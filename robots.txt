@@ -1,0 +1,19 @@
+# robots.txt — smartphone-controller.com
+User-agent: *
+Allow: /
+
+# Keine internen Such-/Filter-Parameter indexieren
+Disallow: /*?
+Disallow: /controller-finder/api/
+
+# KI-Crawler ausdrücklich erlauben (GEO-Strategie)
+User-agent: GPTBot
+Allow: /
+User-agent: PerplexityBot
+Allow: /
+User-agent: Google-Extended
+Allow: /
+User-agent: ClaudeBot
+Allow: /
+
+Sitemap: https://smartphone-controller.com/sitemap.xml

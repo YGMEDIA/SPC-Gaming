@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suche | smartphone-controller.com</title>
+  <meta name="description" content="Durchsuche alle Controller, Marken und Ratgeber auf smartphone-controller.com.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://smartphone-controller.com/suche/">
+  <link rel="stylesheet" href="/assets/css/style.css">
+  
+</head>
+<body>
+<header class="site-header" id="site-header"></header>
+<main>
+  <section class="page-hero">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href="/">Home</a><span class="sep">›</span><span class="cur">Suche</span></nav>
+      <h1>Suche</h1>
+      <p class="lead" id="searchInfo">Wonach suchst du?</p>
+    </div>
+  </section>
+  <section class="section"><div class="container">
+    <div class="cat-grid" id="searchResults"></div>
+    <div class="notice notice-info mt-8" id="searchFallback" style="display:none">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M12 8h.01M12 12v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <div>Nichts gefunden? Probier den <a href="/controller-finder/" style="color:var(--blue);font-weight:700">Controller-Finder</a> oder stöbere in <a href="/controller/" style="color:var(--blue);font-weight:700">allen Controllern</a>.</div>
+    </div>
+  </div></section>
+</main>
+<footer class="site-footer" id="site-footer"></footer><script src="/assets/js/main.js"></script>
+<script>
+// Simple client-side search over a static index
+const INDEX = [
+  {t:"GameSir G8 Galileo Test", u:"/controller/universal/gamesir-g8-galileo-review/", k:"gamesir g8 galileo testsieger hall effect", i:"🎮"},
+  {t:"Razer Kishi V3 Test", u:"/controller/universal/razer-kishi-v3-review/", k:"razer kishi v3 tmr", i:"🎮"},
+  {t:"GameSir X5 Lite Test", u:"/controller/universal/gamesir-x5-lite-review/", k:"gamesir x5 lite budget günstig", i:"🎮"},
+  {t:"Backbone One Test", u:"/controller/ios/backbone-one-2-review/", k:"backbone one iphone ios", i:"🎮"},
+  {t:"Backbone Pro Test", u:"/controller/ios/backbone-pro-review/", k:"backbone pro wireless bluetooth", i:"🎮"},
+  {t:"Kishi V3 Pro Test", u:"/controller/universal/razer-kishi-v3-pro-review/", k:"razer kishi v3 pro premium haptik", i:"🎮"},
+  {t:"8BitDo Ultimate 2C Test", u:"/controller/universal/8bitdo-ultimate-2c-review/", k:"8bitdo ultimate 2c bluetooth switch", i:"🎮"},
+  {t:"Beste Handy Controller 2026", u:"/controller/beste/", k:"bester handy controller bestenliste top", i:"🏆"},
+  {t:"iPhone Controller", u:"/controller/ios/", k:"iphone ios controller apple", i:"📱"},
+  {t:"Android Controller", u:"/controller/android/", k:"android controller samsung pixel", i:"🤖"},
+  {t:"Finger Sleeves", u:"/zubehoer/finger-sleeves/", k:"finger sleeves fingerlinge schwitzen pubg", i:"🧤"},
+  {t:"Handy Trigger", u:"/zubehoer/trigger/", k:"trigger auslöser pubg cod mobile", i:"🎯"},
+  {t:"Handy-Kühler", u:"/zubehoer/handy-kuehler/", k:"kühler cooler peltier heiß", i:"❄️"},
+  {t:"GameSir Marken-Hub", u:"/marken/gamesir/", k:"gamesir marke alle modelle", i:"⭐"},
+  {t:"Hall-Effect erklärt", u:"/ratgeber/hall-effect-erklaert/", k:"hall effect sticks drift ratgeber", i:"📖"},
+  {t:"USB-C vs. Bluetooth", u:"/ratgeber/usb-c-vs-bluetooth/", k:"usb-c bluetooth verbindung latenz", i:"📖"},
+  {t:"Controller-Finder", u:"/controller-finder/", k:"finder berater empfehlung quiz", i:"🔍"},
+];
+const q = new URLSearchParams(location.search).get('q') || '';
+const info = document.getElementById('searchInfo');
+const grid = document.getElementById('searchResults');
+if (q) {
+  const terms = q.toLowerCase().split(/\s+/);
+  const hits = INDEX.filter(e => terms.some(t => (e.t+' '+e.k).toLowerCase().includes(t)));
+  info.textContent = hits.length + ' Ergebnisse für „' + q + '"';
+  grid.innerHTML = hits.map(e => '<a href="'+e.u+'" class="cat-card"><span class="cat-icon">'+e.i+'</span><div><div class="cat-label">'+e.t+'</div></div><span class="cat-arrow">›</span></a>').join('');
+  if (!hits.length) document.getElementById('searchFallback').style.display='flex';
+} else {
+  info.textContent = 'Gib oben im Suchfeld einen Begriff ein.';
+  document.getElementById('searchFallback').style.display='flex';
+}
+</script>
+</body></html>
