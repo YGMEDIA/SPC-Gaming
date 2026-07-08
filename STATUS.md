@@ -37,29 +37,15 @@
 - **Ouligay** B0C9D8BB9B — Material Silberfaser→Carbonfaser, 30 Stück, 7€, 4,1/257. Cons: Größen zu klein.
 - **RXKFIGX** B0D9Y9116S — war fälschlich "Profi/E-Sport"; ehrlich abgestuft: Polyester, 40 Stück, 7€, **3,5/36** (schwach, "löst sich auf"-Klagen). Profi-Framing entfernt.
 
-### ✅ ZUBEHÖR — Trigger (zubehoer/trigger/) KOMPLETT (08.07.2026):
-- **OZKAK AK77** B086JPTLDD ✅ — Controller-Grip mit Lüfter + 4 Triggern + 4000mAh-Akku, 27€, 4,2/450. Cons: Kratzer ohne Hülle. "Preistipp"-Badge ENTFERNT (Roland-Entscheidung 08.07).
-- **OZKAK 4-Trigger L1R1** B0BGR4DGSQ ✅ — war fälschlich "2er-Set"; ist Clip-On-Grip mit 4 Auslösern, USB-Kontakte, 18€, 3,9/669. Bild ✅
-- **OZKAK 4-Auslöser grün** B0CNPVCJCL ✅ — war fälschlich "6er-Set"; 4 kapazitive Auslöser, Gummipuffer, 17€ (war 16€), 3,9/109. Bild ✅. Cons: Auslöser lösen teils selbst aus, zu schmal für S23 Ultra.
-- **OZKAK Tablet Game Controller Schnellfeuer** B096S5WV62 ✅ — ERSETZT alte ASIN B0CSSDDH52 (war "Smartphone Gamepad"). Ist Tablet/iPad-Controller (7-13"), elektr. Schnellfeuer 5 Stufen, 33€ (war 27€), 3,6/275. Bild ✅. Cons: Gummis lösen sich, linker Controller teils defekt, nur Micro-USB, Akkuabhängigkeit links. SCHWACHER Kandidat.
-- **RISOKA 2x Trigger (4 Buttons)** B0DPQQJYL4 ✅ — war "L1R1"; ist Dual-Trigger 2 Tasten/Seite = 4 Aktionen, mechanisch, 20€, 4,0/76. Bild ✅. Bestseller-Badge ENTFERNT (4,0/76 + "häufig retourniert"-Amazon-Warnung). Cons: Tasten locker/wackelig.
-- **Toaluea 4-Trigger** B0F3JF5P5J ✅ — Marke war fälschlich "Ozkak", KEIN Joystick-Aufsatz; 4-Auslöser-Grip vergoldete Kontakte, 9€, 4,0/68, "Amazons Tipp". Bild ✅. Cons: rechter Controller teils defekt, beim Feuern laggy.
-- **Ozkak L1R1 Trigger-Aufsatz** B07ZQ9G7ZX ✅ — VERSCHOBEN von controller/mini-gamepad/ → zubehoer/trigger/ (08.07). War "Mini-Controller/Bluetooth"; ist 2-Auslöser-Aufsteck-Trigger, USB (kein BT!), 10€, 3,8/324. Bild ✅. Cons: keine Passform-Anpassung, teils schnell kaputt.
-- TRIGGER-REIHENFOLGE nach Empfehlung sortiert: AK77 → RISOKA → Ozkak L1R1 → Toaluea → Ozkak grün → Trigger-Aufsatz → Tablet (ans Ende). HINWEIS: 4 fast identische 4-Trigger-Grips — bewusst gestaffelt statt zusammengelegt (behält echte ASINs/Bewertungen).
-
-### ✅ ZUBEHÖR — Handy-Kühler (zubehoer/handy-kuehler/) KOMPLETT (08.07.2026):
-- **Razer Phone Cooler Chroma** B09LVF2RYL ✅ — Peltier + Chroma-RGB, USB-C (kein Akku), 46€ (war 60€ UVP), 3,2/72. "Premium"-Badge ENTFERNT. Cons: sehr laut, Klammer/Scharnier bricht ab, kein Akku. HEIKEL trotz Marke.
-- **Jremreo 2-in-1 Kühler** B0F1FW7BYG ✅ — Marke war "Magnetisch"; Peltier Clip+Magnet, 3 Stufen RGB, USB (kein Akku), 17€ (war ~25€), 3,4/120. "Preistipp"-Badge ENTFERNT. Cons: kühlt teils gar nicht, Kabelbruch-Risiko.
-- **Black Shark FunCooler 6** B0GWL9QDRG ✅ — war "FunCooler 5"; 20W Peltier ICECOLD 2.0, MagSafe+Clip, USB-C (Netzteil ≥20W nötig), 40€ (war 35€ UVP), 4,0/69. "#1 Empfehlung"-Badge BEHALTEN (bester der 3 Kühler). Kabel nicht im Lieferumfang. STÄRKSTER Kühler.
-- EINORDNUNG: Alle 3 Peltier ohne Akku (Netzteil/Powerbank Pflicht). Black Shark 6 klarer Sieger.
-
-### ✅ SONSTIGE KOMPLETT (08.07.2026):
-- **Trust GXT 735G Mylox** B0DVLTX8SX ✅ (controller/android/) — war "GXT Controller RGB"; ist Teleskop-Controller, echte Analogsticks, bis 12h Akku, BT 5.0, RGB, PS5/Xbox-Remote-Play, 40€ (war 39€), 4,2/317. Bild ✅. STARKER günstiger Kandidat ("Top Preis-Leistung").
-- **Ozkak L1R1 Trigger-Aufsatz** B07ZQ9G7ZX → siehe Trigger (wurde dorthin verschoben).
+### 🔜 ZUBEHÖR — Trigger (zubehoer/trigger/) LÄUFT:
+- **OZKAK AK77** B086JPTLDD ✅ — war fälschlich "6-Finger-Trigger-Set, 16€"; ist Controller-Grip mit Lüfter + 4 Triggern + 4000mAh-Akku, 27€, 4,2/450. Cons: Kratzer ohne Hülle. OFFEN: "Preistipp"-Badge passt bei 27€ nicht mehr — Roland fragen ob entfernen/ändern.
+- **NÄCHSTER:** OZKAK L1R1 B0BGR4DGSQ (als nächstes dran)
+- Weitere offene Trigger: B0CNPVCJCL ozkak-6finger, B0CSSDDH52 ozkak-gamepad, B0DPQQJYL4 risoka-trigger, B0F3JF5P5J ozkak-joystick
+- DANN Handy-Kühler (zubehoer/handy-kuehler/): B09LVF2RYL razer-phone-cooler, B0F1FW7BYG magnet-peltier, B0GWL9QDRG black-shark-funcooler
+- DANN Sonstige: B0DVLTX8SX trust-gxt-rgb (controller/android/), B07ZQ9G7ZX ozkak-mini-portable (controller/mini-gamepad/)
 
 ### 📋 NOCH OFFEN aus vorheriger Controller-Queue (nach Zubehör evtl. nachziehen):
-- Bild-URLs (data-img) fehlen noch bei vielen älteren Karten. Separater Bild-Pass steht weiter aus.
-- OPTIONAL: B07ZQ9G7ZX steht jetzt korrekt bei Trigger — mini-gamepad hat noch 3 Karten.
+- Bild-URLs (data-img) fehlen noch bei: MGPXPRO hat Bild ✅, aber viele ältere Karten. Separater Bild-Pass steht weiter aus.
 
 ---
 
@@ -229,12 +215,7 @@ smartphone-controller.com/ (Git-Root)
 3. ⚠️ Wichtig: Immer die NEUESTE STATUS.md nutzen. Ältere Versionen (07.07 oder früher) führen zu Verwirrung.
 
 **Aktuell wichtigste nächste Aufgabe:**
-→ PRODUKT-REVIEW-QUEUE KOMPLETT DURCH (Stand 08.07.2026): alle Controller, alle Zubehör-Kategorien (Finger-Sleeves, Trigger, Handy-Kühler) und Sonstige (Trust GXT) an echte Amazon-Daten angepasst. Nächste sinnvolle Schritte:
-1. Separater BILD-PASS: viele ältere Karten zeigen noch Icon-Fallback statt Foto — data-img per Rechtsklick→Grafikadresse (m.media-amazon.com) nachziehen.
-2. COOKIE-CONSENT-Banner einbauen, BEVOR GA4 aktiviert wird (steht schon als Hinweis in Datenschutz).
-3. GA4 Measurement ID in main.js eintragen (+ GTM laut Phase 6).
-4. Controller-Finder als echte interaktive Seite (aktuell Platzhalter).
-5. Rechtstexte final anwaltlich prüfen lassen vor Live-Gang.
+→ Produkt-Review Zubehör fortsetzen (Workflow: 1 Link → Screenshot → einbauen → nächster). NÄCHSTER: OZKAK L1R1 B0BGR4DGSQ (Trigger). Danach restliche Trigger, dann Handy-Kühler, dann Sonstige (siehe SESSION 08.07 oben). Offene Entscheidung: "Preistipp"-Badge bei OZKAK AK77 (27€) entfernen/ändern.
 
 ---
 

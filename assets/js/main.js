@@ -12,6 +12,7 @@
   /* ---------- Header HTML ---------- */
   function buildHeader(activePage) {
     const nav = [
+      { href: '/produkte/', label: 'Alle Produkte', icon: '🛒' },
       { href: '/controller-finder/', label: 'Controller-Finder', icon: '🎮' },
       { href: '/controller/ios/', label: 'iPhone' },
       { href: '/controller/android/', label: 'Android' },
@@ -105,14 +106,10 @@
         </a>
       </div>
       <p>Das unabhängige Fachportal für Smartphone-Gaming-Controller. Wir testen, vergleichen und erklären – damit du den passenden Controller findest, nicht nur den teuersten.</p>
-      <div class="foot-socials">
-        <a href="#" class="foot-social" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12s0-3.5-.4-5.1c-.3-1-1-1.7-2-2C18.9 4.5 12 4.5 12 4.5s-6.9 0-8.6.4c-1 .3-1.7 1-2 2C1 8.5 1 12 1 12s0 3.5.4 5.1c.3 1 1 1.7 2 2 1.7.4 8.6.4 8.6.4s6.9 0 8.6-.4c1-.3 1.7-1 2-2 .4-1.6.4-5.1.4-5.1zM9.8 15.3V8.7l5.7 3.3-5.7 3.3z"/></svg></a>
-        <a href="#" class="foot-social" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.8"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor"/></svg></a>
-        <a href="#" class="foot-social" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 3c.3 2 1.6 3.6 3.6 3.9v2.7c-1.4 0-2.7-.4-3.6-1.1v5.8c0 3.3-2.4 5.7-5.5 5.7-3 0-5.3-2.3-5.3-5.3 0-3.1 2.6-5.5 5.9-5.1v2.8c-.4-.1-.8-.2-1.2-.2-1.4 0-2.4 1-2.4 2.4s1 2.4 2.4 2.4 2.5-1 2.5-2.7V3H16z"/></svg></a>
-      </div>
     </div>
     <div class="foot-col">
       <h4>Controller</h4>
+      <a href="/produkte/">🛒 Alle Produkte</a>
       <a href="/controller/">Alle Controller</a>
       <a href="/controller/ios/">iPhone Controller</a>
       <a href="/controller/android/">Android Controller</a>
@@ -131,7 +128,6 @@
       <a href="/marken/razer/">Razer</a>
       <a href="/marken/backbone/">Backbone</a>
       <a href="/marken/8bitdo/">8BitDo</a>
-      <a href="/marken/ipega/">iPega</a>
     </div>
     <div class="foot-col">
       <h4>Über uns</h4>
@@ -163,6 +159,83 @@
   }
 
   /* ---------- Inject Header & Footer ---------- */
+  function enhance(root) {
+      // Affiliate link handling — append tag automatically
+      root.querySelectorAll('a[data-asin]').forEach(link => {
+        const asin = link.dataset.asin;
+        if (asin) {
+          link.href = `https://www.amazon.de/dp/${asin}?tag=${AFFILIATE_TAG}`;
+          link.rel = 'nofollow sponsored noopener';
+          link.target = '_blank';
+        }
+      });
+  
+      // Product images — render data-img as <img>, keep icon as fallback.
+      // Source priority: card's own data-img > any child element's data-img.
+      root.querySelectorAll('.pcard-img').forEach(imgBox => {
+        const card = imgBox.closest('.pcard') || imgBox.parentElement;
+        const src = imgBox.dataset.img ||
+                    card?.dataset.img ||
+                    card?.querySelector('[data-img]')?.dataset.img;
+        if (!src) return; // no image → leave the emoji icon in place
+        const iconEl = imgBox.querySelector('.product-icon');
+        const name = card?.querySelector('.pcard-name')?.textContent?.trim() || 'Produkt';
+        const img = document.createElement('img');
+        img.className = 'pcard-photo';
+        img.src = src;
+        img.alt = name;
+        img.loading = 'lazy';
+        // If the image fails to load, fall back to the icon.
+        img.addEventListener('error', () => {
+          img.remove();
+          if (iconEl) iconEl.style.display = '';
+        });
+        if (iconEl) iconEl.style.display = 'none';
+        imgBox.appendChild(img);
+      });
+  
+      // Make whole product cards clickable.
+      // Priority: internal review page (.btn-detail) > Amazon link as fallback.
+      // The Amazon button keeps its own behaviour and is excluded from the card click.
+      root.querySelectorAll('.pcard').forEach(card => {
+        const detailLink = card.querySelector('.btn-detail[href]:not([href="#"])');
+        const amazonLink = card.querySelector('.btn-amazon');
+        const target = detailLink || amazonLink;
+        if (!target) return;
+  
+        // Rename the detail button label to "Mehr erfahren" for consistency.
+        if (detailLink && /zum test|details/i.test(detailLink.textContent)) {
+          detailLink.textContent = 'Mehr erfahren';
+        }
+  
+        card.classList.add('pcard-clickable');
+        card.addEventListener('click', function (e) {
+          // Ignore clicks on real links/buttons inside the card.
+          if (e.target.closest('a, button')) return;
+          if (detailLink) {
+            window.location.href = detailLink.getAttribute('href');
+          } else if (amazonLink) {
+            amazonLink.click();
+          }
+        });
+        // Keyboard accessibility: Enter/Space activates the card.
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'link');
+        const label = card.querySelector('.pcard-name')?.textContent?.trim();
+        if (label) card.setAttribute('aria-label', label + ' – Details ansehen');
+        card.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            (detailLink || amazonLink).click ? (detailLink ? window.location.href = detailLink.getAttribute('href') : amazonLink.click()) : null;
+          }
+        });
+      });
+  
+  }
+
+  // Expose so dynamically-rendered pages (e.g. /produkte/) can enhance new cards.
+  window.SPCEnhance = enhance;
+
   function init() {
     const headerEl = document.getElementById('site-header');
     const footerEl = document.getElementById('site-footer');
@@ -174,15 +247,8 @@
     if (headerEl) headerEl.innerHTML = buildHeader(activePage);
     if (footerEl) footerEl.innerHTML = buildFooter();
 
-    // Affiliate link handling — append tag automatically
-    document.querySelectorAll('a[data-asin]').forEach(link => {
-      const asin = link.dataset.asin;
-      if (asin) {
-        link.href = `https://www.amazon.de/dp/${asin}?tag=${AFFILIATE_TAG}`;
-        link.rel = 'nofollow sponsored noopener';
-        link.target = '_blank';
-      }
-    });
+    // Enhance static + future dynamic product cards
+    enhance(document);
 
     // Track affiliate clicks (for GA4 via GTM later)
     document.querySelectorAll('a[data-asin], .btn-amazon').forEach(link => {
