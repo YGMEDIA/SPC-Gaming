@@ -8,6 +8,10 @@
   /* ---------- Config ---------- */
   const AFFILIATE_TAG = 'ygmedia-21';
   const DOMAIN = 'https://smartphone-controller.com';
+  // GA4: sobald die Measurement-ID hier eingetragen ist (z.B. 'G-XXXXXXXXXX'),
+  // wird GA4 automatisch geladen — aber NUR nach Cookie-Zustimmung.
+  const GA_MEASUREMENT_ID = '';
+  const CONSENT_KEY = 'spc_cookie_consent'; // 'accepted' | 'declined'
 
   /* ---------- Header HTML ---------- */
   function buildHeader(activePage) {
@@ -249,6 +253,72 @@
   // Expose so dynamically-rendered pages (e.g. /produkte/) can enhance new cards.
   window.SPCEnhance = enhance;
 
+  /* ---------- Cookie-Consent (DSGVO) ---------- */
+  function getConsent() {
+    try { return localStorage.getItem(CONSENT_KEY); } catch (e) { return null; }
+  }
+  function setConsent(value) {
+    try { localStorage.setItem(CONSENT_KEY, value); } catch (e) {}
+  }
+
+  function loadGA4() {
+    if (!GA_MEASUREMENT_ID) return; // keine ID hinterlegt → nichts laden
+    if (window.__ga4Loaded) return;
+    window.__ga4Loaded = true;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () { window.dataLayer.push(arguments); };
+    window.gtag('js', new Date());
+    window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
+  }
+
+  function buildConsentBanner() {
+    const el = document.createElement('div');
+    el.className = 'cookie-banner';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', 'Cookie-Einstellungen');
+    el.setAttribute('aria-live', 'polite');
+    el.innerHTML = `
+      <div class="cookie-inner">
+        <div class="cookie-text">
+          <strong>Wir respektieren deine Privatsphäre.</strong>
+          Wir nutzen nur technisch notwendige Cookies. Zusätzlich möchten wir anonyme Statistik-Cookies
+          (Google Analytics) setzen, um unser Angebot zu verbessern. Du entscheidest.
+          <a href="/datenschutz/">Mehr in der Datenschutzerklärung</a>.
+        </div>
+        <div class="cookie-actions">
+          <button type="button" class="cookie-btn cookie-decline" id="cookieDecline">Nur notwendige</button>
+          <button type="button" class="cookie-btn cookie-accept" id="cookieAccept">Alle akzeptieren</button>
+        </div>
+      </div>`;
+    return el;
+  }
+
+  function initConsent() {
+    const consent = getConsent();
+    if (consent === 'accepted') { loadGA4(); return; }
+    if (consent === 'declined') { return; }
+
+    // Noch keine Entscheidung → Banner zeigen
+    const banner = buildConsentBanner();
+    document.body.appendChild(banner);
+    requestAnimationFrame(() => banner.classList.add('is-visible'));
+
+    function close() {
+      banner.classList.remove('is-visible');
+      setTimeout(() => banner.remove(), 300);
+    }
+    banner.querySelector('#cookieAccept').addEventListener('click', () => {
+      setConsent('accepted'); loadGA4(); close();
+    });
+    banner.querySelector('#cookieDecline').addEventListener('click', () => {
+      setConsent('declined'); close();
+    });
+  }
+
   function init() {
     const headerEl = document.getElementById('site-header');
     const footerEl = document.getElementById('site-footer');
@@ -290,6 +360,9 @@
     document.querySelectorAll('.current-year').forEach(el => {
       el.textContent = new Date().getFullYear();
     });
+
+    // Cookie-Consent-Banner (lädt GA4 erst nach Zustimmung)
+    initConsent();
   }
 
   if (document.readyState === 'loading') {

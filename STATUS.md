@@ -265,3 +265,35 @@ smartphone-controller.com/ (Git-Root)
 ### 📋 HINWEIS:
 - Base44-Screenshot war Inspiration für STRUKTUR (Problem→Lösung, Feature-Grid, Trust-Zahlen), NICHT für Farben. Shop bleibt hell/seriös (weiß/navy/blau).
 - Pexels-Link (hände-spielen-konsole-handy) wurde NICHT eingebaut — die 2 hochgeladenen Bilder reichten für die Collage. Bei Bedarf nachrüstbar.
+
+### ✅ Button-Beschriftung (08.07.2026):
+- Alle Produkt-Buttons "Amazon →" / "Preis auf Amazon →" / "Preis prüfen →" → "Kaufen →" (71 Buttons + 2 JS-Renderer hub-render.js/produkte.js).
+- Vergleichs-Buttons "Produkt (Preis) → Amazon" → "Produkt (Preis) kaufen".
+- Fließtexte (Affiliate-Hinweise, Impressum, Datenschutz) UNVERÄNDERT — erwähnen Amazon korrekt. "✓ Auf Amazon verfügbar"-Status bleibt.
+
+---
+
+## 🔧 SESSION 08.07.2026 (Teil 4) — BILDER, COOKIE-BANNER, FINDER
+
+### ✅ Alle Produktbilder komplett:
+- 3 letzte Bilder ergänzt: GameSir X3 Pro (71LVpM24TaL), Backbone One PS (71j7Tl+PYhL), Turtle Beach Atom (71DDV8CRz3L). products.json: 40/40 mit Bild. Alle 13 Review-Seiten haben großes cta-photo.
+- Bewertungen für 12 Kern-Controller in products.json ergänzt (Bew.-Spec), die vorher keine hatten — wichtig fürs Finder-Scoring.
+
+### ✅ Cookie-Consent-Banner (DSGVO):
+- In main.js: initConsent() zeigt Banner beim 1. Besuch. "Alle akzeptieren" / "Nur notwendige". Wahl in localStorage (spc_cookie_consent). GA4 lädt NUR nach 'accepted' UND wenn GA_MEASUREMENT_ID gesetzt ist (aktuell leer — später eintragen: const GA_MEASUREMENT_ID = 'G-XXXX').
+- CSS: .cookie-banner unten fixiert, mobil gestapelt. Getestet: erscheint 1x, Wahl wird respektiert.
+
+### ✅ Controller-Finder INTERAKTIV (echte Seite):
+- controller-finder/index.html: 3 Fragen (Plattform → Budget → Priorität) + Fortschrittsbalken + Zurück + Neu starten.
+- assets/js/finder.js: Match-Scoring gegen products.json (worksOn für Plattform, Preis-Range für Budget, Rating+Hall-Effect/Kompaktheit für Priorität). Zeigt Top 3 als Karten. Feuert finder_complete GA4-Event.
+- Getestet: iPhone/mid/quality → G8 Galileo/Kishi V3/Backbone One (Testsieger korrekt oben). Android/low/value → 8BitDo 2C/MGPX/Handheld. any/any/portable → M4 Snap-On/Backbone One/Ultimate Mobile.
+
+### 📋 NOCH OFFEN (vor Live):
+- GA_MEASUREMENT_ID in main.js eintragen (dann lädt GA4 nach Consent automatisch).
+- Rechtstexte final anwaltlich prüfen (Cookie-Banner + GA4 jetzt vorbereitet).
+- Live-Check Amazon-Produktbilder nach Deployment.
+- Deployment: DNS-Propagation, HTTPS erzwingen, Search Console + Sitemap (56 URLs, +/produkte/).
+
+### ✅ Ratgeber-Bilder (08.07.2026):
+- 3 echte Bilder statt Icons: assets/img/ratgeber/ hall-effect.jpg (Stick-Querschnitt), usb-c-vs-bluetooth.jpg (2 weiße Controller), trigger-pubg.jpg (schwebende Trigger).
+- Eingebaut in Ratgeber-Übersicht (article-thumb) UND als großes Artikelbild (.article-hero-img) auf den 3 Detailseiten. CSS: article-thumb img cover, article-hero-img mit Schatten.

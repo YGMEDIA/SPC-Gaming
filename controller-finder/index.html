@@ -20,13 +20,59 @@
       <p class="lead">5 kurze Fragen — dein perfekter Controller in 60 Sekunden.</p>
     </div>
   </section>
-  <section class="section-sm"><div class="container">
-    <div style="background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:32px;box-shadow:var(--shadow-md);text-align:center">
-      <div style="font-size:52px;margin-bottom:16px">🎮</div>
-      <h2 style="font-size:22px;font-weight:800;margin-bottom:10px">Controller-Finder wird geladen …</h2>
-      <p style="color:var(--ink-soft);margin-bottom:24px">Der interaktive Berater mit 12 verifizierten 2026-Modellen und personalisierten Match-Scores.</p>
-      <a href="/controller/" class="btn btn-primary">Direkt zu allen Controllern →</a>
+  <section class="section"><div class="container">
+    <div class="finder" id="finder">
+      <!-- Fortschritt -->
+      <div class="finder-progress" id="finderProgress" aria-hidden="true">
+        <span class="fp-step is-active" data-step="0"></span>
+        <span class="fp-step" data-step="1"></span>
+        <span class="fp-step" data-step="2"></span>
+      </div>
+
+      <!-- Schritt 1: Plattform -->
+      <div class="finder-step is-active" data-step="0">
+        <span class="finder-q-num">Frage 1 von 3</span>
+        <h2 class="finder-q">Welches Smartphone nutzt du?</h2>
+        <div class="finder-options">
+          <button type="button" class="finder-opt" data-key="platform" data-value="ios">📱 iPhone</button>
+          <button type="button" class="finder-opt" data-key="platform" data-value="android">🤖 Android</button>
+          <button type="button" class="finder-opt" data-key="platform" data-value="any">Egal / beides</button>
+        </div>
+      </div>
+
+      <!-- Schritt 2: Budget -->
+      <div class="finder-step" data-step="1">
+        <span class="finder-q-num">Frage 2 von 3</span>
+        <h2 class="finder-q">Wie viel möchtest du ausgeben?</h2>
+        <div class="finder-options">
+          <button type="button" class="finder-opt" data-key="budget" data-value="low">💶 Bis 50 €</button>
+          <button type="button" class="finder-opt" data-key="budget" data-value="mid">💶 50–100 €</button>
+          <button type="button" class="finder-opt" data-key="budget" data-value="high">💶 Über 100 €</button>
+          <button type="button" class="finder-opt" data-key="budget" data-value="any">Preis egal</button>
+        </div>
+        <button type="button" class="finder-back" data-back>← Zurück</button>
+      </div>
+
+      <!-- Schritt 3: Priorität -->
+      <div class="finder-step" data-step="2">
+        <span class="finder-q-num">Frage 3 von 3</span>
+        <h2 class="finder-q">Was ist dir am wichtigsten?</h2>
+        <div class="finder-options">
+          <button type="button" class="finder-opt" data-key="prio" data-value="quality">🏆 Beste Qualität &amp; Präzision</button>
+          <button type="button" class="finder-opt" data-key="prio" data-value="value">💡 Bestes Preis-Leistungs-Verhältnis</button>
+          <button type="button" class="finder-opt" data-key="prio" data-value="portable">🎒 Kompakt für unterwegs</button>
+        </div>
+        <button type="button" class="finder-back" data-back>← Zurück</button>
+      </div>
+
+      <!-- Ergebnis -->
+      <div class="finder-result" data-step="result">
+        <span class="finder-q-num">Dein Ergebnis</span>
+        <h2 class="finder-q" id="finderResultTitle">Deine Top-Empfehlungen</h2>
+        <div class="grid-auto" id="finderMatches"></div>
+        <button type="button" class="btn btn-secondary" id="finderRestart" style="margin-top:20px">↺ Neu starten</button>
+      </div>
     </div>
   </div></section>
 </main>
-<footer class="site-footer" id="site-footer"></footer><script src="/assets/js/main.js"></script></body></html>
+<footer class="site-footer" id="site-footer"></footer><script src="/assets/js/main.js"></script><script src="/assets/js/finder.js" defer></script></body></html>

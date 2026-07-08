@@ -37,7 +37,7 @@
           <div class="pcard-specs">${specs}</div>
           <div class="pcard-foot">
             <div class="price-row"><span class="price">${esc(p.price || '—')}</span><span class="in-stock">Verfügbar</span></div>
-            <div class="pcard-actions">${detail}<a class="btn-amazon" data-asin="${esc(p.asin)}" data-product="${esc(p.slug)}" href="#"${img}>Amazon →</a></div>
+            <div class="pcard-actions">${detail}<a class="btn-amazon" data-asin="${esc(p.asin)}" data-product="${esc(p.slug)}" href="#"${img}>Kaufen →</a></div>
           </div>
         </div>
       </article>`;

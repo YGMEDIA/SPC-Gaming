@@ -163,6 +163,10 @@
       [
         "Sticks",
         "Hall-Effect"
+      ],
+      [
+        "Bew.",
+        "4,5 (828)"
       ]
     ],
     "worksOn": [
@@ -191,6 +195,10 @@
       [
         "Sticks",
         "Hall-Effect"
+      ],
+      [
+        "Bew.",
+        "4,2 (500+)"
       ]
     ],
     "worksOn": [
@@ -223,6 +231,10 @@
       [
         "App",
         "kostenlos"
+      ],
+      [
+        "Bew.",
+        "4,4 (900+)"
       ]
     ],
     "worksOn": [
@@ -255,6 +267,10 @@
       [
         "iPhone",
         "15+"
+      ],
+      [
+        "Bew.",
+        "4,4 (1.200+)"
       ]
     ],
     "worksOn": [
@@ -283,6 +299,10 @@
       [
         "Sticks",
         "TMR"
+      ],
+      [
+        "Bew.",
+        "4,3 (300+)"
       ]
     ],
     "worksOn": [
@@ -369,6 +389,10 @@
       [
         "Sticks",
         "Hall-Effect"
+      ],
+      [
+        "Bew.",
+        "4,2 (150+)"
       ]
     ],
     "worksOn": [
@@ -418,7 +442,12 @@
     "type": "controller",
     "platform": "android",
     "platformLabel": "Android",
-    "specs": [],
+    "specs": [
+      [
+        "Bew.",
+        "4,3 (400+)"
+      ]
+    ],
     "worksOn": [
       "android",
       "ios",
@@ -431,13 +460,18 @@
     "name": "Backbone One – PlayStation Edition",
     "claim": "",
     "price": "",
-    "img": "",
+    "img": "https://m.media-amazon.com/images/I/71j7Tl+PYhL._SL1500_.jpg",
     "detail": "/controller/ios/backbone-one-ps-review/",
     "slug": "B0CT17GPNT",
     "type": "controller",
     "platform": "ios",
     "platformLabel": "iPhone",
-    "specs": [],
+    "specs": [
+      [
+        "Bew.",
+        "4,3 (500+)"
+      ]
+    ],
     "worksOn": [
       "ios"
     ]
@@ -454,7 +488,12 @@
     "type": "controller",
     "platform": "universal",
     "platformLabel": "Universal",
-    "specs": [],
+    "specs": [
+      [
+        "Bew.",
+        "4,4 (445)"
+      ]
+    ],
     "worksOn": [
       "android",
       "ios",
@@ -514,13 +553,18 @@
     "name": "X3 Pro",
     "claim": "",
     "price": "",
-    "img": "",
+    "img": "https://m.media-amazon.com/images/I/71LVpM24TaL._SL1500_.jpg",
     "detail": "/controller/android/gamesir-x3-pro-review/",
     "slug": "B0DCVZWNMY",
     "type": "controller",
     "platform": "android",
     "platformLabel": "Android",
-    "specs": [],
+    "specs": [
+      [
+        "Bew.",
+        "4,2 (200+)"
+      ]
+    ],
     "worksOn": [
       "android",
       "ios",
@@ -651,7 +695,12 @@
     "type": "controller",
     "platform": "universal",
     "platformLabel": "Universal",
-    "specs": [],
+    "specs": [
+      [
+        "Bew.",
+        "4,3 (250+)"
+      ]
+    ],
     "worksOn": [
       "android",
       "ios",
@@ -664,13 +713,18 @@
     "name": "Atom",
     "claim": "",
     "price": "",
-    "img": "",
+    "img": "https://m.media-amazon.com/images/I/71DDV8CRz3L._SL1500_.jpg",
     "detail": "/controller/android/turtle-beach-atom-review/",
     "slug": "B0BDXSWZMF",
     "type": "controller",
     "platform": "android",
     "platformLabel": "Android",
-    "specs": [],
+    "specs": [
+      [
+        "Bew.",
+        "4,1 (300+)"
+      ]
+    ],
     "worksOn": [
       "android",
       "ios",

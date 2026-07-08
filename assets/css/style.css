@@ -751,7 +751,9 @@ ul, ol { list-style: none; }
   align-items: center;
   justify-content: center;
   font-size: 52px;
+  overflow: hidden;
 }
+.article-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .article-body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
 .article-tag {
   font-size: 11px;
@@ -972,3 +974,118 @@ ul, ol { list-style: none; }
   .stat-sep { display: none; }
   .stat-item { padding: 8px 16px; }
 }
+
+/* ============================================================
+   Cookie-Consent-Banner
+   ============================================================ */
+.cookie-banner {
+  position: fixed;
+  left: 16px; right: 16px; bottom: 16px;
+  z-index: 1000;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .3s, transform .3s;
+  max-width: 920px;
+  margin: 0 auto;
+}
+.cookie-banner.is-visible { opacity: 1; transform: translateY(0); }
+.cookie-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 22px;
+}
+.cookie-text { font-size: 13.5px; line-height: 1.55; color: var(--ink-soft); flex: 1; }
+.cookie-text strong { color: var(--ink); display: block; margin-bottom: 3px; font-size: 14px; }
+.cookie-text a { color: var(--blue); font-weight: 600; text-decoration: underline; }
+.cookie-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.cookie-btn {
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  border: 1.5px solid var(--line);
+  transition: all .15s;
+  white-space: nowrap;
+}
+.cookie-decline { background: var(--surface); color: var(--ink-soft); }
+.cookie-decline:hover { border-color: var(--ink-dim); color: var(--ink); }
+.cookie-accept { background: var(--blue); border-color: var(--blue); color: #fff; }
+.cookie-accept:hover { background: var(--blue-light); border-color: var(--blue-light); }
+@media (max-width: 640px) {
+  .cookie-inner { flex-direction: column; align-items: stretch; gap: 14px; padding: 16px; }
+  .cookie-actions { flex-direction: column-reverse; }
+  .cookie-btn { width: 100%; }
+}
+
+/* ============================================================
+   Controller-Finder (interaktiv)
+   ============================================================ */
+.finder {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 36px;
+  max-width: 720px;
+  margin: 0 auto;
+}
+.finder-progress { display: flex; gap: 8px; margin-bottom: 28px; }
+.fp-step { flex: 1; height: 5px; border-radius: 3px; background: var(--line); transition: background .3s; }
+.fp-step.is-active { background: var(--blue); }
+.finder-step, .finder-result { display: none; }
+.finder-step.is-active, .finder-result.is-active { display: block; animation: finderIn .35s ease; }
+@keyframes finderIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.finder-q-num { font-size: 12px; font-weight: 800; color: var(--blue); text-transform: uppercase; letter-spacing: .05em; }
+.finder-q { font-size: 24px; font-weight: 800; margin: 8px 0 22px; letter-spacing: -.01em; }
+.finder-options { display: flex; flex-direction: column; gap: 12px; }
+.finder-opt {
+  text-align: left;
+  padding: 18px 20px;
+  border: 1.5px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .15s;
+}
+.finder-opt:hover {
+  border-color: var(--blue);
+  background: var(--blue-bg);
+  transform: translateX(4px);
+}
+.finder-back {
+  margin-top: 20px;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 4px 0;
+}
+.finder-back:hover { color: var(--blue); }
+@media (max-width: 640px) {
+  .finder { padding: 24px 20px; }
+  .finder-q { font-size: 20px; }
+}
+
+/* Ratgeber: Artikel-Vorschaubild unter dem Hero */
+.article-hero-img {
+  margin: 0 0 -8px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--line);
+}
+.article-hero-img img { display: block; width: 100%; height: auto; max-height: 360px; object-fit: cover; }
