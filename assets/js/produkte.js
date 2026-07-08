@@ -56,7 +56,12 @@
   function apply() {
     let list = PRODUCTS.filter(p => {
       if (state.type && p.type !== state.type) return false;
-      if (state.platform && p.platform !== state.platform) return false;
+      if (state.platform) {
+        // Use compatibility list (worksOn) so e.g. Bluetooth/USB-C controllers
+        // also appear under iPhone, not just their "home" category.
+        const compat = p.worksOn && p.worksOn.length ? p.worksOn : [p.platform];
+        if (!compat.includes(state.platform)) return false;
+      }
       if (state.brand && (p.brand || '') !== state.brand) return false;
       if (state.q) {
         const hay = (p.name + ' ' + p.brand + ' ' + p.claim).toLowerCase();
@@ -86,14 +91,14 @@
     const c = document.getElementById(containerId);
     c.innerHTML = values.map(v => {
       const label = labelMap ? (labelMap[v] || v) : v;
-      return `<button type="button" class="chip" data-facet="${facet}" data-value="${esc(v)}">${esc(label)}</button>`;
+      return `<button type="button" class="pf-chip" data-facet="${facet}" data-value="${esc(v)}">${esc(label)}</button>`;
     }).join('');
     c.addEventListener('click', e => {
-      const btn = e.target.closest('.chip');
+      const btn = e.target.closest('.pf-chip');
       if (!btn) return;
       const val = btn.dataset.value;
       state[facet] = state[facet] === val ? null : val;
-      c.querySelectorAll('.chip').forEach(x => x.classList.toggle('active', x.dataset.value === state[facet]));
+      c.querySelectorAll('.pf-chip').forEach(x => x.classList.toggle('active', x.dataset.value === state[facet]));
       apply();
     });
   }
@@ -102,7 +107,7 @@
     state.type = state.platform = state.brand = null;
     state.q = '';
     document.getElementById('prodSearch').value = '';
-    document.querySelectorAll('.chip.active').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.pf-chip.active').forEach(x => x.classList.remove('active'));
     apply();
   }
 
@@ -112,7 +117,11 @@
       PRODUCTS = data;
 
       const types = [...new Set(data.map(p => p.type))];
-      const platforms = [...new Set(data.map(p => p.platform))];
+      const platSet = new Set();
+      data.forEach(p => (p.worksOn && p.worksOn.length ? p.worksOn : [p.platform]).forEach(x => platSet.add(x)));
+      // Sinnvolle Reihenfolge der Plattform-Chips
+      const PLAT_ORDER = ['ios', 'android', 'universal', 'tablet', 'mini', 'trigger', 'finger-sleeves', 'kuehler'];
+      const platforms = PLAT_ORDER.filter(x => platSet.has(x));
       const brands = [...new Set(data.map(p => p.brand).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'de'));
 
       buildChips('chipsType', 'type', types, TYPE_LABELS);
@@ -125,7 +134,7 @@
       if (params.get('platform')) state.platform = params.get('platform');
       if (params.get('marke')) state.brand = params.get('marke');
       if (params.get('q')) { state.q = params.get('q'); document.getElementById('prodSearch').value = state.q; }
-      document.querySelectorAll('.chip').forEach(x => {
+      document.querySelectorAll('.pf-chip').forEach(x => {
         const f = x.dataset.facet;
         if (state[f] === x.dataset.value) x.classList.add('active');
       });

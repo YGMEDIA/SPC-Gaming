@@ -227,3 +227,41 @@ smartphone-controller.com/ (Git-Root)
 - **Ehrliche Cons:** Jedes Review nennt mindestens 2 echte Schwächen
 - **Struktur vor Content:** 57 Seiten, QA-geprüft — jetzt Content & Launch-Vorbereitung
 - **Affiliate-Tag:** ygmedia-21 — überall in main.js eingebaut, automatisch
+
+---
+
+## 🛒 SESSION 08.07.2026 (Teil 2) — SHOP-UMBAU & FILTER
+
+### ✅ NEU GEBAUT:
+- **Alle-Produkte-Seite** /produkte/ — zentrale Übersicht aus assets/data/products.json (40 Produkte, EINE Datenquelle). Filter nach Typ/Plattform/Marke, Live-Suche, Sortierung (Empfehlung/Preis/Name), Ergebniszähler, Empty-State. CSS-Klassen mit pf-* Präfix isoliert (kein Konflikt mit Hub-Filtern). JS: assets/js/produkte.js.
+- **products.json** (assets/data/) — 40 Produkte mit Feld worksOn (Kompatibilitätsliste). Ableitung: USB-C ODER Bluetooth => iPhone-tauglich. Zubehör = universal.
+
+### ✅ HUB-SEITEN DYNAMISCH (großer Umbau):
+- controller/ios/, /android/, /universal/ rendern jetzt dynamisch aus products.json via assets/js/hub-render.js (data-hub-platform Attribut).
+- iOS-Hub zeigt jetzt 26 Controller (vorher 3!) — alle Bluetooth/USB-C-Controller sind iPhone-tauglich. Android 25, Universal 25.
+- Statische Cards durch <div id="hubGrid" data-hub-platform="..."> ersetzt.
+
+### ✅ KLICKBARE CARDS & UX:
+- Ganze Produktkarte klickbar (Klick auf Card/Bild → Review-Seite, sonst Amazon-Fallback). Tastaturbedienbar. main.js: enhance(root) als wiederverwendbare Funktion, window.SPCEnhance exportiert für dynamische Seiten.
+- "Zum Test"/"Details" → "Mehr erfahren" umbenannt.
+- Review-Detailseiten: großes Produktbild (.cta-photo) in der Kaufbox (10 von 13 Seiten; 3 ohne Bild-URL = Icon).
+- Startseite Testsieger-Widget: echte Produktbilder statt Emoji (5 Stück, mit Emoji-Fallback).
+- Footer: "Alle Produkte" ohne Shopping-Icon. Header + Homepage-Hero verlinken /produkte/.
+
+### 📋 NOCH OFFEN:
+- 3 Produkte ohne Amazon-Bild-URL (zeigen Icon): GameSir X3 Pro (B0DCVZWNMY), Turtle Beach Atom (B0BDXSWZMF), Backbone One PS Edition (B0CT17GPNT).
+- Wenn neue Produkte dazukommen: in products.json eintragen (worksOn nicht vergessen) — dann erscheinen sie automatisch auf /produkte/ + passenden Hubs.
+- KEIN Fade-in beim Scrollen gewünscht (nur dezente Hover-Effekte) — bewusste Entscheidung.
+
+---
+
+## 🎨 SESSION 08.07.2026 (Teil 3) — STARTSEITE EMOTION & TRUST
+
+### ✅ NEU:
+- **Emotions-Abschnitt** auf Startseite (nach Trust-Bar): 2 echte Bilder als Collage (assets/img/hero/fortnite-controller.png + gaming-setup.png), Problem→Lösung-Text, 3 Feature-Cards (Input-Lag/Kompatibilität/ehrliche Tests), Trust-Zahlen-Band (40+/100+/13/0€). Heller Shop-Stil beibehalten (NICHT der dunkle Base44-Look — der diente nur als Struktur-Inspiration).
+- **Footer-Trust:** 5-Sterne-Rating-Icon + Text "Wir empfehlen nur Controller mit 4★+ auf Amazon". Irreführende Zahlungsarten (Visa/Mastercard/PayPal — wir sind KEIN eigener Shop!) durch "Offizieller Amazon-Partner"-Badge ersetzt. Ehrlicher + seriöser.
+- **Logo-Fix:** Leerzeichen zwischen "smartphone-controller" und ".com" behoben (war Flex-gap-Problem). Name+TLD jetzt in <span class="logo-text"> gewickelt. Header + Footer.
+
+### 📋 HINWEIS:
+- Base44-Screenshot war Inspiration für STRUKTUR (Problem→Lösung, Feature-Grid, Trust-Zahlen), NICHT für Farben. Shop bleibt hell/seriös (weiß/navy/blau).
+- Pexels-Link (hände-spielen-konsole-handy) wurde NICHT eingebaut — die 2 hochgeladenen Bilder reichten für die Collage. Bei Bedarf nachrüstbar.

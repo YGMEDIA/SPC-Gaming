@@ -20,6 +20,11 @@
         "Bew.",
         "4,1 (977)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -47,6 +52,11 @@
         "Verb.",
         "Bluetooth 5.0"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -70,6 +80,11 @@
         "Bew.",
         "4,2 (768)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -93,6 +108,11 @@
         "Bew.",
         "4,2 (721)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -116,6 +136,11 @@
         "Bew.",
         "4,4 (249)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -139,6 +164,11 @@
         "Sticks",
         "Hall-Effect"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -162,6 +192,11 @@
         "Sticks",
         "Hall-Effect"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -189,6 +224,11 @@
         "App",
         "kostenlos"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -216,6 +256,11 @@
         "iPhone",
         "15+"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -239,6 +284,11 @@
         "Sticks",
         "TMR"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -262,6 +312,12 @@
         "Bew.",
         "4,5 (361)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "mini",
+      "universal"
     ]
   },
   {
@@ -285,6 +341,12 @@
         "Bew.",
         "4,3 (506)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "mini",
+      "universal"
     ]
   },
   {
@@ -308,6 +370,12 @@
         "Sticks",
         "Hall-Effect"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "tablet",
+      "universal"
     ]
   },
   {
@@ -331,6 +399,11 @@
         "Bew.",
         "4,1 (234)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -345,7 +418,12 @@
     "type": "controller",
     "platform": "android",
     "platformLabel": "Android",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
+    ]
   },
   {
     "asin": "B0CT17GPNT",
@@ -359,7 +437,10 @@
     "type": "controller",
     "platform": "ios",
     "platformLabel": "iPhone",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "ios"
+    ]
   },
   {
     "asin": "B0DQM23MLZ",
@@ -373,7 +454,12 @@
     "type": "controller",
     "platform": "universal",
     "platformLabel": "Universal",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
+    ]
   },
   {
     "asin": "B0D1KFNLLM",
@@ -396,6 +482,11 @@
         "Bew.",
         "4,2 (768)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -410,7 +501,12 @@
     "type": "controller",
     "platform": "universal",
     "platformLabel": "Universal",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
+    ]
   },
   {
     "asin": "B0DCVZWNMY",
@@ -424,7 +520,12 @@
     "type": "controller",
     "platform": "android",
     "platformLabel": "Android",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
+    ]
   },
   {
     "asin": "B0F4JPSWDT",
@@ -447,6 +548,11 @@
         "Bew.",
         "4,1 (99)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -470,6 +576,11 @@
         "Bew.",
         "4,0 (25)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -493,6 +604,11 @@
         "Bew.",
         "4,0 (368)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -516,6 +632,11 @@
         "Bew.",
         "3,3 (7)"
       ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
     ]
   },
   {
@@ -530,7 +651,12 @@
     "type": "controller",
     "platform": "universal",
     "platformLabel": "Universal",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
+    ]
   },
   {
     "asin": "B0BDXSWZMF",
@@ -544,7 +670,12 @@
     "type": "controller",
     "platform": "android",
     "platformLabel": "Android",
-    "specs": []
+    "specs": [],
+    "worksOn": [
+      "android",
+      "ios",
+      "universal"
+    ]
   },
   {
     "asin": "B0DTTT23P7",
@@ -571,6 +702,9 @@
         "Bew.",
         "4,3 (60)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -598,6 +732,9 @@
         "Bew.",
         "4,1 (257)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -625,6 +762,9 @@
         "Bew.",
         "4,4 (2.759)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -652,6 +792,9 @@
         "Bew.",
         "3,5 (36)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -679,6 +822,9 @@
         "Anschluss",
         "USB (kein Akku)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -706,6 +852,9 @@
         "Anschluss",
         "USB-C (Netzteil ≥20W)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -733,6 +882,9 @@
         "RGB",
         "Chroma 12 LEDs"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -760,6 +912,9 @@
         "Für",
         "Smartphone bis 11mm"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -787,6 +942,9 @@
         "Kompatibel",
         "iOS/Android 3–12mm"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -814,6 +972,9 @@
         "Bew.",
         "4,2 (450)"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -841,6 +1002,9 @@
         "Für",
         "Smartphone 5–9mm"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -868,6 +1032,9 @@
         "Kompatibel",
         "iOS/Android 5–13mm"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -895,6 +1062,9 @@
         "Für",
         "Smartphone 5–13mm"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   },
   {
@@ -922,6 +1092,9 @@
         "Für",
         "Tablet/iPad &lt;10mm"
       ]
+    ],
+    "worksOn": [
+      "universal"
     ]
   }
 ]

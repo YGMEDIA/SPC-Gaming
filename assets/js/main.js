@@ -46,7 +46,7 @@
     <span class="logo-mark" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none"><path d="M6 9h12a3 3 0 013 3v0a3 3 0 01-3 3h-1l-1.5-2h-7L7 15H6a3 3 0 01-3-3v0a3 3 0 013-3z" stroke="#fff" stroke-width="1.8"/><circle cx="8" cy="12" r="1.1" fill="#fff"/><circle cx="16.5" cy="11" r=".9" fill="#fff"/><circle cx="16.5" cy="13" r=".9" fill="#fff"/></svg>
     </span>
-    smartphone-controller<span class="logo-tld">.com</span>
+    <span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span>
   </a>
   <div class="searchbar" role="search">
     <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -102,14 +102,24 @@
           <span class="logo-mark" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none"><path d="M6 9h12a3 3 0 013 3v0a3 3 0 01-3 3h-1l-1.5-2h-7L7 15H6a3 3 0 01-3-3v0a3 3 0 013-3z" stroke="#fff" stroke-width="1.8"/><circle cx="8" cy="12" r="1.1" fill="#fff"/><circle cx="16.5" cy="11" r=".9" fill="#fff"/><circle cx="16.5" cy="13" r=".9" fill="#fff"/></svg>
           </span>
-          smartphone-controller<span class="logo-tld">.com</span>
+          <span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span>
         </a>
       </div>
       <p>Das unabhängige Fachportal für Smartphone-Gaming-Controller. Wir testen, vergleichen und erklären – damit du den passenden Controller findest, nicht nur den teuersten.</p>
+      <div class="foot-rating">
+        <div class="foot-stars" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24" class="star-half"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <div class="foot-rating-text">Wir empfehlen nur Controller mit <strong>4★+ auf Amazon</strong> — top-bewertete Modelle, ehrlich getestet.</div>
+      </div>
     </div>
     <div class="foot-col">
       <h4>Controller</h4>
-      <a href="/produkte/">🛒 Alle Produkte</a>
+      <a href="/produkte/">Alle Produkte</a>
       <a href="/controller/">Alle Controller</a>
       <a href="/controller/ios/">iPhone Controller</a>
       <a href="/controller/android/">Android Controller</a>
@@ -152,7 +162,10 @@
       <span>© 2026 YG MEDIA</span>
     </div>
     <div class="foot-pay">
-      <span>Visa</span><span>Mastercard</span><span>PayPal</span>
+      <span class="foot-amazon-badge">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h16M4 8l1.5 9.5a2 2 0 002 1.5h5a2 2 0 002-1.5L16 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+        Offizieller <strong>Amazon</strong>-Partner
+      </span>
     </div>
   </div>
 </div>`;

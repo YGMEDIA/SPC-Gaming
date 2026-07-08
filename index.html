@@ -146,7 +146,8 @@
       border-radius: 12px;
       margin-bottom: 12px;
     }
-    .hv-winner .icon { font-size: 44px; }
+    .hv-winner .icon { font-size: 44px; flex-shrink: 0; }
+    .hv-winner .icon img { width: 52px; height: 52px; object-fit: contain; display: block; mix-blend-mode: multiply; }
     .hv-winner .info .name { font-weight: 800; font-size: 15px; }
     .hv-winner .info .detail { font-size: 12.5px; color: var(--ink-soft); margin-top: 3px; }
     .hv-winner .badge-winner {
@@ -178,7 +179,8 @@
       width: 18px;
       text-align: center;
     }
-    .hv-item .icon { font-size: 24px; }
+    .hv-item .icon { font-size: 24px; flex-shrink: 0; }
+    .hv-item .icon img { width: 30px; height: 30px; object-fit: contain; display: block; mix-blend-mode: multiply; }
     .hv-item .name { font-size: 13px; font-weight: 700; flex: 1; }
     .hv-item .price { font-size: 13px; font-weight: 800; color: var(--ink); }
 
@@ -269,7 +271,7 @@
               Testsieger 2026
             </div>
             <div class="hv-winner">
-              <div class="icon">🎮</div>
+              <div class="icon"><img src="https://m.media-amazon.com/images/I/61FUXjnhfXL._SL1500_.jpg" alt="GameSir G8 Galileo" loading="lazy" onerror="this.replaceWith(document.createTextNode('🎮'))"></div>
               <div class="info">
                 <div class="name">GameSir G8 Galileo</div>
                 <div class="detail">Hall-Effect · USB-C · iOS+Android · 79 €</div>
@@ -277,10 +279,10 @@
               <span class="badge-winner">#1 Test</span>
             </div>
             <div class="hv-list">
-              <div class="hv-item"><span class="rank">2</span><span class="icon">🎮</span><span class="name">Razer Kishi V3</span><span class="price">99 €</span></div>
-              <div class="hv-item"><span class="rank">3</span><span class="icon">🎮</span><span class="name">GameSir X5 Lite</span><span class="price">39 €</span></div>
-              <div class="hv-item"><span class="rank">4</span><span class="icon">🎮</span><span class="name">Backbone One</span><span class="price">99 €</span></div>
-              <div class="hv-item"><span class="rank">5</span><span class="icon">🎮</span><span class="name">8BitDo Ult. 2C</span><span class="price">19 €</span></div>
+              <div class="hv-item"><span class="rank">2</span><span class="icon"><img src="https://m.media-amazon.com/images/I/618HoYQQUrL._AC_SL1500_.jpg" alt="Razer Kishi V3" loading="lazy" onerror="this.replaceWith(document.createTextNode('🎮'))"></span><span class="name">Razer Kishi V3</span><span class="price">99 €</span></div>
+              <div class="hv-item"><span class="rank">3</span><span class="icon"><img src="https://m.media-amazon.com/images/I/71oJVM3GuOL._SL1500_.jpg" alt="GameSir X5 Lite" loading="lazy" onerror="this.replaceWith(document.createTextNode('🎮'))"></span><span class="name">GameSir X5 Lite</span><span class="price">39 €</span></div>
+              <div class="hv-item"><span class="rank">4</span><span class="icon"><img src="https://m.media-amazon.com/images/I/61gf0Hn9VJL._SL1500_.jpg" alt="Backbone One" loading="lazy" onerror="this.replaceWith(document.createTextNode('🎮'))"></span><span class="name">Backbone One</span><span class="price">99 €</span></div>
+              <div class="hv-item"><span class="rank">5</span><span class="icon"><img src="https://m.media-amazon.com/images/I/61lvnaOk4kL._SL1500_.jpg" alt="8BitDo Ultimate 2C" loading="lazy" onerror="this.replaceWith(document.createTextNode('🎮'))"></span><span class="name">8BitDo Ult. 2C</span><span class="price">19 €</span></div>
             </div>
           </aside>
         </div>
@@ -307,6 +309,63 @@
             <div class="trust-ico"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><path d="M4 7l8-4 8 4v6c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
             <div><div class="trust-t">Ehrliche Cons</div><div class="trust-s">Schwächen werden genannt</div></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Emotions- & Problem→Lösung-Abschnitt -->
+    <section class="section emotion-section" aria-labelledby="emotion-title">
+      <div class="container">
+        <div class="emotion-grid">
+          <div class="emotion-copy">
+            <span class="eyebrow">🎯 Warum ein Controller?</span>
+            <h2 id="emotion-title">Touch-Steuerung kostet dich Spiele.</h2>
+            <p class="emotion-lead">Deine Finger verdecken den Bildschirm, die Reaktion kommt zu spät, und im entscheidenden Moment fehlt das Tastengefühl. Ein guter Controller macht aus deinem Handy eine echte Konsole.</p>
+            <ul class="emotion-points">
+              <li><span class="ep-ico">✓</span> <div><strong>Freie Sicht</strong> — keine Daumen mehr auf dem Spielgeschehen</div></li>
+              <li><span class="ep-ico">✓</span> <div><strong>Echte Tasten</strong> — präzise Eingaben statt Rutschen auf Glas</div></li>
+              <li><span class="ep-ico">✓</span> <div><strong>Sofort startklar</strong> — anstecken oder per Bluetooth koppeln</div></li>
+            </ul>
+            <a href="/produkte/" class="btn btn-primary">Passenden Controller finden →</a>
+          </div>
+          <div class="emotion-media">
+            <figure class="emotion-photo emotion-photo-main">
+              <img src="/assets/img/hero/fortnite-controller.png" alt="Smartphone-Controller im Einsatz beim Mobile Gaming" loading="lazy">
+            </figure>
+            <figure class="emotion-photo emotion-photo-sub">
+              <img src="/assets/img/hero/gaming-setup.png" alt="Gaming-Setup mit Smartphone-Controller, Tablet und iPhone" loading="lazy">
+            </figure>
+          </div>
+        </div>
+
+        <!-- Feature-Grid -->
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></div>
+            <h3>Weniger Input-Lag</h3>
+            <p>USB-C-Modelle reagieren praktisch verzögerungsfrei — wir messen die Latenz für jeden Controller.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M11 18h2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+            <h3>Passt zu deinem Handy</h3>
+            <p>Ob iPhone (USB-C oder Bluetooth) oder Android — unser Filter zeigt nur, was wirklich passt.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 7l8-4 8 4v6c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></svg></div>
+            <h3>Ehrlich getestet</h3>
+            <p>Jedes Review nennt mindestens zwei echte Schwächen. Kein bezahltes Ranking, keine Schönfärberei.</p>
+          </div>
+        </div>
+
+        <!-- Trust-Zahlen -->
+        <div class="stat-band">
+          <div class="stat-item"><div class="stat-num">40+</div><div class="stat-cap">Modelle im Sortiment</div></div>
+          <div class="stat-sep" aria-hidden="true"></div>
+          <div class="stat-item"><div class="stat-num">100+</div><div class="stat-cap">Controller getestet</div></div>
+          <div class="stat-sep" aria-hidden="true"></div>
+          <div class="stat-item"><div class="stat-num">13</div><div class="stat-cap">ausführliche Reviews</div></div>
+          <div class="stat-sep" aria-hidden="true"></div>
+          <div class="stat-item"><div class="stat-num">0 €</div><div class="stat-cap">kostenlos & unabhängig</div></div>
         </div>
       </div>
     </section>
