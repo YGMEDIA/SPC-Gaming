@@ -297,3 +297,25 @@ smartphone-controller.com/ (Git-Root)
 ### ✅ Ratgeber-Bilder (08.07.2026):
 - 3 echte Bilder statt Icons: assets/img/ratgeber/ hall-effect.jpg (Stick-Querschnitt), usb-c-vs-bluetooth.jpg (2 weiße Controller), trigger-pubg.jpg (schwebende Trigger).
 - Eingebaut in Ratgeber-Übersicht (article-thumb) UND als großes Artikelbild (.article-hero-img) auf den 3 Detailseiten. CSS: article-thumb img cover, article-hero-img mit Schatten.
+
+---
+
+## 🔍 SESSION 08.07.2026 (Teil 5) — SEO-PAKET
+
+### ✅ Umgesetzt:
+- **Open Graph + Twitter Cards** auf ALLEN 56 Seiten (vorher 1). Für Social-Sharing-Vorschau (WhatsApp/Discord/FB/X). OG-Bild pro Seite: Amazon-Produktbild bei Reviews, sonst Default.
+- **OG-Standardbild** erstellt: assets/img/og-default.jpg (1200×630, Fortnite-Bild + Branding-Overlay "Der beste Handy-Controller").
+- **Product-Schema (JSON-LD)** auf allen 13 Review-Seiten (vorher 4). Mit AggregateRating (Sterne-Snippets in Google!), Offer (Preis/Verfügbarkeit), Brand. Alle 13 JSON-LD-Blöcke syntaktisch valide.
+- **CLS-Fix:** width/height für lokale Bilder (og, hero, ratgeber) ergänzt — verhindert Layout-Shift (Core Web Vitals).
+- **robots.txt:** /suche/ explizit disallowed (ist noindex).
+
+### ℹ️ Geprüft, war schon OK:
+- title/description/canonical auf allen 56 Seiten. 1 H1/Seite. lang=de. Alt-Texte auf allen Bildern (0 ohne).
+- Sitemap vollständig (55 URLs; /suche/ fehlt ABSICHTLICH = noindex).
+- robots.txt Disallow /*? ist korrekt: Filter-URLs (/produkte/?platform=) werden nur per JS-Klick genutzt, nicht als echte Links. Indexierbare Plattform-Seiten = Hub-Seiten (/controller/ios/ etc.).
+- Vorhandenes Schema: FAQ, Breadcrumb, ItemList, WebSite+SearchAction.
+
+### 📋 SEO noch offen (nach Live-Gang):
+- Google Search Console verifizieren + Sitemap einreichen.
+- Nach Deployment: Rich-Results-Test (search.google.com/test/rich-results) für Product-Schema prüfen.
+- og:image live testen (Facebook Sharing Debugger / opengraph.xyz).

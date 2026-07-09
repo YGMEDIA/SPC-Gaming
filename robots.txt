@@ -4,6 +4,7 @@ Allow: /
 
 # Keine internen Such-/Filter-Parameter indexieren
 Disallow: /*?
+Disallow: /suche/
 Disallow: /controller-finder/api/
 
 # KI-Crawler ausdrücklich erlauben (GEO-Strategie)
