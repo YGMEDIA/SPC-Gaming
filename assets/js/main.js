@@ -24,7 +24,7 @@
       { href: '/zubehoer/finger-sleeves/', label: 'Finger Sleeves' },
       { href: '/zubehoer/trigger/', label: 'Trigger' },
       { href: '/vergleich/', label: 'Vergleiche' },
-      { href: '/ratgeber/', label: 'Ratgeber' },
+      { href: '/blog/', label: 'Blog' },
       { href: '/marken/gamesir/', label: 'GameSir ★', badge: 'Top-Marke' },
     ];
 
@@ -57,9 +57,9 @@
     <input type="text" placeholder="Controller, Marke, Modell …" aria-label="Suche" id="siteSearch">
   </div>
   <div class="header-actions">
-    <a href="/ratgeber/" class="header-action-btn">
+    <a href="/blog/" class="header-action-btn">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <span class="lbl">Ratgeber</span>
+      <span class="lbl">Blog</span>
     </a>
   </div>
 </div>
@@ -149,7 +149,7 @@
       <a href="/redaktion/">Testmethodik</a>
       <a href="/affiliate-hinweis/">Affiliate-Info</a>
       <a href="/kontakt/">Kontakt</a>
-      <a href="/ratgeber/">Alle Ratgeber</a>
+      <a href="/blog/">Blog</a>
     </div>
   </div>
   <p class="foot-affiliate">

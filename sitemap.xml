@@ -223,49 +223,49 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/was-ist-ein-smartphone-controller/</loc>
+    <loc>https://smartphone-controller.com/blog/was-ist-ein-smartphone-controller/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/hall-effect-erklaert/</loc>
+    <loc>https://smartphone-controller.com/blog/hall-effect-erklaert/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/usb-c-vs-bluetooth/</loc>
+    <loc>https://smartphone-controller.com/blog/usb-c-vs-bluetooth/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/huellen-kompatibilitaet/</loc>
+    <loc>https://smartphone-controller.com/blog/huellen-kompatibilitaet/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/trigger-erlaubt-pubg/</loc>
+    <loc>https://smartphone-controller.com/blog/trigger-erlaubt-pubg/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/finger-sleeves-sinnvoll/</loc>
+    <loc>https://smartphone-controller.com/blog/finger-sleeves-sinnvoll/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/handy-kuehler-sinnvoll/</loc>
+    <loc>https://smartphone-controller.com/blog/handy-kuehler-sinnvoll/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/mobile-gaming-setup/</loc>
+    <loc>https://smartphone-controller.com/blog/mobile-gaming-setup/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -319,7 +319,7 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://smartphone-controller.com/ratgeber/</loc>
+    <loc>https://smartphone-controller.com/blog/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -328,6 +328,36 @@
     <loc>https://smartphone-controller.com/vergleich/</loc>
     <lastmod>2026-07-06</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://smartphone-controller.com/blog/cloud-gaming-smartphone/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://smartphone-controller.com/blog/welche-spiele-controller/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://smartphone-controller.com/blog/controller-mit-handy-verbinden/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://smartphone-controller.com/blog/controller-verbindet-nicht/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://smartphone-controller.com/blog/controller-iphone-15-16-usb-c/</loc>
+    <lastmod>2026-07-09</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 </urlset>

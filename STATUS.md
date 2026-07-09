@@ -319,3 +319,58 @@ smartphone-controller.com/ (Git-Root)
 - Google Search Console verifizieren + Sitemap einreichen.
 - Nach Deployment: Rich-Results-Test (search.google.com/test/rich-results) für Product-Schema prüfen.
 - og:image live testen (Facebook Sharing Debugger / opengraph.xyz).
+
+---
+
+## 📝 SESSION 09.07.2026 — BLOG
+
+### ✅ Blog erstellt (/blog/):
+- Übersichtsseite + 5 ausführliche Artikel (je ~800–1100 Wörter netto), basierend auf ECHTER Keyword-/Nutzerfragen-Recherche (Websuche statt ATP — Roland spart seine 3 ATP-Anfragen).
+- Artikel: (1) Cloud Gaming auf dem Smartphone [Roland-Wunschthema: Konsolengefühl ohne Konsolenkosten, Xbox GamePass/GeForce NOW/PS Remote Play, EA FC/NfS/CoD/GTA5], (2) Welche Spiele unterstützen Controller [Genshin iOS vs Android/Mantis-App], (3) PS5/Xbox mit Handy verbinden [Schritt-für-Schritt], (4) Controller verbindet nicht [5 Ursachen Troubleshooting], (5) Controller iPhone 15/16/17 USB-C [Lightning-Verwechslung-Warnung].
+- Jeder Artikel: verdict-box (Direktantwort), H2/H3-Prosa, FAQ (aufklappbar), Related-Box, Blog-CTA zum Finder. Starke interne Verlinkung (Cloud-Artikel: 45 interne Links).
+- SEO: Article-Schema + BreadcrumbList + FAQPage-Schema pro Artikel (alle JSON-LD valide). OG/Twitter komplett. In Sitemap (jetzt 61 URLs) + Header-Nav + Footer.
+- 2 Artikel nutzen echte Hero-Bilder (gaming-setup, fortnite-controller), 3 nutzen farbige Icon-Thumbs.
+- CSS: faq-item (details/summary), related-box, blog-cta, article-grid, article-byline — im Shop-Design.
+
+### 📋 Blog-Ausbau (später):
+- Weitere Artikel möglich: Hall-Effect vs TMR, beste Controller unter 50€, Trigger richtig einsetzen, Tablet-Controller.
+- Roland hat 3 kostenlose AnswerThePublic-Anfragen offen für gezielte Keyword-Vertiefung.
+
+---
+
+## 🔀 SESSION 09.07.2026 (Teil 2) — RATGEBER → BLOG KONSOLIDIERT
+
+### ✅ Ratgeber komplett in Blog überführt:
+- Alle 8 Ratgeber-Artikel nach /blog/ verschoben (finger-sleeves-sinnvoll, hall-effect-erklaert, handy-kuehler-sinnvoll, huellen-kompatibilitaet, mobile-gaming-setup, trigger-erlaubt-pubg, usb-c-vs-bluetooth, was-ist-ein-smartphone-controller). Slugs unverändert (1:1 URL-Umzug, da Site noch nicht live).
+- ratgeber/-Ordner komplett gelöscht.
+- Blog hat jetzt 13 Artikel (5 neue ausführliche + 8 überführte). Übersicht neu gebaut, sortiert (ausführliche/bebilderte zuerst).
+- Alle /ratgeber/-Verweise projektweit auf /blog/ umgestellt (9 HTML-Dateien + main.js Nav/Action-Button/Footer). Bild-Pfade /assets/img/ratgeber/ blieben korrekt (nach Sed-Fix).
+- Sitemap: /ratgeber/ → /blog/, Dublette /blog/ entfernt (60 URLs).
+- Homepage-Sektion "Ratgeber & Kaufhilfen" → "Aus unserem Blog", echte Bilder statt Emojis, Button "Alle Beiträge ansehen".
+- eyebrow-Labels der überführten Artikel: "📖 Ratgeber" → "📝 Blog".
+- KEIN /ratgeber/ mehr im Projekt. Getestet: 13 Blog-Karten, keine toten Links, keine JS-Fehler.
+
+### 📋 Blog-Ausbau offen:
+- Die 8 überführten Artikel sind kurz (~100-283 W) — später auf Blog-Niveau (~800 W) ausbauen. Roland-Wunsch: ausbauen statt löschen.
+- Überführte Artikel haben noch altes Ratgeber-Layout (kein Blog-CTA/Byline) — bei Ausbau angleichen.
+
+---
+
+## 🖼️ SESSION 09.07.2026 (Teil 3) — ECHTE PRODUKTFOTOS
+
+### ✅ Ratgeber-Bilder getauscht (Roland-Wunsch):
+- hall-effect.jpg → neues Stick-Detailbild (assets/img/ratgeber/, 1000x1000). Greift automatisch überall (Blog-Übersicht, Homepage, Artikel).
+- usb-c-vs-bluetooth.jpg → GameSir X5 Lite Foto (weißer Controller am Handy + PS5-Pad mit Funkwellen, 1600x900) — zeigt kabelgebunden vs. kabellos perfekt. width/height aktualisiert.
+
+### ✅ Echte Produktfotos in Review-Detailseiten (assets/img/products-real/):
+- ROG Tessen Review → rog-tessen.jpg (Controller in Händen, 2602x1314)
+- GameSir G8 Review → gamesir-g8.jpg (weißer Controller, 1366x910)
+- Kishi V3 Review → kishi-v3-sticks.webp (TMR-Thumbsticks, 1920x700)
+- Als große .article-hero-img direkt nach dem Hero eingefügt (zusätzlich zum kleinen cta-photo in der Kaufbox).
+
+### ✅ Blog-Inline-Bild:
+- welche-spiele-controller: kishi-v3-nexus.webp (Nexus-App mit Genshin-Menü) im Genshin-Abschnitt, mit Bildunterschrift. Neue CSS-Klasse .article-inline-img (mit figcaption).
+
+### 📋 Reserve:
+- gamesir-g8-2.jpg (447x447) noch ungenutzt — Kandidat für Startseite oder Cloud-Gaming-Artikel.
+- WebP-Bilder (Kishi) sind browserweit unterstützt, effizienter — kein Problem.
