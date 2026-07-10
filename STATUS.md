@@ -374,3 +374,15 @@ smartphone-controller.com/ (Git-Root)
 ### 📋 Reserve:
 - gamesir-g8-2.jpg (447x447) noch ungenutzt — Kandidat für Startseite oder Cloud-Gaming-Artikel.
 - WebP-Bilder (Kishi) sind browserweit unterstützt, effizienter — kein Problem.
+
+---
+
+## 🎛️ SESSION 09.07.2026 (Teil 4) — PRODUKTE-SEITE: FILTER-SIDEBAR
+
+### ✅ Filter von oben (horizontal) → links (Sidebar):
+- /produkte/ umgebaut auf 2-Spalten-Layout (.pf-layout grid 260px/1fr): Filter-Card links, Produkte rechts.
+- Sidebar ist STICKY (top:184px = Header-Höhe 171px + Abstand): bleibt beim Scrollen stehen, Produkte scrollen. Wichtig: .pf-sidebar (Grid-Item) ist sticky, nicht .pf-sidebar-inner — sonst greift sticky nicht (Grid-align-items:start).
+- Filter-Gruppen jetzt als <details>/<summary> = aufklappbare Dropdowns (Typ+Plattform offen, Marke zu). Chips (Chip-Auswahl) unverändert.
+- Suche in Sidebar oben, Sortierung+Ergebniszähler in .pf-toolbar über dem Grid.
+- Responsive <900px: Sidebar wird static (oben), nicht sticky. Getestet: iPhone+GameSir=5, Reset=40, mobil funktioniert.
+- produkte.js UNVERÄNDERT (arbeitet über IDs chipsType/chipsPlatform/chipsBrand/productGrid, nicht über Layout-Struktur).

@@ -33,53 +33,62 @@
 
   <section class="section">
     <div class="container">
+      <div class="pf-layout">
 
-      <!-- Filter bar -->
-      <div class="pf-bar" id="filterBar">
-        <div class="pf-search">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          <input type="search" id="prodSearch" placeholder="Produkt suchen …" aria-label="Produkte durchsuchen" autocomplete="off">
+        <!-- Filter-Sidebar (sticky, links) -->
+        <aside class="pf-sidebar">
+          <div class="pf-sidebar-inner" id="filterBar">
+            <div class="pf-sidebar-head">
+              <span class="pf-sidebar-title">Filter</span>
+              <button type="button" class="pf-reset" id="filterReset" hidden>Zurücksetzen ✕</button>
+            </div>
+
+            <div class="pf-search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8"/><path d="m20 20-3.5-3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <input type="search" id="prodSearch" placeholder="Produkt suchen …" aria-label="Produkte durchsuchen" autocomplete="off">
+            </div>
+
+            <details class="pf-group" data-facet="type" open>
+              <summary class="pf-label">Typ</summary>
+              <div class="pf-chips" id="chipsType"></div>
+            </details>
+            <details class="pf-group" data-facet="platform" open>
+              <summary class="pf-label">Plattform</summary>
+              <div class="pf-chips" id="chipsPlatform"></div>
+            </details>
+            <details class="pf-group" data-facet="brand">
+              <summary class="pf-label">Marke</summary>
+              <div class="pf-chips" id="chipsBrand"></div>
+            </details>
+          </div>
+        </aside>
+
+        <!-- Produktbereich (rechts) -->
+        <div class="pf-main">
+          <div class="pf-toolbar">
+            <div class="pf-count" id="resultCount" aria-live="polite"></div>
+            <div class="pf-sort">
+              <label for="prodSort">Sortieren:</label>
+              <select id="prodSort">
+                <option value="featured">Empfehlung</option>
+                <option value="price-asc">Preis aufsteigend</option>
+                <option value="price-desc">Preis absteigend</option>
+                <option value="name">Name (A–Z)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-auto" id="productGrid"></div>
+
+          <div class="pf-empty" id="emptyState" hidden>
+            <div class="pf-empty-icon">🔍</div>
+            <h2>Keine Produkte gefunden</h2>
+            <p>Für diese Kombination gibt es kein Ergebnis. Setze einen Filter zurück oder ändere die Suche.</p>
+            <button type="button" class="btn btn-secondary" id="emptyReset">Alle Filter zurücksetzen</button>
+          </div>
         </div>
-        <div class="pf-groups">
-          <div class="pf-group" data-facet="type">
-            <span class="pf-label">Typ</span>
-            <div class="pf-chips" id="chipsType"></div>
-          </div>
-          <div class="pf-group" data-facet="platform">
-            <span class="pf-label">Plattform</span>
-            <div class="pf-chips" id="chipsPlatform"></div>
-          </div>
-          <div class="pf-group" data-facet="brand">
-            <span class="pf-label">Marke</span>
-            <div class="pf-chips" id="chipsBrand"></div>
-          </div>
-        </div>
-        <div class="pf-foot">
-          <div class="pf-sort">
-            <label for="prodSort">Sortieren:</label>
-            <select id="prodSort">
-              <option value="featured">Empfehlung</option>
-              <option value="price-asc">Preis aufsteigend</option>
-              <option value="price-desc">Preis absteigend</option>
-              <option value="name">Name (A–Z)</option>
-            </select>
-          </div>
-          <div class="pf-count" id="resultCount" aria-live="polite"></div>
-          <button type="button" class="pf-reset" id="filterReset" hidden>Filter zurücksetzen ✕</button>
-        </div>
+
       </div>
-
-      <!-- Product grid -->
-      <div class="grid-auto" id="productGrid" style="margin-top:24px"></div>
-
-      <!-- Empty state -->
-      <div class="pf-empty" id="emptyState" hidden>
-        <div class="pf-empty-icon">🔍</div>
-        <h2>Keine Produkte gefunden</h2>
-        <p>Für diese Kombination gibt es kein Ergebnis. Setze einen Filter zurück oder ändere die Suche.</p>
-        <button type="button" class="btn btn-secondary" id="emptyReset">Alle Filter zurücksetzen</button>
-      </div>
-
     </div>
   </section>
 </main>
