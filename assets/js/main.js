@@ -8,10 +8,24 @@
   /* ---------- Config ---------- */
   const AFFILIATE_TAG = 'ygmedia-21';
   const DOMAIN = 'https://smartphone-controller.com';
-  // GA4: sobald die Measurement-ID hier eingetragen ist (z.B. 'G-XXXXXXXXXX'),
-  // wird GA4 automatisch geladen — aber NUR nach Cookie-Zustimmung.
-  const GA_MEASUREMENT_ID = '';
+  // --- Google Tag Manager (GTM) ---
+  // GTM lädt erst NACH Cookie-Zustimmung (DSGVO). GA4 wird INNERHALB von GTM
+  // konfiguriert (GA4-Config-Tag mit Measurement-ID G-Q1EK5X7PTC im GTM-Interface).
+  const GTM_CONTAINER_ID = 'GTM-PV7MKJ8P';
   const CONSENT_KEY = 'spc_cookie_consent'; // 'accepted' | 'declined'
+
+  // --- Google Consent Mode v2 (Pflicht für EU-Traffic) ---
+  // Setzt alle Consent-Signale VOR dem GTM-Load auf 'denied'.
+  // Erst nach aktiver Zustimmung wird auf 'granted' aktualisiert.
+  window.dataLayer = window.dataLayer || [];
+  window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+  window.gtag('consent', 'default', {
+    ad_storage: 'denied',
+    ad_user_data: 'denied',
+    ad_personalization: 'denied',
+    analytics_storage: 'denied',
+    wait_for_update: 500
+  });
 
   /* ---------- Header HTML ---------- */
   function buildHeader(activePage) {
@@ -261,18 +275,25 @@
     try { localStorage.setItem(CONSENT_KEY, value); } catch (e) {}
   }
 
-  function loadGA4() {
-    if (!GA_MEASUREMENT_ID) return; // keine ID hinterlegt → nichts laden
-    if (window.__ga4Loaded) return;
-    window.__ga4Loaded = true;
-    const s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_MEASUREMENT_ID;
-    document.head.appendChild(s);
-    window.dataLayer = window.dataLayer || [];
-    window.gtag = function () { window.dataLayer.push(arguments); };
-    window.gtag('js', new Date());
-    window.gtag('config', GA_MEASUREMENT_ID, { anonymize_ip: true });
+  function loadGTM() {
+    if (!GTM_CONTAINER_ID) return; // keine ID hinterlegt → nichts laden
+    // Consent-Signal auf 'granted' aktualisieren (Consent Mode v2)
+    window.gtag('consent', 'update', {
+      analytics_storage: 'granted'
+    });
+    if (window.__gtmLoaded) return;
+    window.__gtmLoaded = true;
+    // Offizielles GTM-Snippet (nach Zustimmung nachgeladen)
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != 'dataLayer' ? '&l=' + l : '';
+      j.async = true;
+      j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', GTM_CONTAINER_ID);
   }
 
   function buildConsentBanner() {
@@ -299,7 +320,7 @@
 
   function initConsent() {
     const consent = getConsent();
-    if (consent === 'accepted') { loadGA4(); return; }
+    if (consent === 'accepted') { loadGTM(); return; }
     if (consent === 'declined') { return; }
 
     // Noch keine Entscheidung → Banner zeigen
@@ -312,7 +333,7 @@
       setTimeout(() => banner.remove(), 300);
     }
     banner.querySelector('#cookieAccept').addEventListener('click', () => {
-      setConsent('accepted'); loadGA4(); close();
+      setConsent('accepted'); loadGTM(); close();
     });
     banner.querySelector('#cookieDecline').addEventListener('click', () => {
       setConsent('declined'); close();
