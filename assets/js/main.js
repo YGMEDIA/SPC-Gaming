@@ -354,16 +354,19 @@
     // Enhance static + future dynamic product cards
     enhance(document);
 
-    // Track affiliate clicks (for GA4 via GTM later)
-    document.querySelectorAll('a[data-asin], .btn-amazon').forEach(link => {
-      link.addEventListener('click', function () {
-        const productName = this.dataset.product || this.closest('[data-product]')?.dataset.product || 'unknown';
-        if (typeof gtag === 'function') {
-          gtag('event', 'affiliate_click', {
-            product_name: productName,
-            destination: this.href
-          });
-        }
+    // Track affiliate clicks (GA4 via GTM).
+    // Event-Delegation: erfasst auch dynamisch gerenderte Karten (/produkte/, Hubs).
+    // WICHTIG: dataLayer.push({event: ...}) — NICHT gtag('event', ...) —
+    // damit der GTM-Custom-Event-Trigger feuert und die DLVs
+    // (product_name, destination) direkt aus der Datenschicht lesen können.
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('a[data-asin], .btn-amazon');
+      if (!link) return;
+      const productName = link.dataset.product || link.closest('[data-product]')?.dataset.product || 'unknown';
+      window.dataLayer.push({
+        event: 'affiliate_click',
+        product_name: productName,
+        destination: link.href
       });
     });
 

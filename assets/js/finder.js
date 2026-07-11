@@ -120,9 +120,15 @@
 
     show('result');
     if (window.SPCEnhance) window.SPCEnhance(grid);
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'finder_complete', { platform: answers.platform, budget: answers.budget, prio: answers.prio });
-    }
+    // dataLayer.push (nicht gtag) → GTM-Custom-Event-Trigger "finder_complete"
+    // feuert und die DLVs platform/budget/prio sind direkt lesbar.
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'finder_complete',
+      platform: answers.platform,
+      budget: answers.budget,
+      prio: answers.prio
+    });
   }
 
   // Antwort-Buttons
