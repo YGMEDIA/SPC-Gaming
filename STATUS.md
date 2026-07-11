@@ -1,9 +1,47 @@
 # 🎮 PROJEKT: Smartphone-Controller Affiliate-Plattform
-**Letzte Aktualisierung:** 2026-07-08
-**Projektstatus:** Phase 5 abgeschlossen — Site auf GitHub Pages deployed (Repo: YGMEDIA/SPC-Gaming), Custom Domain in DNS-Propagation
-**Hauptdomain:** smartphone-controller.com
-**Affiliate-Tag:** ygmedia-21
-**Tech-Stack:** Statisches HTML + GitHub Pages (bewusste Entscheidung, kein Next.js)
+**Letzte Aktualisierung:** 2026-07-11
+**Projektstatus:** LIVE — Tiefen-Optimierung (Fable 5) abgeschlossen: GEO-Pre-Rendering, 27 neue Produktseiten, Tracking-Fix. ZIP bereit zum Deploy.
+
+---
+
+## 🚀 SESSION 11.07.2026 — TIEFEN-AUDIT & OPTIMIERUNG (Fable 5)
+
+**Kennzahlen NEU: 88 HTML-Seiten (61→88) · 40 Produkte (alle mit Detailseite!) · Sitemap 87 URLs · llms.txt neu.**
+
+### ✅ KRITISCHE FIXES:
+1. **GEO-Killer behoben — Hubs statisch pre-rendert:** iOS/Android/Universal-Hubs + /produkte/ hatten NUR JS-gerenderte Produkte → KI-Crawler (GPTBot/ClaudeBot, kein JS) sahen leere Seiten. Jetzt: Karten statisch im HTML (26/25/25/40), identisches Markup wie hub-render.js/produkte.js (JS überschreibt 1:1, kein Konflikt). No-JS-Test via Playwright bestätigt.
+2. **Tracking-Bug behoben (main.js + finder.js):** affiliate_click/finder_complete feuerten per gtag('event') → GTM-Custom-Event-Trigger + DLVs erwarten dataLayer.push({event:...}). Zudem Listener nur bei init gebunden → dynamische Karten (Hubs, /produkte/, Finder) wurden NIE getrackt. Jetzt: Event-Delegation auf document + dataLayer.push mit product_name/destination (matcht GTM-DLVs exakt). Playwright-verifiziert.
+3. **27 Produkt-Detailseiten NEU unter /produkte/<slug>/:** Alle Produkte ohne Review haben jetzt "Mehr erfahren" (Kurzcheck-Format: Kurz-Einschätzung, 2 Absätze individueller Text, Specs, Stärken/Schwächen, 2 FAQs, Related, Sticky-CTA). Product+BreadcrumbList+FAQPage-Schema, AggregateRating (5er-Skala, sichtbar). Ehrliche Warnungen bei rxkfigx (3,5★) & MGPXPRO (3,3★ „keine Kaufempfehlung").
+4. **14 tote Details-Buttons (href="#") repariert** auf statischen Karten → echte Detail-Links; 6 data-product-Slugs gesynct.
+5. **\x02-Steuerzeichen in allen 13 Reviews gefixt** (kaputtes Icon-Tag in CTA-Box).
+6. **products.json:** 7 fehlende Preise ergänzt (ROG Tessen 75, Backbone One PS 66, Backbone Pro 189, X2s 53, X3 Pro 90, Kishi V3 Pro 149, Atom 87); 6 Preise an Review-Seiten angeglichen (2C 20, X5 Lite 38, Backbone One 65, G8 80, Kishi V3 94); ASIN-Slugs → sprechende Slugs; Marken normalisiert (8BITDO→8BitDo = 1 Filter-Chip, MARSGAMING→Mars Gaming); VITURE-Produkt umbenannt (hieß identisch wie 8BitDo Ultimate Mobile); OZKAK L1R1 gesynct (vergoldete Kontakte, 3,9/669); X2s-Specs gefüllt.
+
+### ✅ SEO/GEO-AUSBAU:
+- **Hubs iOS/Android/Universal:** je 3 Absätze SEO-Editorial + 3-4 FAQs (sichtbar) + ItemList/BreadcrumbList/FAQPage-Schema + bessere Descriptions. Vorher: 2,5-3,4 KB, null Schema, null Text.
+- **BreadcrumbList-Schema auf 48 weiteren Seiten** ergänzt (überall wo sichtbare Breadcrumb existiert). 124 JSON-LD-Blöcke, alle valide.
+- **Organization-Schema** auf Startseite (E-E-A-T).
+- **llms.txt NEU** (GEO): strukturierte Site-Übersicht mit Testsiegern, Kategorien, Top-Reviews.
+- **Titles/Descriptions auf 21 kommerziellen Seiten optimiert** (Titles ≤62 Zeichen, dünne Descriptions ausgebaut).
+- **Sitemap: 60→87 URLs** (+27 /produkte/-Seiten), lastmod 11.07., XML validiert.
+- **8bitdo-2c-Review:** Schema-Preis 19→20 (= sichtbarer Preis).
+
+### ✅ STARTSEITE:
+- Finder-Banner korrigiert: „3 kurze Fragen" (war 5), „40 Modelle" (war 12).
+- Testsieger-Widget-Preise aktualisiert (80/94/38/65/20 — Backbone One stand auf 99 statt 65!).
+- **NEU „Blick in unsere Tests":** Foto-Strip mit 3 echten Testfotos (rog-tessen.jpg, gamesir-g8-2.jpg [Reserve endlich genutzt], kishi-v3-sticks.webp) → verlinkt auf Reviews.
+
+### ✅ VERIFIZIERT (Playwright, lokaler HTTP-Server):
+- Hydration ohne Konflikt, affiliate_click + finder_complete feuern mit korrekten Parametern, Finder-Ergebnis-Karten haben Mehr-erfahren, 0 JS-Fehler, alle internen Links OK.
+
+### 📋 NACH DEPLOY:
+1. GTM prüfen: affiliate_click/finder_complete sollten jetzt in GA4-Echtzeit ankommen (vorher kamen sie NIE an!).
+2. Rich-Results-Test: G8-Review + 2-3 neue /produkte/-Seiten.
+3. Sitemap in GSC neu einreichen (87 URLs).
+4. llms.txt live prüfen: smartphone-controller.com/llms.txt
+
+### 📋 WEITER OFFEN:
+- Zubehör-Screenshot-Queue (Karten-Daten weiter verifizieren), Blog-Ausbau (8 kurze Artikel), Rechtstexte anwaltlich, Microsoft Clarity via GTM, 5 geschätzte Review-Counts (Gruppe A).
+- Budget-Longtail-Strategie: /produkte/-Template ist jetzt der Generator dafür — neue Datenblatt-Seiten nach gleichem Muster möglich.
 
 ---
 

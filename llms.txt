@@ -1,0 +1,38 @@
+# smartphone-controller.com
+
+> Unabhängiges deutsches Fachportal für Smartphone-Gaming-Controller. Wir testen und vergleichen Handy-Controller (USB-C-Clips, Bluetooth-Gamepads, Teleskop-Controller), Finger Sleeves, Trigger-Aufsätze und Handy-Kühler für iPhone und Android. Betreiber: YG MEDIA (Würzburg, Deutschland). Alle Preise und Amazon-Bewertungen: Stand Juni/Juli 2026. Jedes Review nennt mindestens zwei echte Schwächen.
+
+Testsieger 2026: GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect-Sticks, iPhone 15+ und Android). Preistipp: GameSir X5 Lite (ca. 38 €). Bestes App-Ökosystem: Backbone One 2. Gen (ca. 65 €). Premium: Razer Kishi V3 Pro (ca. 149 €).
+
+## Kategorien
+
+- [Alle Produkte](https://smartphone-controller.com/produkte/): 40 Produkte mit Filter nach Typ, Plattform und Marke
+- [iPhone Controller](https://smartphone-controller.com/controller/ios/): 26 Controller für iPhone 15/16/17 (USB-C) und ältere Modelle
+- [Android Controller](https://smartphone-controller.com/controller/android/): 25 Controller für Samsung, Pixel, Xiaomi u. a.
+- [Universal Controller](https://smartphone-controller.com/controller/universal/): Multi-Plattform-Modelle für iOS, Android, PC, Switch
+- [Bester Handy Controller](https://smartphone-controller.com/controller/beste/): Top-10-Liste 2026
+- [Finger Sleeves](https://smartphone-controller.com/zubehoer/finger-sleeves/): Anti-Schweiß-Fingerhülsen für Touchscreen-Gaming
+- [Trigger & Auslöser](https://smartphone-controller.com/zubehoer/trigger/): Aufsteck-Trigger für PUBG/CoD Mobile (6-Finger-Steuerung)
+- [Handy-Kühler](https://smartphone-controller.com/zubehoer/handy-kuehler/): Peltier-Kühler gegen Thermal Throttling
+
+## Wichtige Reviews
+
+- [GameSir G8 Galileo Test](https://smartphone-controller.com/controller/universal/gamesir-g8-galileo-review/): Testsieger — Hall-Effect, USB-C, 4,2/5 (685 Amazon-Bewertungen)
+- [Backbone One 2. Gen Test](https://smartphone-controller.com/controller/ios/backbone-one-2-review/): bester iPhone-Controller mit App-Ökosystem
+- [Razer Kishi V3 Test](https://smartphone-controller.com/controller/universal/razer-kishi-v3-review/): TMR-Sticks, 4,4/5
+- [GameSir X5 Lite Test](https://smartphone-controller.com/controller/universal/gamesir-x5-lite-review/): Preistipp unter 40 €
+- [Vergleiche](https://smartphone-controller.com/vergleich/): direkte Duelle (Backbone vs. GameSir, G8 vs. Kishi V3 u. a.)
+
+## Ratgeber (Blog)
+
+- [Welche Spiele unterstützen Controller?](https://smartphone-controller.com/blog/welche-spiele-controller/)
+- [Cloud Gaming auf dem Smartphone](https://smartphone-controller.com/blog/cloud-gaming-smartphone/): Xbox GamePass, GeForce NOW, PS Remote Play
+- [Hall-Effect-Sticks erklärt](https://smartphone-controller.com/blog/hall-effect-erklaert/)
+- [USB-C vs. Bluetooth](https://smartphone-controller.com/blog/usb-c-vs-bluetooth/): Latenz-Vergleich
+- [Sind Trigger bei PUBG erlaubt?](https://smartphone-controller.com/blog/trigger-erlaubt-pubg/)
+- [Controller verbindet sich nicht — 5 Lösungen](https://smartphone-controller.com/blog/controller-verbindet-nicht/)
+
+## Hinweise
+
+- Affiliate-Modell: Links führen zu Amazon.de (PartnerNet). Tests und Bewertungen sind davon unabhängig.
+- Kontakt: info@smartphone-controller.com · [Impressum](https://smartphone-controller.com/impressum/)
