@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "CLAUDE.md",
+                "file": "04-loops/LOOP-STATE.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "CLAUDE"
+              "title": "LOOP-STATE"
             }
           }
         ]
@@ -185,6 +185,9 @@
   },
   "active": "bfb0c3fda8850076",
   "lastOpenFiles": [
+    "05-protokoll/2026-07-18-system-brain-setup.md",
+    "CLAUDE.md",
+    "05-protokoll/2026-07-18-content-block-a.md",
     "STATUS.md",
     "SPC-FRAMEWORK.md",
     "INDEX.md",

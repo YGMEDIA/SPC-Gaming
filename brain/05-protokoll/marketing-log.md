@@ -1,6 +1,6 @@
 # Marketing-Log (lebende Tabelle)
 
-> Jede Vermarktungs-Aktivität eine Zeile — Reddit/Gutefrage-Antworten (Block E), Outreach (Block F), Verzeichnisse, später Social. Felgen liefert die Infos per Zuruf, Claude trägt ein (oder Felgen direkt in Obsidian).
+> Jede Vermarktungs-Aktivität eine Zeile — Reddit/Gutefrage-Antworten (Block E), Outreach (Block F), Verzeichnisse, später Social. Yasin liefert die Infos per Zuruf, Claude trägt ein (oder Yasin direkt in Obsidian).
 > Zweck: Nach 3 Monaten sehen wir, welcher Kanal Besucher/Links gebracht hat (Abgleich mit GA4-Referrals im gsc-loop).
 
 | Datum | Kanal | Aktion / Thread | Link gesetzt? | Ziel-URL | Ergebnis (später) |

@@ -15,20 +15,20 @@ Lies gezielt (INDEX → relevante Seite → Links), nie den ganzen Vault (Framew
 ## Harte Regeln
 - **products.json ist die einzige Produkt-Wahrheit** (§A1). Preise/Specs/ASINs werden dort gepflegt; HTML wird generiert oder per Script gesynct — nie divergent von Hand.
 - **Statik zuerst (GEO, §A2):** Jede Seite zeigt ihren vollen Inhalt ohne JavaScript. JS hydratisiert nur. Nach Umbauten: No-JS-Check via `scripts/verify.py`.
-- **Produktdaten NUR aus Felgens Amazon-Screenshots** (§A5). Amazon blockt jeden programmatischen Zugriff (403) — web_fetch auf Amazon ist zwecklos. Nie Preise/Bewertungen erfinden oder "aktualisieren" ohne Beleg.
+- **Produktdaten NUR aus Yasins Amazon-Screenshots** (§A5). Amazon blockt jeden programmatischen Zugriff (403) — web_fetch auf Amazon ist zwecklos. Nie Preise/Bewertungen erfinden oder "aktualisieren" ohne Beleg.
 - **Schema-Gesetz (§A4):** aggregateRating immer 5er-Skala (`bestRating: "5"`), `reviewCount` > 1, jeder Schema-Wert steht sichtbar im Seitentext. Verstoß = Rich-Results-Risiko + manuelle Maßnahme.
 - **Tracking (§A8):** Custom Events NUR als `dataLayer.push({event: '...'})` mit den GTM-DLV-Namen (product_name, destination, platform, budget, prio). NIE `gtag('event', ...)`.
 - **Affiliate-Links** entstehen ausschließlich in main.js aus `data-asin` → `amazon.de/dp/[ASIN]?tag=ygmedia-21`. Buttons tragen `href="#"` + data-asin, nie harte Amazon-URLs.
 - **Ehrliche Reviews (§A6):** Jedes Review nennt ≥2 echte Schwächen. Schwache Produkte (Rating < 3,8) bekommen explizite Warnung statt Kaufempfehlung.
-- **Deploy ist Menschen-Gate:** Du pushst/deployst NIE selbst. Arbeit endet mit grünem `python3 scripts/verify.py` + aktualisiertem `brain/STATUS.md`. Felgen deployt.
-- **Löschen von Seiten, Massenänderungen (>10 Dateien), Geld-/ASIN-Änderungen:** stoppen, in STATUS unter „braucht Felgen" eintragen, fragen.
+- **Autonomes Arbeiten & Deploy:** Du committest und pushst selbstständig — eine aussagekräftige Commit-Message pro abgeschlossenem Arbeitspaket. Hartes Maschinen-Gate: `python3 scripts/verify.py` MUSS grün sein vor jedem Commit; NIEMALS einen roten Stand pushen. Push auf main löst automatisch den Live-Deploy aus (GitHub Actions) — das ist gewollt. Yasin kann jederzeit per `git revert` zurückrollen.
+- **Verbleibende Stopp-Punkte (fragen statt handeln):** Geld-/ASIN-Änderungen ohne Screenshot-Beleg · Änderungen an `.github/workflows/` · Änderungen an `.claude/settings.json` selbst. Alles andere läuft autonom über das verify-Gate.
 - **Keine Em-Dashes** in Copy. Deutsch für Content, Englisch für Code. Helles Shop-Design (weiß/navy/blau), CSS nur in style.css bzw. Seiten-<style>.
 
 ## Arbeitsweise
-Senior-Haltung: Ursache faktisch beweisen (Diagnose vor Fix), klare Anweisung statt Optionsliste, Einwände ernst nehmen. „ok/weiter/passt" = sofort nächster Schritt. Felgen kommuniziert knapp, oft per Sprachnachricht-Transkript.
+Senior-Haltung: Ursache faktisch beweisen (Diagnose vor Fix), klare Anweisung statt Optionsliste, Einwände ernst nehmen. „ok/weiter/passt" = sofort nächster Schritt. Yasin kommuniziert knapp, oft per Sprachnachricht-Transkript.
 Verify-Gate pro Aufgabe: maschinell prüfbar, nie „sieht gut aus". Macher ≠ Prüfer: Review-Läufe in frischem Kontext.
-Nach JEDEM abgeschlossenen Schritt: `brain/STATUS.md` aktualisieren (bei Widerspruch gewinnt das Repo, dann wird die Doku korrigiert). Gelerntes → Constitution/Patterns (Rückfluss).
-Loops in `brain/04-loops/` laufen über `LOOP-STATE.md` (erledigt/blockiert/braucht Felgen) — zuerst lesen, erledigte Arbeit nie wiederholen, max. 3 Versuche pro Item.
+Nach JEDEM abgeschlossenen Schritt: `brain/STATUS.md` aktualisieren (kompakt; bei Widerspruch gewinnt das Repo) UND einen Protokoll-Eintrag in `brain/05-protokoll/` schreiben (JJJJ-MM-TT-kategorie-thema.md: Was · Wie · Warum so · Verify · Gelernt). Gelerntes → Constitution/Patterns (Rückfluss).
+Loops in `brain/04-loops/` laufen über `LOOP-STATE.md` (erledigt/blockiert/braucht Yasin) — zuerst lesen, erledigte Arbeit nie wiederholen, max. 3 Versuche pro Item.
 
 ## Werkzeuge
 - `python3 scripts/verify.py` — Pflicht-Gate vor jedem „fertig" (Schemas, Links, Sitemap, No-JS-Statik, Invarianten CNAME/.nojekyll, products.json-Integrität).

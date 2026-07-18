@@ -1,0 +1,51 @@
+name: Deploy Site (Option A — brain bleibt privat)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build artifact (nur die Site, nichts Internes)
+        run: |
+          mkdir -p _site
+          rsync -a \
+            --exclude 'brain' \
+            --exclude 'scripts' \
+            --exclude '.github' \
+            --exclude '.claude' \
+            --exclude '.git' \
+            --exclude '_site' \
+            --exclude 'CLAUDE.md' \
+            --exclude 'README.md' \
+            --exclude 'STATUS.md' \
+            --exclude 'SPC-Gaming-Visuals' \
+            --exclude '.DS_Store' \
+            ./ _site/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

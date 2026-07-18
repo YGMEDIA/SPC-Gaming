@@ -1,11 +1,11 @@
 # PREIS-LOOP (monatlich)
 
 **Zweck:** Preise, Verfügbarkeit und Bewertungszahlen aller 40 Produkte aktuell halten (§A1, §A4, §A5). Letzter Voll-Abgleich: 07.–10.07.2026.
-**Trigger:** Monatsanfang, oder wenn Felgen Screenshots liefert.
+**Trigger:** Monatsanfang, oder wenn Yasin Screenshots liefert.
 **Ablauf (P-4, strikt seriell):**
 1. LOOP-STATE lesen; offene Produkte aus letztem Lauf zuerst.
 2. Kandidatenliste erzeugen: products.json nach ältestem Preis-Stand sortiert (STATUS-Datumseinträge); Top 10 pro Lauf.
-3. Pro Produkt: Amazon-Link an Felgen → Screenshot abwarten → products.json + alle sichtbaren HTML-Stellen + Schema synchron updaten → Datum in STATUS.
+3. Pro Produkt: Amazon-Link an Yasin → Screenshot abwarten → products.json + alle sichtbaren HTML-Stellen + Schema synchron updaten → Datum in STATUS.
 4. Nicht verfügbare Produkte: als Befund melden (Entfernen = Menschen-Gate).
 5. Nach Batch: gen_pages.py + gen_hubs.py + verify.py → STATUS + LOOP-STATE fortschreiben.
 **Fertig-Kriterium (maschinell):** verify.py grün UND kein bearbeitetes Produkt mit Preis-Diff zwischen products.json und HTML (verify prüft Stichprobe).

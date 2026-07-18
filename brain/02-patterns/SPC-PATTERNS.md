@@ -22,7 +22,7 @@
 
 ## P-4 · Review-Update-Loop-Pattern
 **Wann:** Preis-/Daten-Aktualisierung bestehender Produkte.
-**Form:** Strikt seriell: Claude nennt EINEN Amazon-Link → Felgen liefert Screenshot → Daten extrahieren → products.json + betroffene HTML-Stellen updaten (Schema = sichtbarer Text!) → nächster. Nie mehrere gleichzeitig, nie ohne Screenshot.
+**Form:** Strikt seriell: Claude nennt EINEN Amazon-Link → Yasin liefert Screenshot → Daten extrahieren → products.json + betroffene HTML-Stellen updaten (Schema = sichtbarer Text!) → nächster. Nie mehrere gleichzeitig, nie ohne Screenshot.
 **Gesetze:** §A1, §A4, §A5.
 
 ## P-5 · Blog-Artikel-Pattern
@@ -43,7 +43,7 @@
 
 ## P-8 · Screenshot-als-Ground-Truth-Pattern
 **Wann:** Jede externe Datenlage (Amazon, GSC, GA4).
-**Form:** Felgen liefert Screenshot/Export → landet konzeptionell in 03-research/raw/ (Ablage der Kernzahlen als datierte Notiz) → Claude leitet Maßnahmen ab und schreibt die INTERPRETATION getrennt von den Rohzahlen. Rohdaten werden nie überschrieben.
+**Form:** Yasin liefert Screenshot/Export → landet konzeptionell in 03-research/raw/ (Ablage der Kernzahlen als datierte Notiz) → Claude leitet Maßnahmen ab und schreibt die INTERPRETATION getrennt von den Rohzahlen. Rohdaten werden nie überschrieben.
 **Gesetze:** Leitprinzip 1, §A5, Leseregel "Rohquellen unantastbar".
 
 ---

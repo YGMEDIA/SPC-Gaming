@@ -1,6 +1,6 @@
 # SPEC · Sichtbarkeit Block A (Quick Wins) + Block B (Longtail Batch 1)
 
-> Feature-Spec #1 des SPC Brain · Status: **ZUR FREIGABE (Felgen)** · geschrieben gegen das echte Repo, Stand 2026-07-18
+> Feature-Spec #1 des SPC Brain · Status: **ZUR FREIGABE (Yasin)** · geschrieben gegen das echte Repo, Stand 2026-07-18
 > Gelesen zusammen mit: SPC-CONSTITUTION (§A, §B), SPC-PATTERNS (P-2, P-3, P-5, P-6), CLAUDE.md.
 
 ## 1 · Ziel & Datenbasis
@@ -23,7 +23,7 @@ GSC 18.07.: 7 Klicks, alle über Blog; "controller finden" = Top-Impressions-Que
 verify.py grün · 10 neue Seiten mit validem Schema (Product ohne Rating bzw. nur belegte Felder, BreadcrumbList) · jede Batch-Seite hat ≥2 interne Links auf kaufbare Produkte · Finder-Seite zeigt SEO-Block ohne JS · Alt-Audit: 0 Bilder ohne Alt, 0 Alts == Dateiname.
 
 ## 6 · Explizit NICHT in diesem Spec
-Batches 2–5 (erst Erfolgskontrolle) · Mehrbild-Galerien (Block H Teil 2, braucht Bild-URLs von Felgen) · Blog-Ausbau der 8 Kurz-Artikel (content-loop) · Backlinks (Block F).
+Batches 2–5 (erst Erfolgskontrolle) · Mehrbild-Galerien (Block H Teil 2, braucht Bild-URLs von Yasin) · Blog-Ausbau der 8 Kurz-Artikel (content-loop) · Backlinks (Block F).
 
 ## 7 · Freigabe
-[ ] Felgen: freigegeben am ______ / Änderungen: ______
+[x] Yasin: freigegeben am 2026-07-18 / Änderungen: Block A in dieser Session, Block B in eigener Session (Freigabe per Chat-Anweisung an Claude Code)

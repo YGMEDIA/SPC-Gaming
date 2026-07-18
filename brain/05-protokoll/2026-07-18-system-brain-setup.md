@@ -6,6 +6,6 @@
 
 **Warum so:** Option A (ein Repo, Actions filtert) statt zweitem Brain-Repo — ein Sync-System, Generatoren können später im Deploy laufen. Keywords als Text statt xlsx im Brain — greppbar für Claude Code, Leseregel-konform.
 
-**Verify:** scripts/verify.py grün (88 Seiten, 172 JSON-LD, 40 Produkte, 0 Fehler) · nach Deploy: /brain/ = 404 bestätigt (Felgen).
+**Verify:** scripts/verify.py grün (88 Seiten, 172 JSON-LD, 40 Produkte, 0 Fehler) · nach Deploy: /brain/ = 404 bestätigt (Yasin).
 
 **Gelernt → Rückfluss:** §B2 um Deploy-Vollzugs-Pflicht ergänzt · P-7 (Verify-Suite) und P-8 (Screenshot-Ground-Truth) als Patterns kodifiziert · Deploy-Loop trägt die Pages-Source-Umstellung als Einmal-Schritt.

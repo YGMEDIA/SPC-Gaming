@@ -21,7 +21,7 @@ Links entstehen ausschließlich in main.js aus `data-asin` → `amazon.de/dp/[AS
 aggregateRating immer `bestRating: "5"`, `reviewCount` > 1, jeder Schema-Wert (Preis, Rating, Count) steht sichtbar im Seitentext. Keine 10er-Skalen, keine erfundenen Counts (Historie: 4 Seiten mit 10er-Skala + count 1 — behoben 10.07.). Geschätzte Counts sind als Befund zu führen (aktuell: 5 Seiten Gruppe A mit gerundeten Werten — offen, valide aber zu präzisieren).
 
 ### §A5 · Produktdaten nur mit Beleg [bewiesen]
-Amazon blockt jeden programmatischen Zugriff (web_fetch 403, CDN-curl 403). Quelle für Preise/Ratings/Verfügbarkeit sind ausschließlich Felgens Screenshots; Bild-URLs kommen per Rechtsklick → Grafikadresse. Jede Datenänderung trägt ihr Screenshot-Datum in STATUS. Nie verfügbare Produkte werden entfernt, nicht schöngeredet (Historie: iPega, Mocute, RedMagic).
+Amazon blockt jeden programmatischen Zugriff (web_fetch 403, CDN-curl 403). Quelle für Preise/Ratings/Verfügbarkeit sind ausschließlich Yasins Screenshots; Bild-URLs kommen per Rechtsklick → Grafikadresse. Jede Datenänderung trägt ihr Screenshot-Datum in STATUS. Nie verfügbare Produkte werden entfernt, nicht schöngeredet (Historie: iPega, Mocute, RedMagic).
 
 ### §A6 · Ehrlichkeit ist der Burggraben [bewiesen]
 Jedes Review ≥2 echte Cons. Produkte unter ~3,8 Sternen bekommen explizite Warnung oder "keine Kaufempfehlung" (RXKFIGX 3,5 · MGPXPRO 3,3). Wir listen sie transparent und empfehlen die Alternative — das ist Positionierung, kein Bug.
@@ -43,7 +43,7 @@ Jede kommerzielle Seite hat ihr Keyword aus dem Keyword-Master (Title ≤62 Zeic
 non-www ist kanonisch, jede Seite trägt genau einen Canonical auf sich selbst, gelöschte Pfade verschwinden physisch aus dem Deploy. **Verletzt entdeckt 18.07.:** /ratgeber/ lag als Duplikat-Zombie neben /blog/ live (8 Artikel doppelt, beide selbst-kanonisch), marken/ipega + marken/mocute ebenso (beschlossene Löschung 08.07. war live nie vollzogen), .nojekyll fehlte im Repo. Behoben im Brain-Commit; Option-A-Workflow verhindert die Fehlerklasse (Deploy = exakter Repo-Stand).
 
 ### §B3 · Sitemap & llms.txt wachsen mit [bewiesen]
-Jede neue indexierbare Seite → sitemap.xml (+ lastmod) und ggf. llms.txt. /suche/ bleibt noindex + disallowed. Nach Deploy mit neuen Seiten: Sitemap in GSC neu einreichen (Felgen).
+Jede neue indexierbare Seite → sitemap.xml (+ lastmod) und ggf. llms.txt. /suche/ bleibt noindex + disallowed. Nach Deploy mit neuen Seiten: Sitemap in GSC neu einreichen (Yasin).
 
 ### §B4 · Blog-first-Vererbung [bewiesen]
 Die ersten Rankings/Klicks kommen über Info-Content (GSC-Beleg 18.07.). Jeder Blog-Artikel verlinkt kontextuell auf passende Geld-Seiten (Review/Hub, nicht generisch). Interne Links sind Pflichtteil jedes Content-Piece.
@@ -74,7 +74,8 @@ Impressum/Datenschutz sind fachlich solide aufgebaut, die juristische Prüfung s
 - **Verify-Gate:** `python3 scripts/verify.py` muss grün sein, bevor irgendetwas als fertig gilt. Nie "sieht gut aus".
 - **STATUS-Pflicht:** Nach jedem abgeschlossenen Schritt `brain/STATUS.md` aktualisieren. Bei Widerspruch gewinnt das Repo.
 - **Diagnose vor Fix:** Ursache faktisch beweisen (Grep, Test, Datenlage), nie auf Verdacht bauen. Historisches Vorbild: GTM-Debugging 10.07. (Container geladen aber leer → Ursache "nicht veröffentlicht" bewiesen, nicht geraten).
-- **Menschen-Gates:** Deploy · Seiten-Löschung · Massenänderung >10 Dateien · Geld/ASIN-Änderungen · neue Domains. Stoppen, auf "braucht Felgen"-Liste (LOOP-STATE), fragen.
+- **Autonomes Deploy (seit 18.07.2026):** Claude Code committet und pusht selbstständig; Push auf main löst den Live-Deploy aus (GitHub Actions). Hartes Maschinen-Gate: verify.py MUSS grün sein vor jedem Commit — ein roter Stand wird niemals gepusht. Eine aussagekräftige Commit-Message pro abgeschlossenem Arbeitspaket. Yasin hat jederzeit Rollback-Recht via `git revert`.
+- **Verbleibende Menschen-Gates:** Geld-/ASIN-Änderungen ohne Screenshot-Beleg · Änderungen an `.github/workflows/` · Änderungen an `.claude/settings.json`. Stoppen, auf "braucht Yasin"-Liste (LOOP-STATE), fragen. (Deploy, Seiten-Löschung und >10-Dateien-Gate sind seit 18.07.2026 durch das verify-Gate ersetzt.)
 - **Macher ≠ Prüfer:** Reviews größerer Umbauten in frischem Kontext.
 - **str_replace mit vollem Kontext**, mehrzeilige HTML-Blöcke nie per sed. Sitemap-Änderungen immer mit XML-Validierung.
 - **Komplett-Läufe der Generatoren** nach products.json-Änderungen (gen_pages → gen_hubs → verify), nie Teilstände committen.
@@ -87,10 +88,11 @@ Impressum/Datenschutz sind fachlich solide aufgebaut, die juristische Prüfung s
 |---|---|---|
 | /ratgeber/-Duplikat live + .nojekyll fehlte im Repo | §B2 | im Brain-Commit behoben — **Deploy ausstehend** |
 | 5 Reviews mit geschätzten reviewCounts (Gruppe A) | §A4 | offen, bei nächsten Screenshots präzisieren |
-| Rechtstexte ohne anwaltliche Abnahme | §C4 | offen (Felgen) |
+| Rechtstexte ohne anwaltliche Abnahme | §C4 | offen (Yasin) |
 | Alt-Texte generisch, nur 1 Bild pro Produkt | §A6/Block H | geplant (Spec folgt) |
 
 ## Änderungslog
 | Datum | Änderung |
 |---|---|
 | 2026-07-18 | v1.0 — Constitution aus Projekthistorie extrahiert; alle A/B/C-Gesetze durch Sessions bewiesen oder als Befund markiert. |
+| 2026-07-18 | v1.1 — Teil D auf Vollautonomie umgestellt (Yasins Entscheidung): verify.py als hartes Maschinen-Gate ersetzt das Deploy-Menschen-Gate; Claude Code committet/pusht selbst; Rollback-Recht Yasin via git revert. Namenskorrektur: Projektinhaber heißt Yasin; der bisher im Brain verwendete Rufname war ein Transkriptionsfehler und wurde projektweit ersetzt. |
