@@ -21,6 +21,18 @@
 
 **Brain:** Mit diesem Commit aufgesetzt (Framework, Constitution, Patterns, Loops, Specs, verify.py, CLAUDE.md, Actions-Deploy). Ersetzt das bisherige ZIP-/STATUS-Handoff-Verfahren — Arbeit läuft ab jetzt über Claude Code im Repo.
 
+## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
+| Art des Todos | Ort | Aktuell dort |
+|---|---|---|
+| Entscheidungen & Handgriffe für Felgen | **hier unten: "Braucht Felgen"** | 7 Punkte (Spec-Freigabe, Deploy-Checks, Bing, GSC-Screenshot, GA4-Test, 2. Domain, Rich-Results) |
+| Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 4 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle) |
+| Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
+| Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B (A+B) |
+| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: 8 Blog-Ausbauten · preis-loop: 9 Screenshot-ASINs + Voll-Abgleich August |
+| Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Felgen), A+B im Spec, C–H danach |
+| Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | Eintrag #1: Brain-Setup 18.07. |
+Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos landen zuerst hier in STATUS (Braucht Felgen / Befund / Merkposten) oder in einer Loop-Warteschlange — nie in Chat-Verläufen.
+
 ---
 
 ## Befund-Status
@@ -50,7 +62,7 @@
 
 ---
 
-## Verlauf (chronologisch, neueste zuletzt)
+## Verlauf (chronologisch, neueste zuletzt — Kompakt; Details je Schritt in `05-protokoll/`)
 
 1. **Kompakt-Archiv Juni–10.07.** Site-Aufbau in 5 Phasen (Keywords → Architektur → 57 Seiten → QA), Deployment auf GitHub Pages + IONOS-DNS, GTM/GA4 über Consent Mode v2 live (Lehre: Container VERÖFFENTLICHEN, nicht nur speichern), Search Console Domain-Property + Sitemap, Produkt-Review-Workflow per Screenshots (13 Reviews + Karten aktualisiert, iPega/Mocute entfernt), Shop-Umbau (/produkte/ mit Filtern, products.json 40 Produkte, Hubs dynamisch), Blog konsolidiert (13 Artikel, /ratgeber/ aufgelöst), Cookie-Banner, Finder interaktiv, SEO-Paket (OG sitewide, Product-Schema 13 Reviews, 5er-Skala-Fix).
 2. **11.07. Tiefen-Optimierung (Fable 5), deployed.** GEO-Pre-Rendering der Hubs + /produkte/ (statische Karten, SEO-Editorial, FAQs, ItemList), 27 generierte Produkt-Detailseiten (alle 40 Produkte haben "Mehr erfahren"), Tracking-Fix (dataLayer.push + Delegation), products.json bereinigt (Preise, Slugs, Marken), 14 tote Buttons repariert, \x02-Korruption in 13 Reviews gefixt, BreadcrumbList auf 48 Seiten, Organization-Schema, llms.txt, Sitemap 87, Titles/Descriptions auf 21 Seiten, Startseiten-Fotostrip. Alles Playwright-verifiziert.
