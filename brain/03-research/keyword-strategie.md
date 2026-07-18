@@ -1,6 +1,6 @@
 # Keyword-Strategie (Destillat aus Keyword-Master v3, verifiziert Juni 2026)
 
-> Quelle: Keyword-Master_SmartphoneController_v3_VERIFIZIERT.xlsx (937 DE-Keywords) + Budget-Longtail-Sheet (212 Keywords). Rohdaten bei Felgen; Kernzahlen hier. GSC-Realität ergänzt laufend über 04-loops/gsc-loop.
+> Quelle: Keyword-Master_SmartphoneController_v3_VERIFIZIERT.xlsx (937 DE-Keywords) + Budget-Longtail-Sheet (212 Keywords). Vollständige Listen liegen als Text in raw/ (keyword-master-v3.md, budget-longtail.md u. a.); die xlsx bleibt bei Felgen. GSC-Realität ergänzt laufend über 04-loops/gsc-loop.
 
 ## Die drei Schichten
 | Schicht | Volumen | Beispiele | Zielseiten | Status |
