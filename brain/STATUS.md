@@ -57,8 +57,9 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 3. **GSC Indexierungs-Screenshot** (Indexierung → Seiten) — die Zahl fehlt uns noch.
 4. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
 5. Zweite anzubindende Domain benennen (neben der .de).
-6. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
-7. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
+6. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
+7. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
+8. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
@@ -81,6 +82,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 7. **18.07. spät: Erster voll autonomer Arbeitslauf — Loop-Fixes + Block B (deployed).** Ohne Rückfragen umgesetzt und gepusht: (a) CoD/PUBG-FAQ in iOS- und Android-Hub faktisch korrigiert (Schema + Text + gen_hubs.py synchron; gen_hubs ist NICHT idempotent, deshalb Hand-Sync). (b) 12 Preisdivergenzen auf products.json-Werte gesynct. (c) Block B komplett: 10 Longtail-Datenblätter (P-6) via neuem gen_longtail.py aus longtail.json — ehrliche Verfügbarkeits-Hinweise, Specs als Herstellerangaben gekennzeichnet, KEINE erfundenen Preise/Ratings, je 3 kaufbare Alternativen als Konversionspfad, Sitemap 97 URLs, Keyword-Vergabe dokumentiert. verify GRÜN (98 Seiten, 204 Schemas). Details: `05-protokoll/2026-07-18-content-block-b.md`.
 
 8. **18.07. spät: content-loop Lauf 1 — alle 8 Kurz-Artikel auf P-5 (deployed).** Autonomer Batch auf Yasins Anweisung: usb-c-vs-bluetooth, mobile-gaming-setup, trigger-erlaubt-pubg, was-ist-ein-smartphone-controller, finger-sleeves-sinnvoll, handy-kuehler-sinnvoll, huellen-kompatibilitaet je komplett ausgebaut (Article+FAQPage-Schema, Byline, 4-5 Prosa-Sektionen, 4 FAQs, Related, Finder-CTA), hall-effect nur Prosa-Ergänzung (rankt bereits, A2-Ausbau blieb unangetastet). Dabei 2 weitere Faktenkorrekturen (CoD-Behauptung in usb-c-vs-bluetooth, veraltete Zubehör-Preise in mobile-gaming-setup auf JSON-Werte). Maschinelles Gate: 13/13 Artikel ≥700 W netto, ≥3 Geld-Links, Schema-Spiegel. Sitemap-lastmod aktualisiert. Details: `05-protokoll/2026-07-18-content-blog-ausbau.md`.
+
+9. **18.07. spät: Wachstums-Recherche + Emotions-Redesign Startseite (deployed).** Web-Recherche zu AI Overviews (48 % der Suchen, CTR -34-61 %, aber Klicker konvertieren um Vielfaches besser → BOFU + Zitierfähigkeit), E-E-A-T 2026 (Erste-Hand-Erfahrung = stärkstes Signal, ~2,3x häufiger zitiert) und emotionalem Design (Storytelling-Bänder, authentische Fotos, Statement-Typo). Destillat mit priorisierten Maßnahmen: `03-research/2026-07-18-wachstums-recherche.md`. Umgesetzt: 3 neue Emotions-Bänder auf der Startseite (Navy-Gradient-Statement "Echte Konsolen-Spiele" mit G8 auf weißer Karte, graues Ehrlichkeits-Statement mit /redaktion/-Link, helles Foto-Band mit eigenem G8-Testfoto), Apple-Rhythmus in Corporate-Farben, §A7-konform, rein statisch, Browser-verifiziert. Details: `05-protokoll/2026-07-18-dev-emotions-redesign.md`.
 
 ---
 
