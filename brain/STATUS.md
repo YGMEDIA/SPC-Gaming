@@ -17,7 +17,7 @@
 7 Klicks · 348 Impressionen (Verzehnfachung in einer Woche) · Ø Position 18,3 (von 23 kommend) · CTR 2 %.
 **Kern-Erkenntnis:** ALLE Klicks kommen über Blog-Artikel ("Welche Spiele unterstützen Controller" 2×, iPhone-USB-C, Hall-Effect) → Blog-first-Vererbung ist bewiesen (§B4), Blog-Ausbau hat Priorität. Top-Impressions-Begriff ohne optimierte Zielseite: "controller finden" (9) → Block A.
 
-**Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A umgesetzt + deployed (18.07.)**, Block B folgt in eigener Session (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
+**Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A und Block B umgesetzt + deployed (18.07.)** — Spec #1 damit komplett abgearbeitet (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
 
 **Brain:** Am 18.07. aufgesetzt (Framework, Constitution, Patterns, Loops, Specs, verify.py, CLAUDE.md). Ersetzt das ZIP-/STATUS-Handoff-Verfahren. Stand-Korrektur (Repo gewinnt): Der im Brain-Setup dokumentierte Actions-Deploy war NIE im Repo (.github/ fehlte komplett) — nachgeholt am 18.07. abends samt Pages-Umstellung.
 
@@ -29,9 +29,9 @@
 | Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 6 Punkte (Live-Stichprobe, Bing, GSC-Screenshot, GA4-Test, 2. Domain, Rich-Results) |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 6 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle, Preisdivergenzen, CoD-FAQ); Brain-Leak 18.07. behoben |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
-| Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A umgesetzt 18.07., B wartet auf eigene Session |
-| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: 8 Blog-Ausbauten + CoD-FAQ-Fix · preis-loop: 9 Screenshot-ASINs + 12 Divergenzen + Voll-Abgleich August |
-| Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A umgesetzt, B freigegeben/wartet, C–H danach |
+| Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
+| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: 8 Blog-Ausbauten · preis-loop: 9 Screenshot-ASINs + Voll-Abgleich August (CoD-FAQ + 12 Divergenzen erledigt 18.07.) |
+| Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A+B umgesetzt, C–H danach |
 | Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
 Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos landen zuerst hier in STATUS (Braucht Yasin / Befund / Merkposten) oder in einer Loop-Warteschlange — nie in Chat-Verläufen.
 
@@ -77,10 +77,13 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 6. **18.07. abends: Vollautonomie + Namenskorrektur + Leak-Fix (diese Session).** Yasins Entscheidung: Claude Code committet/pusht künftig selbst, verify.py ersetzt als hartes Gate das Deploy-Menschen-Gate (CLAUDE.md, Constitution v1.1 Teil D, Framework v1.1, deploy-loop, settings.json umgestellt). Namenskorrektur projektweit: Projektinhaber heißt Yasin (bisheriger Name war Transkriptionsfehler). Dabei KRITISCHEN Befund gefunden und behoben: brain/ war live öffentlich (Pages Legacy-Modus, Actions-Workflow existierte entgegen Doku nie) — deploy.yml erstellt, Pages per API auf "GitHub Actions" umgestellt, Root-STATUS-Zombie gelöscht, erster autonomer Push. Details: `05-protokoll/2026-07-18-system-vollautonomie.md`.
 
+7. **18.07. spät: Erster voll autonomer Arbeitslauf — Loop-Fixes + Block B (deployed).** Ohne Rückfragen umgesetzt und gepusht: (a) CoD/PUBG-FAQ in iOS- und Android-Hub faktisch korrigiert (Schema + Text + gen_hubs.py synchron; gen_hubs ist NICHT idempotent, deshalb Hand-Sync). (b) 12 Preisdivergenzen auf products.json-Werte gesynct. (c) Block B komplett: 10 Longtail-Datenblätter (P-6) via neuem gen_longtail.py aus longtail.json — ehrliche Verfügbarkeits-Hinweise, Specs als Herstellerangaben gekennzeichnet, KEINE erfundenen Preise/Ratings, je 3 kaufbare Alternativen als Konversionspfad, Sitemap 97 URLs, Keyword-Vergabe dokumentiert. verify GRÜN (98 Seiten, 204 Schemas). Details: `05-protokoll/2026-07-18-content-block-b.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Yasin:** Live-Stichprobe (Punkt 1), dann Bing (Punkt 2). Deploys laufen ab jetzt autonom über Claude Code.
+**Yasin:** Die 6 Punkte der "Braucht Yasin"-Liste, v. a. Live-Stichprobe, Bing, GSC-Screenshot + Amazon-Screenshots für den preis-loop (9 ASINs + 5 reviewCounts).
+**Claude Code (nächste Session, sobald Yasins Input da ist):** preis-loop-Lauf mit den Screenshots · gsc-loop-Erstlauf mit dem GSC-Paket · danach content-loop (8 Blog-Ausbauten). Ohne Yasin-Input möglich: content-loop-Start.
 **Claude Code (nächste Session):** Block B (Longtail Batch 1, 10 Datenblatt-Seiten nach P-6) nach Spec; danach Erfolgskontrolle Block A im gsc-loop (3–4 Wochen).
 **Loops:** Erster manueller Lauf des GSC-Loops nach nächstem Screenshot-Paket; Preis-Loop fällig ab August (letzter Voll-Abgleich 07./08.07.) — Warteschlange enthält jetzt zusätzlich 12 dokumentierte Preisdivergenzen.

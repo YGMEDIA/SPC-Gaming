@@ -1,0 +1,252 @@
+[
+  {
+    "slug": "8bitdo-lite-2",
+    "brand": "8BitDo",
+    "name": "Lite 2",
+    "keyword": "8bitdo lite 2",
+    "claim": "Extrem kompaktes Bluetooth-Gamepad für Switch, Android und Raspberry Pi. Als Altmodell kaum noch regulär erhältlich, wir ordnen ein.",
+    "verdict": "Der 8BitDo Lite 2 ist ein extrem flaches, leichtes Bluetooth-Gamepad für Switch, Android und Raspberry Pi. Für entspannte 2D-, Indie- und Retro-Spiele ist das Format klasse, für Shooter oder lange Sessions sind die kompakten Sticks und Tasten aber spürbar limitiert. Regulär erhältlich ist er kaum noch.",
+    "desc": [
+      "Der Lite 2 folgt der Idee des Switch-Lite-Formats: ein Gamepad, das in die Jackentasche passt. Er verbindet sich per Bluetooth, hat zwei kompakte Analog-Sticks, ein Steuerkreuz und Schultertasten, verzichtet aber auf eine Handy-Halterung. Am Smartphone brauchst du also einen Ständer, das Handy wird nicht eingespannt. Genau deshalb ist er eher ein Reise- und Retro-Pad als ein vollwertiger Smartphone-Controller.",
+      "Interessant ist das Modell heute vor allem, weil danach gesucht wird: Als Neukauf ist die Lage schwierig, 8BitDo selbst hat die Ultimate-Serie als Nachfolge-Linie etabliert. Wer das kompakte Bluetooth-Konzept mag, bekommt mit dem 8BitDo Ultimate 2C Wireless für rund 20 Euro die modernere Technik, und wer wirklich am Handy zocken will, ist mit einem Teleskop-Modell wie dem GameSir X5 Lite besser bedient."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth"],
+      ["Plattformen (Herstellerangabe)", "Nintendo Switch, Android, Raspberry Pi"],
+      ["Bauform", "Flaches Mini-Gamepad ohne Handy-Halterung"],
+      ["Sticks", "Kompakte Analog-Sticks (keine Hall-Effect-Sensoren)"],
+      ["Erscheinungsjahr", "ca. 2022"]
+    ],
+    "availability": "Der Lite 2 ist ein Altmodell: Bei Amazon.de ist er nicht mehr durchgängig oder nur über Drittanbieter und Restbestände gelistet. Wir führen ihn deshalb ohne Kauflink.",
+    "alternatives": ["8bitdo-ultimate-2c", "8bitdo-ultimate-mobile", "gamesir-x5-lite"],
+    "faqs": [
+      ["Funktioniert der 8BitDo Lite 2 mit dem iPhone?", "Offiziell nicht. 8BitDo nennt Switch, Android und Raspberry Pi als Plattformen. Am iPhone fährst du mit einem iOS-kompatiblen Gamepad besser, zum Beispiel dem 8BitDo Ultimate 2C aus unserem Sortiment."],
+      ["Lohnt sich der 8BitDo Lite 2 im Jahr 2026 noch?", "Nur als Zweit-Pad für Switch- und Retro-Spiele, wenn du ihn günstig findest. Für Smartphone-Gaming bekommst du mit dem Ultimate 2C für rund 20 Euro die aktuellere Technik mit laufendem Support."]
+    ]
+  },
+  {
+    "slug": "8bitdo-lite-se",
+    "brand": "8BitDo",
+    "name": "Lite SE",
+    "keyword": "8bitdo lite se",
+    "claim": "Barrierefreies Gamepad mit besonders leichtgängigen Tasten und Sticks, entwickelt für Spieler mit eingeschränkter Handkraft.",
+    "verdict": "Der 8BitDo Lite SE ist ein Spezialist: Alle Tasten und Sticks sind auf minimalen Kraftaufwand ausgelegt, gedacht für Menschen mit eingeschränkter Handbeweglichkeit. In dieser Nische ist er bis heute ein bemerkenswertes Produkt, als Allround-Controller fürs Smartphone ist er dagegen nicht gedacht.",
+    "desc": [
+      "Die Idee hinter dem Lite SE entstand laut 8BitDo aus dem Feedback von Eltern, deren Kinder herkömmliche Controller nicht bedienen konnten. Das Ergebnis: extrem leichtgängige Analog-Sticks, empfindliche Tasten, die schon auf sanften Druck reagieren, rutschfeste Unterseite und ein flaches Format, das auf einem Tisch oder Schoß liegend bedienbar ist. Verbunden wird per Bluetooth mit Switch oder Android.",
+      "Wenn Barrierefreiheit dein Hauptkriterium ist, lohnt die Suche nach dem Lite SE oder seinen Nachfolgern im Barrierefrei-Segment weiterhin. Geht es dir dagegen um klassisches Smartphone-Gaming, findest du im Sortiment gängigere Optionen: das 8BitDo Ultimate 2C als günstiges Bluetooth-Pad oder den abxylute S8 als Multi-Plattform-Controller mit gut erreichbaren Tasten."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth"],
+      ["Plattformen (Herstellerangabe)", "Nintendo Switch, Android"],
+      ["Besonderheit", "Extra leichtgängige Tasten und Sticks (Barrierefreiheit)"],
+      ["Bauform", "Flaches Gamepad, liegend bedienbar, ohne Handy-Halterung"],
+      ["Erscheinungsjahr", "ca. 2022"]
+    ],
+    "availability": "Der Lite SE ist bei Amazon.de nicht durchgängig verfügbar, die Liefersituation wechselt. Wir führen ihn deshalb ohne Kauflink und ohne Preisangabe.",
+    "alternatives": ["8bitdo-ultimate-2c", "abxylute-s8", "marsgaming-mgp-bt2"],
+    "faqs": [
+      ["Für wen ist der 8BitDo Lite SE gedacht?", "Für Spielerinnen und Spieler mit eingeschränkter Handkraft oder Feinmotorik: Alle Bedienelemente reagieren auf minimalen Druck, und das flache Format lässt sich liegend bedienen, ohne den Controller halten zu müssen."],
+      ["Funktioniert der Lite SE am Smartphone?", "Ja, per Bluetooth an Android-Geräten (Herstellerangabe). Eine Handy-Halterung hat er nicht, du brauchst also einen Ständer fürs Smartphone."]
+    ]
+  },
+  {
+    "slug": "gamesir-x2",
+    "brand": "GameSir",
+    "name": "X2",
+    "keyword": "gamesir x2",
+    "claim": "Der Teleskop-Klassiker von GameSir in drei Varianten (Bluetooth, USB-C, Lightning). Vorgänger des aktuellen X2s.",
+    "verdict": "Der GameSir X2 war einer der Controller, die die Teleskop-Bauform populär gemacht haben: Handy einspannen, loszocken. Technisch ist er von seinen Nachfolgern aber klar überholt, die Membran-Tasten und Standard-Sticks kommen nicht an die aktuelle X2s- und G8-Generation heran.",
+    "desc": [
+      "Den X2 gab es in drei Varianten: als Bluetooth-Version mit eigenem Akku, als USB-C-Version für Android und später als Lightning-Version fürs iPhone. Das Handy wird zwischen die Griffhälften gespannt, die USB-C-Variante spielt praktisch latenzfrei. Die Verarbeitung war für die damalige Preisklasse ordentlich, aber die Sticks nutzen klassische Potentiometer, die mit der Zeit driften können, und die Tasten sind Membran statt Mikroschalter.",
+      "Heute ist der X2 vor allem als Suchbegriff relevant, nicht mehr als Kauf: GameSir hat die Linie mit dem X2s direkt fortgeführt, mit besseren Sticks und aktuellem App-Support. Unser ausführlicher Test des GameSir X2s zeigt, was sich getan hat. Wer mehr Budget hat, springt gleich zum G8 Galileo mit Hall-Effect-Sticks."
+    ],
+    "specs": [
+      ["Verbindung", "Je nach Variante: Bluetooth, USB-C oder Lightning"],
+      ["Plattformen (Herstellerangabe)", "Android; iPhone nur als Bluetooth- oder Lightning-Variante"],
+      ["Bauform", "Teleskop-Controller (Handy wird eingespannt)"],
+      ["Sticks/Tasten", "Potentiometer-Sticks, Membran-Tasten"],
+      ["Erscheinungsjahr", "ca. 2020/2021"]
+    ],
+    "availability": "Der X2 wird von GameSir nicht mehr aktiv vermarktet und ist bei Amazon.de allenfalls als Restbestand oder gebraucht zu finden. Wir führen ihn ohne Kauflink.",
+    "alternatives": ["gamesir-x2s", "gamesir-x5-lite", "gamesir-g8-galileo"],
+    "faqs": [
+      ["Was ist der Unterschied zwischen GameSir X2 und X2s?", "Der X2s ist die überarbeitete Generation derselben Idee: gleiche Teleskop-Bauform, aber modernisierte Technik und aktueller App-Support. Details und Wertung findest du in unserem X2s-Test."],
+      ["Passt der GameSir X2 ans iPhone 15 oder 16?", "Nur bedingt: Die Lightning-Variante passt physisch nicht (iPhone 15 und neuer haben USB-C), und die alte USB-C-Variante war für Android ausgelegt. Fürs aktuelle iPhone ist ein USB-C-Modell wie der G8 Galileo die saubere Lösung."]
+    ]
+  },
+  {
+    "slug": "gamesir-x3",
+    "brand": "GameSir",
+    "name": "X3",
+    "keyword": "gamesir x3",
+    "claim": "Teleskop-Controller mit eingebauter aktiver Kühlung: Der X3 kühlte das Handy beim Spielen. Vorgänger des X3 Pro.",
+    "verdict": "Der GameSir X3 hatte ein Alleinstellungsmerkmal: einen integrierten aktiven Kühler, der die Handy-Rückseite beim Spielen herunterkühlt. Die Idee lebt im aktuellen X3 Pro weiter. Das Original ist als USB-C-Modell für Android konzipiert und heute nur noch schwer zu bekommen.",
+    "desc": [
+      "Beim X3 steckte zwischen den Griffen ein Lüfter mit Kühlelement, der direkt auf der Handy-Rückseite auflag. Gerade bei fordernden Titeln wie Genshin Impact, die das Smartphone zum Throtteln bringen, war das ein echtes Argument. Angeschlossen wurde per USB-C, der Controller ist laut Hersteller für Android ausgelegt; der Kühler zieht dabei zusätzlichen Strom, weshalb eine Stromversorgung über den Pass-Through-Port sinnvoll war.",
+      "Wer das Konzept heute will, muss nicht zum Altmodell greifen: Der GameSir X3 Pro führt die Kühler-Idee in unserem Sortiment fort, unser Test ordnet ihn ausführlich ein. Ohne Kühl-Anspruch sind der G8 Galileo oder der X2s die vielseitigeren Teleskop-Controller."
+    ],
+    "specs": [
+      ["Verbindung", "USB-C"],
+      ["Plattformen (Herstellerangabe)", "Android"],
+      ["Besonderheit", "Integrierter aktiver Kühler auf der Handy-Rückseite"],
+      ["Bauform", "Teleskop-Controller (Handy wird eingespannt)"],
+      ["Erscheinungsjahr", "ca. 2022"]
+    ],
+    "availability": "Der ursprüngliche X3 ist weitgehend vom Nachfolger X3 Pro abgelöst und bei Amazon.de kaum noch regulär gelistet. Wir führen ihn ohne Kauflink.",
+    "alternatives": ["gamesir-x3-pro", "gamesir-g8-galileo", "gamesir-x2s"],
+    "faqs": [
+      ["Was macht den GameSir X3 besonders?", "Die integrierte aktive Kühlung: Ein Lüfter mit Kühlelement liegt direkt auf der Handy-Rückseite auf und wirkt dem Leistungs-Throttling bei langen Sessions entgegen. Diese Idee führt der aktuelle X3 Pro fort."],
+      ["Funktioniert der GameSir X3 mit dem iPhone?", "Nein. Der X3 ist laut Hersteller ein USB-C-Controller für Android. Fürs iPhone (ab Modell 15 mit USB-C) sind G8 Galileo oder Razer Kishi V3 die passenden Teleskop-Optionen."]
+    ]
+  },
+  {
+    "slug": "gamesir-t4-pro",
+    "brand": "GameSir",
+    "name": "T4 Pro",
+    "keyword": "gamesir t4 pro",
+    "claim": "Bluetooth-Gamepad-Klassiker mit halbtransparenter Front, LED-Beleuchtung und abnehmbarer Handy-Halterung.",
+    "verdict": "Der GameSir T4 Pro war jahrelang der Budget-Tipp unter den Bluetooth-Gamepads: Multi-Plattform-Support, abnehmbare Handy-Halterung und Turbo-Funktion zum kleinen Preis. Technisch ist er inzwischen zwei Generationen hinter aktuellen Modellen, bleibt aber ein häufig gesuchter Klassiker.",
+    "desc": [
+      "Markenzeichen des T4 Pro sind die halbtransparente Front mit sichtbarer Platine und LED-Beleuchtung sowie die mitgelieferte, abnehmbare Halterung, die das Smartphone über dem Gamepad einspannt. Laut Hersteller unterstützt er Switch, Android, iOS und PC, dazu kommen Turbo-Tasten und zwei zusätzliche Rücktasten. Die Sticks sind klassische Potentiometer, das Gewicht liegt angenehm niedrig.",
+      "Für gelegentliches Zocken am Handy war der T4 Pro lange eine solide Empfehlung, heute macht ihm die eigene Verfügbarkeit einen Strich durch die Rechnung. Im Sortiment decken der 8BitDo Ultimate 2C (günstiges Bluetooth-Pad), der ShanWan Bluetooth Controller (mit Halterung) und der abxylute S8 (Multi-Plattform inklusive Switch-2-Support) dieselben Einsatzzwecke mit aktueller Technik ab."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth (am PC auch Kabel/Empfänger je nach Modus)"],
+      ["Plattformen (Herstellerangabe)", "Nintendo Switch, Android, iOS, PC"],
+      ["Besonderheit", "Abnehmbare Handy-Halterung, Turbo, 2 Rücktasten, LED"],
+      ["Sticks", "Potentiometer-Sticks (keine Hall-Effect-Sensoren)"],
+      ["Erscheinungsjahr", "ca. 2020"]
+    ],
+    "availability": "Der T4 Pro ist bei Amazon.de nur noch unregelmäßig oder über Drittanbieter gelistet. Wir führen ihn deshalb ohne Kauflink und ohne Preisangabe.",
+    "alternatives": ["8bitdo-ultimate-2c", "shanwan-bt-white", "abxylute-s8"],
+    "faqs": [
+      ["Funktioniert der GameSir T4 Pro mit dem iPhone?", "Laut Hersteller ja, per Bluetooth ab iOS 13. In der Praxis hängt die Spielekompatibilität wie bei allen Gamepads vom jeweiligen Titel ab; Apple-Arcade- und Cloud-Gaming-Titel sind die sichere Bank."],
+      ["Hat der T4 Pro eine Handy-Halterung?", "Ja, eine abnehmbare Klemm-Halterung gehört zum Lieferumfang. Das Smartphone sitzt damit über dem Gamepad, ähnlich wie bei unserem ShanWan Bluetooth Controller aus dem aktuellen Sortiment."]
+    ]
+  },
+  {
+    "slug": "ipega-pg-9083s",
+    "brand": "iPega",
+    "name": "PG-9083S",
+    "keyword": "ipega 9083s",
+    "claim": "Teleskop-Bluetooth-Controller mit weiter Spannweite, einer der bekanntesten iPega-Klassiker für Android.",
+    "verdict": "Der iPega PG-9083S war ein beliebter Budget-Teleskop-Controller mit ungewöhnlich weiter Spannweite, in die laut Hersteller auch kleine Tablets passen. Die Technik ist heute veraltet und die Marke haben wir bewusst nicht mehr im Sortiment; als Suchbegriff bleibt der 9083S aber präsent.",
+    "desc": [
+      "Das Konzept: ein Bluetooth-Gamepad, dessen Halterung sich so weit auseinanderziehen lässt, dass neben Smartphones auch kompakte Tablets eingespannt werden können. Dazu gab es Standard-Sticks, Membran-Tasten und einen für die Zeit üblichen Direct-Play-Modus für Android. iOS wurde nur eingeschränkt und je nach Systemversion unterstützt, was schon damals eine häufige Fehlerquelle war.",
+      "Wir haben iPega-Produkte aus dem Sortiment genommen, weil Verfügbarkeit und Software-Pflege nicht mehr auf dem Niveau waren, das wir empfehlen wollen. Wer die Teleskop-Idee heute sucht, bekommt sie ausgereifter beim GameSir X2s oder günstig beim Trust GXT 735G Mylox; für Tablets führt der Weg eher über klassische Bluetooth-Gamepads mit Ständer, siehe unsere Tablet-Controller-Übersicht."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth"],
+      ["Plattformen (Herstellerangabe)", "Android; iOS nur eingeschränkt"],
+      ["Besonderheit", "Sehr weite Teleskop-Spannweite (laut Hersteller auch kleine Tablets)"],
+      ["Sticks/Tasten", "Potentiometer-Sticks, Membran-Tasten"],
+      ["Erscheinungsjahr", "ca. 2018"]
+    ],
+    "availability": "Der PG-9083S ist bei Amazon.de nicht mehr regulär gelistet; iPega-Produkte führen wir generell nicht mehr im Sortiment. Kein Kauflink.",
+    "alternatives": ["gamesir-x2s", "trust-gxt-rgb", "gamesir-x5-lite"],
+    "faqs": [
+      ["Funktioniert der iPega PG-9083S mit iOS?", "Nur eingeschränkt: Der Controller war primär für Android ausgelegt, iOS-Unterstützung hing an bestimmten Systemversionen und Modi. Für iPhones empfehlen wir stattdessen ein Modell mit offiziellem iOS-Support."],
+      ["Warum führt smartphone-controller.com keine iPega-Controller mehr?", "Eine Sortimentsentscheidung: Verfügbarkeit und Software-Pflege der Marke waren zuletzt nicht mehr verlässlich genug für eine Kaufempfehlung. Die Alternativen im Sortiment decken dieselben Einsatzzwecke mit aktueller Technik ab."]
+    ]
+  },
+  {
+    "slug": "ipega-pg-9023",
+    "brand": "iPega",
+    "name": "PG-9023",
+    "keyword": "ipega 9023",
+    "claim": "Der Teleskop-Urahn: Bluetooth-Controller mit extrem weiter Spannweite, laut Hersteller bis zu 10-Zoll-Tablets.",
+    "verdict": "Der iPega PG-9023 ist einer der Urahnen der Teleskop-Controller: Seine Halterung spannt laut Hersteller sogar Tablets bis etwa 10 Zoll ein. Als Kauf ist er 2026 nicht mehr sinnvoll, die Technik stammt aus der Mitte der 2010er und die Software-Unterstützung ist Geschichte.",
+    "desc": [
+      "Als der PG-9023 erschien, war die Idee radikal: ein Bluetooth-Gamepad, das sich so weit auseinanderziehen lässt, dass ein ganzes Tablet hineinpasst. Die Verarbeitung war zweckmäßig, die Sticks und Tasten einfache Standardware, und die Kopplung lief über verschiedene Modi für Android und PC. Viele Spiele brauchten damals zusätzlich Mapping-Tools, was die Einrichtung fummelig machte.",
+      "Heute scheitert das Modell an moderner Software: Aktuelle Android-Versionen und Spiele sind auf die alten Modi nicht mehr ausgelegt. Wer ein Tablet mit Controller nutzen will, kombiniert besser ein aktuelles Bluetooth-Gamepad mit Ständer, unsere Tablet-Controller-Übersicht zeigt die Optionen. Für Smartphones sind der GameSir X2s oder der Trust GXT 735G Mylox die zeitgemäßen Teleskop-Nachfolger."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth"],
+      ["Plattformen (Herstellerangabe)", "Android, PC"],
+      ["Besonderheit", "Spannweite laut Hersteller bis ca. 10-Zoll-Tablets"],
+      ["Sticks/Tasten", "Potentiometer-Sticks, Membran-Tasten"],
+      ["Erscheinungsjahr", "ca. 2015"]
+    ],
+    "availability": "Der PG-9023 ist seit Jahren nicht mehr regulär im Handel; iPega führen wir nicht mehr im Sortiment. Kein Kauflink.",
+    "alternatives": ["gamesir-x2s", "trust-gxt-rgb", "hellcool-controller"],
+    "faqs": [
+      ["Passt wirklich ein Tablet in den iPega PG-9023?", "Laut Hersteller ja, bis etwa 10 Zoll, das war sein Alleinstellungsmerkmal. Für heutige Tablets ist die Kombination aus aktuellem Bluetooth-Gamepad und Ständer aber die praktischere und stabilere Lösung."],
+      ["Lohnt sich der PG-9023 im Jahr 2026 noch?", "Nein. Aktuelle Android-Versionen und Spiele unterstützen die alten Kopplungs-Modi kaum noch, und Ersatzteile oder Firmware-Pflege gibt es nicht mehr. Ein moderner Teleskop-Controller ist die bessere Wahl."]
+    ]
+  },
+  {
+    "slug": "mocute-050",
+    "brand": "Mocute",
+    "name": "050",
+    "keyword": "mocute 050",
+    "claim": "Mini-Bluetooth-Controller im Fernbedienungs-Format, einst als VR- und Handy-Begleiter beliebt. Heute klar überholt.",
+    "verdict": "Der Mocute 050 ist ein winziger Bluetooth-Controller im Fernbedienungs-Format, der vor allem über den Preis und die VR-Welle bekannt wurde. Für aktuelle Spiele und Smartphones ist er praktisch unbrauchbar, wir raten vom Kauf ab und zeigen, was das kleine Geld heute besser kann.",
+    "desc": [
+      "Mit einem Stick, wenigen Tasten und Einhand-Format war der 050 nie ein vollwertiges Gamepad, sondern ein Kompromiss für VR-Brillen-Menüs, E-Book-Blättern und einfache Spiele. Die Kopplung lief über mehrere Bluetooth-Modi, viele Spiele funktionierten nur über Mapping-Apps, und genau diese Fummelei ist mit modernen Android- und iOS-Versionen noch schlimmer geworden.",
+      "Ehrliche Einordnung: Auch wenn der 050 gebraucht für ein paar Euro zu haben ist, kauft man damit 2026 vor allem Frust. Schon knapp über 20 Euro liegt mit dem 8BitDo Ultimate 2C ein vollwertiges, aktuelles Gamepad im Sortiment; der Mars Gaming MGP-BT2 und der HELLCOOL Handheld Controller bedienen das Budget-Segment mit echter Spiele-Tauglichkeit."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth"],
+      ["Plattformen (Herstellerangabe)", "Android, iOS (jeweils nur eingeschränkt, je nach Modus)"],
+      ["Bauform", "Einhand-Mini-Controller mit einem Stick"],
+      ["Besonderheit", "Mehrere Kopplungs-Modi, oft nur mit Mapping-Apps nutzbar"],
+      ["Erscheinungsjahr", "ca. 2016"]
+    ],
+    "availability": "Der Mocute 050 ist bei Amazon.de nicht mehr regulär gelistet; die Marke führen wir nicht im Sortiment. Kein Kauflink, keine Kaufempfehlung.",
+    "alternatives": ["marsgaming-mgp-bt2", "hellcool-controller", "8bitdo-ultimate-2c"],
+    "faqs": [
+      ["Funktioniert der Mocute 050 mit aktuellen Smartphones?", "Meist nur eingeschränkt: Die alten Kopplungs-Modi und Mapping-Apps vertragen sich schlecht mit aktuellen Android- und iOS-Versionen. Verbindungsabbrüche und nicht erkannte Eingaben sind typisch."],
+      ["Was ist die beste Alternative zum Mocute 050?", "Im gleichen Preisbereich das 8BitDo Ultimate 2C Wireless (rund 20 Euro): ein vollwertiges, aktuelles Gamepad statt eines Einhand-Kompromisses. Mit Handy-Halterung ist der Mars Gaming MGP-BT2 die passende Budget-Option."]
+    ]
+  },
+  {
+    "slug": "razer-kishi-v1",
+    "brand": "Razer",
+    "name": "Kishi (1. Generation)",
+    "keyword": "razer kishi v1",
+    "claim": "Der erste Razer Kishi (2020): faltbarer Teleskop-Controller mit USB-C- und Lightning-Variante. Von V2 und V3 abgelöst.",
+    "verdict": "Der erste Razer Kishi machte 2020 die Teleskop-Klasse massentauglich: direkt angesteckt statt Bluetooth, mit Pass-Through-Laden und faltbarem Rücken. Gegen die heutigen Nachfolger wirkt er wacklig und technisch überholt, bleibt aber der meistgesuchte Name der Serie.",
+    "desc": [
+      "Der Kishi der ersten Generation spannte das Handy in eine faltbare Konstruktion, die sich für den Transport klein zusammenlegen ließ. Es gab eine USB-C-Variante für Android und eine separate Lightning-Variante fürs iPhone, beide mit Pass-Through-Laden. Schwächen zeigte vor allem die Mechanik: Der faltbare Rücken stand stabilem Halt im Weg, und die Membran-Tasten samt Potentiometer-Sticks waren solide, aber nicht herausragend.",
+      "Razer hat die Serie seitdem zweimal grundlegend erneuert. Der aktuelle Kishi V3 setzt auf ein starres, stabiles Chassis, TMR-Sticks und die Nexus-App; der Kishi V3 Pro erweitert das Konzept in Richtung Profi-Ausstattung. Beide haben wir ausführlich getestet. Wer heute nach dem Kishi V1 sucht, sollte direkt dort weiterlesen."
+    ],
+    "specs": [
+      ["Verbindung", "USB-C (Android-Variante) oder Lightning (iPhone-Variante)"],
+      ["Plattformen (Herstellerangabe)", "Android bzw. iPhone, je nach Variante"],
+      ["Besonderheit", "Faltbare Rückenkonstruktion, Pass-Through-Laden"],
+      ["Sticks/Tasten", "Potentiometer-Sticks, Membran-Tasten"],
+      ["Erscheinungsjahr", "2020"]
+    ],
+    "availability": "Der Kishi der ersten Generation wird von Razer nicht mehr verkauft und taucht bei Amazon.de höchstens als Restposten oder gebraucht auf. Wir führen ihn ohne Kauflink.",
+    "alternatives": ["razer-kishi-v3", "razer-kishi-v3-pro", "gamesir-g8-galileo"],
+    "faqs": [
+      ["Passt der Razer Kishi V1 ans iPhone 15 oder 16?", "Nein. Die iPhone-Variante des V1 nutzt Lightning, iPhone 15 und neuer haben aber USB-C. Für aktuelle iPhones ist der Kishi V3 die passende Option."],
+      ["Was ist der Unterschied zwischen Kishi V1 und Kishi V3?", "Der V3 hat ein starres, deutlich stabileres Chassis statt der faltbaren Konstruktion, langlebige TMR-Sticks statt Potentiometern und die Nexus-App mit Mapping-Funktionen. Unser Kishi-V3-Test hat die Details."]
+    ]
+  },
+  {
+    "slug": "gamesir-g4s",
+    "brand": "GameSir",
+    "name": "G4s",
+    "keyword": "gamesir g4s",
+    "claim": "Bluetooth-Gamepad-Klassiker von 2016 mit 2,4-GHz-Dongle, Vibration und abnehmbarer Handy-Halterung.",
+    "verdict": "Der GameSir G4s war Mitte der 2010er eines der beliebtesten Android-Gamepads: Bluetooth plus 2,4-GHz-Dongle für den PC, Vibration, Turbo und eine abnehmbare Handy-Halterung. Ein Stück Mobile-Gaming-Geschichte, aber 2026 kein sinnvoller Kauf mehr.",
+    "desc": [
+      "Der G4s deckte damals ungewöhnlich viel ab: Am Android-Handy lief er per Bluetooth mit Halterung, am PC über den mitgelieferten 2,4-GHz-Empfänger, dazu kamen Vibrationsmotoren, Turbo-Funktion und ein wertiges Gehäuse mit griffiger Rückseite. Genau diese Vielseitigkeit machte ihn zum Dauerbrenner in Empfehlungslisten seiner Zeit.",
+      "Inzwischen ist die Firmware- und App-Pflege längst eingestellt, und aktuelle Spiele erwarten moderne Controller-Profile. Die Bluetooth-Kopplung an aktuellen Android-Geräten klappt oft noch, einzelne Tasten oder Modi aber nicht mehr zuverlässig. Als moderne Erben im Sortiment: der GameSir X2s für die Teleskop-Richtung, der ShanWan Bluetooth Controller für das klassische Gamepad-plus-Halterung-Konzept und das 8BitDo Ultimate 2C als Preistipp."
+    ],
+    "specs": [
+      ["Verbindung", "Bluetooth; am PC 2,4-GHz-Funk per Dongle"],
+      ["Plattformen (Herstellerangabe)", "Android, PC, Smart-TV"],
+      ["Besonderheit", "Abnehmbare Handy-Halterung, Vibration, Turbo"],
+      ["Sticks/Tasten", "Potentiometer-Sticks, Membran-Tasten"],
+      ["Erscheinungsjahr", "ca. 2016"]
+    ],
+    "availability": "Der G4s wird nicht mehr produziert und ist bei Amazon.de allenfalls als Restbestand oder gebraucht zu finden. Wir führen ihn ohne Kauflink.",
+    "alternatives": ["gamesir-x2s", "shanwan-bt-white", "8bitdo-ultimate-2c"],
+    "faqs": [
+      ["Funktioniert der GameSir G4s noch mit aktuellen Android-Handys?", "Die Bluetooth-Kopplung gelingt häufig noch, aber Firmware und App werden nicht mehr gepflegt, und moderne Spiele erwarten aktuelle Controller-Profile. Einzelne Tasten oder Modi funktionieren daher oft nicht mehr zuverlässig."],
+      ["Was ist der moderne Nachfolger des G4s?", "Einen direkten Nachfolger gibt es nicht. GameSir hat den Fokus auf Teleskop-Controller verlagert: Der X2s ist der geistige Erbe im Sortiment, das klassische Gamepad-plus-Halterung-Konzept übernimmt heute z. B. der ShanWan Bluetooth Controller."]
+    ]
+  }
+]

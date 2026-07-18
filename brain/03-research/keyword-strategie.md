@@ -17,3 +17,18 @@ Rankende Queries: handy controller android test (1 Klick!) · controller finden 
 2. Neue Seiten beginnen im Longtail; Mittelschicht-Angriffe nur mit interner Verlinkung aus rankenden Blog-Artikeln.
 3. "test"-Modifier ist unser Muster: Deutsche suchen "X test" — Reviews tragen es im Title.
 4. Handy-Kühler-Cluster ist schwach (Datenlage) — kein weiterer Ausbau ohne GSC-Signal.
+
+## Longtail Batch 1 — Keyword-Vergabe (18.07.2026, Block B umgesetzt)
+| Keyword | Zielseite |
+|---|---|
+| 8bitdo lite 2 (~500/Mon.!) | /produkte/8bitdo-lite-2/ |
+| 8bitdo lite se | /produkte/8bitdo-lite-se/ |
+| gamesir x2 | /produkte/gamesir-x2/ |
+| gamesir x3 | /produkte/gamesir-x3/ |
+| gamesir t4 pro | /produkte/gamesir-t4-pro/ |
+| ipega 9083s | /produkte/ipega-pg-9083s/ |
+| ipega 9023 | /produkte/ipega-pg-9023/ |
+| mocute 050 | /produkte/mocute-050/ |
+| razer kishi v1 | /produkte/razer-kishi-v1/ |
+| gamesir g4s | /produkte/gamesir-g4s/ |
+Abgrenzung: "gamesir x2s", "gamesir x3 pro", "razer kishi v3" bleiben bei den Review-Seiten (keine Doppelbelegung; Altmodell-Seiten zielen exakt auf die Altmodell-Begriffe und verlinken auf die Nachfolger-Reviews).

@@ -31,10 +31,11 @@
 **Vorlage:** blog/cloud-gaming-smartphone/.
 **Gesetze:** §B1, §B4, §B5.
 
-## P-6 · Longtail-Datenblatt-Pattern (geplant — Spec ausstehend)
+## P-6 · Longtail-Datenblatt-Pattern [bewiesen 18.07.2026]
 **Wann:** Alt-/Budget-Modelle aus dem Longtail-Sheet, oft nicht (mehr) bei Amazon.de kaufbar.
-**Form:** P-2-Template + "Nachfolger/Alternative im Sortiment"-Box (2–3 Karten auf kaufbare Produkte) statt/neben CTA. Ehrlicher Verfügbarkeits-Hinweis. Ziel: Traffic-Fänger → Weiterleitung auf Geld-Seiten.
-**Status:** wird mit SPEC-longtail-batch1 real.
+**Form:** gen_longtail.py + assets/data/longtail.json (getrennt von products.json, §A1): P-2-Template, aber Kaufbox → Verfügbarkeits-Box (ehrlich, kein Kauflink), Preiszeile → Status-Zeile, 2-3 kaufbare Alternativen als related-cards + "Beste Alternative"-CTA. Product-Schema NUR belegte Felder (kein Preis/Rating/Bild). Generator-Asserts: FAQ-Schema == sichtbarer Text, ≥2 kaufbare Links, Title ≤62.
+**Vorlage:** /produkte/8bitdo-lite-2/ (Top-Volumen) · /produkte/mocute-050/ (ehrliche Abratung).
+**Gesetze:** §A5, §A6, §B1, §B3.
 
 ## P-7 · Verify-Suite-Pattern
 **Wann:** Vor jedem "fertig", nach jedem Umbau.
