@@ -48,6 +48,21 @@ def related(prod):
 def detail_url(p):
     return p['detail'] if p['detail'] else f"/produkte/{p['slug']}/"
 
+ALT_PLATFORM = {'Universal': 'für Android & iPhone', 'Android': 'für Android', 'iPhone': 'fürs iPhone',
+                'Tablet': 'für Tablet & Smartphone', 'Mini-Gamepad': 'für unterwegs'}
+
+def alt_text(prod, full_name):
+    """Beschreibender, keyword-relevanter Alt-Text: Produktname + Merkmal + Kontext (§ Block A4)."""
+    if prod['type'] == 'controller':
+        suffix = ALT_PLATFORM.get(prod.get('platformLabel', ''), 'für Smartphones')
+        if 'controller' in full_name.lower():
+            return f"{full_name} {suffix}"
+        return f"{full_name}, Smartphone-Controller {suffix}"
+    pl = prod.get('platformLabel', '')
+    if pl and pl.lower() not in full_name.lower():
+        return f"{full_name}, {pl} für Mobile Gaming"
+    return f"{full_name}, Gaming-Zubehör für Smartphones"
+
 def build(prod, c):
     slug = prod['slug']
     url = f"{DOMAIN}/produkte/{slug}/"
@@ -234,7 +249,7 @@ def build(prod, c):
 
         <aside class="sticky-cta" aria-label="Preis und Kauf">
           <div class="cta-box" data-product="{esc(slug)}">
-            <img class="cta-photo" src="{esc(img)}" alt="{esc(full_name)}" loading="lazy" onerror="this.remove()">
+            <img class="cta-photo" src="{esc(img)}" alt="{esc(alt_text(prod, full_name))}" loading="lazy" onerror="this.remove()">
             <div class="cta-name">{esc(full_name)}</div>
             <div class="cta-brand">{esc(prod['brand'])}</div>
             <div class="cta-price">{esc(prod['price'] or 'Preis auf Amazon')}</div>
