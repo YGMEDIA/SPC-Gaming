@@ -25,3 +25,13 @@ Diagnose vor Fix: Pages-Konfiguration per `gh api repos/{owner}/{repo}/pages` (b
 1. **Doku kann lügen, das Repo nie:** "Actions-Deploy gebaut" stand im Brain, aber .github/ hatte null Git-Historie. Vor jedem Deploy-relevanten Schritt den Ist-Zustand maschinell prüfen (gh api, git log), nicht der Doku glauben.
 2. **Die Web-Upload-Fehlerklasse ist größer als gedacht:** Sie frisst Dotfiles UND Dot-Ordner (.nojekyll, .github/) und belebt Gelöschtes wieder (ratgeber/, Root-STATUS.md). Mit git-only-Deploys ist die Klasse tot.
 3. **Erst Konfiguration, dann Push:** Die Pages-Source-Umstellung MUSS vor dem ersten Push passieren, sonst veröffentlicht der Legacy-Build das, was der Workflow gerade ausschließen soll.
+
+---
+
+## Nachtrag (gleiche Session, spät)
+
+**Was:** Yasins Anweisung nach dem ersten Permission-Dialog-Screenshot: keine Genehmigungsanfragen mehr. settings.json auf `defaultMode: bypassPermissions` umgestellt + breite Allow-Regeln (Bash/Read/Edit/Write/WebFetch/WebSearch) als Fallback; deny bleibt `rm -rf` + `sudo`; `skipDangerousModePermissionPrompt: true` gegen den einmaligen Warndialog. Zusätzlich neue **Kontext-Schnitt-Regel** in CLAUDE.md (beide) + Constitution Teil D (v1.2): Kontextfenster selbst überwachen, bei absehbarer Erschöpfung das laufende Teilstück fertigstellen (verify grün, Commit+Push, Doku aktuell), Folgeschritt in STATUS präzisieren, sauberer Schnitt — nie halbfertig, nie uncommittet über Session-Grenzen.
+
+**Verify:** settings.json JSON-valide · verify.py grün · Commit + Push autonom.
+
+**Gelernt:** Die Permission-Dialoge dieser Session kamen daher, dass settings.json erst beim Session-Start geladen wird — die neuen Regeln greifen ab der NÄCHSTEN Session vollständig.

@@ -77,6 +77,8 @@ Impressum/Datenschutz sind fachlich solide aufgebaut, die juristische Prüfung s
 - **Autonomes Deploy (seit 18.07.2026):** Claude Code committet und pusht selbstständig; Push auf main löst den Live-Deploy aus (GitHub Actions). Hartes Maschinen-Gate: verify.py MUSS grün sein vor jedem Commit — ein roter Stand wird niemals gepusht. Eine aussagekräftige Commit-Message pro abgeschlossenem Arbeitspaket. Yasin hat jederzeit Rollback-Recht via `git revert`.
 - **Verbleibende Menschen-Gates:** Geld-/ASIN-Änderungen ohne Screenshot-Beleg · Änderungen an `.github/workflows/` · Änderungen an `.claude/settings.json`. Stoppen, auf "braucht Yasin"-Liste (LOOP-STATE), fragen. (Deploy, Seiten-Löschung und >10-Dateien-Gate sind seit 18.07.2026 durch das verify-Gate ersetzt.)
 - **Macher ≠ Prüfer:** Reviews größerer Umbauten in frischem Kontext.
+- **Keine Permission-Prompts (seit 18.07.2026):** settings.json genehmigt alle Werkzeuge autonom (bypassPermissions); harte technische Ausnahmen bleiben `rm -rf` und `sudo` (deny). Die inhaltlichen Menschen-Gates aus dieser Constitution gelten unabhängig davon auf Verhaltensebene weiter.
+- **Kontext-Schnitt (seit 18.07.2026):** Claude Code überwacht sein Kontextfenster selbst. Bei absehbarer Erschöpfung wird KEINE neue Baustelle mehr geöffnet: das laufende Teilstück wird fertiggestellt (verify grün, Commit + Push, STATUS/Protokoll/LOOP-STATE aktuell), der Folgeschritt präzise in STATUS hinterlegt, dann sauberer Session-Schnitt. Kein halbfertiges Feature, kein uncommitteter Stand über Session-Grenzen.
 - **str_replace mit vollem Kontext**, mehrzeilige HTML-Blöcke nie per sed. Sitemap-Änderungen immer mit XML-Validierung.
 - **Komplett-Läufe der Generatoren** nach products.json-Änderungen (gen_pages → gen_hubs → verify), nie Teilstände committen.
 - **Rückfluss:** Neues Muster oder neue Lehre → Patterns/Constitution ergänzen, im Änderungslog datieren.
@@ -95,4 +97,5 @@ Impressum/Datenschutz sind fachlich solide aufgebaut, die juristische Prüfung s
 | Datum | Änderung |
 |---|---|
 | 2026-07-18 | v1.0 — Constitution aus Projekthistorie extrahiert; alle A/B/C-Gesetze durch Sessions bewiesen oder als Befund markiert. |
+| 2026-07-18 | v1.2 — Zwei Betriebsregeln ergänzt (Yasins Anweisung): Keine Permission-Prompts mehr (settings.json bypassPermissions, deny nur rm -rf/sudo) + Kontext-Schnitt-Regel (Session endet nur an sauberen Schnitten: Teilstück fertig, grün, gepusht, Folgeschritt in STATUS). |
 | 2026-07-18 | v1.1 — Teil D auf Vollautonomie umgestellt (Yasins Entscheidung): verify.py als hartes Maschinen-Gate ersetzt das Deploy-Menschen-Gate; Claude Code committet/pusht selbst; Rollback-Recht Yasin via git revert. Namenskorrektur: Projektinhaber heißt Yasin; der bisher im Brain verwendete Rufname war ein Transkriptionsfehler und wurde projektweit ersetzt. |

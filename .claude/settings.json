@@ -1,7 +1,13 @@
 {
   "permissions": {
-    "defaultMode": "acceptEdits",
+    "defaultMode": "bypassPermissions",
     "allow": [
+      "Bash",
+      "Read",
+      "Edit",
+      "Write",
+      "WebFetch",
+      "WebSearch",
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
@@ -12,5 +18,6 @@
       "Bash(rm -rf:*)",
       "Bash(sudo:*)"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }

@@ -17,11 +17,11 @@
 7 Klicks · 348 Impressionen (Verzehnfachung in einer Woche) · Ø Position 18,3 (von 23 kommend) · CTR 2 %.
 **Kern-Erkenntnis:** ALLE Klicks kommen über Blog-Artikel ("Welche Spiele unterstützen Controller" 2×, iPhone-USB-C, Hall-Effect) → Blog-first-Vererbung ist bewiesen (§B4), Blog-Ausbau hat Priorität. Top-Impressions-Begriff ohne optimierte Zielseite: "controller finden" (9) → Block A.
 
-**Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A umgesetzt (18.07., Deploy ausstehend)**, Block B folgt in eigener Session (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
+**Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A umgesetzt + deployed (18.07.)**, Block B folgt in eigener Session (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
 
 **Brain:** Am 18.07. aufgesetzt (Framework, Constitution, Patterns, Loops, Specs, verify.py, CLAUDE.md). Ersetzt das ZIP-/STATUS-Handoff-Verfahren. Stand-Korrektur (Repo gewinnt): Der im Brain-Setup dokumentierte Actions-Deploy war NIE im Repo (.github/ fehlte komplett) — nachgeholt am 18.07. abends samt Pages-Umstellung.
 
-**Arbeitsmodell (seit 18.07. abends, Yasins Entscheidung):** VOLLAUTONOMIE. Claude Code committet und pusht selbst; Push auf main deployt automatisch via GitHub Actions. Hartes Maschinen-Gate: verify.py grün vor jedem Commit, nie einen roten Stand pushen. Menschen-Gates nur noch: Geld-/ASIN-Änderungen ohne Screenshot-Beleg · .github/workflows · .claude/settings.json. Yasin: Live-Stichproben + Rollback via git revert.
+**Arbeitsmodell (seit 18.07. abends, Yasins Entscheidung):** VOLLAUTONOMIE. Claude Code committet und pusht selbst; Push auf main deployt automatisch via GitHub Actions. Hartes Maschinen-Gate: verify.py grün vor jedem Commit, nie einen roten Stand pushen. Menschen-Gates nur noch: Geld-/ASIN-Änderungen ohne Screenshot-Beleg · .github/workflows · .claude/settings.json. Yasin: Live-Stichproben + Rollback via git revert. Nachtrag (18.07. spät): Permission-Prompts komplett abgeschafft (settings.json: bypassPermissions, deny nur rm -rf/sudo) + Kontext-Schnitt-Regel etabliert (Constitution v1.2): Sessions enden nur an sauberen Schnitten — Teilstück fertig, verify grün, gepusht, Folgeschritt in STATUS.
 
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
@@ -32,7 +32,7 @@
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A umgesetzt 18.07., B wartet auf eigene Session |
 | Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: 8 Blog-Ausbauten + CoD-FAQ-Fix · preis-loop: 9 Screenshot-ASINs + 12 Divergenzen + Voll-Abgleich August |
 | Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A umgesetzt, B freigegeben/wartet, C–H danach |
-| Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A (beide 18.07.) |
+| Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
 Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos landen zuerst hier in STATUS (Braucht Yasin / Befund / Merkposten) oder in einer Loop-Warteschlange — nie in Chat-Verläufen.
 
 ---
@@ -41,9 +41,9 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | Befund | Gesetz | Status |
 |---|---|---|
 | **brain/ + Root-STATUS.md + SPC-Gaming-Visuals/ waren LIVE öffentlich** (Pages im Legacy-Modus deployte den ganzen Branch; /brain/STATUS.md lieferte HTTP 200; der dokumentierte Actions-Workflow existierte nie) | §B2 / Governance 5 | **behoben 18.07. abends:** deploy.yml erstellt (Option A), Pages auf GitHub Actions umgestellt, Root-STATUS-Zombie gelöscht, Push + Live-Check /brain/ → 404 |
-| /ratgeber/ lag als Duplikat neben /blog/ live; kehrte per Bulk-Upload (Commit "1.1") ein DRITTES Mal zurück | §B2 | **erneut behoben 18.07. (Block-A-Session)** — Ursache: Deploy per GitHub-Web-Upload. Deploy ausstehend; künftig NUR git push |
-| marken/ipega/ + marken/mocute/ als Zombie-Seiten live (am 08.07. beschlossen gelöscht, per Upload-Deploy zurückgekehrt) | §B2 | **behoben im Brain-Commit** — von verify.py gefunden (Sitemap-Rückabgleich), Deploy ausstehend |
-| .nojekyll war laut Git-Historie NIE committet (Web-Upload nimmt keine Dotfiles) | §B2 | **erneut angelegt 18.07.** — Deploy ausstehend |
+| /ratgeber/ lag als Duplikat neben /blog/ live; kehrte per Bulk-Upload (Commit "1.1") ein DRITTES Mal zurück | §B2 | **behoben + deployed 18.07. abends, live 404-verifiziert** — Ursache war Deploy per GitHub-Web-Upload; künftig NUR git push |
+| marken/ipega/ + marken/mocute/ als Zombie-Seiten live (am 08.07. beschlossen gelöscht, per Upload-Deploy zurückgekehrt) | §B2 | **behoben im Brain-Commit, deployed 18.07. abends** — von verify.py gefunden (Sitemap-Rückabgleich) |
+| .nojekyll war laut Git-Historie NIE committet (Web-Upload nimmt keine Dotfiles) | §B2 | **erneut angelegt + deployed 18.07.** (unter Actions-Deploy ohnehin obsolet, bleibt als Belt-and-Braces) |
 | 12 Preisdivergenzen HTML vs. products.json auf Geld-Seiten (u. a. controller/beste: Backbone One 99 statt 65 €) | §A1 | offen — Warteschlange preis-loop (Liste in LOOP-STATE); in den 3 Block-A-Artikeln bereits gesynct |
 | iOS-Hub-FAQ behauptet, CoD Mobile unterstütze keine Controller — Widerspruch zu blog/welche-spiele-controller (Blog ist korrekt) | §A6 | offen — Warteschlange content-loop (Schema + sichtbarer Text zusammen ändern) |
 | Tracking-Events erreichten GA4 nie (gtag statt dataLayer.push, keine Delegation) | §A8 | behoben 11.07., deployed — **Erfolgskontrolle in GA4-Echtzeit noch offen (Yasin)** |

@@ -28,6 +28,7 @@ Lies gezielt (INDEX → relevante Seite → Links), nie den ganzen Vault (Framew
 Senior-Haltung: Ursache faktisch beweisen (Diagnose vor Fix), klare Anweisung statt Optionsliste, Einwände ernst nehmen. „ok/weiter/passt" = sofort nächster Schritt. Yasin kommuniziert knapp, oft per Sprachnachricht-Transkript.
 Verify-Gate pro Aufgabe: maschinell prüfbar, nie „sieht gut aus". Macher ≠ Prüfer: Review-Läufe in frischem Kontext.
 Nach JEDEM abgeschlossenen Schritt: `brain/STATUS.md` aktualisieren (kompakt; bei Widerspruch gewinnt das Repo) UND einen Protokoll-Eintrag in `brain/05-protokoll/` schreiben (JJJJ-MM-TT-kategorie-thema.md: Was · Wie · Warum so · Verify · Gelernt). Gelerntes → Constitution/Patterns (Rückfluss).
+Kontext-Schnitt-Regel: Beobachte dein Kontextfenster selbst. Wird es knapp, KEINE neue Baustelle mehr aufmachen — das angefangene Teilstück fertig bauen (verify.py grün, Commit + Push, STATUS/Protokoll/LOOP-STATE aktuell), den Folgeschritt präzise in STATUS unter "Nächster geplanter Schritt" hinterlegen und die Session sauber beenden. Die neue Session liest INDEX → STATUS und macht nahtlos weiter. Nie mitten in einem Feature abbrechen, nie uncommitteten Stand über eine Session-Grenze tragen.
 Loops in `brain/04-loops/` laufen über `LOOP-STATE.md` (erledigt/blockiert/braucht Yasin) — zuerst lesen, erledigte Arbeit nie wiederholen, max. 3 Versuche pro Item.
 
 ## Werkzeuge
