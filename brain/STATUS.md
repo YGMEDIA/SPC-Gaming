@@ -30,7 +30,7 @@
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 6 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle, Preisdivergenzen, CoD-FAQ); Brain-Leak 18.07. behoben |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
-| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: 8 Blog-Ausbauten · preis-loop: 9 Screenshot-ASINs + Voll-Abgleich August (CoD-FAQ + 12 Divergenzen erledigt 18.07.) |
+| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: Blog-Ausbauten KOMPLETT (18.07.), nächstes: neue Artikel/Batches nach GSC-Signal · preis-loop: 9 Screenshot-ASINs + Voll-Abgleich August |
 | Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A+B umgesetzt, C–H danach |
 | Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
 Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos landen zuerst hier in STATUS (Braucht Yasin / Befund / Merkposten) oder in einer Loop-Warteschlange — nie in Chat-Verläufen.
@@ -57,7 +57,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 3. **GSC Indexierungs-Screenshot** (Indexierung → Seiten) — die Zahl fehlt uns noch.
 4. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
 5. Zweite anzubindende Domain benennen (neben der .de).
-6. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
+6. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
+7. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
@@ -78,6 +79,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 6. **18.07. abends: Vollautonomie + Namenskorrektur + Leak-Fix (diese Session).** Yasins Entscheidung: Claude Code committet/pusht künftig selbst, verify.py ersetzt als hartes Gate das Deploy-Menschen-Gate (CLAUDE.md, Constitution v1.1 Teil D, Framework v1.1, deploy-loop, settings.json umgestellt). Namenskorrektur projektweit: Projektinhaber heißt Yasin (bisheriger Name war Transkriptionsfehler). Dabei KRITISCHEN Befund gefunden und behoben: brain/ war live öffentlich (Pages Legacy-Modus, Actions-Workflow existierte entgegen Doku nie) — deploy.yml erstellt, Pages per API auf "GitHub Actions" umgestellt, Root-STATUS-Zombie gelöscht, erster autonomer Push. Details: `05-protokoll/2026-07-18-system-vollautonomie.md`.
 
 7. **18.07. spät: Erster voll autonomer Arbeitslauf — Loop-Fixes + Block B (deployed).** Ohne Rückfragen umgesetzt und gepusht: (a) CoD/PUBG-FAQ in iOS- und Android-Hub faktisch korrigiert (Schema + Text + gen_hubs.py synchron; gen_hubs ist NICHT idempotent, deshalb Hand-Sync). (b) 12 Preisdivergenzen auf products.json-Werte gesynct. (c) Block B komplett: 10 Longtail-Datenblätter (P-6) via neuem gen_longtail.py aus longtail.json — ehrliche Verfügbarkeits-Hinweise, Specs als Herstellerangaben gekennzeichnet, KEINE erfundenen Preise/Ratings, je 3 kaufbare Alternativen als Konversionspfad, Sitemap 97 URLs, Keyword-Vergabe dokumentiert. verify GRÜN (98 Seiten, 204 Schemas). Details: `05-protokoll/2026-07-18-content-block-b.md`.
+
+8. **18.07. spät: content-loop Lauf 1 — alle 8 Kurz-Artikel auf P-5 (deployed).** Autonomer Batch auf Yasins Anweisung: usb-c-vs-bluetooth, mobile-gaming-setup, trigger-erlaubt-pubg, was-ist-ein-smartphone-controller, finger-sleeves-sinnvoll, handy-kuehler-sinnvoll, huellen-kompatibilitaet je komplett ausgebaut (Article+FAQPage-Schema, Byline, 4-5 Prosa-Sektionen, 4 FAQs, Related, Finder-CTA), hall-effect nur Prosa-Ergänzung (rankt bereits, A2-Ausbau blieb unangetastet). Dabei 2 weitere Faktenkorrekturen (CoD-Behauptung in usb-c-vs-bluetooth, veraltete Zubehör-Preise in mobile-gaming-setup auf JSON-Werte). Maschinelles Gate: 13/13 Artikel ≥700 W netto, ≥3 Geld-Links, Schema-Spiegel. Sitemap-lastmod aktualisiert. Details: `05-protokoll/2026-07-18-content-blog-ausbau.md`.
 
 ---
 
