@@ -85,6 +85,11 @@
       "android",
       "ios",
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/61NGdqwSQAL._SL1001_.jpg",
+      "https://m.media-amazon.com/images/I/61Vf2qgfuJL._SL1001_.jpg",
+      "https://m.media-amazon.com/images/I/510h0YwaJ6L._SL1001_.jpg"
     ]
   },
   {
@@ -113,6 +118,11 @@
       "android",
       "ios",
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/71lMl0hSizL._SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/71vmGG7eESL._SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/81wu88N835L._SL1500_.jpg"
     ]
   },
   {
@@ -277,6 +287,11 @@
       "android",
       "ios",
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/61gsHwJfWFL._SL1000_.jpg",
+      "https://m.media-amazon.com/images/I/511fKCCB9ZL._SL1000_.jpg",
+      "https://m.media-amazon.com/images/I/61BV4qrHeUL._SL1000_.jpg"
     ]
   },
   {
@@ -367,6 +382,11 @@
       "ios",
       "mini",
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/61fl0fqxpQL._SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/51xbs2OHpeL._SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/51kc-P0oXJL._SL1500_.jpg"
     ]
   },
   {
@@ -428,6 +448,11 @@
       "android",
       "ios",
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/61q8WipizbL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/61tdzyZx0vL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/61990QZud1L._AC_SL1500_.jpg"
     ]
   },
   {
@@ -690,6 +715,11 @@
       "android",
       "ios",
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/51kfXuwFGqL._SL1024_.jpg",
+      "https://m.media-amazon.com/images/I/51a-gylpdvL._SL1024_.jpg",
+      "https://m.media-amazon.com/images/I/510RDHlkTCL._SL1024_.jpg"
     ]
   },
   {
@@ -828,6 +858,11 @@
     ],
     "worksOn": [
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/91vfF14jRFL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/81QlsWJzGtL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/91XpcpciezL._AC_SL1500_.jpg"
     ]
   },
   {
@@ -918,6 +953,11 @@
     ],
     "worksOn": [
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/71BxrgEcG6L._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/817K-6xwMTL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/81TQgjoeV8L._AC_SL1500_.jpg"
     ]
   },
   {
@@ -948,6 +988,11 @@
     ],
     "worksOn": [
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/71jXJLn0QoL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/61Yfve1cZlL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/61vonrymF0L._AC_SL1500_.jpg"
     ]
   },
   {
@@ -978,6 +1023,11 @@
     ],
     "worksOn": [
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/81OxG9q2VDL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/811IXiwk35L._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/81iJ4efC0iL._AC_SL1500_.jpg"
     ]
   },
   {
@@ -1008,6 +1058,11 @@
     ],
     "worksOn": [
       "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/61LY-tkSPWL._AC_SL1001_.jpg",
+      "https://m.media-amazon.com/images/I/711WE09JF5L._AC_SL1001_.jpg",
+      "https://m.media-amazon.com/images/I/51xqXXb6TEL._AC_SL1001_.jpg"
     ]
   },
   {

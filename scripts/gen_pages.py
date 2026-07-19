@@ -73,6 +73,7 @@ def build(prod, c):
     hub_url, hub_label = PLATFORM_HUB.get(prod['platform'], (typ_url, typ_label))
     img = prod.get('img') or f"{DOMAIN}/assets/img/og-default.jpg"
     if img.startswith('/'): img = DOMAIN + img
+    gallery = [u for u in (prod.get('gallery') or []) if u and u != img]
 
     title = f"{full_name} — Kurzcheck & Preis | smartphone-controller.com"
     if len(title) > 68:
@@ -83,7 +84,7 @@ def build(prod, c):
     schema_prod = {
         "@context": "https://schema.org", "@type": "Product",
         "name": full_name,
-        "image": img,
+        "image": [img] + gallery if gallery else img,
         "description": c['verdict'],
         "brand": {"@type": "Brand", "name": prod['brand']},
         "url": url,
@@ -122,6 +123,14 @@ def build(prod, c):
         f'<div class="faq-item"><h3 class="faq-q">{esc(q)}</h3><p class="faq-a">{esc(a)}</p></div>'
         for q, a in c.get('faqs', []))
     faq_section = f'<hr class="divider">\n<h2>Häufige Fragen</h2>\n<div class="faq-list">{faq_html}</div>' if faq_html else ''
+
+    gallery_section = ''
+    if gallery:
+        figs = '\n'.join(
+            f'<figure class="gallery-item"><img src="{esc(u)}" alt="{esc(full_name)}, Produktansicht {i + 2}" '
+            f'loading="lazy" onerror="this.closest(\'figure\').remove()"></figure>'
+            for i, u in enumerate(gallery))
+        gallery_section = f'<h2>Produktbilder</h2>\n<div class="gallery-grid">\n{figs}\n</div>'
 
     rel_cards = ''
     for r in related(prod):
@@ -193,6 +202,9 @@ def build(prod, c):
 .faq-item:last-child{{border-bottom:none}}
 .faq-q{{font-size:16px;font-weight:700;margin-bottom:8px}}
 .faq-a{{font-size:14px;color:var(--ink-soft);line-height:1.6}}
+.gallery-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:16px 0}}
+.gallery-item{{margin:0;border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;padding:10px}}
+.gallery-item img{{width:100%;height:170px;object-fit:contain;display:block}}
 .divider{{border:none;border-top:1px solid var(--line);margin:32px 0}}
 .related-card{{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 16px;background:var(--surface);transition:box-shadow .15s,border-color .15s}}
 .related-card:hover{{box-shadow:var(--shadow-md);border-color:var(--blue-dim)}}
@@ -232,6 +244,8 @@ def build(prod, c):
             {specs_rows}
           </table>
 
+          {gallery_section}
+
           <h2>Stärken & Schwächen</h2>
           <div class="pros-cons-grid">
             <div class="pros-box"><h3>Stärken</h3><ul>{pros}</ul></div>
@@ -269,9 +283,20 @@ def build(prod, c):
 </body></html>'''
 
 # ---- Erzeugen ----
+# Normalmodus: nur Produkte OHNE detail (Erstanlage).
+# --regen [slug ...]: bestehende /produkte/-Seiten neu bauen (alle oder nur die genannten);
+# Review-Seiten (detail außerhalb /produkte/) werden NIE angefasst.
+import sys
+regen = '--regen' in sys.argv
+regen_slugs = {a for a in sys.argv[1:] if not a.startswith('-')}
 created = []
 for prod in items:
-    if prod['detail']:
+    if regen:
+        if not (prod.get('detail') or '').startswith('/produkte/'):
+            continue
+        if regen_slugs and prod['slug'] not in regen_slugs:
+            continue
+    elif prod['detail']:
         continue
     c = CONTENT.get(prod['slug'])
     if not c:
@@ -283,5 +308,6 @@ for prod in items:
     created.append(prod['slug'])
 
 json.dump(items, open(f'{ROOT}/assets/data/products.json', 'w'), ensure_ascii=False, indent=2)
-print(f"✓ {len(created)} Detailseiten erzeugt:")
+mode = 'regeneriert' if regen else 'erzeugt'
+print(f"✓ {len(created)} Detailseiten {mode}:")
 for s in created: print('  /produkte/' + s + '/')

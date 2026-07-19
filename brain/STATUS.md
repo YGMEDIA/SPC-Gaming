@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 5 Punkte (GSC-Paket ~26.07., Autoren-Identität, Galerie-Bilder, Rich-Results, Key-Visual Marken-Vergleich) |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 4 aktive Punkte (GSC-Paket ~26.07., Autoren-Identität, Rich-Results, Key-Visual Marken-Vergleich); Galerie-URLs seit 19.07. autonom via Chrome |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 6 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle, Preisdivergenzen, CoD-FAQ); Brain-Leak 18.07. behoben |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
@@ -54,7 +54,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 ## Braucht Yasin (Entscheidungen & Handgriffe)
 1. **Nächstes GSC-Paket ~26.07.** (wöchentlich): Leistung 7 Tage + Indexierung → Seiten mit FRISCHEM Datenstand. Paket 1 komplett geliefert 19.07. ✓ (inkl. Indexierungs-Baseline 53/65, Stand 10.07.).
 2. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
-3. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
+3. **Mehrbild-Galerien (Block H2): Handgriff entfällt** — Beschaffung läuft seit 19.07. autonom über deine Chrome-Extension (P-9). Dein einziger Beitrag: Chrome offen + Extension verbunden lassen, wenn ich Batch 2/3 ziehe.
 4. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
 5. **Key-Visual für den neuen Marken-Vergleich** (/blog/gamesir-oder-backbone/, aktuell SVG-Platzhalter): Bild generieren mit Prompt "Zwei Smartphone-Gaming-Controller liegen einander gegenüber auf dunkler navy-blauer Fläche, der linke in hellem Weiß-Silber, der rechte in kräftigem Blau, zwischen ihnen ein feiner blauer Energie-Funke, dramatisches seitliches Licht, Produktfotografie, 16:9" → Download slug-benannt (gamesir-oder-backbone), Claude Code baut ein (bewiesener Workflow vom 19.07.).
 
@@ -94,11 +94,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 15. **19.07. Statement-Bänder auf 3 Geld-Seiten (Wachstums-Recherche S2, deployed).** Je ein Navy-Statement-Band (emo-Muster Startseite) als Abschluss-Sektion auf /controller/beste/ (Test-Philosophie + /redaktion/-Link), /controller/ios/ ("Dein iPhone ist eine Konsole", USB-C/Pass-Through-These, G8) und /controller/android/ (Preis-Leistung "20-Euro-Gamepad bis 80-Euro-Testsieger", X5 Lite). CSS zentral in style.css, Bänder außerhalb aller gen_hubs-Muster (Generator unangetastet, nicht idempotent), rein statisch, Browser-verifiziert. Details: `05-protokoll/2026-07-19-dev-statement-baender-hubs.md`.
 
+16. **19.07. Block H2 gestartet: Galerie-Beschaffung via Chrome + gen_pages-Galerie (P-9 neu, deployed).** Yasins Chat-Delegation umgesetzt: Amazon-hiRes-URLs erstmals autonom über seine Chrome-Extension gezogen (Amazon blockt nur programmatische Zugriffe, der echte Browser kommt durch; CDN liefert frei). Batch 1: 11 Produkte × 3 validierte Bilder als gallery-Feld in products.json, gen_pages.py um Produktbilder-Sektion + Schema-image-Array + --regen-Modus erweitert (Fund: Normalmodus überspringt alle Bestandsprodukte, hätte nie regeneriert), 10 Detailseiten live, Alt-Texte bewusst ohne unbesichtigte Merkmale. Pattern-Katalog v1.1. Warteschlange: Batch 2 (17 GEN-Produkte) + Batch 3 (12 Review-Produkte) + Review-Hand-Einbau. Details: `05-protokoll/2026-07-19-dev-galerie-block-h2.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
+0. Block H2 fortsetzen, wenn Chrome verbunden: Batch 2 (17 restliche GEN-Produkte per browser_batch ziehen, gallery-Felder, `gen_pages.py --regen`, P-9) — sonst direkt zu 1.
 1. content-loop: Neuer Blog-Artikel "Hall-Effect vs. TMR" nach P-5 (Kalender-Punkt 1; rankende hall-effect-erklaert-Basis intern verlinken, GSC-Query "hall effekt sticks" 0/2 als Signal; Keyword-Vergabe dokumentieren, Sitemap +1).
 2. content-loop: Kuratierung beste-budget-controller (X2s Bluetooth 53 € verletzt den "unter 50 €"-Rahmen auf #3; Kandidat 8BitDo Ultimate Mobile 45 € — Karten + Editorial + Schema zusammen).
 3. Danach GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).

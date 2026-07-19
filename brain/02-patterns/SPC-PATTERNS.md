@@ -47,11 +47,18 @@
 **Form:** Yasin liefert Screenshot/Export → landet konzeptionell in 03-research/raw/ (Ablage der Kernzahlen als datierte Notiz) → Claude leitet Maßnahmen ab und schreibt die INTERPRETATION getrennt von den Rohzahlen. Rohdaten werden nie überschrieben.
 **Gesetze:** Leitprinzip 1, §A5, Leseregel "Rohquellen unantastbar".
 
+## P-9 · Bilder-Galerie-Pattern [bewiesen 19.07.2026]
+**Wann:** Mehrbild pro Sortiments-Produkt (Block H Teil 2) auf generierten Detailseiten.
+**Beschaffung:** Amazon blockt nur programmatische Zugriffe — Yasins ECHTER Chrome via Claude-in-Chrome-Extension kommt durch. Pro ASIN: /dp/ASIN öffnen, hiRes-URLs per Regex `["']hiRes["']\s*:\s*["'](https:[^"']+)["']` aus den Seiten-Scripts ziehen (dedupe, Original-Reihenfolge; browser_batch bündelt navigate+JS für ~5 Produkte pro Call). Validierung: urls[0] muss idealerweise der products.json-img entsprechen (Methoden-Beweis); jede Galerie-URL per HEAD == 200; Dedupe gegen img über die Bild-ID (Pfadteil vor `._`).
+**Daten:** `gallery`-Feld in products.json = 2–3 Zusatz-URLs (ohne Hauptbild-Duplikat). products.json bleibt einzige Wahrheit (§A1).
+**Bau:** gen_pages.py rendert bei vorhandenem gallery eine "Produktbilder"-Sektion (figure-Grid, lazy, onerror-remove) zwischen Specs und Stärken/Schwächen; Product-Schema `image` wird Array [img, ...gallery]. Regeneration NUR über `gen_pages.py --regen [slugs]` (Normalmodus baut nur detail-lose Produkte; --regen fasst NIE Review-Seiten an). Vor Galerie-Läufen: Drift-Test mit einem galerielosen Produkt (git diff muss leer bis kosmetisch sein).
+**Alt-Texte:** Ohne Bild-Sichtung KEINE erfundenen Merkmale (§A5-Geist): "{Name}, Produktansicht N". Merkmals-Alts nach A4-Formel erst, wenn Bilder gesichtet werden (Review-Galerie-Paket).
+**Vorlage:** /produkte/risoka-trigger/ · Gesetze: §A1, §A2, §A5, §C3.
+
 ---
 
 ## Offen / noch zu definieren
-- Bilder-Galerie-Pattern (Block H — Mehrbild pro Produkt, Alt-Text-Systematik)
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v1.0 · 2026-07-18*
+*SPC Pattern-Katalog v1.1 · 2026-07-19*
