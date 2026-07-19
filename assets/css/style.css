@@ -1240,3 +1240,11 @@ main .container[style*="760px"] a.btn, main .container[style*="760px"] a.btn-pri
 .video-wrap{margin:16px 0;border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;padding:12px}
 .video-wrap video{width:100%;max-height:480px;display:block;border-radius:var(--radius);background:#000}
 .video-note{font-size:12px;color:var(--ink-dim);margin-top:8px;text-align:center}
+
+/* ═══ Autoren-Box (E-E-A-T) — Reviews + /redaktion/ ═══ */
+.author-box{display:flex;gap:14px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--surface);padding:16px 18px;margin:28px 0}
+.author-avatar{width:56px;height:56px;border-radius:50%;flex-shrink:0}
+.author-name{font-weight:800;font-size:15px}
+.author-name a{color:var(--ink)}
+.author-role{font-size:12px;color:var(--ink-dim);margin:2px 0 6px}
+.author-bio{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:0}
