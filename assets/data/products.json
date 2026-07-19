@@ -30,7 +30,12 @@
       "https://m.media-amazon.com/images/I/61r7ixigGEL._AC_SL1001_.jpg",
       "https://m.media-amazon.com/images/I/617c8ylXd9L._AC_SL1001_.jpg",
       "https://m.media-amazon.com/images/I/718O631OqrL._AC_SL1001_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/9db2bb67-ec26-4137-8463-81ed377d598d/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/61bY5F68AeL.SX522_.jpg",
+      "duration": "2:35"
+    }
   },
   {
     "asin": "B0DVLTX8SX",
@@ -67,7 +72,12 @@
       "https://m.media-amazon.com/images/I/81SMi4wbZyL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/81KBPZ-KUEL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/719bZ9LlCNL._AC_SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c6e5e643-9cac-4c2a-b65e-3eecb77c0e1d/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/71H4boidJrL.SX522_.jpg",
+      "duration": "0:42"
+    }
   },
   {
     "asin": "B0C9J45XCV",
@@ -133,7 +143,12 @@
       "https://m.media-amazon.com/images/I/71lMl0hSizL._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/71vmGG7eESL._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/81wu88N835L._SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/54ac7a45-c205-4afe-abad-09a091bf73c3/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51ko95Ijj2L.SX522_.jpg",
+      "duration": "0:25"
+    }
   },
   {
     "asin": "B0FJ1GGMMZ",
@@ -166,7 +181,12 @@
       "https://m.media-amazon.com/images/I/71iE-pGJxgL._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/71jSA1QPiuL._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/71-JijFhfrL._SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/ef216bc6-0fcb-4948-a82b-5be8b3dbba4b/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51AMjikJbeL.SX522_.jpg",
+      "duration": "1:05"
+    }
   },
   {
     "asin": "B0D72WYT8Z",
@@ -317,7 +337,12 @@
       "https://m.media-amazon.com/images/I/61gsHwJfWFL._SL1000_.jpg",
       "https://m.media-amazon.com/images/I/511fKCCB9ZL._SL1000_.jpg",
       "https://m.media-amazon.com/images/I/61BV4qrHeUL._SL1000_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c7450e21-51ee-4b4c-9663-1e50e202114a/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/91y04YV8hDL.SX522_.jpg",
+      "duration": "0:54"
+    }
   },
   {
     "asin": "B0F2JFWSJ5",
@@ -354,7 +379,12 @@
       "https://m.media-amazon.com/images/I/81G-d2mMISL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/614sV+d2dkL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/61qFvyXZH+L._AC_SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/d7ba433f-da80-42fc-b44c-0c871b5e97b7/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51K9HaK1eAL.SX522_.jpg",
+      "duration": "0:39"
+    }
   },
   {
     "asin": "B0FWBYDF8Y",
@@ -493,7 +523,12 @@
       "https://m.media-amazon.com/images/I/61q8WipizbL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/61tdzyZx0vL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/61990QZud1L._AC_SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/e551229e-1f97-4388-ab4e-34f9a966e46a/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/A1wgyxDzsPL.SX522_.jpg",
+      "duration": "0:49"
+    }
   },
   {
     "asin": "B0BRYX6RQR",
@@ -611,7 +646,12 @@
       "https://m.media-amazon.com/images/I/61v9AhmszzL._SL1001_.jpg",
       "https://m.media-amazon.com/images/I/61L6jpM3wfL._SL1001_.jpg",
       "https://m.media-amazon.com/images/I/614m6wduhVL._SL1001_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/becc0aec-fe4f-4dd9-81ee-716d59a67531/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51KKSBVFoJL.SX522_.jpg",
+      "duration": "0:56"
+    }
   },
   {
     "asin": "B0D5GTM2PL",
@@ -739,7 +779,12 @@
       "https://m.media-amazon.com/images/I/7107586t60L._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/716bxQmQRNL._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/71ylOxonU6L._SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/23b722be-1bc0-4e33-a92c-642d39f2b65f/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51ZDHmjdk+L.SX522_.jpg",
+      "duration": "0:34"
+    }
   },
   {
     "asin": "B0D9HGJ1ZB",
@@ -772,7 +817,12 @@
       "https://m.media-amazon.com/images/I/61++vOt1dzL._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/61ETDvZv46L._SL1500_.jpg",
       "https://m.media-amazon.com/images/I/71OQ2tiOXVL._SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/c628d647-ca35-4d38-a2d6-b5ecc8908a67/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51kHT6Qqm8L.SX522_.jpg",
+      "duration": "0:37"
+    }
   },
   {
     "asin": "B0G8JXCNB3",
@@ -805,7 +855,12 @@
       "https://m.media-amazon.com/images/I/51kfXuwFGqL._SL1024_.jpg",
       "https://m.media-amazon.com/images/I/51a-gylpdvL._SL1024_.jpg",
       "https://m.media-amazon.com/images/I/510RDHlkTCL._SL1024_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/e66cfe91-bd30-4a32-b0a4-d587e5a55418/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51FaqzznRGL.SX522_.jpg",
+      "duration": "0:23"
+    }
   },
   {
     "asin": "B0F2JGV9NK",
@@ -834,7 +889,12 @@
       "https://m.media-amazon.com/images/I/71q3BNJD43L._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/81UpCsJqwGL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/71tkdZSzSWL._AC_SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/a40cb261-8b1f-419c-9a84-a002d508ae4d/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51Vut-66orL.SX522_.jpg",
+      "duration": "0:37"
+    }
   },
   {
     "asin": "B0BDXSWZMF",
@@ -968,7 +1028,12 @@
       "https://m.media-amazon.com/images/I/91vfF14jRFL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/81QlsWJzGtL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/91XpcpciezL._AC_SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/44d10396-1d04-4fff-ae5d-f6f59751252e/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51VOI4IfseL.SX522_.jpg",
+      "duration": "0:29"
+    }
   },
   {
     "asin": "B0D9Y9116S",
@@ -1033,7 +1098,12 @@
     ],
     "worksOn": [
       "universal"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/1274a665-43a4-4a6b-9725-e2d56d4a853a/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/91o5MwuxIXL.SX522_.png",
+      "duration": "0:38"
+    }
   },
   {
     "asin": "B0GWL9QDRG",
@@ -1138,7 +1208,12 @@
       "https://m.media-amazon.com/images/I/81OxG9q2VDL._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/811IXiwk35L._AC_SL1500_.jpg",
       "https://m.media-amazon.com/images/I/81iJ4efC0iL._AC_SL1500_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/f034d2a5-a559-493d-859f-e0c3c88d06e6/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/51+YIX-MxhL.SX522_.jpg",
+      "duration": "0:36"
+    }
   },
   {
     "asin": "B0CNPVCJCL",
@@ -1173,7 +1248,12 @@
       "https://m.media-amazon.com/images/I/61LY-tkSPWL._AC_SL1001_.jpg",
       "https://m.media-amazon.com/images/I/711WE09JF5L._AC_SL1001_.jpg",
       "https://m.media-amazon.com/images/I/51xqXXb6TEL._AC_SL1001_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/9e0869aa-6739-4b89-8dc0-351e8281b08c/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/61iNFuph-hL.SX522_.jpg",
+      "duration": "0:42"
+    }
   },
   {
     "asin": "B086JPTLDD",
@@ -1208,7 +1288,12 @@
       "https://m.media-amazon.com/images/I/61XjzG2nwrL._AC_SL1001_.jpg",
       "https://m.media-amazon.com/images/I/61uo6PFunqL._AC_SL1001_.jpg",
       "https://m.media-amazon.com/images/I/61Slvno7J-L._AC_SL1001_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/0d513c3b-ebc3-407e-94a6-f66d68924b77/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/61pw4909-XL.SX522_.jpg",
+      "duration": "1:22"
+    }
   },
   {
     "asin": "B07ZQ9G7ZX",
@@ -1278,7 +1363,12 @@
       "https://m.media-amazon.com/images/I/613kboWBuvL._AC_SL1000_.jpg",
       "https://m.media-amazon.com/images/I/61-HDjhjW7L._AC_SL1000_.jpg",
       "https://m.media-amazon.com/images/I/61ROWFB+cGL._AC_SL1000_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/de4c76df-2e66-40e3-8741-d21ac1ee1e27/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/91hiq6LtlZL.SX522_.jpg",
+      "duration": "0:33"
+    }
   },
   {
     "asin": "B0F3JF5P5J",
@@ -1348,6 +1438,11 @@
       "https://m.media-amazon.com/images/I/61wW2swDgeL._SL1001_.jpg",
       "https://m.media-amazon.com/images/I/61I8Hh+fi5L._SL1001_.jpg",
       "https://m.media-amazon.com/images/I/61c0ANuMfxL._SL1001_.jpg"
-    ]
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/b6b24f46-a2a7-4d8e-9cae-a7d5dcf8f63c/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/91JER5ugK4L.SX522_.jpg",
+      "duration": "0:48"
+    }
   }
 ]

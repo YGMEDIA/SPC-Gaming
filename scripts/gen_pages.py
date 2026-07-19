@@ -74,6 +74,7 @@ def build(prod, c):
     img = prod.get('img') or f"{DOMAIN}/assets/img/og-default.jpg"
     if img.startswith('/'): img = DOMAIN + img
     gallery = [u for u in (prod.get('gallery') or []) if u and u != img]
+    video = prod.get('video') or None
 
     title = f"{full_name} — Kurzcheck & Preis | smartphone-controller.com"
     if len(title) > 68:
@@ -131,6 +132,17 @@ def build(prod, c):
             f'loading="lazy" onerror="this.closest(\'figure\').remove()"></figure>'
             for i, u in enumerate(gallery))
         gallery_section = f'<h2>Produktbilder</h2>\n<div class="gallery-grid">\n{figs}\n</div>'
+
+    # Produktvideo nur bei belegtem video-Feld (Amazon-ImageBlock-Extraktion, §A5);
+    # preload="none": ohne Klick lädt nur das Poster, Seite bleibt voll statisch (§A2).
+    video_section = ''
+    if video:
+        video_section = (
+            f'<h2>Produktvideo</h2>\n'
+            f'<figure class="video-wrap"><video controls preload="none" poster="{esc(video["poster"])}" '
+            f'src="{esc(video["url"])}" title="Produktvideo: {esc(full_name)}"></video>'
+            f'<figcaption class="video-note">Video von der Amazon-Produktseite · Länge {esc(video["duration"])} Min.</figcaption></figure>'
+        )
 
     rel_cards = ''
     for r in related(prod):
@@ -205,6 +217,9 @@ def build(prod, c):
 .gallery-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin:16px 0}}
 .gallery-item{{margin:0;border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;padding:12px}}
 .gallery-item img{{width:100%;height:230px;object-fit:contain;display:block}}
+.video-wrap{{margin:16px 0;border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;padding:12px}}
+.video-wrap video{{width:100%;max-height:480px;display:block;border-radius:var(--radius);background:#000}}
+.video-note{{font-size:12px;color:var(--ink-dim);margin-top:8px;text-align:center}}
 .divider{{border:none;border-top:1px solid var(--line);margin:32px 0}}
 .related-card{{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 16px;background:var(--surface);transition:box-shadow .15s,border-color .15s}}
 .related-card:hover{{box-shadow:var(--shadow-md);border-color:var(--blue-dim)}}
@@ -245,6 +260,8 @@ def build(prod, c):
           </table>
 
           {gallery_section}
+
+          {video_section}
 
           <h2>Stärken & Schwächen</h2>
           <div class="pros-cons-grid">
