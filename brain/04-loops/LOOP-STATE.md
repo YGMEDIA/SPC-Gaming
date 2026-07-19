@@ -7,6 +7,7 @@
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | preis-loop | Außerplanmäßig: Preis-Sync Welle 2 — 42 veraltete Stellen in 27 Seiten (Vergleiche, related-/cat-cards, Metas, FAQ, X5-Schema, X2s-Variantenfehler) auf products.json gesynct; Träger-Checkliste in preis-loop verankert. Details: 05-protokoll/2026-07-19-content-preis-sync-vergleiche.md |
 | 2026-07-19 | content-loop | Lauf 2: CTR-Rettung controller-verbindet-nicht — Title ("Meist in 2 Min. gelöst", 60 Z.) + Description ("kein Defekt", 4 Meta-Stellen synchron) neu, Prosa unangetastet, Sitemap-lastmod 19.07. Erfolgskontrolle: gsc-loop Punkt 6 (Baseline 0/47). Details: 05-protokoll/2026-07-19-content-ctr-verbindet-nicht.md |
 | 2026-07-18 | (Setup) | Brain aufgesetzt, verify.py gebaut, Zombies behoben (/ratgeber/, marken/ipega, marken/mocute) + .nojekyll |
 | 2026-07-18 | (Spec Block A) | A1 Finder-Keyword · A2 drei Klick-Artikel verstärkt · A3 alle 13 Blog-Artikel ≥3 Geld-Links · A4 Alt-Pass (67 Bilder, 0 Verstöße). Details: 05-protokoll/2026-07-18-content-block-a.md |
