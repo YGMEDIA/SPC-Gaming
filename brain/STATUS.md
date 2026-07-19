@@ -96,14 +96,15 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 16. **19.07. Block H2 gestartet: Galerie-Beschaffung via Chrome + gen_pages-Galerie (P-9 neu, deployed).** Yasins Chat-Delegation umgesetzt: Amazon-hiRes-URLs erstmals autonom über seine Chrome-Extension gezogen (Amazon blockt nur programmatische Zugriffe, der echte Browser kommt durch; CDN liefert frei). Batch 1: 11 Produkte × 3 validierte Bilder als gallery-Feld in products.json, gen_pages.py um Produktbilder-Sektion + Schema-image-Array + --regen-Modus erweitert (Fund: Normalmodus überspringt alle Bestandsprodukte, hätte nie regeneriert), 10 Detailseiten live, Alt-Texte bewusst ohne unbesichtigte Merkmale. Pattern-Katalog v1.1. Noch in derselben Session Batch 2: 16 weitere GEN-Produkte gezogen + live (48 URLs validiert; magnet-peltier-cooler hat auf Amazon nur 1 hiRes-Bild → ohne Galerie). 26/27 GEN-Seiten haben jetzt Galerien. Und Batch 3: 11 Review-Produkte als Datenvorrat (33 URLs validiert; backbone-one-2 = 2. Ausnahme, nur 1 Amazon-Bild). **Beschaffung komplett: 38/40.** Danach in derselben Session der Review-Einbau: alle 36 Bilder per Kontaktbogen gesichtet, Merkmals-Alts nach A4-Formel, Galerie + Schema-Array auf 12/12 Review-Seiten (Fund: X5-Schema hatte kein image-Feld, ergänzt). **Block H2 damit KOMPLETT.** Details: `05-protokoll/2026-07-19-dev-galerie-block-h2.md`.
 
+17. **19.07. content-loop Lauf 4: Budget-Kuratierung (deployed).** X2s Bluetooth (53 €) verletzte nach dem Preis-Sync sichtbar den "unter 50 €"-Rahmen der Budget-Liste — auf #3 gegen 8BitDo Ultimate Mobile (45 €, Hall-Effect-Sticks und -Trigger, Kurzcheck-Link statt Review) getauscht. Lehre: Kuratierungs-Check gehört ans Ende jedes Preis-Syncs. Details: `05-protokoll/2026-07-19-content-budget-kuratierung.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
 1. content-loop: Neuer Blog-Artikel "Hall-Effect vs. TMR" nach P-5 (Kalender-Punkt 1; rankende hall-effect-erklaert-Basis intern verlinken, GSC-Query "hall effekt sticks" 0/2 als Signal; Keyword-Vergabe dokumentieren, Sitemap +1).
-2. content-loop: Kuratierung beste-budget-controller (X2s Bluetooth 53 € verletzt den "unter 50 €"-Rahmen auf #3; Kandidat 8BitDo Ultimate Mobile 45 € — Karten + Editorial + Schema zusammen).
-3. Danach GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
+2. Danach GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
 Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).

@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (Block H2 KOMPLETT abgeschlossen)
+**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 4, Budget-Kuratierung)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | content-loop | Lauf 4: Budget-Kuratierung — X2s (53 €) gegen 8BitDo Ultimate Mobile (45 €) auf beste-budget #3 getauscht; "unter 50 €"-Rahmen wieder eingehalten. Details: 05-protokoll/2026-07-19-content-budget-kuratierung.md |
 | 2026-07-19 | (Block H2) | Review-Einbau: 12/12 Review-Seiten mit Galerie + gesichteten Merkmals-Alts (A4-Formel) + Schema-image-Array; X5-Schema-image-Lücke gefunden+behoben. **Block H2 KOMPLETT** (38/40; 2 Amazon-Ausnahmen). Details: 05-protokoll/2026-07-19-dev-galerie-block-h2.md |
 | 2026-07-19 | (Block H2) | Galerie-Batch 3: 12 Review-Produkte gezogen, 11 als Datenvorrat in products.json (33 URLs validiert). Beschaffung KOMPLETT: 38/40 mit gallery (Ausnahmen backbone-one-2 + magnet-peltier, Amazon hat je nur 1 Bild). Nächstes: Review-Hand-Einbau |
 | 2026-07-19 | (Block H2) | Galerie-Batch 2: 16 restliche GEN-Produkte gezogen + regeneriert (48 URLs validiert); 26/27 GEN-Seiten mit Galerie. magnet-peltier-cooler ohne (Amazon: nur 1 hiRes). Warteschlange: Batch 3 + Review-Einbau |
