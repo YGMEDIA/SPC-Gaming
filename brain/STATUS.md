@@ -11,7 +11,7 @@
 
 ## Wo wir stehen
 
-**Site:** LIVE, 88 Seiten (Stand-Korrektur nach Brain-Commit: 87 indexierbare + Suche), Sitemap 87 URLs, Analytics/GTM aktiv (Events seit 11.07.-Fix korrekt), Search Console + Bing offen.
+**Site:** LIVE, 88 Seiten (Stand-Korrektur nach Brain-Commit: 87 indexierbare + Suche), Sitemap 87 URLs, Analytics/GTM aktiv (Events seit 11.07.-Fix korrekt), Search Console aktiv, Bing Webmaster Tools seit 19.07. aktiv (GSC-Import) + IndexNow eingerichtet.
 
 **Erste echte Marktdaten (GSC, 18.07., 3-Monats-Sicht = real ~10 Tage Index):**
 7 Klicks · 348 Impressionen (Verzehnfachung in einer Woche) · Ø Position 18,3 (von 23 kommend) · CTR 2 %.
@@ -53,7 +53,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
 1. **Live-Stichprobe nach dem ersten autonomen Deploy** (Prüfliste im Protokoll content-block-a): kurz gegenchecken, ob live alles wie erwartet aussieht. Ab jetzt gilt: Deploys laufen autonom, nie mehr "Add files via upload".
-2. **Bing Webmaster Tools** einrichten (Block C, ~20 Min, GSC-Import).
+2. **Bing: Sitemaps-Tab prüfen** — falls leer, einmal https://smartphone-controller.com/sitemap.xml einreichen. (Property selbst ist seit 19.07. verifiziert.)
 3. **GSC Indexierungs-Screenshot** (Indexierung → Seiten) — die Zahl fehlt uns noch.
 4. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
 5. Zweite anzubindende Domain benennen (neben der .de).
