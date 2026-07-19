@@ -5,7 +5,7 @@
 **Warteschlange (Stand 18.07., Reihenfolge = Priorität):**
 1. Longtail-Batches 2–5 (nach Batch-1-Erfolgskontrolle im gsc-loop).
 2. Neue Blog-Artikel aus Kalender (Hall vs TMR, beste unter 50 €, Tablet-Controller).
-3. Galerie Block H2 (P-9): Review-Hand-Einbau = letzter offener Teil (13 Review-Seiten; gallery-Daten liegen KOMPLETT in products.json; Bilder beim Einbau sichten → Merkmals-Alts nach A4-Formel; Product-Schema image-Array wie gen_pages). Beschaffung abgeschlossen 19.07.: 38/40 (Ausnahmen backbone-one-2, magnet-peltier: Amazon hat je nur 1 Bild).
+3. (erledigt 19.07.: Block H2 komplett — Beschaffung 38/40 + Einbau auf 26 GEN- und 12 Review-Seiten; Ausnahmen backbone-one-2/magnet-peltier haben auf Amazon nur 1 Bild)
 4. Kuratierung beste-budget-controller: Rahmen "unter 50 €" vs. X2s Bluetooth 53 € auf #3 — Kandidat als Ersatz: 8BitDo Ultimate Mobile (45 €); beim Tausch Karten + Editorial + Schema zusammen ändern (Fund 19.07., Preis-Sync Welle 2).
 **Ablauf:** LOOP-STATE lesen → 1 Artikel pro Lauf komplett (Text, FAQ, Schema, interne Links, Sitemap-lastmod) → verify.py → STATUS.
 **Fertig-Kriterium:** verify.py grün + Artikel ≥700 Wörter netto + ≥3 kontextuelle interne Links + FAQPage-Schema valide.
