@@ -49,11 +49,11 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | Tracking-Events erreichten GA4 nie (gtag statt dataLayer.push, keine Delegation) | §A8 | **GESCHLOSSEN 19.07.:** Live-Test auf Netzwerk-Ebene — Consent-Gate korrekt, dataLayer-Push korrekt, /g/collect-Hit mit en=affiliate_click + ep.product_name an G-Q1EK5X7PTC gesendet. (1 Test-Event vom 19.07. in den GA4-Daten) |
 | 5 Reviews mit geschätzten reviewCounts (ROG Tessen, X3 Pro, Turtle Beach, Backbone One PS, Kishi V3 Pro) | §A4 | offen — bei nächsten Screenshots präzisieren |
 | Rechtstexte ohne anwaltliche Abnahme | §C4 | offen (Yasin) |
-| .de-Domain + eine weitere Domain nicht angebunden (Redirect empfohlen; welche zweite Domain: Yasin nennt sie noch) | — | offen (Yasin, IONOS) |
+| 3 Zusatz-Domains ungenutzt bei IONOS: smartphone-controller.de / .info / .store (alle bis 02/2027 bezahlt) | — | Anleitung übergeben 19.07.: je 301-HTTP-Weiterleitung (KEINE Frame-Weiterleitung) auf die .com + SSL aktivieren. Nach Einrichtung: HTTP-Verifikation durch Claude Code |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
 1. **Nächstes GSC-Paket ~26.07.** (wöchentlich): Leistung 7 Tage + Indexierung → Seiten mit FRISCHEM Datenstand. Paket 1 komplett geliefert 19.07. ✓ (inkl. Indexierungs-Baseline 53/65, Stand 10.07.).
-2. Zweite anzubindende Domain benennen (neben der .de).
+2. **IONOS-Weiterleitungen einrichten** (.de/.info/.store → 301 auf .com, Anleitung im Chat 19.07.), dann „drin" melden für die Verifikation.
 3. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
 4. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
 5. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
