@@ -104,11 +104,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 20. **19.07. content-loop Lauf 7: Tablet-Artikel — Content-Kalender KOMPLETT (deployed).** `/blog/controller-fuer-tablet/` (756 W, P-5): ehrliche Spannweiten-Regel (Teleskop endet bei iPad-mini-Klasse, belegt über beide Kishi-Kompatibilitätslisten; ab normalem iPad Bluetooth-Gamepad + Ständer mit G8 Plus 76 € / U2C 20 €), Frage/Hub-Paar-Keyword dokumentiert. Blog jetzt 18 Artikel, Site 102 Seiten, Sitemap 101. Damit sind alle drei Kalender-Artikel (Läufe 5-7) an einem Tag entstanden; neue Artikel ab jetzt GSC-getrieben. Details: `05-protokoll/2026-07-19-content-tablet-controller.md`.
 
+21. **19.07. Galerie-Kacheln vergrößert + Video-Machbarkeit geklärt (deployed; Yasins Wunsch aus dem Chat).** Bilder: Galerie-Raster 170 → 240er minmax, Bildhöhe 230 px, CTA-Foto 260 px, beide CSS-Orte synchron, alle 27 GEN-Seiten regeneriert, Reviews ziehen zentral. Videos: Amazon-Produktvideos liegen hotlink-stabil auf dem Bilder-CDN (curl-bewiesen, 20-Jahre-Cache), Extraktion via Chrome-Klick funktioniert — ABER der globale mp4-Scan mischt Amazons "ähnliche Videos" ein (identische URL bei zwei Produkten nachgewiesen), deshalb bewusst NICHTS eingebaut. Nächster Schritt mit produktgebundenem Extraktor in STATUS. Details: `05-protokoll/2026-07-19-dev-galerie-groesser-video-recherche.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Claude Code (nächste Session, autonom):**
+**Claude Code (nächste Session, autonom — Reihenfolge):**
+0. Produkt-Videos (Yasins Wunsch, Machbarkeit bewiesen): produktgebundenen Extraktor bauen — im ImageBlock-State den produktspezifischen 'videos'-Block parsen (NICHT global nach .mp4 greppen, mischt Fremdvideos ein; Details + Stopper-Beweis im Protokoll 2026-07-19-dev-galerie-groesser-video-recherche.md). 1 Produkt gegen abgespielten Player verifizieren → dann Batch über alle 40 (Chrome nötig), video-Feld nur für belegte Treffer, gen_pages-Sektion "Produktvideo" (<video controls preload="none" poster>, kein VideoObject-Schema v1), Review-Hand-Einbau analog Galerie. Ehrlich: nur wo Amazon ein Video hat (~Hälfte laut Stichprobe).
 1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
 Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 

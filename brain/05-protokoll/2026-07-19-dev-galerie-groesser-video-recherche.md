@@ -1,0 +1,12 @@
+# 2026-07-19 · dev · Galerie-Kacheln vergrößert + Produkt-Video-Machbarkeit (Yasins Wunsch)
+
+**Teil 1 — Produktbilder größer (FERTIG, deployed):** Galerie-Raster von minmax(170px) auf minmax(240px), Bildhöhe 170 → 230 px, CTA-Foto max-height 220 → 260 px. Synchron an beiden CSS-Orten geändert (style.css für die 12 Review-Seiten, gen_pages-Seiten-<style> für die GEN-Seiten) + `gen_pages.py --regen` über alle 27 GEN-Seiten. verify GRÜN.
+
+**Teil 2 — Produkt-Videos (Machbarkeit BEWIESEN, Zuordnung braucht präziseren Extraktor):**
+- BEWIESEN: Amazon-Produktvideos liegen auf demselben CDN wie die Bilder (m.media-amazon.com/.../productVideoOptimized.mp4). curl-HEAD: HTTP 200, video/mp4, cache-control max-age=630720000 public → stabile, unsignierte URLs, Hotlinking trägt wie bei P-9-Bildern. Extraktion via Chrome funktioniert: Video-Thumb im #altImages klicken (li.videoThumbnail), danach stehen mp4-URLs im DOM.
+- STOPPER (wichtig!): Der globale Script-Scan nach .mp4 ist als ZUORDNUNGS-Quelle unbrauchbar — Amazons "ähnliche Videos"-Widget mischt Fremdprodukt-Videos ins DOM. Beweis: identische URL (1d500d20…) bei B0DK36N98Q UND B0D97VQGFT; G8-URL (651ba528…) tauchte beim Phone-Cooler auf; beide letzteren haben laut Thumb-Check gar KEIN eigenes Video. Ein Einbau hätte falsche Videos auf Produktseiten gebracht → bewusst NICHTS in products.json geschrieben (§A5-Geist).
+- LÖSUNGSANSATZ für nächste Session: produktspezifische Quelle parsen statt global greppen — der ImageBlock-State enthält einen 'videos'-Block (Teil der colorImages-Daten, produktgebunden; dort url/slateUrl je Video), alternativ data-Attribute des videoThumbnail-li. Erst 1 Produkt gegen den abgespielten Player verifizieren, dann Batch. Rollout danach: video-Feld in products.json (nur belegte Zuordnungen), gen_pages-Sektion "Produktvideo" (natives <video controls preload="none" poster=img>, kein YouTube/kein Consent-Thema, kein VideoObject-Schema in v1 mangels belegtem uploadDate), Review-Hand-Einbau analog Galerie. Ehrlicher Rahmen: Video nur, wo Amazon eines hat ("zu jedem Produkt" ist nicht erfüllbar; Stichprobe: 2 von 4 geprüften ohne eigenes Video).
+
+**Verify:** Teil 1 verify.py GRÜN (102 Seiten, 230 Schemas). Teil 2 ohne Site-Änderung (nur Recherche).
+
+**Gelernt:** DOM-weite Scans sind gut zum FINDEN, aber nicht zum ZUORDNEN — sobald Amazon Fremd-Content ins DOM mischt, braucht es die produktgebundene Datenstruktur. Der Abbruch vor dem Schreiben hat einen ernsten Datenfehler verhindert.
