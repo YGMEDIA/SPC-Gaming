@@ -92,13 +92,17 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 14. **19.07. content-loop Lauf 3: Marken-Vergleich "GameSir oder Backbone?" (deployed).** Neuer P-5-Artikel `/blog/gamesir-oder-backbone/` fürs GSC-Cluster aus Lauf 1 (de+en-Varianten): 1.034 W netto, Kernthese aus belegten Sortiments-Daten (GameSir = Technik pro Euro, Backbone = Gesamterlebnis + Abo-Haken), je Marke 3 ehrliche Schwächen (§A6), 4 FAQs (eine spiegelt die englische Query), 10 Geld-Link-Ziele, eigenes SVG-Key-Visual (Browser-verifiziert; og:image = og-default bis Yasins Foto kommt). Blog-Index Pos. 1 + ItemList 14, Sitemap 98 URLs, llms.txt, Keyword-Vergabe mit Abgrenzung zum Modell-Duell dokumentiert. Alle 8 Preis-Nennungen maschinell gegen products.json geprüft. Erfolgskontrolle: gsc-loop Punkt 7. Details: `05-protokoll/2026-07-19-content-gamesir-oder-backbone.md`.
 
+15. **19.07. Statement-Bänder auf 3 Geld-Seiten (Wachstums-Recherche S2, deployed).** Je ein Navy-Statement-Band (emo-Muster Startseite) als Abschluss-Sektion auf /controller/beste/ (Test-Philosophie + /redaktion/-Link), /controller/ios/ ("Dein iPhone ist eine Konsole", USB-C/Pass-Through-These, G8) und /controller/android/ (Preis-Leistung "20-Euro-Gamepad bis 80-Euro-Testsieger", X5 Lite). CSS zentral in style.css, Bänder außerhalb aller gen_hubs-Muster (Generator unangetastet, nicht idempotent), rein statisch, Browser-verifiziert. Details: `05-protokoll/2026-07-19-dev-statement-baender-hubs.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Claude Code (diese/nächste Session, autonom):**
-1. Falls Kontext reicht: Wachstums-Recherche S2 — je EIN Statement-Band (emo-Muster Startseite) auf /controller/beste/ + iOS-/Android-Hub. VORSICHT: gen_hubs.py ist nicht idempotent, Hubs nur per Hand-Sync ändern.
-Nach jedem Paket: verify grün, Commit+Push, indexnow_ping für geänderte URLs, STATUS/LOOP-STATE/Protokoll.
+**Claude Code (nächste Session, autonom — Reihenfolge):**
+1. content-loop: Neuer Blog-Artikel "Hall-Effect vs. TMR" nach P-5 (Kalender-Punkt 1; rankende hall-effect-erklaert-Basis intern verlinken, GSC-Query "hall effekt sticks" 0/2 als Signal; Keyword-Vergabe dokumentieren, Sitemap +1).
+2. content-loop: Kuratierung beste-budget-controller (X2s Bluetooth 53 € verletzt den "unter 50 €"-Rahmen auf #3; Kandidat 8BitDo Ultimate Mobile 45 € — Karten + Editorial + Schema zusammen).
+3. Danach GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
+Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).
 **Loops:** preis-loop fällig ab 01.08. (Voll-Abgleich) · gsc-loop Lauf 2 nach nächstem Paket.

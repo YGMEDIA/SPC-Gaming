@@ -1,0 +1,13 @@
+# 2026-07-19 · dev · Statement-Bänder auf /controller/beste/ + iOS-/Android-Hub (Wachstums-Recherche S2)
+
+**Was:** Je EIN Emotions-Band nach dem Navy-Statement-Muster der Startseite (18.07.) als Abschluss-Sektion auf drei Geld-Seiten: /controller/beste/ (Test-Philosophie, G8-Bild, Link /redaktion/) · /controller/ios/ (USB-C-Statement "Dein iPhone ist eine Konsole", G8-Bild, Link iPhone-Guide) · /controller/android/ (Preis-Leistungs-Statement "Gutes Mobile-Gaming muss nicht teuer sein", X5-Lite-Bild, Link Budget-Vergleich). Jedes Band: Statement-H2, Sub-Text, Finder-CTA + Kontext-Link, Produktbild auf weißer Karte.
+
+**Wie:** CSS (.emo-navy, .emo-card + Responsive) aus dem Startseiten-<style> nach style.css zentralisiert (Startseite trägt identische Kopie weiter im Seiten-<style>, dort NICHT angefasst = kein Risiko; Aufräumen bei Gelegenheit). Bänder per Skript mit Assertions als letztes main-Kind eingefügt, NACH hub-seo/hub-faq. gen_hubs.py bewusst NICHT geändert und NICHT ausgeführt: Der Generator ist nicht idempotent, aber die Bänder liegen außerhalb aller seiner Muster (er füllt nur leere Grid-Container und hängt head-Blöcke an), ein etwaiger künftiger Lauf ließe sie unberührt.
+
+**Warum so:** Recherche-Destillat 18.07. (S2): Statement-Typo + emotionale Bänder heben Verweildauer/Conversion; die drei Seiten sind die wichtigsten kommerziellen Einstiege nach der Startseite. Position am Seitenende = Abschluss-CTA nach Karten, Editorial und FAQ. Rein statisch (§A2, kein JS).
+
+**Fakten-Absicherung (§A1/§A6):** "Über 100 Geräte getestet" = sitewide Badge-Wortlaut · iOS: "einstecken, spielen, nebenbei laden" = USB-C + Pass-Through des G8 (belegt) · Android: bewusst "Vom 20-Euro-Gamepad mit Hall-Effect-Sticks" (Ultimate 2C 20 €) statt "Hall ab 38 €", weil der U2C im eigenen Android-Grid steht und die 38-€-Aussage site-intern widerlegt hätte · Alt-Texte nach A4-Formel Name+Merkmal+Kontext.
+
+**Verify:** verify.py GRÜN (99 Seiten; interne Links /redaktion/, Blog-Guide, Budget-Vergleich geprüft) · Browser-Check: beste- und android-Band visuell gesichtet (Gradient, CTA, Produktkarte), ios strukturell per DOM (H2/Links/Alt/Position korrekt, identische Klassen). Sitemap-lastmod der 3 URLs stand bereits auf 19.07. (Preis-Sync-Welle).
+
+**Gelernt:** Die Hub-Seiten haben ZWEI Bauformen: /controller/beste/ ist eine Hand-Seite (alles in einer section), die generierten Hubs tragen hub-seo/hub-faq als DIVs direkt in main. Einfüge-Anker "vor </main>" funktioniert für beide. Für Browser-Sichtprüfungen langer Seiten in der Pane: Sektionen davor per JS ausblenden statt scrollen (Screenshots nach programmatischem Scroll liefern leere Frames).
