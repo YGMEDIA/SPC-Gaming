@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (nach Galerie-Batch 1, Block H2)
+**Letzte Aktualisierung:** 2026-07-19 (nach Galerie-Batch 3 — Beschaffung Block H2 komplett)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | (Block H2) | Galerie-Batch 3: 12 Review-Produkte gezogen, 11 als Datenvorrat in products.json (33 URLs validiert). Beschaffung KOMPLETT: 38/40 mit gallery (Ausnahmen backbone-one-2 + magnet-peltier, Amazon hat je nur 1 Bild). Nächstes: Review-Hand-Einbau |
 | 2026-07-19 | (Block H2) | Galerie-Batch 2: 16 restliche GEN-Produkte gezogen + regeneriert (48 URLs validiert); 26/27 GEN-Seiten mit Galerie. magnet-peltier-cooler ohne (Amazon: nur 1 hiRes). Warteschlange: Batch 3 + Review-Einbau |
 | 2026-07-19 | (Block H2) | Galerie-Batch 1: 11 Produkte × 3 Bilder autonom via Chrome-Extension gezogen (P-9 neu), gallery-Feld in products.json, gen_pages-Galerie + --regen gebaut, 10 Seiten live. Details: 05-protokoll/2026-07-19-dev-galerie-block-h2.md |
 | 2026-07-19 | content-loop | Lauf 3: Marken-Vergleich "GameSir oder Backbone?" neu gebaut (/blog/gamesir-oder-backbone/, P-5, Blog-Index Pos. 1, Sitemap 98, llms.txt, Keyword-Vergabe). Erfolgskontrolle: gsc-loop Punkt 7. Details: 05-protokoll/2026-07-19-content-gamesir-oder-backbone.md |
