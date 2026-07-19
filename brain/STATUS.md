@@ -5,13 +5,13 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-07-18
+**Letzte Aktualisierung:** 2026-07-19
 
 ---
 
 ## Wo wir stehen
 
-**Site:** LIVE, 88 Seiten (Stand-Korrektur nach Brain-Commit: 87 indexierbare + Suche), Sitemap 87 URLs, Analytics/GTM aktiv (Events seit 11.07.-Fix korrekt), Search Console aktiv, Bing Webmaster Tools seit 19.07. aktiv (GSC-Import) + IndexNow eingerichtet.
+**Site:** LIVE, 98 Seiten, Sitemap 97 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www, 97 URLs eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
 **Marktdaten (GSC-Lauf 1, Paket 19.07., Fenster 11.-17.07. = Vorher-Baseline VOR den 18./19.07.-Deploys):**
 5 Klicks · 315 Impressionen in 7 Tagen · CTR 1,6 % · Ø Position 16,8 (von 18,3). Rohdaten: `03-research/raw/gsc/2026-07-19.md`.
@@ -83,11 +83,17 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 10. **19.07. (Nacht): Key-Visuals für alle Blog-Artikel (deployed).** 8 Artikel hatten nur Emoji-Platzhalter im Blog-Index und kein Hero-Bild. Da keine Fotos verfügbar: 8 eigene SVG-Illustrationen im Corporate-Look erstellt (Navy/Blau-Verläufe, Glow, klare Motive je Thema, KEIN Text im Bild, je ~8 KB) — Teleskop-Controller, iPhone+USB-C, Pairing-Wellen, unterbrochene Verbindung (Amber), Sleeve-Fingerkuppe, Kühler-Lüfter, Hüllen-Klemme, Setup-Konstellation. Als article-hero-img in die 8 Artikel + als Thumbs in den Blog-Index (Emoji-Divs ersetzt). Browser-verifiziert (alle 8 Kompositionen gesichtet). Nebenfix: 2 falsche "30 Min. Lesezeit"-Angaben → 5 Min. og:image bleibt JPG (SVG für Social ungeeignet). Alle 13 Artikel haben jetzt ein Key-Visual. Details: `05-protokoll/2026-07-19-dev-blog-key-visuals.md`. **Nachtrag 19.07. vormittags:** Yasin hat mit den 8 Prompts fotoreale Bilder generiert (Downloads, slug-benannt) — von Claude Code auf 1600x900 JPG optimiert (130-270 KB), SVG-Illustrationen in Artikeln + Blog-Index ersetzt, og:image/twitter:image/Article-Schema pro Artikel auf das eigene Bild umgestellt, Foto-Alt-Texte gesetzt, SVGs entfernt. Prompt-zu-Bild-Workflow damit bewiesen.
 
+11. **19.07. Betriebs-Tag (Yasin + Claude Code im Wechsel, alles verifiziert).** Bing Webmaster Tools verifiziert + IndexNow live (Erst-Ping 97 URLs, HTTP 202) · GSC: Sitemap non-www eingereicht, 2 Prio-URLs zur Indexierung beantragt, gsc-loop Lauf 1 mit Vorher-Baseline (5 Klicks/315 Impr./Pos. 16,8, Fenster 11.-17.07.) + Indexierungs-Baseline (53/65, Stand 10.07.) archiviert, 6-Punkte-Checkliste für Lauf 2 · GA4-Tracking end-to-end bewiesen (§A8 geschlossen: /g/collect mit en=affiliate_click) · 3 Zusatz-Domains als Redirect angebunden und verifiziert · Blog-Key-Visuals auf fotoreale Yasin-Bilder umgestellt. Protokolle: bing-indexnow, ga4-verifikation, blog-key-visuals (Nachtrag).
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Yasin:** Die 6 Punkte der "Braucht Yasin"-Liste, v. a. Live-Stichprobe, Bing, GSC-Screenshot + Amazon-Screenshots für den preis-loop (9 ASINs + 5 reviewCounts).
-**Claude Code (nächste Session, sobald Yasins Input da ist):** preis-loop-Lauf mit den Screenshots · gsc-loop-Erstlauf mit dem GSC-Paket · danach content-loop (8 Blog-Ausbauten). Ohne Yasin-Input möglich: content-loop-Start.
-**Claude Code (nächste Session):** Block B (Longtail Batch 1, 10 Datenblatt-Seiten nach P-6) nach Spec; danach Erfolgskontrolle Block A im gsc-loop (3–4 Wochen).
-**Loops:** Erster manueller Lauf des GSC-Loops nach nächstem Screenshot-Paket; Preis-Loop fällig ab August (letzter Voll-Abgleich 07./08.07.) — Warteschlange enthält jetzt zusätzlich 12 dokumentierte Preisdivergenzen.
+**Claude Code (nächste Session, autonom — Reihenfolge):**
+1. content-loop Punkt 2: CTR-Rettung controller-verbindet-nicht (Baseline 0 Klicks/47 Impr.) — Title/Description emotional schärfen, Prosa unangetastet.
+2. content-loop Punkt 3: Neuer Marken-Vergleich "GameSir oder Backbone?" nach P-5 (GSC: 5+ Query-Varianten, auch englisch; bestehende Modell-Vergleiche intern verlinken, Keyword-Vergabe in keyword-strategie.md, Sitemap +1).
+3. Falls Kontext reicht: Wachstums-Recherche S2 — je EIN Statement-Band (emo-Muster Startseite) auf /controller/beste/ + iOS-/Android-Hub. VORSICHT: gen_hubs.py ist nicht idempotent, Hubs nur per Hand-Sync ändern.
+Nach jedem Paket: verify grün, Commit+Push, indexnow_ping für geänderte URLs, STATUS/LOOP-STATE/Protokoll.
+
+**Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).
+**Loops:** preis-loop fällig ab 01.08. (Voll-Abgleich) · gsc-loop Lauf 2 nach nächstem Paket.
