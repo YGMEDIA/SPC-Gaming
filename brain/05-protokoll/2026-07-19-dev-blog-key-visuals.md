@@ -14,3 +14,15 @@ verify.py GRÜN (98 Seiten, 218 Schemas) · Browser: alle 8 SVGs naturalWidth 16
 ## Gelernt
 1. qlmanage taugt nicht als SVG-Rasterizer für Nicht-Quadrate (Zoom-Crop). Wenn PNG-Ableitungen nötig werden (Social Cards): cairosvg installieren oder Browser-Screenshot-Pipeline bauen.
 2. SVG-Key-Visuals sind der richtige Standard für Ratgeber-Artikel ohne Foto: eigenes Bildrecht (§C3), Corporate-Farben exakt, 8 KB statt 2 MB. Echte Fotos bleiben erste Wahl, wo vorhanden (Yasin-Liste Punkt 7).
+
+---
+
+## Nachtrag (19.07. vormittags): SVGs durch fotoreale KI-Bilder ersetzt
+
+**Was:** Yasin generierte mit den 8 Prompts aus `03-research/bild-prompts-blog.md` fotoreale Bilder (perfekt slug-benannt in Downloads). Claude Code: PNG (1,4-2,2 MB) → JPG 1600x900 bei Qualität 82 (130-270 KB), Hero-Tausch in den 8 Artikeln, Blog-Index-Thumbs, og:image + twitter:image + Article-Schema-image jeweils auf das eigene Bild (vorher og-default), neue Foto-Alt-Texte (beschreibend statt "Illustration:"), SVGs gelöscht (Git-Historie behält sie).
+
+**Anmerkung an Yasin übergeben:** Bild "verbindet-nicht" enthält ein Warndreieck-Piktogramm, Bild "huellen" ein kleines "X" mit Maßpfeil — streng genommen Symbole im Bild. Eingebaut wie geliefert; bei Bedarf regenerieren (Prompt-Zusatz "no symbols, no icons, no arrows").
+
+**Verify:** verify.py GRÜN · 0 verbleibende SVG-Referenzen · og/Schema-URLs absolut · Live-Check nach Deploy.
+
+**Gelernt:** Der Prompt→Yasin→Integration-Workflow funktioniert als Standard für alle künftigen Bild-Bedarfe (Look-Suffix hält die Konsistenz). Publisher-Logo im Article-Schema heißt "url", Artikel-Bild "image" — Regex-Swap ist dadurch kollisionsfrei.
