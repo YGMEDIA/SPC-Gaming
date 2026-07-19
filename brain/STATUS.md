@@ -52,7 +52,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | .de-Domain + eine weitere Domain nicht angebunden (Redirect empfohlen; welche zweite Domain: Yasin nennt sie noch) | — | offen (Yasin, IONOS) |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
-1. **GSC-Paket liefern (4 Screenshots):** Leistung 7 Tage (Übersicht, Suchanfragen, Seiten) + Indexierung → Seiten. Erledigt 19.07.: Live-Stichprobe ✓, Bing verifiziert ✓, Sitemap non-www neu eingereicht ✓, Indexierung für 8bitdo-lite-2 + controller-finder beantragt ✓.
+1. **Nächstes GSC-Paket ~26.07.** (wöchentlich): Leistung 7 Tage + Indexierung → Seiten mit FRISCHEM Datenstand. Paket 1 komplett geliefert 19.07. ✓ (inkl. Indexierungs-Baseline 53/65, Stand 10.07.).
 2. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
 3. Zweite anzubindende Domain benennen (neben der .de).
 4. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.

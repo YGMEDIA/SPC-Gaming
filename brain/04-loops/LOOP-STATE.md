@@ -9,6 +9,7 @@
 |---|---|---|
 | 2026-07-18 | (Setup) | Brain aufgesetzt, verify.py gebaut, Zombies behoben (/ratgeber/, marken/ipega, marken/mocute) + .nojekyll |
 | 2026-07-18 | (Spec Block A) | A1 Finder-Keyword · A2 drei Klick-Artikel verstärkt · A3 alle 13 Blog-Artikel ≥3 Geld-Links · A4 Alt-Pass (67 Bilder, 0 Verstöße). Details: 05-protokoll/2026-07-18-content-block-a.md |
+| 2026-07-19 | gsc-loop | Nachtrag: Indexierungs-Baseline archiviert (Stand 10.07.: 53/65, Gründe dokumentiert), robots-Blockierungen als gewollt verifiziert, 6-Punkte-Checkliste für nächsten Lauf in gsc-loop.md |
 | 2026-07-19 | gsc-loop | Lauf 1 komplett: Rohdaten raw/gsc/2026-07-19.md (Fenster 11.-17.07. = Vorher-Baseline), Interpretation in STATUS, 2 neue content-loop-Items (CTR-Rettung verbindet-nicht, Marken-Vergleich GameSir/Backbone). Indexierungs-Screenshot steht noch aus |
 | 2026-07-19 | (Block C) | Bing Webmaster Tools verifiziert (Yasin, GSC-Import) + IndexNow live (Key + Ping-Script, Erst-Ping 97 URLs HTTP 202) |
 | 2026-07-18 | content-loop | Alle 8 Kurz-Artikel auf P-5 ausgebaut (je ≥700 W netto, Article+FAQPage-Schema, Byline, Related, Finder-CTA, Sitemap-lastmod). 13/13 Blog-Artikel jetzt auf Vollstandard. Warteschlange Punkt 1 komplett |
