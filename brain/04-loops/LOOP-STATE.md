@@ -9,6 +9,7 @@
 |---|---|---|
 | 2026-07-18 | (Setup) | Brain aufgesetzt, verify.py gebaut, Zombies behoben (/ratgeber/, marken/ipega, marken/mocute) + .nojekyll |
 | 2026-07-18 | (Spec Block A) | A1 Finder-Keyword · A2 drei Klick-Artikel verstärkt · A3 alle 13 Blog-Artikel ≥3 Geld-Links · A4 Alt-Pass (67 Bilder, 0 Verstöße). Details: 05-protokoll/2026-07-18-content-block-a.md |
+| 2026-07-19 | (Block C) | Bing Webmaster Tools verifiziert (Yasin, GSC-Import) + IndexNow live (Key + Ping-Script, Erst-Ping 97 URLs HTTP 202) |
 | 2026-07-18 | content-loop | Alle 8 Kurz-Artikel auf P-5 ausgebaut (je ≥700 W netto, Article+FAQPage-Schema, Byline, Related, Finder-CTA, Sitemap-lastmod). 13/13 Blog-Artikel jetzt auf Vollstandard. Warteschlange Punkt 1 komplett |
 | 2026-07-18 | (Spec Block B) | Longtail Batch 1: 10 Datenblatt-Seiten (P-6, gen_longtail.py + longtail.json), Sitemap 97 URLs, Keywords dokumentiert. Erfolgskontrolle ab ~08/2026 im gsc-loop |
 | 2026-07-18 | preis-loop | 12 Preisdivergenzen auf products.json-Werte gesynct (Beleg: Voll-Abgleich 07./08.07.); Nachkontrolle projektweit sauber |
