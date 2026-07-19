@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 6 Punkte (GSC-Paket, GA4-Test, 2. Domain, Autoren-Identität, Galerie-Bilder, Rich-Results) |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 5 Punkte (GSC-Paket ~26.07., 2. Domain, Autoren-Identität, Galerie-Bilder, Rich-Results) |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 6 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle, Preisdivergenzen, CoD-FAQ); Brain-Leak 18.07. behoben |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
@@ -46,18 +46,17 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | .nojekyll war laut Git-Historie NIE committet (Web-Upload nimmt keine Dotfiles) | §B2 | **erneut angelegt + deployed 18.07.** (unter Actions-Deploy ohnehin obsolet, bleibt als Belt-and-Braces) |
 | 12 Preisdivergenzen HTML vs. products.json auf Geld-Seiten (u. a. controller/beste: Backbone One 99 statt 65 €) | §A1 | offen — Warteschlange preis-loop (Liste in LOOP-STATE); in den 3 Block-A-Artikeln bereits gesynct |
 | iOS-Hub-FAQ behauptet, CoD Mobile unterstütze keine Controller — Widerspruch zu blog/welche-spiele-controller (Blog ist korrekt) | §A6 | offen — Warteschlange content-loop (Schema + sichtbarer Text zusammen ändern) |
-| Tracking-Events erreichten GA4 nie (gtag statt dataLayer.push, keine Delegation) | §A8 | behoben 11.07., deployed — **Erfolgskontrolle in GA4-Echtzeit noch offen (Yasin)** |
+| Tracking-Events erreichten GA4 nie (gtag statt dataLayer.push, keine Delegation) | §A8 | **GESCHLOSSEN 19.07.:** Live-Test auf Netzwerk-Ebene — Consent-Gate korrekt, dataLayer-Push korrekt, /g/collect-Hit mit en=affiliate_click + ep.product_name an G-Q1EK5X7PTC gesendet. (1 Test-Event vom 19.07. in den GA4-Daten) |
 | 5 Reviews mit geschätzten reviewCounts (ROG Tessen, X3 Pro, Turtle Beach, Backbone One PS, Kishi V3 Pro) | §A4 | offen — bei nächsten Screenshots präzisieren |
 | Rechtstexte ohne anwaltliche Abnahme | §C4 | offen (Yasin) |
 | .de-Domain + eine weitere Domain nicht angebunden (Redirect empfohlen; welche zweite Domain: Yasin nennt sie noch) | — | offen (Yasin, IONOS) |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
 1. **Nächstes GSC-Paket ~26.07.** (wöchentlich): Leistung 7 Tage + Indexierung → Seiten mit FRISCHEM Datenstand. Paket 1 komplett geliefert 19.07. ✓ (inkl. Indexierungs-Baseline 53/65, Stand 10.07.).
-2. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
-3. Zweite anzubindende Domain benennen (neben der .de).
-4. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
-5. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
-6. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
+2. Zweite anzubindende Domain benennen (neben der .de).
+3. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
+4. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
+5. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
