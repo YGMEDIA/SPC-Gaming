@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 5, Hall-vs-TMR)
+**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 6, Budget-Frage-Artikel)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | content-loop | Lauf 6: Budget-Frage-Artikel /blog/guenstige-handy-controller/ (P-5, 765 W, Frage-Intention vs. Listen-Keyword sauber getrennt, Sitemap 100). Details: 05-protokoll/2026-07-19-content-guenstige-controller.md |
 | 2026-07-19 | content-loop | Lauf 5: Technik-Artikel /blog/hall-effect-vs-tmr/ (P-5, 841 W, Sitemap 99) + TMR-Faktenkorrekturen (2 irreführende Kishi-Cons entfernt, Duell-Sticks-Zeile neutralisiert). Details: 05-protokoll/2026-07-19-content-hall-vs-tmr.md |
 | 2026-07-19 | content-loop | Lauf 4: Budget-Kuratierung — X2s (53 €) gegen 8BitDo Ultimate Mobile (45 €) auf beste-budget #3 getauscht; "unter 50 €"-Rahmen wieder eingehalten. Details: 05-protokoll/2026-07-19-content-budget-kuratierung.md |
 | 2026-07-19 | (Block H2) | Review-Einbau: 12/12 Review-Seiten mit Galerie + gesichteten Merkmals-Alts (A4-Formel) + Schema-image-Array; X5-Schema-image-Lücke gefunden+behoben. **Block H2 KOMPLETT** (38/40; 2 Amazon-Ausnahmen). Details: 05-protokoll/2026-07-19-dev-galerie-block-h2.md |

@@ -45,3 +45,9 @@ Abgrenzung: Das Modell-Duell "backbone one vs gamesir g8" bleibt bei /vergleich/
 |---|---|
 | hall effect vs tmr · tmr sticks · tmr vs hall effect | /blog/hall-effect-vs-tmr/ |
 Abgrenzung: "hall effekt sticks" (Erklärung, GSC 0/2) bleibt bei /blog/hall-effect-erklaert/ (rankt bereits); der neue Artikel zielt auf die VERGLEICHS-Frage und verlinkt die Erklärung.
+
+## Budget-Frage (19.07.2026, Content-Kalender)
+| Keyword-Cluster | Zielseite |
+|---|---|
+| günstige handy controller · handy controller günstig · billige handy controller (Frage-Intention: taugen die?) | /blog/guenstige-handy-controller/ |
+Abgrenzung: Das transaktionale "beste budget controller unter 50 €" bleibt bei /vergleich/beste-budget-controller/ (der Artikel verlinkt die Liste als Antwort); "8bitdo ultimate 2c" bleibt beim Review.
