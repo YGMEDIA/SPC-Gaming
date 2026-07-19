@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 6, Budget-Frage-Artikel)
+**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 7 — Content-Kalender komplett)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | content-loop | Lauf 7: Tablet-Artikel /blog/controller-fuer-tablet/ (P-5, 756 W, Spannweiten-Regel, Frage/Hub-Paar, Sitemap 101). **Content-Kalender KOMPLETT.** Details: 05-protokoll/2026-07-19-content-tablet-controller.md |
 | 2026-07-19 | preis-loop | Welle 3: 27 veraltete Karten-price-rows auf Hubs/Marken/Startseite gefixt (11.07.-Rendering; pcard-Parser mit 900er-Fenster jetzt Standard-Audit). Gegen-Audit 0. Details: 05-protokoll/2026-07-19-content-preis-sync-welle3.md |
 | 2026-07-19 | content-loop | Lauf 6: Budget-Frage-Artikel /blog/guenstige-handy-controller/ (P-5, 765 W, Frage-Intention vs. Listen-Keyword sauber getrennt, Sitemap 100). Details: 05-protokoll/2026-07-19-content-guenstige-controller.md |
 | 2026-07-19 | content-loop | Lauf 5: Technik-Artikel /blog/hall-effect-vs-tmr/ (P-5, 841 W, Sitemap 99) + TMR-Faktenkorrekturen (2 irreführende Kishi-Cons entfernt, Duell-Sticks-Zeile neutralisiert). Details: 05-protokoll/2026-07-19-content-hall-vs-tmr.md |

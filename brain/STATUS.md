@@ -11,7 +11,7 @@
 
 ## Wo wir stehen
 
-**Site:** LIVE, 101 Seiten, Sitemap 100 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
+**Site:** LIVE, 102 Seiten, Sitemap 101 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
 **Marktdaten (GSC-Lauf 1, Paket 19.07., Fenster 11.-17.07. = Vorher-Baseline VOR den 18./19.07.-Deploys):**
 5 Klicks · 315 Impressionen in 7 Tagen · CTR 1,6 % · Ø Position 16,8 (von 18,3). Rohdaten: `03-research/raw/gsc/2026-07-19.md`.
@@ -56,7 +56,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 2. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
 3. **Mehrbild-Galerien (Block H2): Handgriff entfällt** — Beschaffung läuft seit 19.07. autonom über deine Chrome-Extension (P-9). Dein einziger Beitrag: Chrome offen + Extension verbunden lassen, wenn ich Batch 2/3 ziehe.
 4. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
-5. **Key-Visuals für die ZWEI neuen Artikel** (aktuell SVG-Platzhalter): (a) /blog/gamesir-oder-backbone/ mit Prompt "Zwei Smartphone-Gaming-Controller liegen einander gegenüber auf dunkler navy-blauer Fläche, der linke in hellem Weiß-Silber, der rechte in kräftigem Blau, zwischen ihnen ein feiner blauer Energie-Funke, dramatisches seitliches Licht, Produktfotografie, 16:9" → Download slug-benannt (gamesir-oder-backbone). (b) /blog/hall-effect-vs-tmr/ mit Prompt "Makroaufnahme zweier zerlegter Analogstick-Module nebeneinander auf dunkler navy-blauer Fläche, links ein kleiner Magnet über einem Sensor-Chip, rechts ein Stapel hauchdünner metallischer Schichten, blaues Akzentlicht, technische Produktfotografie, 16:9" → Download slug-benannt (hall-effect-vs-tmr). (c) /blog/guenstige-handy-controller/ mit Prompt "Smartphone-Gaming-Controller liegt neben drei kleinen aufsteigenden Münzstapeln auf dunkler navy-blauer Fläche, weiches blaues Akzentlicht, minimalistische Produktfotografie, 16:9" → Download slug-benannt (guenstige-handy-controller). Claude Code baut alle ein (bewiesener Workflow vom 19.07.).
+5. **Key-Visuals für die ZWEI neuen Artikel** (aktuell SVG-Platzhalter): (a) /blog/gamesir-oder-backbone/ mit Prompt "Zwei Smartphone-Gaming-Controller liegen einander gegenüber auf dunkler navy-blauer Fläche, der linke in hellem Weiß-Silber, der rechte in kräftigem Blau, zwischen ihnen ein feiner blauer Energie-Funke, dramatisches seitliches Licht, Produktfotografie, 16:9" → Download slug-benannt (gamesir-oder-backbone). (b) /blog/hall-effect-vs-tmr/ mit Prompt "Makroaufnahme zweier zerlegter Analogstick-Module nebeneinander auf dunkler navy-blauer Fläche, links ein kleiner Magnet über einem Sensor-Chip, rechts ein Stapel hauchdünner metallischer Schichten, blaues Akzentlicht, technische Produktfotografie, 16:9" → Download slug-benannt (hall-effect-vs-tmr). (c) /blog/guenstige-handy-controller/ mit Prompt "Smartphone-Gaming-Controller liegt neben drei kleinen aufsteigenden Münzstapeln auf dunkler navy-blauer Fläche, weiches blaues Akzentlicht, minimalistische Produktfotografie, 16:9" → Download slug-benannt (guenstige-handy-controller). (d) /blog/controller-fuer-tablet/ mit Prompt "Großes Tablet auf einem Ständer, davor liegt ein kabelloses Gamepad auf dunkler navy-blauer Fläche, weiches blaues Akzentlicht, aufgeräumte Produktfotografie, 16:9" → Download slug-benannt (controller-fuer-tablet). Claude Code baut alle ein (bewiesener Workflow vom 19.07.).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
@@ -102,13 +102,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 19. **19.07. content-loop Lauf 6: Budget-Frage-Artikel (deployed).** `/blog/guenstige-handy-controller/` (765 W, P-5): ehrliches Ja zur Budget-Klasse mit Belegen (Hall ab 20 €, U2C 4,5/828), drei ehrliche Abstriche, belegtes Warnbeispiel MGPXPRO (3,3, "keine Kaufempfehlung" wörtlich gegengeprüft), zwei Warnsignale als Kaufregel. §B1-Muster etabliert: Frage-Artikel + transaktionale Liste als wechselseitig verlinktes Paar. Site: 101 Seiten, Sitemap 100. Details: `05-protokoll/2026-07-19-content-guenstige-controller.md`.
 
+20. **19.07. content-loop Lauf 7: Tablet-Artikel — Content-Kalender KOMPLETT (deployed).** `/blog/controller-fuer-tablet/` (756 W, P-5): ehrliche Spannweiten-Regel (Teleskop endet bei iPad-mini-Klasse, belegt über beide Kishi-Kompatibilitätslisten; ab normalem iPad Bluetooth-Gamepad + Ständer mit G8 Plus 76 € / U2C 20 €), Frage/Hub-Paar-Keyword dokumentiert. Blog jetzt 18 Artikel, Site 102 Seiten, Sitemap 101. Damit sind alle drei Kalender-Artikel (Läufe 5-7) an einem Tag entstanden; neue Artikel ab jetzt GSC-getrieben. Details: `05-protokoll/2026-07-19-content-tablet-controller.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Claude Code (nächste Session, autonom — Reihenfolge):**
-1. content-loop: Letzter Kalender-Artikel "Tablet-Controller" nach P-5 (Frage-Intention "welcher controller für tablet/ipad" — Abgrenzung zum /controller/tablet/-Hub dokumentieren, Sitemap +1).
-2. Danach GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
+**Claude Code (nächste Session, autonom):**
+1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
 Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).

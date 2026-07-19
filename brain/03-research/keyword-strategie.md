@@ -51,3 +51,9 @@ Abgrenzung: "hall effekt sticks" (Erklärung, GSC 0/2) bleibt bei /blog/hall-eff
 |---|---|
 | günstige handy controller · handy controller günstig · billige handy controller (Frage-Intention: taugen die?) | /blog/guenstige-handy-controller/ |
 Abgrenzung: Das transaktionale "beste budget controller unter 50 €" bleibt bei /vergleich/beste-budget-controller/ (der Artikel verlinkt die Liste als Antwort); "8bitdo ultimate 2c" bleibt beim Review.
+
+## Tablet-Frage (19.07.2026, Content-Kalender — Kalender damit KOMPLETT)
+| Keyword-Cluster | Zielseite |
+|---|---|
+| controller für tablet · ipad controller · tablet controller (Frage/Anleitung: welcher passt, wie verbinden) | /blog/controller-fuer-tablet/ |
+Abgrenzung: Die transaktionale Kategorie ("Controller für Tablet & iPad Test & Vergleich") bleibt beim Hub /controller/tablet/ (der Artikel verlinkt ihn als Auswahl); Frage/Hub-Paar-Muster wie bei Budget (Lauf 6).

@@ -28,6 +28,7 @@ Testsieger 2026: GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect-Sticks, iPho
 - [GameSir oder Backbone? Marken-Vergleich](https://smartphone-controller.com/blog/gamesir-oder-backbone/): Technik fürs Geld vs. Gesamterlebnis
 - [Welche Spiele unterstützen Controller?](https://smartphone-controller.com/blog/welche-spiele-controller/)
 - [Cloud Gaming auf dem Smartphone](https://smartphone-controller.com/blog/cloud-gaming-smartphone/): Xbox GamePass, GeForce NOW, PS Remote Play
+- [Controller für Tablet & iPad](https://smartphone-controller.com/blog/controller-fuer-tablet/): die zwei Wege ab 20 €
 - [Sind günstige Handy-Controller gut?](https://smartphone-controller.com/blog/guenstige-handy-controller/): ehrliche Budget-Beratung ab 20 €
 - [Hall-Effect oder TMR?](https://smartphone-controller.com/blog/hall-effect-vs-tmr/): beide Anti-Drift-Techniken im Vergleich
 - [Hall-Effect-Sticks erklärt](https://smartphone-controller.com/blog/hall-effect-erklaert/)
