@@ -58,8 +58,9 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 4. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
 5. Zweite anzubindende Domain benennen (neben der .de).
 6. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
-7. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
-8. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
+7. **Fotoreale Blog-Bilder generieren (optional, ersetzt die SVG-Illustrationen):** 8 fertige Prompts liegen in `03-research/bild-prompts-blog.md` — mit beliebigem Bild-KI-Tool generieren (16:9, ≥1600px, JPG), Dateien an Claude Code geben, Integration läuft autonom. Hinweis dort beachten: KI-Fotos nur für Ratgeber-Themen, nie für Produkt-Darstellungen (E-E-A-T).
+8. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
+9. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
