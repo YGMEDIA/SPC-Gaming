@@ -7,6 +7,7 @@
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | preis-loop | Welle 3: 27 veraltete Karten-price-rows auf Hubs/Marken/Startseite gefixt (11.07.-Rendering; pcard-Parser mit 900er-Fenster jetzt Standard-Audit). Gegen-Audit 0. Details: 05-protokoll/2026-07-19-content-preis-sync-welle3.md |
 | 2026-07-19 | content-loop | Lauf 6: Budget-Frage-Artikel /blog/guenstige-handy-controller/ (P-5, 765 W, Frage-Intention vs. Listen-Keyword sauber getrennt, Sitemap 100). Details: 05-protokoll/2026-07-19-content-guenstige-controller.md |
 | 2026-07-19 | content-loop | Lauf 5: Technik-Artikel /blog/hall-effect-vs-tmr/ (P-5, 841 W, Sitemap 99) + TMR-Faktenkorrekturen (2 irreführende Kishi-Cons entfernt, Duell-Sticks-Zeile neutralisiert). Details: 05-protokoll/2026-07-19-content-hall-vs-tmr.md |
 | 2026-07-19 | content-loop | Lauf 4: Budget-Kuratierung — X2s (53 €) gegen 8BitDo Ultimate Mobile (45 €) auf beste-budget #3 getauscht; "unter 50 €"-Rahmen wieder eingehalten. Details: 05-protokoll/2026-07-19-content-budget-kuratierung.md |
