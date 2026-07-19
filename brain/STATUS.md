@@ -13,9 +13,9 @@
 
 **Site:** LIVE, 88 Seiten (Stand-Korrektur nach Brain-Commit: 87 indexierbare + Suche), Sitemap 87 URLs, Analytics/GTM aktiv (Events seit 11.07.-Fix korrekt), Search Console aktiv, Bing Webmaster Tools seit 19.07. aktiv (GSC-Import) + IndexNow eingerichtet.
 
-**Erste echte Marktdaten (GSC, 18.07., 3-Monats-Sicht = real ~10 Tage Index):**
-7 Klicks · 348 Impressionen (Verzehnfachung in einer Woche) · Ø Position 18,3 (von 23 kommend) · CTR 2 %.
-**Kern-Erkenntnis:** ALLE Klicks kommen über Blog-Artikel ("Welche Spiele unterstützen Controller" 2×, iPhone-USB-C, Hall-Effect) → Blog-first-Vererbung ist bewiesen (§B4), Blog-Ausbau hat Priorität. Top-Impressions-Begriff ohne optimierte Zielseite: "controller finden" (9) → Block A.
+**Marktdaten (GSC-Lauf 1, Paket 19.07., Fenster 11.-17.07. = Vorher-Baseline VOR den 18./19.07.-Deploys):**
+5 Klicks · 315 Impressionen in 7 Tagen · CTR 1,6 % · Ø Position 16,8 (von 18,3). Rohdaten: `03-research/raw/gsc/2026-07-19.md`.
+**Kern-Erkenntnisse Lauf 1:** (1) Blog-first bestätigt: welche-spiele-controller dominiert (2 Klicks/72 Impr.), 57 verschiedene Queries, Position verbessert sich. (2) controller-verbindet-nicht hat 47 Impressionen bei 0 Klicks → CTR/Positions-Problem, Warteschlange. (3) Vergleichs-Cluster "gamesir vs backbone" taucht mehrfach auf (auch englisch) → Content-Chance. (4) ipega-Queries (9083, 90, controller) hatten Impressionen über die ZOMBIE-Seiten — die neuen Longtail-Datenblätter erben das Feld. (5) Produkt-Snippets erscheinen bereits (12 Impr.) → Schema greift. (6) "yasin gündogdu" wird gesucht (4 Impr.) → stützt die Autoren-Box-Entscheidung. Baseline für Block-A/B-Erfolgskontrolle: "controller finden" 0/9, /controller-finder/ 0/9, Longtail 0.
 
 **Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A und Block B umgesetzt + deployed (18.07.)** — Spec #1 damit komplett abgearbeitet (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
 

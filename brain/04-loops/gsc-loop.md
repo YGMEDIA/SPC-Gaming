@@ -8,4 +8,4 @@
 3. Maßnahmen ableiten: max. 3 konkrete Punkte, in LOOP-STATE bzw. Warteschlangen eintragen.
 **Fertig-Kriterium:** raw-Notiz existiert + Interpretation in STATUS (3 Sätze) + Warteschlangen aktualisiert.
 **Erfolgskontrollen offen:** Longtail-Batch 1 (3–4 Wochen nach Deploy), Finder-Seite auf "controller finden", Ratgeber-Duplikat-Bereinigung (Kanonisierungs-Meldungen sollten sinken).
-**Läufe:** —
+**Läufe:** 2026-07-19 · Lauf 1 (Fenster 11.-17.07., Vorher-Baseline; 2 Maßnahmen in content-loop, 1 Beobachtungspunkt).
