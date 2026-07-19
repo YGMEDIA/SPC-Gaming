@@ -85,6 +85,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 9. **18.07. spät: Wachstums-Recherche + Emotions-Redesign Startseite (deployed).** Web-Recherche zu AI Overviews (48 % der Suchen, CTR -34-61 %, aber Klicker konvertieren um Vielfaches besser → BOFU + Zitierfähigkeit), E-E-A-T 2026 (Erste-Hand-Erfahrung = stärkstes Signal, ~2,3x häufiger zitiert) und emotionalem Design (Storytelling-Bänder, authentische Fotos, Statement-Typo). Destillat mit priorisierten Maßnahmen: `03-research/2026-07-18-wachstums-recherche.md`. Umgesetzt: 3 neue Emotions-Bänder auf der Startseite (Navy-Gradient-Statement "Echte Konsolen-Spiele" mit G8 auf weißer Karte, graues Ehrlichkeits-Statement mit /redaktion/-Link, helles Foto-Band mit eigenem G8-Testfoto), Apple-Rhythmus in Corporate-Farben, §A7-konform, rein statisch, Browser-verifiziert. Details: `05-protokoll/2026-07-18-dev-emotions-redesign.md`.
 
+10. **19.07. (Nacht): Key-Visuals für alle Blog-Artikel (deployed).** 8 Artikel hatten nur Emoji-Platzhalter im Blog-Index und kein Hero-Bild. Da keine Fotos verfügbar: 8 eigene SVG-Illustrationen im Corporate-Look erstellt (Navy/Blau-Verläufe, Glow, klare Motive je Thema, KEIN Text im Bild, je ~8 KB) — Teleskop-Controller, iPhone+USB-C, Pairing-Wellen, unterbrochene Verbindung (Amber), Sleeve-Fingerkuppe, Kühler-Lüfter, Hüllen-Klemme, Setup-Konstellation. Als article-hero-img in die 8 Artikel + als Thumbs in den Blog-Index (Emoji-Divs ersetzt). Browser-verifiziert (alle 8 Kompositionen gesichtet). Nebenfix: 2 falsche "30 Min. Lesezeit"-Angaben → 5 Min. og:image bleibt JPG (SVG für Social ungeeignet). Alle 13 Artikel haben jetzt ein Key-Visual. Details: `05-protokoll/2026-07-19-dev-blog-key-visuals.md`.
+
 ---
 
 ## Nächster geplanter Schritt

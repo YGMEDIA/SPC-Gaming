@@ -1,0 +1,16 @@
+# 2026-07-19 · dev · Key-Visuals für alle Blog-Artikel
+
+> Kategorie: dev/design · Auftrag Yasin: jeder Artikel ein passendes, emotionales Bild statt Icons; kein Text im Bild; Konzept-Look
+
+## Was
+8 SVG-Illustrationen (1600x900, je ~8 KB) im Corporate-Design erstellt (`assets/img/blog/`): was-ist-controller (Teleskop-Controller ikonisch), iphone-usb-c (Port-Glow + Stecker), handy-verbinden (Pairing-Wellen), verbindet-nicht (unterbrochene Wellen + Amber-Bruch), finger-sleeves (Gewebe-Fingerkuppe + Touch-Ripple), handy-kuehler (Lüfter-Disk + Kälte-Bögen), huellen (Klemmbacken + Amber-Spalt), gaming-setup-flat (Zubehör-Konstellation). Einheitliche Sprache: Navy-Verlauf, Punktraster, Glow-Radialgradienten, helle Gerätekörper, Blau/Cyan-Akzente, Amber NUR für Problem/Spalt. Eingebaut als article-hero-img in die 8 Artikel ohne Bild + als Thumbs im Blog-Index (Emoji-Platzhalter ersetzt, alt = Artikeltitel wie bestehende Karten). Nebenfix: 2x "30 Min. Lesezeit" → 5 Min.
+
+## Wie
+SVGs per Script generiert (gemeinsame defs, Punktraster-Funktion), Browser-Sichtprüfung aller 8 Kompositionen über lokale Prüfseite (danach gelöscht). qlmanage-PNG-Rendering verworfen: rendert ins Quadrat mit Zoom-Crop (Motive abgeschnitten), cairosvg/rsvg nicht installiert → SVG direkt im <img> (crisp, winzig, überall unterstützt); og:image/Schema behalten JPG (SVG für Social-Cards/Google-Images ungeeignet).
+
+## Verify
+verify.py GRÜN (98 Seiten, 218 Schemas) · Browser: alle 8 SVGs naturalWidth 1600, Kompositionen gesichtet · Blog-Index rendert Foto- und SVG-Thumbs kohärent · Alt-Audit-Regeln eingehalten (beschreibend, "Illustration:"-Präfix, kein Dateiname).
+
+## Gelernt
+1. qlmanage taugt nicht als SVG-Rasterizer für Nicht-Quadrate (Zoom-Crop). Wenn PNG-Ableitungen nötig werden (Social Cards): cairosvg installieren oder Browser-Screenshot-Pipeline bauen.
+2. SVG-Key-Visuals sind der richtige Standard für Ratgeber-Artikel ohne Foto: eigenes Bildrecht (§C3), Corporate-Farben exakt, 8 KB statt 2 MB. Echte Fotos bleiben erste Wahl, wo vorhanden (Yasin-Liste Punkt 7).
