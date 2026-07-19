@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 6 Punkte (Live-Stichprobe, Bing, GSC-Screenshot, GA4-Test, 2. Domain, Rich-Results) |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 6 Punkte (GSC-Paket, GA4-Test, 2. Domain, Autoren-Identität, Galerie-Bilder, Rich-Results) |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 6 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle, Preisdivergenzen, CoD-FAQ); Brain-Leak 18.07. behoben |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
@@ -52,14 +52,12 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | .de-Domain + eine weitere Domain nicht angebunden (Redirect empfohlen; welche zweite Domain: Yasin nennt sie noch) | — | offen (Yasin, IONOS) |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
-1. **Live-Stichprobe nach dem ersten autonomen Deploy** (Prüfliste im Protokoll content-block-a): kurz gegenchecken, ob live alles wie erwartet aussieht. Ab jetzt gilt: Deploys laufen autonom, nie mehr "Add files via upload".
-2. **Bing: Sitemaps-Tab prüfen** — falls leer, einmal https://smartphone-controller.com/sitemap.xml einreichen. (Property selbst ist seit 19.07. verifiziert.)
-3. **GSC Indexierungs-Screenshot** (Indexierung → Seiten) — die Zahl fehlt uns noch.
-4. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
-5. Zweite anzubindende Domain benennen (neben der .de).
-6. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
-7. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
-8. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
+1. **GSC-Paket liefern (4 Screenshots):** Leistung 7 Tage (Übersicht, Suchanfragen, Seiten) + Indexierung → Seiten. Erledigt 19.07.: Live-Stichprobe ✓, Bing verifiziert ✓, Sitemap non-www neu eingereicht ✓, Indexierung für 8bitdo-lite-2 + controller-finder beantragt ✓.
+2. GA4-Echtzeit-Check: kommt `affiliate_click` jetzt an? (1 Testklick nach Consent genügt.)
+3. Zweite anzubindende Domain benennen (neben der .de).
+4. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
+5. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
+6. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
