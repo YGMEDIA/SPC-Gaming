@@ -2,11 +2,13 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (Produkt-Videos live)
+**Letzte Aktualisierung:** 2026-07-19 (Autoren-Paket + Rich-Results)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | (E-E-A-T) | Autoren-Paket komplett (Yasins Pseudonym-Entscheidung): Yannick Gerber auf /redaktion/ (Profil + Person-Schema), 17 Blog-Bylines + Article-author Person, 13 Review-Bylines + Autoren-Boxen. Details: 05-protokoll/2026-07-19-dev-autoren-paket.md |
+| 2026-07-19 | (Betrieb) | Rich-Results-Test autonom: 4 URLs, 0 kritische Fehler, Rezensions-Snippets auf Review- UND GEN-Seiten gültig; FAQ-Typ generell eingestellt (Google-seitig). Details: 05-protokoll/2026-07-19-system-rich-results-test.md |
 | 2026-07-19 | (Block H3) | Produkt-Videos KOMPLETT: produktgebundener ImageBlock-Extraktor (P-10), Batch 40 ASINs via Chrome, 19 belegte Treffer (19/19 validiert: HEAD+Dauer+Eindeutigkeit+Poster-Sichtung), video-Feld products.json, Sektion auf 16 GEN- + 3 Review-Seiten, verify grün, IndexNow 101 URLs. 21 Produkte haben Amazon-seitig kein Video. Details: 05-protokoll/2026-07-19-dev-produkt-videos.md |
 | 2026-07-19 | (Block H2+) | Galerie-Kacheln vergrößert (240er-Raster/230px, CTA 260px; style.css + gen_pages synchron, 27 Seiten regeneriert). Video-Machbarkeit bewiesen (stabile CDN-mp4s), Zuordnungs-Stopper dokumentiert — Rollout wartet auf produktgebundenen Extraktor. Details: 05-protokoll/2026-07-19-dev-galerie-groesser-video-recherche.md |
 | 2026-07-19 | content-loop | Lauf 7: Tablet-Artikel /blog/controller-fuer-tablet/ (P-5, 756 W, Spannweiten-Regel, Frage/Hub-Paar, Sitemap 101). **Content-Kalender KOMPLETT.** Details: 05-protokoll/2026-07-19-content-tablet-controller.md |

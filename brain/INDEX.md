@@ -19,7 +19,7 @@
 Außerhalb des Brains, gehört zum System: `/CLAUDE.md` (Einstieg für Claude Code, <200 Zeilen) · `/scripts/` (verify.py als Pflicht-Gate, Generatoren) · `/.github/workflows/deploy.yml` (veröffentlicht die Site OHNE brain/, scripts/, CLAUDE.md).
 
 ## Site-Stand
-LIVE auf GitHub Pages (smartphone-controller.com, non-www kanonisch). 102 HTML-Seiten · 40 Produkte in products.json (alle mit Detailseite, 38 mit Galerie, 19 mit Produktvideo) · 13 Reviews · 18 Blog-Artikel · 10 Longtail-Datenblätter · Sitemap 101 URLs · GTM/GA4 consent-gated aktiv (end-to-end bewiesen 19.07.) · Bing + IndexNow live. GSC-Baseline (11.-17.07.): 5 Klicks / 315 Impressionen / Ø Position 16,8 — Details in STATUS.
+LIVE auf GitHub Pages (smartphone-controller.com, non-www kanonisch). 102 HTML-Seiten · 40 Produkte in products.json (alle mit Detailseite, 38 mit Galerie, 19 mit Produktvideo) · 13 Reviews · 17 Blog-Artikel · 10 Longtail-Datenblätter · Autoren-Identität Yannick Gerber sitewide (E-E-A-T, seit 19.07.) · Sitemap 101 URLs · GTM/GA4 consent-gated aktiv (end-to-end bewiesen 19.07.) · Bing + IndexNow live. GSC-Baseline (11.-17.07.): 5 Klicks / 315 Impressionen / Ø Position 16,8 — Details in STATUS.
 
 ## Arbeitsprinzip
 Idee → Spec (gegen echtes Repo) → Freigabe (Yasin) → Claude Code baut nach Constitution + Patterns → `scripts/verify.py` grün + Review in frischem Kontext (Macher ≠ Prüfer) → Yasin deployt → Gelerntes zurück ins Brain. Rollen: Yasin entscheidet, Chat-Claude plant und prüft, Claude Code implementiert.
