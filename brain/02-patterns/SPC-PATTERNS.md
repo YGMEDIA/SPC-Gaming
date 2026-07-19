@@ -57,8 +57,19 @@
 
 ---
 
+## P-10 · Produkt-Video-Pattern [bewiesen 19.07.2026]
+**Wann:** Amazon-Produktvideo auf Detail-/Review-Seiten (Block H3). Ehrlicher Rahmen: NUR wo Amazon ein Video hat (Stand 19.07.: 19/40).
+**Beschaffung (produktgebunden, NIE global):** /dp/ASIN in Yasins Chrome → HTML per same-origin `fetch(location.href)` (DOM-Script-Scan unzuverlässig, Tag verschwindet nach Hydration) → ab `ImageBlockATF` den `'videos'`-Array balanced parsen, leer → Fallback ab `ImageBlockBTF`; ohne Slice-Limit. videos[0] (variant MAIN) = das Video des Produkts. Der globale DOM-Scan nach .mp4 ist VERBOTEN als Quelle (multi-brand-Widget mischt Fremdvideos ein — Beweis im Protokoll 2026-07-19-dev-galerie-groesser-video-recherche.md).
+**mp4-Ableitung:** ImageBlock liefert HLS (`default.jobtemplate.hls.m3u8`, nativ unspielbar) → Sibling `default.jobtemplate.mp4.480.mp4` im selben VSE-Artefakt-Ordner (einzige mp4-Rendition). Poster = slateUrl.
+**Validierung pro Treffer (Pflicht):** mp4-HEAD 200 video/mp4 · Poster-HEAD · Dauer-Match deklariert vs. mvhd-Box (±2 s) · projektweite URL-Eindeutigkeit · Poster-Kontaktbogen sichten.
+**Daten:** `video`-Feld in products.json = {url, poster, duration "M:SS"}; nur belegte Treffer (§A5-Geist).
+**Bau:** Sektion "Produktvideo" zwischen Galerie und Stärken/Schwächen: `<video controls preload="none" poster src title>` + Zeile "Video von der Amazon-Produktseite · Länge X:XX Min.". preload=none hält die Seite statisch (§A2), kein Consent-Thema. KEIN VideoObject-Schema (uploadDate nicht belegbar). CSS synchron style.css + gen_pages-<style>. GEN-Seiten via `gen_pages.py --regen`, Reviews per Script-Pass mit Assertions.
+**Vorlage:** /produkte/risoka-trigger/ · Gesetze: §A1, §A2, §A5, §C3.
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v1.1 · 2026-07-19*
+*SPC Pattern-Katalog v1.2 · 2026-07-19*

@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-07-19
+**Letzte Aktualisierung:** 2026-07-19 (abends, nach Produkt-Video-Rollout)
 
 ---
 
@@ -106,14 +106,15 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 21. **19.07. Galerie-Kacheln vergrößert + Video-Machbarkeit geklärt (deployed; Yasins Wunsch aus dem Chat).** Bilder: Galerie-Raster 170 → 240er minmax, Bildhöhe 230 px, CTA-Foto 260 px, beide CSS-Orte synchron, alle 27 GEN-Seiten regeneriert, Reviews ziehen zentral. Videos: Amazon-Produktvideos liegen hotlink-stabil auf dem Bilder-CDN (curl-bewiesen, 20-Jahre-Cache), Extraktion via Chrome-Klick funktioniert — ABER der globale mp4-Scan mischt Amazons "ähnliche Videos" ein (identische URL bei zwei Produkten nachgewiesen), deshalb bewusst NICHTS eingebaut. Nächster Schritt mit produktgebundenem Extraktor in STATUS. Details: `05-protokoll/2026-07-19-dev-galerie-groesser-video-recherche.md`.
 
+22. **19.07. abends: Produkt-Videos live — Block H3 KOMPLETT (deployed, P-10 neu).** Produktgebundener Extraktor gebaut (ImageBlock-State per same-origin fetch, `videos`-Array balanced geparst, BTF-Fallback), Pilot G8 vierfach gegen den abgespielten Player bewiesen (Titel/Thumb-Panel, mp4-HEAD, Dauer 54,3 s = 00:54, Frame-Sichtung; zugleich bestätigt: alle productVideoOptimized-URLs im DOM sind Fremdvideos des multi-brand-Widgets). Batch über alle 40 ASINs via Chrome: **19/40 Produkte mit eigenem Amazon-Video**, mp4-Ableitung `default.jobtemplate.mp4.480.mp4` aus dem HLS-Artefakt, 19/19 maschinell validiert (HEAD, Dauer-Match ±1 s, projektweite Eindeutigkeit) + Poster-Kontaktbogen gesichtet (jedes Poster = richtiges Produkt). `video`-Feld in products.json, Sektion "Produktvideo" (video controls preload=none poster, kein VideoObject v1) auf 16 GEN-Seiten + 3 Reviews (G8, Kishi V3, V3 Pro), CSS zentral + inline, Hotlink-Praxisbeweis von eigener Seite (readyState 4, 3,3 s gepuffert). Sitemap-lastmod 19 URLs, verify GRÜN, IndexNow 101 URLs HTTP 200. Die 21 Produkte ohne Amazon-Video bleiben ehrlich ohne Sektion. Details: `05-protokoll/2026-07-19-dev-produkt-videos.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-0. Produkt-Videos (Yasins Wunsch, Machbarkeit bewiesen): produktgebundenen Extraktor bauen — im ImageBlock-State den produktspezifischen 'videos'-Block parsen (NICHT global nach .mp4 greppen, mischt Fremdvideos ein; Details + Stopper-Beweis im Protokoll 2026-07-19-dev-galerie-groesser-video-recherche.md). 1 Produkt gegen abgespielten Player verifizieren → dann Batch über alle 40 (Chrome nötig), video-Feld nur für belegte Treffer, gen_pages-Sektion "Produktvideo" (<video controls preload="none" poster>, kein VideoObject-Schema v1), Review-Hand-Einbau analog Galerie. Ehrlich: nur wo Amazon ein Video hat (~Hälfte laut Stichprobe).
-1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
-Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
+1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en). Bis dahin: keine neuen Pflicht-Baustellen; optionale Kandidaten nur bei Anlass (z. B. Key-Visual-Einbau sobald Yasins 4 Bilder kommen, Screenshots für preis-loop).
+Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Produkt-Videos sind KOMPLETT (19/40, Block H3, P-10) — bei neuen Produkten gehört der Video-Check in den Aufnahme-Workflow. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).
 **Loops:** preis-loop fällig ab 01.08. (Voll-Abgleich) · gsc-loop Lauf 2 nach nächstem Paket.
