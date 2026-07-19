@@ -54,6 +54,9 @@
 .faq-item:last-child{border-bottom:none}
 .faq-q{font-size:16px;font-weight:700;margin-bottom:8px}
 .faq-a{font-size:14px;color:var(--ink-soft);line-height:1.6}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:12px;margin:16px 0}
+.gallery-item{margin:0;border:1px solid var(--line);border-radius:var(--radius-lg);background:#fff;padding:10px}
+.gallery-item img{width:100%;height:170px;object-fit:contain;display:block}
 .divider{border:none;border-top:1px solid var(--line);margin:32px 0}
 .related-card{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 16px;background:var(--surface);transition:box-shadow .15s,border-color .15s}
 .related-card:hover{box-shadow:var(--shadow-md);border-color:var(--blue-dim)}
@@ -66,7 +69,12 @@
  "@context": "https://schema.org",
  "@type": "Product",
  "name": "Ouligay Fingerschutz Daumenhülsen",
- "image": "https://m.media-amazon.com/images/I/81F1ufTJi3L._AC_SL1500_.jpg",
+ "image": [
+  "https://m.media-amazon.com/images/I/81F1ufTJi3L._AC_SL1500_.jpg",
+  "https://m.media-amazon.com/images/I/715cld9q0sL._AC_SL1500_.jpg",
+  "https://m.media-amazon.com/images/I/71WikTxtmuL._AC_SL1500_.jpg",
+  "https://m.media-amazon.com/images/I/81iQf00e+aL._AC_SL1500_.jpg"
+ ],
  "description": "30 Carbonfaser-Sleeves für 7 € — der Ouligay-Massenpack ist der Preis-Leistungs-Sieger für Verbraucher, die Sleeves als Verschleißartikel sehen. Achtung: Die Größen fallen klein aus.",
  "brand": {
   "@type": "Brand",
@@ -173,6 +181,13 @@
 <tr><td>Amazon-Bewertung</td><td>4,1 / 5 (257 Bewertungen)</td></tr>
 <tr><td>Kategorie</td><td><a href="/zubehoer/finger-sleeves/">Finger Sleeves</a></td></tr>
           </table>
+
+          <h2>Produktbilder</h2>
+<div class="gallery-grid">
+<figure class="gallery-item"><img src="https://m.media-amazon.com/images/I/715cld9q0sL._AC_SL1500_.jpg" alt="Ouligay Fingerschutz Daumenhülsen, Produktansicht 2" loading="lazy" onerror="this.closest('figure').remove()"></figure>
+<figure class="gallery-item"><img src="https://m.media-amazon.com/images/I/71WikTxtmuL._AC_SL1500_.jpg" alt="Ouligay Fingerschutz Daumenhülsen, Produktansicht 3" loading="lazy" onerror="this.closest('figure').remove()"></figure>
+<figure class="gallery-item"><img src="https://m.media-amazon.com/images/I/81iQf00e+aL._AC_SL1500_.jpg" alt="Ouligay Fingerschutz Daumenhülsen, Produktansicht 4" loading="lazy" onerror="this.closest('figure').remove()"></figure>
+</div>
 
           <h2>Stärken & Schwächen</h2>
           <div class="pros-cons-grid">
