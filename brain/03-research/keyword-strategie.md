@@ -38,3 +38,10 @@ Abgrenzung: "gamesir x2s", "gamesir x3 pro", "razer kishi v3" bleiben bei den Re
 |---|---|
 | gamesir oder backbone · gamesir vs backbone · backbone vs gamesir · is gamesir better than backbone (GSC: 5+ Varianten, de+en) | /blog/gamesir-oder-backbone/ |
 Abgrenzung: Das Modell-Duell "backbone one vs gamesir g8" bleibt bei /vergleich/backbone-one-vs-gamesir-g8/ (der neue Artikel zielt auf die MARKEN-Frage und verlinkt aufs Duell); "gamesir" allein bleibt bei /marken/gamesir/ (Riesen-Schicht).
+
+
+## Technik-Vergleich (19.07.2026, Content-Kalender)
+| Keyword-Cluster | Zielseite |
+|---|---|
+| hall effect vs tmr · tmr sticks · tmr vs hall effect | /blog/hall-effect-vs-tmr/ |
+Abgrenzung: "hall effekt sticks" (Erklärung, GSC 0/2) bleibt bei /blog/hall-effect-erklaert/ (rankt bereits); der neue Artikel zielt auf die VERGLEICHS-Frage und verlinkt die Erklärung.

@@ -11,7 +11,7 @@
 
 ## Wo wir stehen
 
-**Site:** LIVE, 99 Seiten, Sitemap 98 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
+**Site:** LIVE, 100 Seiten, Sitemap 99 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
 **Marktdaten (GSC-Lauf 1, Paket 19.07., Fenster 11.-17.07. = Vorher-Baseline VOR den 18./19.07.-Deploys):**
 5 Klicks · 315 Impressionen in 7 Tagen · CTR 1,6 % · Ø Position 16,8 (von 18,3). Rohdaten: `03-research/raw/gsc/2026-07-19.md`.
@@ -56,7 +56,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 2. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
 3. **Mehrbild-Galerien (Block H2): Handgriff entfällt** — Beschaffung läuft seit 19.07. autonom über deine Chrome-Extension (P-9). Dein einziger Beitrag: Chrome offen + Extension verbunden lassen, wenn ich Batch 2/3 ziehe.
 4. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
-5. **Key-Visual für den neuen Marken-Vergleich** (/blog/gamesir-oder-backbone/, aktuell SVG-Platzhalter): Bild generieren mit Prompt "Zwei Smartphone-Gaming-Controller liegen einander gegenüber auf dunkler navy-blauer Fläche, der linke in hellem Weiß-Silber, der rechte in kräftigem Blau, zwischen ihnen ein feiner blauer Energie-Funke, dramatisches seitliches Licht, Produktfotografie, 16:9" → Download slug-benannt (gamesir-oder-backbone), Claude Code baut ein (bewiesener Workflow vom 19.07.).
+5. **Key-Visuals für die ZWEI neuen Artikel** (aktuell SVG-Platzhalter): (a) /blog/gamesir-oder-backbone/ mit Prompt "Zwei Smartphone-Gaming-Controller liegen einander gegenüber auf dunkler navy-blauer Fläche, der linke in hellem Weiß-Silber, der rechte in kräftigem Blau, zwischen ihnen ein feiner blauer Energie-Funke, dramatisches seitliches Licht, Produktfotografie, 16:9" → Download slug-benannt (gamesir-oder-backbone). (b) /blog/hall-effect-vs-tmr/ mit Prompt "Makroaufnahme zweier zerlegter Analogstick-Module nebeneinander auf dunkler navy-blauer Fläche, links ein kleiner Magnet über einem Sensor-Chip, rechts ein Stapel hauchdünner metallischer Schichten, blaues Akzentlicht, technische Produktfotografie, 16:9" → Download slug-benannt (hall-effect-vs-tmr). Claude Code baut beide ein (bewiesener Workflow vom 19.07.).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
@@ -98,12 +98,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 17. **19.07. content-loop Lauf 4: Budget-Kuratierung (deployed).** X2s Bluetooth (53 €) verletzte nach dem Preis-Sync sichtbar den "unter 50 €"-Rahmen der Budget-Liste — auf #3 gegen 8BitDo Ultimate Mobile (45 €, Hall-Effect-Sticks und -Trigger, Kurzcheck-Link statt Review) getauscht. Lehre: Kuratierungs-Check gehört ans Ende jedes Preis-Syncs. Details: `05-protokoll/2026-07-19-content-budget-kuratierung.md`.
 
+18. **19.07. content-loop Lauf 5: Technik-Artikel "Hall-Effect oder TMR?" + TMR-Faktenkorrekturen (deployed).** Neuer P-5-Artikel `/blog/hall-effect-vs-tmr/` (841 W, ehrliche Einordnung: beide Magnet-Techniken driftfrei, TMR feiner aber kein K.-o.-Kriterium; Sitemap 99, Blog-Index Pos. 1, Keyword-Abgrenzung zu hall-effect-erklaert). Dabei 3 Bestandsseiten der Artikel-Logik angepasst: irreführende Cons "Keine Hall-Effect-Sticks" aus beiden Kishi-Reviews entfernt (TMR ist gleichwertig bis feiner), Duell-Sticks-Zeile G8-vs-Kishi von winner/loser auf "beide driftfrei" neutralisiert. Site: 100 Seiten. Details: `05-protokoll/2026-07-19-content-hall-vs-tmr.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-1. content-loop: Neuer Blog-Artikel "Hall-Effect vs. TMR" nach P-5 (Kalender-Punkt 1; rankende hall-effect-erklaert-Basis intern verlinken, GSC-Query "hall effekt sticks" 0/2 als Signal; Keyword-Vergabe dokumentieren, Sitemap +1).
+1. content-loop: Nächster Kalender-Artikel nach P-5 (Kandidaten: "beste Controller unter 50 €" als Blog-Verstärkung der Budget-Liste ODER Tablet-Controller; Keyword-Vergabe dokumentieren, Sitemap +1).
 2. Danach GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en).
 Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 

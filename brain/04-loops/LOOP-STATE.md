@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 4, Budget-Kuratierung)
+**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 5, Hall-vs-TMR)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | content-loop | Lauf 5: Technik-Artikel /blog/hall-effect-vs-tmr/ (P-5, 841 W, Sitemap 99) + TMR-Faktenkorrekturen (2 irreführende Kishi-Cons entfernt, Duell-Sticks-Zeile neutralisiert). Details: 05-protokoll/2026-07-19-content-hall-vs-tmr.md |
 | 2026-07-19 | content-loop | Lauf 4: Budget-Kuratierung — X2s (53 €) gegen 8BitDo Ultimate Mobile (45 €) auf beste-budget #3 getauscht; "unter 50 €"-Rahmen wieder eingehalten. Details: 05-protokoll/2026-07-19-content-budget-kuratierung.md |
 | 2026-07-19 | (Block H2) | Review-Einbau: 12/12 Review-Seiten mit Galerie + gesichteten Merkmals-Alts (A4-Formel) + Schema-image-Array; X5-Schema-image-Lücke gefunden+behoben. **Block H2 KOMPLETT** (38/40; 2 Amazon-Ausnahmen). Details: 05-protokoll/2026-07-19-dev-galerie-block-h2.md |
 | 2026-07-19 | (Block H2) | Galerie-Batch 3: 12 Review-Produkte gezogen, 11 als Datenvorrat in products.json (33 URLs validiert). Beschaffung KOMPLETT: 38/40 mit gallery (Ausnahmen backbone-one-2 + magnet-peltier, Amazon hat je nur 1 Bild). Nächstes: Review-Hand-Einbau |
