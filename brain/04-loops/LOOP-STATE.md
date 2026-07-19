@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 2)
+**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 3)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | content-loop | Lauf 3: Marken-Vergleich "GameSir oder Backbone?" neu gebaut (/blog/gamesir-oder-backbone/, P-5, Blog-Index Pos. 1, Sitemap 98, llms.txt, Keyword-Vergabe). Erfolgskontrolle: gsc-loop Punkt 7. Details: 05-protokoll/2026-07-19-content-gamesir-oder-backbone.md |
 | 2026-07-19 | preis-loop | Außerplanmäßig: Preis-Sync Welle 2 — 42 veraltete Stellen in 27 Seiten (Vergleiche, related-/cat-cards, Metas, FAQ, X5-Schema, X2s-Variantenfehler) auf products.json gesynct; Träger-Checkliste in preis-loop verankert. Details: 05-protokoll/2026-07-19-content-preis-sync-vergleiche.md |
 | 2026-07-19 | content-loop | Lauf 2: CTR-Rettung controller-verbindet-nicht — Title ("Meist in 2 Min. gelöst", 60 Z.) + Description ("kein Defekt", 4 Meta-Stellen synchron) neu, Prosa unangetastet, Sitemap-lastmod 19.07. Erfolgskontrolle: gsc-loop Punkt 6 (Baseline 0/47). Details: 05-protokoll/2026-07-19-content-ctr-verbindet-nicht.md |
 | 2026-07-18 | (Setup) | Brain aufgesetzt, verify.py gebaut, Zombies behoben (/ratgeber/, marken/ipega, marken/mocute) + .nojekyll |

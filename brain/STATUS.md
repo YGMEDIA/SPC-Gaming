@@ -11,7 +11,7 @@
 
 ## Wo wir stehen
 
-**Site:** LIVE, 98 Seiten, Sitemap 97 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www, 97 URLs eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
+**Site:** LIVE, 99 Seiten, Sitemap 98 URLs, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
 **Marktdaten (GSC-Lauf 1, Paket 19.07., Fenster 11.-17.07. = Vorher-Baseline VOR den 18./19.07.-Deploys):**
 5 Klicks · 315 Impressionen in 7 Tagen · CTR 1,6 % · Ø Position 16,8 (von 18,3). Rohdaten: `03-research/raw/gsc/2026-07-19.md`.
@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 4 Punkte (GSC-Paket ~26.07., Autoren-Identität, Galerie-Bilder, Rich-Results) |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 5 Punkte (GSC-Paket ~26.07., Autoren-Identität, Galerie-Bilder, Rich-Results, Key-Visual Marken-Vergleich) |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 6 offen (reviewCounts, Rechtstexte, Domains, Tracking-Kontrolle, Preisdivergenzen, CoD-FAQ); Brain-Leak 18.07. behoben |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
@@ -56,6 +56,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 2. **E-E-A-T-Entscheidung Autoren-Identität** (Recherche-Hebel Nr. 1): Reviews mit echtem Namen + Foto + Kurz-Bio statt nur "smartphone-controller.com"? Klarname oder Pseudonym mit Gesicht — deine Entscheidung, dann baue ich Autoren-Boxen + Person-Schema autonom.
 3. **Bild-URLs für Mehrbild-Galerien (Block H Teil 2):** Pro Sortiments-Produkt 2-3 zusätzliche Amazon-Bild-URLs (Rechtsklick auf Produktbild → Grafikadresse kopieren, §C3). Sobald die da sind, baue ich Galerien + Schema autonom.
 4. **Rich-Results-Test** nach Deploy (offen seit 11.07.): search.google.com/test/rich-results — G8-Galileo-Review + 2–3 neue /produkte/-Seiten auf Sterne-Snippets prüfen; NEU dazu: /controller-finder/ (frisches FAQPage-Schema).
+5. **Key-Visual für den neuen Marken-Vergleich** (/blog/gamesir-oder-backbone/, aktuell SVG-Platzhalter): Bild generieren mit Prompt "Zwei Smartphone-Gaming-Controller liegen einander gegenüber auf dunkler navy-blauer Fläche, der linke in hellem Weiß-Silber, der rechte in kräftigem Blau, zwischen ihnen ein feiner blauer Energie-Funke, dramatisches seitliches Licht, Produktfotografie, 16:9" → Download slug-benannt (gamesir-oder-backbone), Claude Code baut ein (bewiesener Workflow vom 19.07.).
 
 ## Später-Merkposten
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
@@ -89,13 +90,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 13. **19.07. Preis-Sync Welle 2 (außerplanmäßig, deployed).** Beim Vorbereiten des Marken-Vergleichs gekippte Preis-Aussage im bestehenden G8-vs-Backbone-Vergleich gefunden ("G8 20 € günstiger" — real 15 € teurer). Projektweiter Audit: 42 veraltete Stellen in 27 Seiten, alle auf products.json gesynct (Vergleichs-Tabellen, related-/cat-cards aller Reviews, FAQ/Metas, X5-Schema-offers 32→38, X2s-Variantenfehler Type-C→Bluetooth, Startseiten-Claims). Zwei deterministische Skript-Pässe mit Trefferzahl-Assertions, Gegen-Audit 0 Reststellen, Sitemap-lastmod 27 URLs. Rückfluss: 7-Klassen-Preis-Träger-Checkliste im preis-loop. Details: `05-protokoll/2026-07-19-content-preis-sync-vergleiche.md`.
 
+14. **19.07. content-loop Lauf 3: Marken-Vergleich "GameSir oder Backbone?" (deployed).** Neuer P-5-Artikel `/blog/gamesir-oder-backbone/` fürs GSC-Cluster aus Lauf 1 (de+en-Varianten): 1.034 W netto, Kernthese aus belegten Sortiments-Daten (GameSir = Technik pro Euro, Backbone = Gesamterlebnis + Abo-Haken), je Marke 3 ehrliche Schwächen (§A6), 4 FAQs (eine spiegelt die englische Query), 10 Geld-Link-Ziele, eigenes SVG-Key-Visual (Browser-verifiziert; og:image = og-default bis Yasins Foto kommt). Blog-Index Pos. 1 + ItemList 14, Sitemap 98 URLs, llms.txt, Keyword-Vergabe mit Abgrenzung zum Modell-Duell dokumentiert. Alle 8 Preis-Nennungen maschinell gegen products.json geprüft. Erfolgskontrolle: gsc-loop Punkt 7. Details: `05-protokoll/2026-07-19-content-gamesir-oder-backbone.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Claude Code (diese/nächste Session, autonom — Reihenfolge):**
-1. content-loop: Neuer Marken-Vergleich "GameSir oder Backbone?" nach P-5 (GSC: 5+ Query-Varianten, auch englisch; bestehende Modell-Vergleiche intern verlinken, Keyword-Vergabe in keyword-strategie.md, Sitemap +1).
-2. Falls Kontext reicht: Wachstums-Recherche S2 — je EIN Statement-Band (emo-Muster Startseite) auf /controller/beste/ + iOS-/Android-Hub. VORSICHT: gen_hubs.py ist nicht idempotent, Hubs nur per Hand-Sync ändern.
+**Claude Code (diese/nächste Session, autonom):**
+1. Falls Kontext reicht: Wachstums-Recherche S2 — je EIN Statement-Band (emo-Muster Startseite) auf /controller/beste/ + iOS-/Android-Hub. VORSICHT: gen_hubs.py ist nicht idempotent, Hubs nur per Hand-Sync ändern.
 Nach jedem Paket: verify grün, Commit+Push, indexnow_ping für geänderte URLs, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).

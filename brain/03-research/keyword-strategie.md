@@ -32,3 +32,9 @@ Rankende Queries: handy controller android test (1 Klick!) · controller finden 
 | razer kishi v1 | /produkte/razer-kishi-v1/ |
 | gamesir g4s | /produkte/gamesir-g4s/ |
 Abgrenzung: "gamesir x2s", "gamesir x3 pro", "razer kishi v3" bleiben bei den Review-Seiten (keine Doppelbelegung; Altmodell-Seiten zielen exakt auf die Altmodell-Begriffe und verlinken auf die Nachfolger-Reviews).
+
+## Marken-Vergleich (19.07.2026, aus gsc-loop Lauf 1)
+| Keyword-Cluster | Zielseite |
+|---|---|
+| gamesir oder backbone · gamesir vs backbone · backbone vs gamesir · is gamesir better than backbone (GSC: 5+ Varianten, de+en) | /blog/gamesir-oder-backbone/ |
+Abgrenzung: Das Modell-Duell "backbone one vs gamesir g8" bleibt bei /vergleich/backbone-one-vs-gamesir-g8/ (der neue Artikel zielt auf die MARKEN-Frage und verlinkt aufs Duell); "gamesir" allein bleibt bei /marken/gamesir/ (Riesen-Schicht).
