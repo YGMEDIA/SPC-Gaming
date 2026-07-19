@@ -85,14 +85,15 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 11. **19.07. Betriebs-Tag (Yasin + Claude Code im Wechsel, alles verifiziert).** Bing Webmaster Tools verifiziert + IndexNow live (Erst-Ping 97 URLs, HTTP 202) · GSC: Sitemap non-www eingereicht, 2 Prio-URLs zur Indexierung beantragt, gsc-loop Lauf 1 mit Vorher-Baseline (5 Klicks/315 Impr./Pos. 16,8, Fenster 11.-17.07.) + Indexierungs-Baseline (53/65, Stand 10.07.) archiviert, 6-Punkte-Checkliste für Lauf 2 · GA4-Tracking end-to-end bewiesen (§A8 geschlossen: /g/collect mit en=affiliate_click) · 3 Zusatz-Domains als Redirect angebunden und verifiziert · Blog-Key-Visuals auf fotoreale Yasin-Bilder umgestellt. Protokolle: bing-indexnow, ga4-verifikation, blog-key-visuals (Nachtrag).
 
+12. **19.07. content-loop Lauf 2: CTR-Rettung controller-verbindet-nicht (deployed).** Title neu: "Controller verbindet nicht mit Handy? Meist in 2 Min. gelöst" (60 Z., Zeitversprechen statt generischem "5 Lösungen die helfen") · Description neu auf Angst-Nehmer "Meist ist es kein Defekt" + Checkliste-Versprechen (154 Z., 4 Meta-Stellen synchron: meta/og/twitter/Article-Schema). Beide Claims wörtlich durch die Prosa gedeckt, Prosa/H1/Lead unangetastet, Sitemap-lastmod 19.07., Article-dateModified bewusst belassen. Erfolgskontrolle: gsc-loop Lauf 2 Punkt 6 (Baseline 0/47). Nebenbei: LOOP-STATE "Braucht Yasin" entrümpelt (4 erledigte Einträge ausgetragen). Details: `05-protokoll/2026-07-19-content-ctr-verbindet-nicht.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
-**Claude Code (nächste Session, autonom — Reihenfolge):**
-1. content-loop Punkt 2: CTR-Rettung controller-verbindet-nicht (Baseline 0 Klicks/47 Impr.) — Title/Description emotional schärfen, Prosa unangetastet.
-2. content-loop Punkt 3: Neuer Marken-Vergleich "GameSir oder Backbone?" nach P-5 (GSC: 5+ Query-Varianten, auch englisch; bestehende Modell-Vergleiche intern verlinken, Keyword-Vergabe in keyword-strategie.md, Sitemap +1).
-3. Falls Kontext reicht: Wachstums-Recherche S2 — je EIN Statement-Band (emo-Muster Startseite) auf /controller/beste/ + iOS-/Android-Hub. VORSICHT: gen_hubs.py ist nicht idempotent, Hubs nur per Hand-Sync ändern.
+**Claude Code (diese/nächste Session, autonom — Reihenfolge):**
+1. content-loop: Neuer Marken-Vergleich "GameSir oder Backbone?" nach P-5 (GSC: 5+ Query-Varianten, auch englisch; bestehende Modell-Vergleiche intern verlinken, Keyword-Vergabe in keyword-strategie.md, Sitemap +1).
+2. Falls Kontext reicht: Wachstums-Recherche S2 — je EIN Statement-Band (emo-Muster Startseite) auf /controller/beste/ + iOS-/Android-Hub. VORSICHT: gen_hubs.py ist nicht idempotent, Hubs nur per Hand-Sync ändern.
 Nach jedem Paket: verify grün, Commit+Push, indexnow_ping für geänderte URLs, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).

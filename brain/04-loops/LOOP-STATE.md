@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (nach gsc-loop Lauf 1)
+**Letzte Aktualisierung:** 2026-07-19 (nach content-loop Lauf 2)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-19 | content-loop | Lauf 2: CTR-Rettung controller-verbindet-nicht — Title ("Meist in 2 Min. gelöst", 60 Z.) + Description ("kein Defekt", 4 Meta-Stellen synchron) neu, Prosa unangetastet, Sitemap-lastmod 19.07. Erfolgskontrolle: gsc-loop Punkt 6 (Baseline 0/47). Details: 05-protokoll/2026-07-19-content-ctr-verbindet-nicht.md |
 | 2026-07-18 | (Setup) | Brain aufgesetzt, verify.py gebaut, Zombies behoben (/ratgeber/, marken/ipega, marken/mocute) + .nojekyll |
 | 2026-07-18 | (Spec Block A) | A1 Finder-Keyword · A2 drei Klick-Artikel verstärkt · A3 alle 13 Blog-Artikel ≥3 Geld-Links · A4 Alt-Pass (67 Bilder, 0 Verstöße). Details: 05-protokoll/2026-07-18-content-block-a.md |
 | 2026-07-19 | gsc-loop | Nachtrag: Indexierungs-Baseline archiviert (Stand 10.07.: 53/65, Gründe dokumentiert), robots-Blockierungen als gewollt verifiziert, 6-Punkte-Checkliste für nächsten Lauf in gsc-loop.md |
@@ -27,7 +28,6 @@
 ## Braucht Yasin
 | Loop/Quelle | Item |
 |---|---|
-| deploy-loop | Deploy Brain-Stand + Block A; dabei Pages-Source auf "GitHub Actions" umstellen. WICHTIG: nur per git push deployen — GitHub-Web-Upload ("Add files via upload") hat /ratgeber/ zum 3. Mal wiederbelebt und .nojekyll nie mitgenommen |
-| gsc-loop | GSC Indexierungs-Screenshot (Indexierung → Seiten) + wöchentliches Leistungs-Paket |
-| (Block C) | Bing Webmaster Tools einrichten |
-| (Tracking) | GA4-Echtzeit-Check affiliate_click nach Deploy |
+| gsc-loop | Wöchentliches GSC-Paket ~26.07. (Leistung 7 Tage + FRISCHE Indexierung; Checkliste mit 6 Punkten in gsc-loop.md) |
+| preis-loop | Amazon-Screenshots: 9 offene ASINs + 5 geschätzte reviewCounts |
+(Erledigt und ausgetragen 19.07.: Actions-Deploy + Pages-Umstellung 18.07. · Bing/IndexNow live · GA4 end-to-end bewiesen · GSC-Paket 1 inkl. Indexierungs-Baseline geliefert — Details in STATUS-Verlauf 6, 11 und Befund-Tabelle.)
