@@ -11,3 +11,5 @@
 **Yasin (optional, 1 Klick):** In der GSC-Mail auf "Probleme beheben" → "Validierung starten" klicken beschleunigt die Grün-Meldung; ohne Klick löst der nächste reguläre Crawl es auch.
 
 **Gelernt:** "Nur belegte Felder" reicht bei Schema.org nicht als Regel — Google definiert PFLICHT-Kombinationen je Typ. Vor dem Einsatz eines Schema-Typs die Google-Pflichtfelder gegen unsere belegbaren Daten prüfen; wenn sie nicht ehrlich füllbar sind, den Typ weglassen. Die verify-Invariante macht diese Klasse (Product) jetzt unmöglich; weitere Typen bei Bedarf ergänzen.
+
+**Nachtrag:** Yasin hat die GSC-Validierung am 20.07. gestartet ("Prüfung läuft"). Erfolgskontrolle als Punkt 8 in der gsc-loop-Checkliste verankert; Google meldet den Abschluss per Mail (typisch wenige Tage bis ~2 Wochen).
