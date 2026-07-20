@@ -8,4 +8,5 @@
 | — | — | Noch keine Einträge. Block E ist freigegeben — erste Antworten hier eintragen. | — | — | — |
 
 ## Merkzettel für Block E (Kurzregeln)
+**Vollständige Strategie seit 20.07.: `03-research/2026-07-20-reddit-strategie.md`** (3 Schichten: Gutefrage = Konversion · EN-Subs = Autorität/Warmup ohne Links · deutsche Threads = Anlass; Account-Warmup 2-4 Wochen, Ratio ≤1/10, nie Affiliate-Links, Disclosure immer).
 Erst Mehrwert, Link nur wenn er die Frage wirklich beantwortet · nie mehr als 1 Link pro Antwort · Plattformen: Gutefrage.net (rankt selbst bei Google!), r/MobileGaming, r/EmulationOnAndroid, deutsche Android-Foren · gute Ziel-URLs: Troubleshooting-Artikel (controller-verbindet-nicht), Kompatibilitäts-Artikel (welche-spiele-controller), Finder.
