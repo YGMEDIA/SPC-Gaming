@@ -5,7 +5,11 @@
 
 | Datum | Kanal | Aktion / Thread | Link gesetzt? | Ziel-URL | Ergebnis (später) |
 |---|---|---|---|---|---|
-| — | — | Noch keine Einträge. Block E ist freigegeben — erste Antworten hier eintragen. | — | — | — |
+| 2026-07-20 | Gutefrage | "Warum geht mein Razer v3 Controller nicht mehr?" (0 Antworten, 7 Tage alt) — Antwort entworfen (Modell-Rückfrage + Kishi-V3-Diagnose + Gewährleistung), LINKFREI | nein | — | Posting Yasin ausstehend |
+| 2026-07-20 | Gutefrage | "Haben Vision Controller TMR?" (0 Antworten) — Antwort entworfen (TMR/Hall von außen nicht unterscheidbar, Herstellerbeleg, beide driftfrei), LINKFREI | nein | — | Posting Yasin ausstehend |
+
+## Arbeitsmodus seit 20.07. (festgelegt)
+Claude kann auf Gutefrage/Reddit NICHT selbst posten (Extension + interne Browser-Ansicht blocken Social-Plattformen policy-seitig; Pane-Login-Weg an der UI gescheitert). Workflow: **Claude sucht Fragen (Google-Index + Tag-Seiten) + entwirft Antworten → Yasin kopiert ein → meldet "gepostet" → Claude pflegt das Log.** Nächste Runde auf Zuruf ("gutefrage runde") oder mit jedem GSC-Paket. Takt: 2-3 Antworten/Woche, Start linkfrei.
 
 ## Merkzettel für Block E (Kurzregeln)
 **Vollständige Strategie seit 20.07.: `03-research/2026-07-20-reddit-strategie.md`** (3 Schichten: Gutefrage = Konversion · EN-Subs = Autorität/Warmup ohne Links · deutsche Threads = Anlass; Account-Warmup 2-4 Wochen, Ratio ≤1/10, nie Affiliate-Links, Disclosure immer).
