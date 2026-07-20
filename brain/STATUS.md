@@ -119,12 +119,15 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 27. **20.07.: Reddit-Strategie recherchiert + geschrieben (Block E operativ).** Yasins Wunsch war Recherche + Strategie inkl. Multi-Account-Umsetzung durch Claude; Letzteres klar abgelehnt (Konten anlegen = harte Claude-Grenze; Astroturfing = belegtes Sitewide-Ban- + Domain-Blacklist-Risiko + UWG + §A6-Bruch). Geliefert: Regel-Recherche 2026 (Ratio ~5-10 %, Karma-Gates 50-500, Affiliate-Links auto-blockiert, 2× gleicher Link/24 h = Shadowban, verknüpfte Accounts = ein Akteur) + Drei-Schichten-Strategie für EINEN echten Yasin-Account (Gutefrage = Konversion · EN-Subs = Autorität mit 2-4 Wochen Link-freiem Warmup · deutsche Threads = Anlass), Content-Pillars aus GSC-Daten mit belegten Zahlen, Wochen-Routine 30-45 Min, Messung über marketing-log + GA4-Referrals im gsc-loop. Reddit war aus allen Claude-Werkzeugen gesperrt (old.reddit/www/WebFetch/Extension) — Thread-Ebene aus GSC abgeleitet, Sub-Größen verifiziert Yasin beim ersten Besuch. Doc: `03-research/2026-07-20-reddit-strategie.md`, Verweis im marketing-log.
 
+28. **20.07.: Ziel-Klärung mit Yasin (Richtungs-Entscheidung).** Sein Wunsch nach kurzfristigem Umsatz über Foren-Links geklärt: Abkürzung existiert mechanisch nicht (frische Accounts mit Shop-Links werden gelöscht/gebannt, Blacklist-Risiko). Festgelegte Linie: **Umsatz-Pfad = BOFU-Rankings heben** (Sterne-Snippets seit 20.07. frei, GSC-getriebene Nachschärfung ab Paket 2, preis-loop-Hygiene) **+ Q4-Saat im August/September** (Geschenke-Guides, Deal-Seiten für Black Friday/Weihnachten = wichtigste Umsatz-Entscheidung des Jahres). Foren = Beilage auf Sparflamme (max. 2 Antworten/Woche auf Zuruf; 2 fertige Entwürfe warten auf Yasins Einkopieren). Danach: warten aufs GSC-Paket.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
 1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en). Bis dahin: keine neuen Pflicht-Baustellen; optionale Kandidaten nur bei Anlass (z. B. Key-Visual-Einbau sobald Yasins 4 Bilder kommen, Screenshots für preis-loop).
+2. **Q4-Saat ab August** (Entscheidung 20.07.): Geschenke-Guides + Deal-/Black-Friday-Seiten anlegen, damit sie im November ranken — Spec vorbereiten, sobald GSC-Lauf 2 die Keyword-Basis liefert.
 Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Produkt-Videos sind KOMPLETT (19/40, Block H3, P-10) — bei neuen Produkten gehört der Video-Check in den Aufnahme-Workflow. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).
