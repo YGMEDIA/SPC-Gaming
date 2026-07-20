@@ -2,11 +2,17 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-20 (GSC-Schema-Fix)
+**Letzte Aktualisierung:** 2026-07-20 (Zitier-Pass Lauf 1)
+
+## Warteschlangen
+| Loop | Item | Stand |
+|---|---|---|
+| content-loop | **S1 Zitier-Pass Folgeläufe** (von Yasin freigegeben 20.07.): je Lauf die Sektions-Einstiege einer Seite zu eigenständigen Direktantworten mit belegten Zahlen formen. Reihenfolge GSC-getrieben (nach Paket 2 die Impressions-Gewinner zuerst). controller-verbindet-nicht GESPERRT bis Erfolgskontrolle gsc-loop Punkt 6; Hubs nur mit gen_hubs-Sync | wartet auf GSC-Paket 2 |
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-20 | content-loop | Zitier-Pass Lauf 1: welche-spiele-controller, 2 belegte Direktantwort-Edits (8-Titel-Zahl, Key-Mapping-Definition). hall-effect schon auf Muster, verbindet-nicht bewusst geschützt. Strategie-Entscheidung dokumentiert (Outreach/Presse dauerhaft gestrichen). Details: 05-protokoll/2026-07-20-content-zitier-pass-lauf1.md |
 | 2026-07-20 | (Betrieb) | GSC-Kritikmeldung Produkt-Snippets gleicher Tag geschlossen: 10 Longtail-Product-Schemas entfernt, verify-Invariante + §A4-Zusatz. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
 | 2026-07-19 | (Content) | Letzte 4 Key-Visuals eingebaut (Yasins Fotos, Routine-Workflow) — 17/17 Artikel fotoreal. Details: Nachtrag 05-protokoll/2026-07-19-dev-blog-key-visuals.md |
 | 2026-07-19 | (E-E-A-T) | Autoren-Paket komplett (Yasins Pseudonym-Entscheidung): Yannick Gerber auf /redaktion/ (Profil + Person-Schema), 17 Blog-Bylines + Article-author Person, 13 Review-Bylines + Autoren-Boxen. Details: 05-protokoll/2026-07-19-dev-autoren-paket.md |
