@@ -32,14 +32,9 @@ def build(item):
     desc = item['verdict'][:158].rsplit(' ', 1)[0] + ' …' if len(item['verdict']) > 158 else item['verdict']
     og_img = f"{DOMAIN}/assets/img/og-default.jpg"
 
-    # --- Schemas: Product nur mit belegten Feldern (kein Preis, kein Rating, kein Bild) ---
-    schema_prod = {
-        "@context": "https://schema.org", "@type": "Product",
-        "name": full_name,
-        "description": item['verdict'],
-        "brand": {"@type": "Brand", "name": item['brand']},
-        "url": url,
-    }
+    # --- Schemas: KEIN Product-Schema. Google verlangt bei Product zwingend offers,
+    # review oder aggregateRating (GSC-Kritikmeldung WNC-10030322 vom 20.07.2026);
+    # ohne belegbaren Preis/Rating (§A5) bleibt nur der Verzicht. Breadcrumb + FAQ reichen.
     schema_bc = {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Home", "item": DOMAIN + "/"},
         {"@type": "ListItem", "position": 2, "name": "Controller", "item": DOMAIN + "/controller/"},
@@ -50,7 +45,7 @@ def build(item):
         for q, a in item['faqs']]}
     schemas = '\n'.join(
         f'<script type="application/ld+json">\n{json.dumps(s, ensure_ascii=False, indent=1)}\n</script>'
-        for s in [schema_prod, schema_bc, schema_faq])
+        for s in [schema_bc, schema_faq])
 
     specs_rows = '<tr><td>Status</td><td>Altmodell, nicht mehr regulär erhältlich</td></tr>\n'
     for k, v in item['specs']:

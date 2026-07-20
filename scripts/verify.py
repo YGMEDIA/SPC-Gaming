@@ -55,6 +55,16 @@ for p in pages:
                     err(f"Schema ohne bestRating 5 in {p} (§A4)")
                 for rc in re.findall(r'"reviewCount":\s*"?(\d+)"?', blob):
                     if int(rc) <= 1: err(f"reviewCount ≤1 in {p} (§A4)")
+            # §A4-Invariante (GSC WNC-10030322): jedes Product braucht offers, review
+            # oder aggregateRating — sonst kritischer Produkt-Snippets-Fehler.
+            def _prod_check(o):
+                if isinstance(o, dict):
+                    if o.get('@type') == 'Product' and not any(k in o for k in ('offers', 'review', 'aggregateRating')):
+                        err(f"Product-Schema ohne offers/review/aggregateRating in {p} (§A4/GSC)")
+                    for v in o.values(): _prod_check(v)
+                elif isinstance(o, list):
+                    for x in o: _prod_check(x)
+            _prod_check(data)
         except Exception as e:
             err(f"JSON-LD kaputt in {p}: {e}")
     for href in re.findall(r'href="(/[^"#?]*)"', s):

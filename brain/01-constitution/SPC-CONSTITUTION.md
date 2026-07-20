@@ -19,6 +19,7 @@ Links entstehen ausschließlich in main.js aus `data-asin` → `amazon.de/dp/[AS
 
 ### §A4 · Schema = sichtbare Wahrheit [bewiesen]
 aggregateRating immer `bestRating: "5"`, `reviewCount` > 1, jeder Schema-Wert (Preis, Rating, Count) steht sichtbar im Seitentext. Keine 10er-Skalen, keine erfundenen Counts (Historie: 4 Seiten mit 10er-Skala + count 1 — behoben 10.07.). Geschätzte Counts sind als Befund zu führen (aktuell: 5 Seiten Gruppe A mit gerundeten Werten — offen, valide aber zu präzisieren).
+**Zusatz [bewiesen 20.07.]:** Ein Product-Schema trägt IMMER mindestens eins von `offers`, `review`, `aggregateRating` — sonst meldet Google einen kritischen Produkt-Snippets-Fehler (GSC-Mail WNC-10030322: 10 Longtail-Datenblätter mit "ehrlichem" Minimal-Product). Gibt es dafür keine belegbaren Daten (§A5), dann KEIN Product-Schema (Breadcrumb + FAQ genügen). Maschinell erzwungen in verify.py.
 
 ### §A5 · Produktdaten nur mit Beleg [bewiesen]
 Amazon blockt jeden programmatischen Zugriff (web_fetch 403, CDN-curl 403). Quelle für Preise/Ratings/Verfügbarkeit sind ausschließlich Yasins Screenshots; Bild-URLs kommen per Rechtsklick → Grafikadresse. Jede Datenänderung trägt ihr Screenshot-Datum in STATUS. Nie verfügbare Produkte werden entfernt, nicht schöngeredet (Historie: iPega, Mocute, RedMagic).

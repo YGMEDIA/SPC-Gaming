@@ -2,11 +2,12 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-19 (alle Key-Visuals komplett)
+**Letzte Aktualisierung:** 2026-07-20 (GSC-Schema-Fix)
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-20 | (Betrieb) | GSC-Kritikmeldung Produkt-Snippets gleicher Tag geschlossen: 10 Longtail-Product-Schemas entfernt, verify-Invariante + §A4-Zusatz. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
 | 2026-07-19 | (Content) | Letzte 4 Key-Visuals eingebaut (Yasins Fotos, Routine-Workflow) — 17/17 Artikel fotoreal. Details: Nachtrag 05-protokoll/2026-07-19-dev-blog-key-visuals.md |
 | 2026-07-19 | (E-E-A-T) | Autoren-Paket komplett (Yasins Pseudonym-Entscheidung): Yannick Gerber auf /redaktion/ (Profil + Person-Schema), 17 Blog-Bylines + Article-author Person, 13 Review-Bylines + Autoren-Boxen. Details: 05-protokoll/2026-07-19-dev-autoren-paket.md |
 | 2026-07-19 | (Betrieb) | Rich-Results-Test autonom: 4 URLs, 0 kritische Fehler, Rezensions-Snippets auf Review- UND GEN-Seiten gültig; FAQ-Typ generell eingestellt (Google-seitig). Details: 05-protokoll/2026-07-19-system-rich-results-test.md |
