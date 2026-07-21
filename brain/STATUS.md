@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-07-21 (Sortiment auf 42 Produkte)
+**Letzte Aktualisierung:** 2026-07-21 (Rating-Welle abgeschlossen)
 
 ---
 
@@ -26,11 +26,11 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket ~26.07.) + Dauerhinweis Chrome offen lassen; Autoren-Identität, Rich-Results und alle Key-Visuals am 19.07. erledigt |
-| Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 3 offen: **Rating-Divergenzen products.json vs. Review-Seiten (NEU 21.07., hohe Prio, §A4-Fall bei ROG Tessen)** · 5 geschätzte reviewCounts · Rechtstexte-Abnahme |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 2 aktive Punkte: **Backbone One PS Produkt-Status (NEU 21.07.)** · GSC-Paket ~26.07. |
+| Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
-| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | preis-loop: **Rating-Welle 42 Produkte (nächster Schritt)** + Voll-Abgleich August · content-loop: G8-Plus-vs-V3-Pro-Vergleich + Zitier-Pass-Folgeläufe (beide nach GSC-Paket 2) |
+| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: G8-Plus-vs-V3-Pro-Vergleich + Zitier-Pass-Folgeläufe (beide nach GSC-Paket 2) · preis-loop: nächster Voll-Abgleich, Datenstand jetzt 21.07. |
 | Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A+B umgesetzt, C–H danach |
 | Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
 Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos landen zuerst hier in STATUS (Braucht Yasin / Befund / Merkposten) oder in einer Loop-Warteschlange — nie in Chat-Verläufen.
@@ -47,13 +47,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | Preisdivergenzen HTML vs. products.json auf Geld-Seiten — Welle 1: 12 Kaufbox-Stellen (behoben 18.07.) · Welle 2: 42 weitere Stellen in 27 Seiten (Vergleichs-Tabellen mit 2 gekippten "günstiger"-Aussagen, related-/cat-cards aller Reviews, FAQ/Metas/Schema-offers, X2s-Variantenfehler) — die 18.07.-Nachkontrolle prüfte nur Kaufboxen | §A1 | **behoben 19.07. in 3 Wellen** (W2: 42 Stellen Vergleiche/Reviews · W3: 27 Karten-price-rows Hubs/Marken/Startseite, pcard-Parser als neues Standard-Audit; Gegen-Audit je 0 Reststellen; Checklisten-Rückfluss im preis-loop) |
 | iOS-Hub-FAQ behauptet, CoD Mobile unterstütze keine Controller — Widerspruch zu blog/welche-spiele-controller (Blog ist korrekt) | §A6 | **GESCHLOSSEN 18.07.** (Verlauf 7: Schema + Text + gen_hubs.py synchron korrigiert; Repo-Nachprüfung 19.07.: iOS-Hub sagt "Controller werden offiziell unterstützt" — Befundzeile war nur nicht nachgeführt) |
 | Tracking-Events erreichten GA4 nie (gtag statt dataLayer.push, keine Delegation) | §A8 | **GESCHLOSSEN 19.07.:** Live-Test auf Netzwerk-Ebene — Consent-Gate korrekt, dataLayer-Push korrekt, /g/collect-Hit mit en=affiliate_click + ep.product_name an G-Q1EK5X7PTC gesendet. (1 Test-Event vom 19.07. in den GA4-Daten) |
-| 5 Reviews mit geschätzten reviewCounts (ROG Tessen, X3 Pro, Turtle Beach, Backbone One PS, Kishi V3 Pro) | §A4 | offen — bei nächsten Screenshots präzisieren |
-| **Rating-Divergenzen products.json vs. Review-Seiten** (21.07. gefunden): G8 Galileo 4,4 (1.200+) vs. sichtbar 4,2 (685) · Backbone One 2 4,4 (900+) vs. 4,1 (48) · ROG Tessen 4,3 (400+) vs. 4,0 (122) · Kishi V3 4,3 (300+) vs. 4,4 (124); dazu 2x "99 €" im Kishi-V3-Text gegen 94 € in products.json. Beim ROG Tessen weicht das Schema vom sichtbaren Text DERSELBEN Seite ab | §A1/§A4 | **offen, hohe Prio** — Preis-Wellen 1-3 prüften nur Preise, nie Ratings. Behebung als Rating-Welle über alle 42 Produkte via Chrome-Belegweg (P-9/P-10), siehe nächster Schritt |
+| 5 Reviews mit geschätzten reviewCounts | §A4 | **GESCHLOSSEN 21.07.:** Rating-Welle hat alle Schätzwerte durch exakte Amazon-Zahlen ersetzt (die "Plus"-Angaben waren durchweg zu hoch) |
+| **Rating-Divergenzen products.json vs. Review-Seiten** (21.07. gefunden) | §A1/§A4 | **GESCHLOSSEN 21.07. (gleicher Tag):** Rating-Welle über alle 42 Produkte — 16 Preise + 42 Ratings neu belegt, rund 330 Stellen in 90 Dateien gesynct, 4 akute §A4-Verstöße behoben (u. a. Schema-Preis 99 € bei sichtbaren 63 €). Details: 05-protokoll/2026-07-21-preis-rating-welle.md |
 | Rechtstexte ohne anwaltliche Abnahme | §C4 | offen (Yasin) |
 | 3 Zusatz-Domains (.de/.info/.store) waren ungenutzt | — | **GESCHLOSSEN 19.07.:** Weiterleitungen auf die .com eingerichtet (Yasin, IONOS) und verifiziert (http+https, alle 6 Pfade, Ziel korrekt). IONOS setzt 302 statt 301 — optionaler Feinschliff, unkritisch ohne Bestands-Rankings |
 | GSC-Kritikmeldung Produkt-Snippets (Mail WNC-10030322, 20.07.): 10 Longtail-Datenblätter mit Product-Schema ohne offers/review/aggregateRating | §A4 | **GESCHLOSSEN 20.07. (gleicher Tag):** Product-Schema von den 10 Seiten entfernt (gen_longtail + Regeneration), verify-Invariante + §A4-Zusatz als Rückfluss. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
+0. **NEU 21.07. — Backbone One PS Edition: Produkt-Status klären.** Das Amazon-Listing (B0CT17GPNT) zeigt keinen Preis, heißt "iPhone (Lightning) 1st Gen" und die 16.951 Bewertungen gehören zur Varianten-Familie. Lightning ist für iPhone 15+ obsolet. Behalten (mit welchem Beleg?), auf die aktuelle Variante umstellen oder auslisten? Bis dahin bleibt der alte Stand (66 €, 4,3 (500+)) unverändert stehen.
 1. **Nächstes GSC-Paket ~26.07.** (wöchentlich): Leistung 7 Tage + Indexierung → Seiten mit FRISCHEM Datenstand. Paket 1 komplett geliefert 19.07. ✓ (inkl. Indexierungs-Baseline 53/65, Stand 10.07.).
 2. ~~E-E-A-T-Autoren-Identität~~ **ERLEDIGT 19.07.:** Yasins Entscheidung "Pseudonym" umgesetzt — Yannick Gerber sitewide (Profil auf /redaktion/, 17 Blog-Bylines + Person-Schema, 13 Review-Boxen; Details Protokoll dev-autoren-paket). Optional offen: Wenn du ein Autoren-FOTO willst (statt Monogramm-Avatar), liefer eins in Downloads (autor.jpg) — Tausch ist ein Handgriff. Kein KI-Fake-Gesicht von meiner Seite.
 3. **Chrome offen lassen genügt** — Bild-/Video-Beschaffung läuft autonom (P-9/P-10), kein aktiver Handgriff.
@@ -122,6 +123,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 29. **21.07.: Sortiment auf 42 Produkte, Datenbeschaffung erstmals komplett autonom (deployed).** Yasin lieferte zwei Amazon-Links plus die Anweisung, die Daten selbst über seine Chrome-Extension zu ziehen: **Razer Kishi Ultra (119 €, 4,0/110)** und **Scuf Nomad (73 €, 4,0/157)**, beide inkl. Galerie und Produktvideo (alle URLs validiert, Video-Dauer-Match). Content lief durch eine adversariale Workflow-Prüfung (10 Agents), die drei produktbegünstigende Falschaussagen der Entwürfe abfing, welche die eigene Site widerlegt hätte (Rücktasten-Exklusivität, Hall-als-Premium-Argument, Passthrough-Kontrast). Finaler Content nennt je 4 echte Schwächen, beim Kishi Ultra klar: Hall nur bei den Triggern, Sticks sind TPSiV, und er ist teurer als der besser bewertete Kishi V3. Integration über neues idempotentes `scripts/sync_new_products.py` (Karten, Zähler, ItemList-Schemas; gen_hubs.py dafür importierbar gemacht), Hand-Einbau in Tablet-Hub und marken/razer (Lead-Text korrigiert), Zählaussagen sitewide nachgezogen. Bewusst NICHT in die Bestenliste aufgenommen. Details: `05-protokoll/2026-07-21-dev-sortiment-kishi-ultra-scuf-nomad.md`.
 
+30. **21.07.: Rating-Welle über alle 42 Produkte (deployed, 3 Commits).** Der Befund vom selben Tag komplett aufgelöst: alle 42 ASINs frisch über Chrome ausgelesen (Ground Truth in `03-research/raw/amazon/2026-07-21-rating-welle.md`), 16 Preise und 42 Ratings korrigiert. Härteste Funde: Testsieger G8 Galileo war mit 4,4 (1.200+) statt echten 4,2 (688) ausgewiesen, Backbone One 2. Gen mit 4,4 (900+) statt 4,1 (51); alle geschätzten "Plus"-Counts waren zu hoch. Dazu 4 akute §A4-Verstöße (Schema-Preis 99 € bei sichtbaren 63 € u. a.). Sync über Generator-Läufe + neuen `--refresh`-Modus + Workflow (4 Bereichs-Agents, unabhängiges Gegen-Audit): rund 330 Ersetzungen in 90 Dateien, gekippte Aussagen inhaltlich neu formuliert (X5 Lite verliert den Budget-King-Titel, G8 Plus liegt jetzt über dem Testsieger). §A6: 3 neue Produkte unter 3,8 haben explizite Warnungen. Zum Schluss Generator-Drift behoben (Agents hatten GEN-Seiten statt der Quelle korrigiert). Details: `05-protokoll/2026-07-21-preis-rating-welle.md`.
+
 28. **20.07.: Ziel-Klärung mit Yasin (Richtungs-Entscheidung).** Sein Wunsch nach kurzfristigem Umsatz über Foren-Links geklärt: Abkürzung existiert mechanisch nicht (frische Accounts mit Shop-Links werden gelöscht/gebannt, Blacklist-Risiko). Festgelegte Linie: **Umsatz-Pfad = BOFU-Rankings heben** (Sterne-Snippets seit 20.07. frei, GSC-getriebene Nachschärfung ab Paket 2, preis-loop-Hygiene) **+ Q4-Saat im August/September** (Geschenke-Guides, Deal-Seiten für Black Friday/Weihnachten = wichtigste Umsatz-Entscheidung des Jahres). Foren = Beilage auf Sparflamme (max. 2 Antworten/Woche auf Zuruf; 2 fertige Entwürfe warten auf Yasins Einkopieren). Danach: warten aufs GSC-Paket.
 
 ---
@@ -129,9 +132,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-1. **Rating-Welle (neu, hohe Prio, autonom machbar):** Die 21.07. gefundenen Rating-Divergenzen zwischen products.json und Review-Seiten auflösen — alle 42 Produkte über den Chrome-Belegweg (P-9/P-10) frisch auslesen (Rating + Anzahl + Preis), products.json als Wahrheit setzen, Review-Seiten und Schemas synchronisieren. Der ROG-Tessen-Fall (Schema weicht vom sichtbaren Text derselben Seite ab) ist ein §A4-Verstoß und gehört zuerst. Voraussetzung: Yasins Chrome läuft.
-2. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en). Bis dahin: keine neuen Pflicht-Baustellen; optionale Kandidaten nur bei Anlass (z. B. Key-Visual-Einbau sobald Yasins 4 Bilder kommen, Screenshots für preis-loop).
-3. **Q4-Saat ab August** (Entscheidung 20.07.): Geschenke-Guides + Deal-/Black-Friday-Seiten anlegen, damit sie im November ranken — Spec vorbereiten, sobald GSC-Lauf 2 die Keyword-Basis liefert.
+1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en). Bis dahin: keine neuen Pflicht-Baustellen; optionale Kandidaten nur bei Anlass (z. B. Key-Visual-Einbau sobald Yasins 4 Bilder kommen, Screenshots für preis-loop).
+2. **Q4-Saat ab August** (Entscheidung 20.07.): Geschenke-Guides + Deal-/Black-Friday-Seiten anlegen, damit sie im November ranken — Spec vorbereiten, sobald GSC-Lauf 2 die Keyword-Basis liefert.
 Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Produkt-Videos sind KOMPLETT (19/40, Block H3, P-10) — bei neuen Produkten gehört der Video-Check in den Aufnahme-Workflow. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).

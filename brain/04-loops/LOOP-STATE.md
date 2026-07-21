@@ -2,18 +2,18 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-21 (Sortiment 42, Rating-Welle offen)
+**Letzte Aktualisierung:** 2026-07-21 (Rating-Welle erledigt)
 
 ## Warteschlangen
 | Loop | Item | Stand |
 |---|---|---|
 | content-loop | **Vergleichs-Kandidat "G8 Plus vs. Kishi V3 Pro"** (Markt-Signal aus 2 YouTube-Rankings 21.07., beide Produkte mit vollen Daten) + X2s-Retro-Winkel — Priorisierung nach GSC-Lauf 2. Details: 03-research/2026-07-21-markt-youtube-rankings.md | wartet auf GSC-Paket 2 |
-| preis-loop | **Rating-Welle über alle 42 Produkte** (Divergenzen products.json vs. Review-Seiten, 21.07. gefunden; ROG Tessen = akuter §A4-Verstoß). Beschaffung autonom via Chrome-Belegweg | offen, hohe Prio, braucht nur Yasins Chrome |
 | content-loop | **S1 Zitier-Pass Folgeläufe** (von Yasin freigegeben 20.07.): je Lauf die Sektions-Einstiege einer Seite zu eigenständigen Direktantworten mit belegten Zahlen formen. Reihenfolge GSC-getrieben (nach Paket 2 die Impressions-Gewinner zuerst). controller-verbindet-nicht GESPERRT bis Erfolgskontrolle gsc-loop Punkt 6; Hubs nur mit gen_hubs-Sync | wartet auf GSC-Paket 2 |
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-21 | preis-loop | **Rating-Welle KOMPLETT:** alle 42 Produkte frisch belegt (16 Preise, 42 Ratings), ~330 Stellen in 90 Dateien gesynct, 4 §A4-Verstöße behoben, 3 neue §A6-Warnungen, Generator-Drift behoben. Details: 05-protokoll/2026-07-21-preis-rating-welle.md |
 | 2026-07-21 | (Sortiment) | Kishi Ultra + Scuf Nomad aufgenommen (42 Produkte): Daten autonom via Chrome gezogen, Content adversarial geprüft (3 Falschaussagen abgefangen), sync_new_products.py neu, Hubs/Marken/Tablet/Zähler/Sitemap. Details: 05-protokoll/2026-07-21-dev-sortiment-kishi-ultra-scuf-nomad.md |
 | 2026-07-20 | content-loop | Zitier-Pass Lauf 1: welche-spiele-controller, 2 belegte Direktantwort-Edits (8-Titel-Zahl, Key-Mapping-Definition). hall-effect schon auf Muster, verbindet-nicht bewusst geschützt. Strategie-Entscheidung dokumentiert (Outreach/Presse dauerhaft gestrichen). Details: 05-protokoll/2026-07-20-content-zitier-pass-lauf1.md |
 | 2026-07-20 | (Betrieb) | GSC-Kritikmeldung Produkt-Snippets gleicher Tag geschlossen: 10 Longtail-Product-Schemas entfernt, verify-Invariante + §A4-Zusatz. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
