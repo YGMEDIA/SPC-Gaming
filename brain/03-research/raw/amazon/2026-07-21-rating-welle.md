@@ -17,7 +17,7 @@ B0DK36N98Q | 8bitdo-ultimate-mobile   | 44,99 € | 4,4 | 517
 B0FYQ1SHHS | gamesir-g8-plus          | 89,99 € | 4,1 | 457
 B0F5WRZ3LJ | viture-8bitdo            | 67,15 € | 4,1 | 241
 B0BRYX6RQR | asus-rog-tessen          | 73,90 € | 4,0 | 125
-B0CT17GPNT | backbone-one-ps          | KEIN PREIS | 4,3 | 16951  <-- SONDERFALL, siehe unten
+B0BHH8DT37 | backbone-one-ps          | 58,99 € | 4,2 | 312   <-- KORRIGIERTE ASIN, siehe Nachtrag
 B0DQM23MLZ | backbone-pro             | 189,99 € | 4,4 | 459
 B0D1KFNLLM | shanwan-metallic         | 33,99 € | 4,3 | 781
 B0D5GTM2PL | gamesir-x2s              | 45,99 € | 3,8 | 100
@@ -55,3 +55,10 @@ Die 4,3 / 16.951 sind die Bewertungen der gesamten Varianten-Familie, nicht dies
 Pro ASIN: /dp/ASIN in Yasins Chrome, Auslesung von #corePrice_feature_div (a-offscreen),
 #acrPopover[title], #acrCustomerReviewText. ASIN-Schlüssel aus der URL, nicht aus #ASIN
 (bei Varianten-Listings meldet #ASIN teils die Parent-ASIN).
+
+## Nachtrag 21.07. abends — Backbone One PS Edition: richtige ASIN von Yasin
+Yasin lieferte das korrekte Listing: **B0BHH8DT37** (bisher geführt: B0CT17GPNT, ein Familien-Listing ohne Preis).
+Ausgelesen: Titel "BACKBONE - One Mobile Gaming Controller for iPhone - Playstation Edition",
+Modellnummer BB-02-W-S, **58,99 €**, **4,2 von 5 bei 312 Bewertungen** (produktgenau, nicht Familie),
+Verfügbarkeit "Nur noch 1 auf Lager", 1 hiRes-Bild, keine Anschluss-Angabe auf der Seite.
+Unsere Review-Seite führt das Modell als "Lightning, iPhone 14 & älter" — konsistent mit BB-02, kein Widerspruch.
