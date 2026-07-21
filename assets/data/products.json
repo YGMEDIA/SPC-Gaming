@@ -926,6 +926,89 @@
     ]
   },
   {
+    "asin": "B0CXY4MWKR",
+    "brand": "Razer",
+    "name": "Kishi Ultra",
+    "claim": "USB-C-Controller für iPhone, Android und iPad mini bis 8 Zoll, mit Hall-Effekt-Triggern, Klinke und Passthrough-Laden.",
+    "price": "119 €",
+    "img": "https://m.media-amazon.com/images/I/71vamojjeKL._AC_SL1500_.jpg",
+    "detail": "/produkte/razer-kishi-ultra/",
+    "slug": "razer-kishi-ultra",
+    "type": "controller",
+    "platform": "universal",
+    "platformLabel": "Universal",
+    "specs": [
+      [
+        "Verb.",
+        "USB-C"
+      ],
+      [
+        "Trigger",
+        "Hall-Effect"
+      ],
+      [
+        "Bew.",
+        "4,0 (110)"
+      ]
+    ],
+    "worksOn": [
+      "android",
+      "ios",
+      "tablet",
+      "universal"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/71h7enV6giL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/818v+bWnHIL._AC_SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/711GVsz+uUL._AC_SL1500_.jpg"
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/fad57e70-cb44-48b9-b13c-9e12b76f2539/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/415oh+hKbhL.SX522_.jpg",
+      "duration": "0:30"
+    }
+  },
+  {
+    "asin": "B0D7D83HBN",
+    "brand": "Scuf",
+    "name": "Nomad",
+    "claim": "Bluetooth-Controller fürs iPhone mit Hall-Effekt-Sticks, Wechselkappen, zwei Rücktasten und eigenem Akku.",
+    "price": "73 €",
+    "img": "https://m.media-amazon.com/images/I/61jeqWowRFL._SL1500_.jpg",
+    "detail": "/produkte/scuf-nomad/",
+    "slug": "scuf-nomad",
+    "type": "controller",
+    "platform": "ios",
+    "platformLabel": "iPhone",
+    "specs": [
+      [
+        "Verb.",
+        "Bluetooth 5.0"
+      ],
+      [
+        "Sticks",
+        "Hall-Effect"
+      ],
+      [
+        "Bew.",
+        "4,0 (157)"
+      ]
+    ],
+    "worksOn": [
+      "ios"
+    ],
+    "gallery": [
+      "https://m.media-amazon.com/images/I/71Zctlu2rfL._SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/611zOoLBk9L._SL1500_.jpg",
+      "https://m.media-amazon.com/images/I/61Du4ueoU8L._SL1500_.jpg"
+    ],
+    "video": {
+      "url": "https://m.media-amazon.com/images/S/vse-vms-transcoding-artifact-eu-west-1-prod/3360fcda-b058-4a2c-a8e7-22c253db1619/default.jobtemplate.mp4.480.mp4",
+      "poster": "https://m.media-amazon.com/images/I/61MxdGBY8zL.SX522_.jpg",
+      "duration": "0:52"
+    }
+  },
+  {
     "asin": "B0DTTT23P7",
     "brand": "WLLHYF",
     "name": "Anti-Schweiß Finger Sleeves",

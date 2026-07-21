@@ -118,48 +118,56 @@ HUBS = {
          ('Welcher Universal-Controller ist der beste?','Als Clip-Controller: der GameSir G8 Galileo (Testsieger, ca. 80 €). Als klassisches Multi-Plattform-Gamepad: der abxylute S8 (ca. 46 €, inkl. Switch-2-Support, 4,4 Sterne).')]),
 }
 
-for path, cfg in HUBS.items():
-    f = f'{ROOT}/{path}'
+# ============================================================
+# Ausführung nur bei direktem Aufruf — die Funktionen oben sind
+# importierbar (sync_new_products.py nutzt card_html/hub_list/
+# itemlist_schema für driftfreies Nachrüsten neuer Produkte).
+# ACHTUNG: Dieses Skript ist NICHT idempotent (SEO-Text + Schemas
+# würden bei erneutem Lauf doppelt eingefügt) — nie zweimal laufen lassen.
+# ============================================================
+if __name__ == '__main__':
+    for path, cfg in HUBS.items():
+        f = f'{ROOT}/{path}'
+        s = open(f, encoding='utf-8').read()
+        lst = hub_list(cfg['platform'])
+        cards = ''.join(card_html(p, i == 0) for i, p in enumerate(lst))
+        count_label = f'{len(lst)} Modelle'
+
+        # 1) Statisches Pre-Rendering in den hubGrid
+        s = re.sub(r'(<div class="grid-auto" id="hubGrid"[^>]*>)\s*(</div>)',
+                   lambda m: m.group(1) + cards + '\n' + m.group(2), s)
+        # 2) Zähler statisch
+        s = s.replace('<span class="hub-count" id="hubCount">Lädt …</span>',
+                      f'<span class="hub-count" id="hubCount">{count_label}</span>')
+        # 3) Meta-Description ersetzen
+        s = re.sub(r'(<meta name="description" content=")[^"]*(")',
+                   r'\g<1>' + cfg['new_desc'] + r'\g<2>', s)
+        # 4) SEO-Text + FAQ vor dem "Alle Controller"-Backlink einfügen
+        insert = seo_text(cfg['seo'], cfg['seo_h2']) + faq_html(cfg['faqs'])
+        anchor = '<div class="text-center mt-8">'
+        if anchor in s:
+            s = s.replace(anchor, insert + '\n' + anchor, 1)
+        else:
+            s = s.replace('</main>', insert + '\n</main>', 1)
+        # 5) Schema in <head>
+        schemas = [itemlist_schema(cfg['list_name'], DOMAIN + '/' + path.replace('index.html',''), lst),
+                   bc_schema(cfg['crumbs']), faq_schema(cfg['faqs'])]
+        block = '\n'.join(f'<script type="application/ld+json">\n{json.dumps(x, ensure_ascii=False)}\n</script>' for x in schemas)
+        s = s.replace('</head>', block + '\n</head>', 1)
+        open(f, 'w', encoding='utf-8').write(s)
+        print(f'✓ {path}: {len(lst)} Karten statisch, SEO-Text, {len(cfg["faqs"])} FAQs, 3 Schemas')
+
+    # ============================================================
+    # /produkte/ — alle 40 statisch pre-rendern
+    # ============================================================
+    f = f'{ROOT}/produkte/index.html'
     s = open(f, encoding='utf-8').read()
-    lst = hub_list(cfg['platform'])
-    cards = ''.join(card_html(p, i == 0) for i, p in enumerate(lst))
-    count_label = f'{len(lst)} Modelle'
-
-    # 1) Statisches Pre-Rendering in den hubGrid
-    s = re.sub(r'(<div class="grid-auto" id="hubGrid"[^>]*>)\s*(</div>)',
+    cards = ''.join(card_html(p) for p in items)
+    s = re.sub(r'(<div[^>]*id="productGrid"[^>]*>)\s*(</div>)',
                lambda m: m.group(1) + cards + '\n' + m.group(2), s)
-    # 2) Zähler statisch
-    s = s.replace('<span class="hub-count" id="hubCount">Lädt …</span>',
-                  f'<span class="hub-count" id="hubCount">{count_label}</span>')
-    # 3) Meta-Description ersetzen
-    s = re.sub(r'(<meta name="description" content=")[^"]*(")',
-               r'\g<1>' + cfg['new_desc'] + r'\g<2>', s)
-    # 4) SEO-Text + FAQ vor dem "Alle Controller"-Backlink einfügen
-    insert = seo_text(cfg['seo'], cfg['seo_h2']) + faq_html(cfg['faqs'])
-    anchor = '<div class="text-center mt-8">'
-    if anchor in s:
-        s = s.replace(anchor, insert + '\n' + anchor, 1)
-    else:
-        s = s.replace('</main>', insert + '\n</main>', 1)
-    # 5) Schema in <head>
-    schemas = [itemlist_schema(cfg['list_name'], DOMAIN + '/' + path.replace('index.html',''), lst),
-               bc_schema(cfg['crumbs']), faq_schema(cfg['faqs'])]
-    block = '\n'.join(f'<script type="application/ld+json">\n{json.dumps(x, ensure_ascii=False)}\n</script>' for x in schemas)
-    s = s.replace('</head>', block + '\n</head>', 1)
+    s = s.replace('id="resultCount">Lädt …<', f'id="resultCount">{len(items)} Produkte<')
+    s = s.replace('id="resultCount"><', f'id="resultCount">{len(items)} Produkte<')
     open(f, 'w', encoding='utf-8').write(s)
-    print(f'✓ {path}: {len(lst)} Karten statisch, SEO-Text, {len(cfg["faqs"])} FAQs, 3 Schemas')
-
-# ============================================================
-# /produkte/ — alle 40 statisch pre-rendern
-# ============================================================
-f = f'{ROOT}/produkte/index.html'
-s = open(f, encoding='utf-8').read()
-cards = ''.join(card_html(p) for p in items)
-s = re.sub(r'(<div[^>]*id="productGrid"[^>]*>)\s*(</div>)',
-           lambda m: m.group(1) + cards + '\n' + m.group(2), s)
-s = s.replace('id="resultCount">Lädt …<', f'id="resultCount">{len(items)} Produkte<')
-s = s.replace('id="resultCount"><', f'id="resultCount">{len(items)} Produkte<')
-open(f, 'w', encoding='utf-8').write(s)
-import subprocess
-n = subprocess.run(['grep', '-c', 'class="pcard', f], capture_output=True, text=True).stdout.strip()
-print(f'✓ produkte/index.html: {n} Karten statisch pre-rendert')
+    import subprocess
+    n = subprocess.run(['grep', '-c', 'class="pcard', f], capture_output=True, text=True).stdout.strip()
+    print(f'✓ produkte/index.html: {n} Karten statisch pre-rendert')
