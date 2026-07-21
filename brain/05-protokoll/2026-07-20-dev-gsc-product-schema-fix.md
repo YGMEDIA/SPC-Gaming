@@ -13,3 +13,5 @@
 **Gelernt:** "Nur belegte Felder" reicht bei Schema.org nicht als Regel — Google definiert PFLICHT-Kombinationen je Typ. Vor dem Einsatz eines Schema-Typs die Google-Pflichtfelder gegen unsere belegbaren Daten prüfen; wenn sie nicht ehrlich füllbar sind, den Typ weglassen. Die verify-Invariante macht diese Klasse (Product) jetzt unmöglich; weitere Typen bei Bedarf ergänzen.
 
 **Nachtrag:** Yasin hat die GSC-Validierung am 20.07. gestartet ("Prüfung läuft"). Erfolgskontrolle als Punkt 8 in der gsc-loop-Checkliste verankert; Google meldet den Abschluss per Mail (typisch wenige Tage bis ~2 Wochen).
+
+**Nachtrag 2 (gleicher Tag):** Google hat die Validierung noch am 20.07. abgeschlossen und den Fix bestätigt (Mail WNC-10030335: "Probleme wurden behoben", als korrigiert bestätigt). Befund endgültig geschlossen — Durchlaufzeit Meldung→Fix→Google-Bestätigung: unter einem Tag.
