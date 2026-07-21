@@ -7,6 +7,8 @@
 ## Warteschlangen
 | Loop | Item | Stand |
 |---|---|---|
+| content-loop | **Vergleichs-Kandidat "G8 Plus vs. Kishi V3 Pro"** (Markt-Signal aus 2 YouTube-Rankings 21.07., beide Produkte mit vollen Daten) + X2s-Retro-Winkel — Priorisierung nach GSC-Lauf 2. Details: 03-research/2026-07-21-markt-youtube-rankings.md | wartet auf GSC-Paket 2 |
+| (Sortiment) | Kishi Ultra + Scuf Nomad als Sortiments-Kandidaten (Video-Lücken) | braucht Yasin: Entscheidung + Amazon-Screenshots |
 | content-loop | **S1 Zitier-Pass Folgeläufe** (von Yasin freigegeben 20.07.): je Lauf die Sektions-Einstiege einer Seite zu eigenständigen Direktantworten mit belegten Zahlen formen. Reihenfolge GSC-getrieben (nach Paket 2 die Impressions-Gewinner zuerst). controller-verbindet-nicht GESPERRT bis Erfolgskontrolle gsc-loop Punkt 6; Hubs nur mit gen_hubs-Sync | wartet auf GSC-Paket 2 |
 
 ## Erledigt
