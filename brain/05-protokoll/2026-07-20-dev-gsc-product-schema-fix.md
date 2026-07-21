@@ -14,4 +14,4 @@
 
 **Nachtrag:** Yasin hat die GSC-Validierung am 20.07. gestartet ("Prüfung läuft"). Erfolgskontrolle als Punkt 8 in der gsc-loop-Checkliste verankert; Google meldet den Abschluss per Mail (typisch wenige Tage bis ~2 Wochen).
 
-**Nachtrag 2 (gleicher Tag):** Google hat die Validierung noch am 20.07. abgeschlossen und den Fix bestätigt (Mail WNC-10030335: "Probleme wurden behoben", als korrigiert bestätigt). Befund endgültig geschlossen — Durchlaufzeit Meldung→Fix→Google-Bestätigung: unter einem Tag.
+**Nachtrag 2:** Validierung BESTANDEN — Start 20.07., bestätigt 21.07. (Mail WNC-10030335, GSC-Bericht "Überprüfung bestanden"). Die im Bericht verbleibende rote "1 betroffene Elemente" ist der historische Messstand vom 19.07. (Berichts-Datenverzug), fällt mit dem nächsten Update auf 0. Befund endgültig geschlossen — Durchlaufzeit Meldung→Fix→Google-Bestätigung: ein Tag.

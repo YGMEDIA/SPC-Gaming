@@ -15,6 +15,6 @@
 5. Falls "Zugriffsverbot 403" (1 Seite) erneut auftaucht: Yasin klickt den Grund an, schickt die URL → Diagnose.
 6. CTR-Rettung controller-verbindet-nicht: Wirkung nach Title-Schärfung (Baseline 0/47).
 7. Neuer Marken-Vergleich /blog/gamesir-oder-backbone/: erste Impressionen auf das Query-Cluster "gamesir vs/oder backbone" (Baseline: 5+ Varianten je 0 Klicks, auch die ENGLISCHEN Varianten beobachten).
-8. ~~GSC-Validierung "Produkt-Snippets"~~ **BESTANDEN 20.07. am selben Tag** (Bestätigungs-Mail WNC-10030335: "Probleme wurden behoben") — kein Prüfpunkt mehr, nur noch Vollständigkeits-Blick: taucht der Fehlertyp im frischen Bericht wirklich nicht mehr auf?
+8. ~~GSC-Validierung "Produkt-Snippets"~~ **BESTANDEN 21.07.** (Start 20.07., Bestätigungs-Mail WNC-10030335; Bericht zeigt noch "1 betroffen" vom 19.07. = Datenverzug, fällt von selbst auf 0) — kein Prüfpunkt mehr, nur noch Vollständigkeits-Blick: taucht der Fehlertyp im frischen Bericht wirklich nicht mehr auf?
 Erwartet & kein Befund: robots.txt blockiert /suche/ + Parameter-URLs absichtlich (§B3); "Alternative Seite mit Canonical" = www-Kanonisierung arbeitet korrekt.
 **Läufe:** 2026-07-19 · Lauf 1 (Fenster 11.-17.07., Vorher-Baseline; 2 Maßnahmen in content-loop, 1 Beobachtungspunkt).
