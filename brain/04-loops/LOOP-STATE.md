@@ -2,7 +2,7 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-21 (Rating-Welle erledigt)
+**Letzte Aktualisierung:** 2026-07-27 (gsc-loop Lauf 2, Vergleich gebaut)
 
 ## Warteschlangen
 | Loop | Item | Stand |
