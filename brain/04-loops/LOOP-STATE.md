@@ -7,12 +7,14 @@
 ## Warteschlangen
 | Loop | Item | Stand |
 |---|---|---|
-| content-loop | **Vergleichs-Kandidat "G8 Plus vs. Kishi V3 Pro"** (Markt-Signal aus 2 YouTube-Rankings 21.07., beide Produkte mit vollen Daten) + X2s-Retro-Winkel — Priorisierung nach GSC-Lauf 2. Details: 03-research/2026-07-21-markt-youtube-rankings.md | wartet auf GSC-Paket 2 |
+| content-loop | X2s-Retro-Winkel (Positionierung als Retro-/Emulator-Empfehlung, Markt-Signal 21.07.) | offen, kleiner Edit beim nächsten content-Lauf |
 | content-loop | **S1 Zitier-Pass Folgeläufe** (von Yasin freigegeben 20.07.): je Lauf die Sektions-Einstiege einer Seite zu eigenständigen Direktantworten mit belegten Zahlen formen. Reihenfolge GSC-getrieben (nach Paket 2 die Impressions-Gewinner zuerst). controller-verbindet-nicht GESPERRT bis Erfolgskontrolle gsc-loop Punkt 6; Hubs nur mit gen_hubs-Sync | wartet auf GSC-Paket 2 |
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-07-27 | gsc-loop | Lauf 2 komplett (Fenster 18.-26.07.): Position 13,6 (-3,2), Klick-Träger drehen auf Geld-Seiten, Razer-Cluster belegt, www-Diagnose sauber, Checkliste Lauf 3 (8 Punkte). Rohdaten raw/gsc/2026-07-27.md |
+| 2026-07-27 | content-loop | Direktvergleich /vergleich/g8-plus-vs-kishi-v3-pro/ gebaut (Kandidat durch Lauf-2-Daten bestätigt): ehrliches Duell auf Rating-Wellen-Belegstand, Duell-Links aus beiden Reviews, §A1-Fix G8-Plus-Verbindung. Details: 05-protokoll/2026-07-27-gsc-lauf2-vergleich.md |
 | 2026-07-21 | preis-loop | **Rating-Welle KOMPLETT:** alle 42 Produkte frisch belegt (16 Preise, 42 Ratings), ~330 Stellen in 90 Dateien gesynct, 4 §A4-Verstöße behoben, 3 neue §A6-Warnungen, Generator-Drift behoben. Details: 05-protokoll/2026-07-21-preis-rating-welle.md |
 | 2026-07-21 | (Sortiment) | Kishi Ultra + Scuf Nomad aufgenommen (42 Produkte): Daten autonom via Chrome gezogen, Content adversarial geprüft (3 Falschaussagen abgefangen), sync_new_products.py neu, Hubs/Marken/Tablet/Zähler/Sitemap. Details: 05-protokoll/2026-07-21-dev-sortiment-kishi-ultra-scuf-nomad.md |
 | 2026-07-20 | content-loop | Zitier-Pass Lauf 1: welche-spiele-controller, 2 belegte Direktantwort-Edits (8-Titel-Zahl, Key-Mapping-Definition). hall-effect schon auf Muster, verbindet-nicht bewusst geschützt. Strategie-Entscheidung dokumentiert (Outreach/Presse dauerhaft gestrichen). Details: 05-protokoll/2026-07-20-content-zitier-pass-lauf1.md |
