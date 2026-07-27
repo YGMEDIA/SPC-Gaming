@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 2 aktive Punkte (6 Indexierungs-Anträge · GSC-Paket ~03.08.) + Dauerhinweis Chrome |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket ~03.08.) + Dauerhinweis Chrome; Indexierungs-Anträge 27.07. gestellt |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
@@ -54,10 +54,9 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | GSC-Kritikmeldung Produkt-Snippets (Mail WNC-10030322, 20.07.): 10 Longtail-Datenblätter mit Product-Schema ohne offers/review/aggregateRating | §A4 | **GESCHLOSSEN 20.07. (gleicher Tag):** Product-Schema von den 10 Seiten entfernt (gen_longtail + Regeneration), verify-Invariante + §A4-Zusatz als Rückfluss. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
-1. **Indexierungs-Anträge (5 Min, einmalig):** In der GSC oben in die URL-Prüfung nacheinander diese 6 URLs eingeben und je "Indexierung beantragen" klicken (Engpass "Gefunden, nicht indexiert" = 47): /vergleich/g8-plus-vs-kishi-v3-pro/ · /blog/gamesir-oder-backbone/ · /blog/hall-effect-vs-tmr/ · /blog/guenstige-handy-controller/ · /produkte/razer-kishi-ultra/ · /produkte/scuf-nomad/
-2. **Nächstes GSC-Paket ~03.08.** (gleiche 4 Blöcke wie am 27.07.; beim Indexierungs-Bericht aufs frische "Letzte Aktualisierung"-Datum achten — der 27.07.-Stand war noch vom 10.07.).
-3. **Dauerhinweis:** Chrome offen lassen genügt — Bild-/Video-/Daten-Beschaffung läuft autonom (P-9/P-10).
-(Erledigt & ausgetragen 27.07.: Autoren-Paket 19.07. (Foto-Tausch jederzeit möglich: autor.jpg in Downloads) · Rich-Results-Test 19.07. · alle Key-Visuals 19.07. — Prompt-Muster für künftige Artikel: Motiv + "auf dunkler navy-blauer Fläche, blaues Akzentlicht, Produktfotografie, 16:9", Download slug-benannt.)
+1. **Nächstes GSC-Paket ~03.08.** (gleiche 4 Blöcke wie am 27.07.; beim Indexierungs-Bericht aufs frische "Letzte Aktualisierung"-Datum achten — der 27.07.-Stand war noch vom 10.07.).
+2. **Dauerhinweis:** Chrome offen lassen genügt — Bild-/Video-/Daten-Beschaffung läuft autonom (P-9/P-10).
+(Erledigt & ausgetragen 27.07.: **6 Indexierungs-Anträge von Yasin gestellt 27.07.** (Kontrolle = gsc-loop Lauf 3 Punkt 3) · Autoren-Paket 19.07. (Foto-Tausch jederzeit möglich: autor.jpg in Downloads) · Rich-Results-Test 19.07. · alle Key-Visuals 19.07. — Prompt-Muster für künftige Artikel: Motiv + "auf dunkler navy-blauer Fläche, blaues Akzentlicht, Produktfotografie, 16:9", Download slug-benannt.)
 
 ## Später-Merkposten
 - **offers-Feld in 6 Review-Schemas nachrüsten** (razer-kishi-v3-pro, backbone-pro, backbone-one-ps, gamesir-x3-pro, turtle-beach-atom, asus-rog-tessen): Diese älteren Reviews tragen kein `offers` im Product-Schema, damit fehlt das Preis-Snippet in den Suchergebnissen. Kein Verstoß (review + aggregateRating vorhanden), aber verschenkte Sichtbarkeit. Preise sind seit 21.07. alle belegt.
