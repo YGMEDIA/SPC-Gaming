@@ -1,0 +1,23 @@
+# 2026-08-07 · gsc-loop · Lauf 3: Sichtbarkeits-Einbruch ab 25.07. diagnostiziert + ratgeber-404-Fix
+
+**Was:** Yasins Paket (3-Monats- + 28-Tage-Sicht, Indexierung Stand 24.07.) ausgewertet. Die zentrale Nachricht ist unbequem: **Nach dem Peak am 24.07. (3 Klicks/47 Impr. an einem Tag) ist die Sichtbarkeit ab dem 25./26.07. auf nahe null eingebrochen und blieb dort bis zum Datenende (~04.08.).** Gleichzeitig wurde der GSC-Meilenstein "10 Klicks in 28 Tagen" am 04.08. erreicht (13/15 zum nächsten) — die Klicks stammen aber fast alle aus der starken Phase 11.-24.07. Rohdaten: `03-research/raw/gsc/2026-08-07.md`.
+
+**Diagnose (Dreiklang, ehrlich):**
+1. **Selbstverschulden technisch AUSGESCHLOSSEN** (live geprüft 07.08.): robots.txt sauber, Sitemap 200/104 URLs, kein noindex auf Kernseiten, www→non-www 301 korrekt. Die Site ist crawlbar und indexierbar.
+2. **Externe Volatilität belegt, erklärt aber den Start nicht:** Community-Berichte zeigen massive unbestätigte Google-Ranking-Volatilität ab 01.08. (Peak 03.08.; seroundtable.com/google-search-ranking-volatility-august-1-41811.html, seovendor.co). Unser Einbruch beginnt jedoch ~1 Woche FRÜHER (25.07.).
+3. **Wahrscheinlichste Haupterklärung: Ende der New-Site-Boost-Phase + Neubewertung.** Die Site bekam ab 11.07. schnell Sichtbarkeit (typischer Honeymoon neuer Domains), Google zieht diesen Vorschuss regelmäßig nach 2-4 Wochen zurück und pendelt auf Verdienst-Niveau ein. Zeitlich passt auch die Neubewertungs-Phase nach der Rating-Welle vom 21.07. (330 Änderungen sitewide) hinein. Beweisbar ist die Gewichtung nicht — dokumentiert als Beobachtung, Kontrolle in Lauf 4.
+
+**Positive Signale im selben Paket (gehen im Einbruch-Bild unter):** 109 verschiedene Queries (Lauf 1: 57) · Indexierung 53 → **69** (+16, Stand 24.07., bekannte Seiten 118 → 190) · welche-spiele-controller hat wieder 2 Klicks (28T) · Meilenstein-Badge · Länder: DE 85 %.
+
+**Checkliste Lauf 3 abgearbeitet:** (1) verbindet-nicht: weiter unsichtbar — www-Variante trägt 0/56 im 3M-Bild, non-www nicht in Top 10; Title-Änderung hat die 47-Impr.-Sichtbarkeit nicht zurückgebracht → **Lehre verallgemeinert: Meta-Freeze** (s. u.). (2) welche-spiele: Klicks zurück ✓. (3) Neue Seiten (Vergleich, Kalender-Artikel, Kishi Ultra, Scuf Nomad): in Top-Listen nicht sichtbar — per Seiten-Filter in Lauf 4 prüfen (Datenlücke, Yasin-Checkliste). (4) Finder "controller finden" 0/28 (3M): wächst, klicklos; unter 30-Schwelle. (5) Razer-Cluster: keine neuen Daten in Top 10. (6) Longtail: weiter nicht sichtbar. (7) Indexierung frischer (24.07.), aber Gründe-Tabelle zum 121er-Stand fehlt im Paket (Datenlücke). (8) www: mehrere www-URLs im 3M-Bild — enthält Altzeit, nicht abschließend beurteilbar; Technik bleibt sauber.
+
+**Fund + Sofort-Fix: alte /ratgeber/-Pfade waren 404 mit echtem Klick-Verlust.** www…/ratgeber/usb-c-vs-bluetooth/ bekam einen Klick, leitet 301 auf non-www — und dort 404 (GitHub Pages kennt keine Server-Redirects, die Pfade waren ersatzlos gelöscht). Fix: **14 Redirect-Stubs** (13 Alt-Artikel + Verzeichnis-Wurzel) mit `meta refresh 0` + `noindex` + Canonical aufs /blog/-Ziel. Wegen der Zombie-Historie (§B2, dreifache Rückkehr!) wurde die verify-Invariante präzisiert statt entfernt: /ratgeber/ ist erlaubt, wenn JEDE Datei dort nachweislich ein Stub ist (noindex + refresh + <1200 Zeichen + kein <main>); Voll-Content bleibt ROT. **Beide Richtungen bewiesen:** Stubs → grün; testweise eingeschleuster Artikel-Content → ROT.
+
+**Maßnahmen (max. 3, in LOOP-STATE):**
+1. ratgeber-Stubs (erledigt in diesem Lauf, deployed).
+2. **Meta-Freeze bis Lauf 4:** Keine Title/Description-Änderungen an Seiten mit Impressionen, solange Einbruch + externe Volatilität laufen — sonst ist Ursache nie zuordenbar (Lehre aus verbindet-nicht).
+3. **Q4-Saat jetzt starten** (war "ab August" geplant): Statt am Bestand zu drehen, neue Nachfrage-Flächen bauen — Spec Geschenke-Guides/Black-Friday als nächstes Bauvorhaben. Der Einbruch betrifft den Bestand, nicht die Q4-Chance; Reifezeit bis November drängt.
+
+**Verify:** verify.py GRÜN (119 Seiten inkl. 14 Stubs, 228 Schemas, 42 Produkte) · Invarianten-Beweis rot/grün wie oben · Live-Checks siehe Rohdaten-Notiz.
+
+**Gelernt:** (1) Ein Einbruch braucht zuerst den Technik-Ausschluss, dann die externe Lage, dann erst Hypothesen — und alle drei gehören dokumentiert, bevor gebaut wird. (2) 3-Monats-Mischfenster verschleiern Wochen-Dynamik: Für Lauf 4 wieder ein sauberes 7-Tage-Fenster anfordern. (3) Statische Hosts brauchen für JEDE gelöschte URL-Klasse einen Stub-Plan — "löschen und vergessen" produziert 404-Klicks Monate später. (4) Eine harte Invariante lässt sich präzisieren, ohne sie aufzuweichen, wenn der Beweis in beide Richtungen erbracht wird.

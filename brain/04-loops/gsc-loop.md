@@ -7,13 +7,13 @@
 2. Interpretation getrennt: Auf-/Absteiger, neue Query-Chancen (Impressionen ohne passende Seite → content-loop-Warteschlange), Indexierungs-Probleme (→ Befund).
 3. Maßnahmen ableiten: max. 3 konkrete Punkte, in LOOP-STATE bzw. Warteschlangen eintragen.
 **Fertig-Kriterium:** raw-Notiz existiert + Interpretation in STATUS (3 Sätze) + Warteschlangen aktualisiert.
-**Erfolgskontrollen offen (Checkliste Lauf 3):**
-1. verbindet-nicht: Nach Title-Schärfung (19.07.) ist die Seite aus den Top-Seiten VERSCHWUNDEN (Lauf 1: 47 Impr. → Lauf 2: nicht in Top 10). Ranking-Neubewertung nach Title-Änderung ist normal — Lauf 3 zeigt, ob sie zurückkommt. Falls weiter unsichtbar: Positions-Analyse per Query-Filter.
-2. welche-spiele-controller: 75 Impr. (Höchstwert), aber 0 Klicks (Lauf 1: 2). Zitier-Pass Lauf 1 (20.07.) wirkte noch nicht ins Fenster. Beobachten: Klicks zurück?
-3. gamesir-oder-backbone + die 3 Kalender-Artikel + kishi-ultra/scuf-nomad: erste Impressionen? (Indexierungs-Anträge von Yasin am 27.07. gestellt → sollten greifen)
-4. Finder: "controller finden" 0/16 (Impressionen +78 % vs. 0/9) und /controller-finder/ 0/18 — sobald Klicks > 0 oder Impr. > 30: Snippet-CTR analysieren. Achtung Mehrdeutigkeit der Query (verlorenen Controller "finden").
-5. Razer-/Trigger-Cluster nach neuem Vergleichs-Artikel: Impressionen auf "g8 plus vs kishi", razer-Queries, /vergleich/-Seite.
-6. Longtail-Datenblätter: weiterhin keine sichtbaren Impressionen in Top-Listen — Lauf 3 gezielt per Seiten-Filter /produkte/gamesir-x2 etc. prüfen (Yasin: Seiten-Tab nach "gamesir-x2" filtern).
-7. Indexierungs-Bericht: Der 27.07.-Stand zeigte noch Daten von ~10.07. (53/65, Chart endet 07.07.) — beim nächsten Paket auf FRISCHES "Letzte Aktualisierung"-Datum achten; erst dann sind Punkt-3-Fragen aus Lauf 1 beantwortbar. NEU aus der Aufschlüsselung: Eingereichte Seiten nur 10/60 indexiert (alter Sitemap-Stand) — die Zahl muss mit frischem Stand Richtung 103 eingereicht / deutlich mehr indexiert wandern.
-8. www-Konsolidierung: 2 www-URLs rankten in Lauf 2 (ios-Hub 16 Impr., kishi-v3-review 9). Diagnose 27.07.: 301 + Canonical korrekt, Google konsolidiert selbst. Lauf 3: www-Anteil sollte sinken. Kein Fix nötig.
-**Läufe:** 2026-07-19 · Lauf 1 (Fenster 11.-17.07., Vorher-Baseline; 2 Maßnahmen in content-loop, 1 Beobachtungspunkt). · 2026-07-27 · Lauf 2 (Fenster 18.-26.07.: Position 16,8 → **13,6**, CTR 1,6 → 2,3 %, Klicks 7; Klick-Träger drehen von Blog auf Startseite/Zubehör-Hubs; Maßnahmen: Vergleichs-Artikel G8 Plus vs. Kishi V3 Pro gebaut, Yasin-Indexierungs-Anträge, www-Diagnose sauber).
+**Erfolgskontrollen offen (Checkliste Lauf 4):**
+1. **EINBRUCH-KONTROLLE (wichtigster Punkt):** Kommen Impressionen/Klicks nach dem 25.07.-Einbruch zurück? Yasin liefert SAUBERES 7-Tage-Fenster + 28-Tage-Vergleich. Falls weiter nahe 0: Positions-Analyse der Top-5-Bestandsqueries (Query-Filter), erst danach über Content-Reaktionen entscheiden.
+2. Meta-Freeze einhalten bis dieser Punkt geklärt ist (keine Title/Description-Änderungen an Seiten mit Impressionen).
+3. ratgeber-Stubs: 404-Klicks weg? (www…/ratgeber/… muss via Refresh auf /blog/ landen; GSC-Seitenliste auf /ratgeber/-Reste prüfen)
+4. Neue Seiten per Seiten-Filter prüfen (Vergleich g8-plus-vs-kishi-v3-pro, 4 Kalender-Artikel, kishi-ultra, scuf-nomad): erste Impressionen? Die 6 Indexierungs-Anträge vom 27.07. müssen jetzt sichtbar sein.
+5. verbindet-nicht: bleibt die Seite auch nach Einbruch-Erholung unsichtbar → Positions-Analyse + ggf. Title-Rückbau als Experiment (NUR nach Freeze-Ende).
+6. Indexierung: FRISCHES Datum + Gründe-Tabelle zum aktuellen Stand (fehlte im 07.08.-Paket). Kontrolle: 69 indexiert (24.07.) → weiter steigend? "Gefunden, nicht indexiert" (47 Baseline) endlich fallend?
+7. Finder "controller finden" (0/28): bei >30 Impr. Snippet-CTR-Analyse (nach Freeze-Ende).
+Erwartet & kein Befund: robots.txt blockiert /suche/ + Parameter absichtlich (§B3) · www-Konsolidierung läuft (Technik sauber geprüft 27.07. + 07.08.).
+**Läufe:** 2026-07-19 · Lauf 1 (Fenster 11.-17.07., Vorher-Baseline; 2 Maßnahmen in content-loop, 1 Beobachtungspunkt). · 2026-07-27 · Lauf 2 (Fenster 18.-26.07.: Position 16,8 → **13,6**, CTR 1,6 → 2,3 %, Klicks 7; Klick-Träger drehen von Blog auf Startseite/Zubehör-Hubs; Maßnahmen: Vergleichs-Artikel G8 Plus vs. Kishi V3 Pro gebaut, Yasin-Indexierungs-Anträge, www-Diagnose sauber). · 2026-08-07 · Lauf 3 (Mischfenster 3M/28T: **Einbruch ab 25.07. auf nahe 0**, Technik-Ausschluss bestanden, externe Aug-Volatilität dokumentiert, Haupthypothese New-Site-Boost-Ende; Meilenstein 10 Klicks/28T erreicht 04.08., Indexierung 53→69; Maßnahmen: 14 ratgeber-Stubs deployed, Meta-Freeze, Q4-Saat vorgezogen).

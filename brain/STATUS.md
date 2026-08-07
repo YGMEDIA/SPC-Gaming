@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-07-27 (gsc-loop Lauf 2 + Vergleich)
+**Letzte Aktualisierung:** 2026-08-07 (gsc-loop Lauf 3: Einbruch-Diagnose + ratgeber-Stubs)
 
 ---
 
@@ -13,9 +13,9 @@
 
 **Site:** LIVE, 104 Seiten, Sitemap 103 URLs, 42 Produkte, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
-**Marktdaten (GSC-Lauf 2, Paket 27.07., Fenster 18.-26.07. = erstes Fenster NACH den 18./19.07.-Deploys):**
-7 Klicks · 308 Impressionen · CTR 2,3 % (von 1,6) · **Ø Position 13,6 (von 16,8 — minus 3,2 in einer Woche, die Deploys wirken)**. Rohdaten: `03-research/raw/gsc/2026-07-27.md`.
-**Kern-Erkenntnisse Lauf 2:** (1) **Klick-Träger drehen:** Lauf 1 klickte nur der Blog, jetzt Startseite (4), Trigger-Hub (1), Finger-Sleeves-Hub (1), Cloud-Gaming-Artikel (1) — die Geld-Seiten fangen an zu greifen, "controller für handy" konvertiert bei 1 Impression. (2) **Zubehör zieht:** Trigger-Hub 23 Impr. + Klick, Sleeves 13 — nachgewiesene Nachfrage. (3) **Razer-Cluster formiert sich:** razer-Queries + marken/razer 10 Impr. + kishi-v3-review 9 → stützt den Vergleichs-Artikel-Kandidaten. (4) Finder-Impressionen +78 % ("controller finden" 0/16, Seite 0/18), noch klicklos. (5) **verbindet-nicht nach Title-Änderung aus Top-Seiten verschwunden** (Ranking-Neubewertung, Lauf 3 beobachten) und welche-spiele-controller 75 Impr./0 Klicks (Lauf 1: 2 Klicks). (6) Indexierungs-Bericht hinkt nach (Stand ~10.07., 53/65) — frische Zahlen erst im nächsten Paket; NEU: nur 10/60 eingereichte Seiten indexiert (alter Sitemap-Stand), 47 "Gefunden, nicht indexiert" bleibt der Engpass → Yasin-Indexierungs-Anträge. (7) www-URLs in Top-Seiten: technisch sauber (301+Canonical live geprüft), Google konsolidiert. GA4: 2 erfasste Nutzer (Consent-Quote), keine Affiliate-Klicks messbar.
+**Marktdaten (GSC-Lauf 3, Paket 07.08., Mischfenster 3M/28T — Details raw/gsc/2026-08-07.md):**
+28 Tage: 13 Klicks · 723 Impressionen. 3 Monate: 14 Klicks · 736 Impr. · Ø Position 18,7. Meilenstein "10 Klicks/28 Tage" erreicht 04.08.
+**Kern-Erkenntnisse Lauf 3:** (1) **EINBRUCH: Nach Peak 24.07. (3 Klicks/47 Impr./Tag) fällt die Sichtbarkeit ab 25./26.07. auf nahe 0 und bleibt dort bis Datenende 04.08.** Technik-Ausschluss bestanden (robots/sitemap/noindex/www live geprüft); externe unbestätigte Google-Volatilität ab 01.08. dokumentiert, erklärt den 25.07.-Start aber nicht; Haupthypothese: Ende der New-Site-Boost-Phase + Neubewertung nach Rating-Welle (21.07.). Kontrolle = Lauf 4 Punkt 1. (2) **Meta-Freeze bis Lauf 4:** keine Title/Description-Änderungen an Seiten mit Impressionen (Lehre verbindet-nicht: nach Title-Änderung von 47 Impr./Woche auf unsichtbar). (3) Positiv: 109 Queries (Lauf 1: 57), Indexierung 53→69 (Stand 24.07.), welche-spiele wieder 2 Klicks, DE-Anteil 85 %. (4) 404-Fund behoben: alte /ratgeber/-Pfade bekamen noch Klicks → 14 noindex-Redirect-Stubs deployed (§B2-Invariante präzisiert statt aufgeweicht, rot/grün bewiesen). (5) Neue Seiten + Indexierungs-Gründe im Paket nicht sichtbar (Mischfenster/fehlende Tabelle) → Lauf-4-Checkliste präzisiert die Anforderung.
 
 **Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A und Block B umgesetzt + deployed (18.07.)** — Spec #1 damit komplett abgearbeitet (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
 
@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket ~03.08.) + Dauerhinweis Chrome; Indexierungs-Anträge 27.07. gestellt |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket Lauf 4 ~Mitte August, sauberes 7-Tage-Fenster + Indexierungs-Gründe-Tabelle) + Dauerhinweis Chrome |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
@@ -54,7 +54,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | GSC-Kritikmeldung Produkt-Snippets (Mail WNC-10030322, 20.07.): 10 Longtail-Datenblätter mit Product-Schema ohne offers/review/aggregateRating | §A4 | **GESCHLOSSEN 20.07. (gleicher Tag):** Product-Schema von den 10 Seiten entfernt (gen_longtail + Regeneration), verify-Invariante + §A4-Zusatz als Rückfluss. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
-1. **Nächstes GSC-Paket ~03.08.** (gleiche 4 Blöcke wie am 27.07.; beim Indexierungs-Bericht aufs frische "Letzte Aktualisierung"-Datum achten — der 27.07.-Stand war noch vom 10.07.).
+1. **Nächstes GSC-Paket für Lauf 4, ~Mitte August (etwa 14.-17.08.):** Diesmal wichtig: (a) Leistung als SAUBERES 7-Tage-Fenster (nicht 3 Monate) + einmal 28 Tage zum Vergleich, (b) Indexierungs-Bericht MIT der Gründe-Tabelle unten (fehlte am 07.08.), (c) im Seiten-Tab einmal nach "vergleich" und "kishi-ultra" filtern (Screenshot), damit wir die neuen Seiten sehen. Kernfrage des Laufs: Erholt sich die Sichtbarkeit nach dem 25.07.-Einbruch?
 2. **Dauerhinweis:** Chrome offen lassen genügt — Bild-/Video-/Daten-Beschaffung läuft autonom (P-9/P-10).
 (Erledigt & ausgetragen 27.07.: **6 Indexierungs-Anträge von Yasin gestellt 27.07.** (Kontrolle = gsc-loop Lauf 3 Punkt 3) · Autoren-Paket 19.07. (Foto-Tausch jederzeit möglich: autor.jpg in Downloads) · Rich-Results-Test 19.07. · alle Key-Visuals 19.07. — Prompt-Muster für künftige Artikel: Motiv + "auf dunkler navy-blauer Fläche, blaues Akzentlicht, Produktfotografie, 16:9", Download slug-benannt.)
 
@@ -127,14 +127,17 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 31. **27.07.: gsc-loop Lauf 2 + Direktvergleich G8 Plus vs. Kishi V3 Pro (deployed).** Erstes Fenster nach den 18./19.07.-Deploys: **Position 16,8 → 13,6, CTR 1,6 → 2,3 %**, Klick-Träger drehen vom Blog auf Startseite (4 Klicks) und Zubehör-Hubs (Trigger 1/23, Sleeves 1/13). Razer-Cluster in den Daten → Warteschlangen-Kandidat gebaut: `/vergleich/g8-plus-vs-kishi-v3-pro/` (ehrliches Duell: G8 Plus Preis-Leistungs-Sieger 90 €, V3 Pro besser bewertet 4,4 vs. 4,1; unbelegte Haptik-Zeile vor Publish entfernt), Duell-Links aus beiden Reviews, §A1-Fix G8-Plus-Verbindungszeile (BT+USB-C), Sitemap 104. www-Verdacht diagnostiziert und entkräftet (301+Canonical sauber). verbindet-nicht nach Title-Änderung abgetaucht (Neubewertung, Lauf 3 entscheidet), Indexierungs-Bericht hinkt (Stand 10.07.) → 6 Indexierungs-Anträge an Yasin. Checkliste Lauf 3: 8 Punkte. Details: `05-protokoll/2026-07-27-gsc-lauf2-vergleich.md`.
 
+32. **07.08.: gsc-loop Lauf 3 — Einbruch diagnostiziert, ratgeber-404-Fix deployed.** Kernbefund: Sichtbarkeit ab 25./26.07. auf nahe 0 (nach Peak 24.07.); Dreiklang-Diagnose: Technik-Ausschluss bestanden · externe Aug-Volatilität (unbestätigt, ab 01.08.) dokumentiert · Haupthypothese New-Site-Boost-Ende + Neubewertung nach Rating-Welle. Gegengewichte: Meilenstein 10 Klicks/28T (04.08.), 109 Queries, Indexierung 53→69. Maßnahmen: (1) 14 /ratgeber/-Redirect-Stubs gegen belegte 404-Klicks (verify-§B2-Invariante präzisiert: Stubs erlaubt, Voll-Content bleibt ROT — beide Richtungen bewiesen), (2) Meta-Freeze an Impressions-Trägern bis Lauf 4, (3) Q4-Saat vorgezogen als nächstes Bauvorhaben. Details: `05-protokoll/2026-08-07-gsc-lauf3-einbruch-diagnose.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-1. GSC-getrieben weiter: gsc-loop Lauf 2 sobald Yasins Paket (~26.07.) da ist — Checkliste hat jetzt 7 Punkte (inkl. CTR-Wirkung verbindet-nicht, Marken-Vergleich-Cluster de+en). Bis dahin: keine neuen Pflicht-Baustellen; optionale Kandidaten nur bei Anlass (z. B. Key-Visual-Einbau sobald Yasins 4 Bilder kommen, Screenshots für preis-loop).
-2. **Q4-Saat ab August** (Entscheidung 20.07.): Geschenke-Guides + Deal-/Black-Friday-Seiten anlegen, damit sie im November ranken — Spec vorbereiten, sobald GSC-Lauf 2 die Keyword-Basis liefert.
-Longtail-Batches 2–5 bleiben geparkt bis Batch-1-Erfolgskontrolle. Produkt-Videos sind KOMPLETT (19/40, Block H3, P-10) — bei neuen Produkten gehört der Video-Check in den Aufnahme-Workflow. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
+1. **Q4-Saat (vorgezogen per Lauf-3-Entscheidung):** Spec für Geschenke-Guides + Black-Friday-/Deals-Struktur erarbeiten (gegen echtes Repo, Keyword-Basis aus keyword-strategie.md + Lauf-Daten) und Yasin zur Freigabe vorlegen; nach Freigabe bauen. Reifezeit bis November ist der Treiber.
+2. gsc-loop Lauf 4, sobald Yasins Paket kommt (~Mitte August; Checkliste mit 7 Punkten in gsc-loop.md — Punkt 1 ist die Einbruch-Kontrolle mit sauberem 7-Tage-Fenster).
+**Leitplanke bis Lauf 4: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen; Bauen ja (neue Seiten), Bestands-Metas nein.
+Longtail-Batches 2–5 bleiben geparkt. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
 **Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).
 **Loops:** preis-loop fällig ab 01.08. (Voll-Abgleich) · gsc-loop Lauf 2 nach nächstem Paket.

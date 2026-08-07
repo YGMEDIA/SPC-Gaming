@@ -16,7 +16,15 @@ for f in ['CNAME', '.nojekyll', 'llms.txt', 'robots.txt', 'sitemap.xml', 'assets
     if not os.path.exists(f): err(f"Invariante fehlt: {f}")
 if os.path.exists('CNAME') and open('CNAME').read().strip() != 'smartphone-controller.com':
     err("CNAME-Inhalt falsch")
-if os.path.isdir('ratgeber'): err("ZOMBIE: /ratgeber/ existiert wieder (§B2) — muss gelöscht bleiben")
+# §B2 präzisiert (07.08.): /ratgeber/ darf NUR noindex-Redirect-Stubs enthalten
+# (meta refresh + noindex, kein Content). Voll-Content dort = Zombie-Rückkehr = ROT.
+if os.path.isdir('ratgeber'):
+    for stub in glob.glob('ratgeber/**/index.html', recursive=True):
+        s_html = open(stub, encoding='utf-8').read()
+        ok_stub = ('noindex' in s_html and 'http-equiv="refresh"' in s_html
+                   and len(s_html) < 1200 and '<main' not in s_html)
+        if not ok_stub:
+            err(f"ZOMBIE: {stub} ist kein Redirect-Stub (§B2) — Voll-Content unter /ratgeber/ verboten")
 
 pages = sorted(glob.glob('**/index.html', recursive=True))
 pages = [p for p in pages if not p.startswith(('brain/', 'scripts/', '.github/'))]

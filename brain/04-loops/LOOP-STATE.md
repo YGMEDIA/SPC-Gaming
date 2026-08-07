@@ -2,7 +2,10 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-07-27 (gsc-loop Lauf 2, Vergleich gebaut)
+**Letzte Aktualisierung:** 2026-08-07 (gsc-Lauf 3)
+
+> **AKTIVE LEITPLANKE bis gsc-Lauf 4: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen (Einbruch-Diagnose läuft).
+
 
 ## Warteschlangen
 | Loop | Item | Stand |
@@ -13,6 +16,7 @@
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-08-07 | gsc-loop | Lauf 3: Einbruch ab 25.07. diagnostiziert (Technik-Ausschluss, Aug-Volatilität, Boost-Ende-Hypothese), 14 ratgeber-Redirect-Stubs deployed (§B2-Invariante präzisiert), Meta-Freeze verhängt, Q4-Saat vorgezogen. Rohdaten raw/gsc/2026-08-07.md · Details: 05-protokoll/2026-08-07-gsc-lauf3-einbruch-diagnose.md |
 | 2026-07-27 | gsc-loop | Lauf 2 komplett (Fenster 18.-26.07.): Position 13,6 (-3,2), Klick-Träger drehen auf Geld-Seiten, Razer-Cluster belegt, www-Diagnose sauber, Checkliste Lauf 3 (8 Punkte). Rohdaten raw/gsc/2026-07-27.md |
 | 2026-07-27 | content-loop | Direktvergleich /vergleich/g8-plus-vs-kishi-v3-pro/ gebaut (Kandidat durch Lauf-2-Daten bestätigt): ehrliches Duell auf Rating-Wellen-Belegstand, Duell-Links aus beiden Reviews, §A1-Fix G8-Plus-Verbindung. Details: 05-protokoll/2026-07-27-gsc-lauf2-vergleich.md |
 | 2026-07-21 | preis-loop | **Rating-Welle KOMPLETT:** alle 42 Produkte frisch belegt (16 Preise, 42 Ratings), ~330 Stellen in 90 Dateien gesynct, 4 §A4-Verstöße behoben, 3 neue §A6-Warnungen, Generator-Drift behoben. Details: 05-protokoll/2026-07-21-preis-rating-welle.md |
