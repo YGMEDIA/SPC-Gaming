@@ -29,7 +29,7 @@
 | Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket Lauf 4 ~Mitte August, sauberes 7-Tage-Fenster + Indexierungs-Gründe-Tabelle) + Dauerhinweis Chrome |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
-| Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-sichtbarkeit-blockA-B: A+B umgesetzt 18.07. (komplett), nächstes Spec offen |
+| Freigegebene/wartende Bauvorhaben | `06-specs/` | **SPEC-q4-saat: ZUR FREIGABE bei Yasin (07.08.)** · SPEC-sichtbarkeit-blockA-B komplett |
 | Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: G8-Plus-vs-V3-Pro-Vergleich + Zitier-Pass-Folgeläufe (beide nach GSC-Paket 2) · preis-loop: nächster Voll-Abgleich, Datenstand jetzt 21.07. |
 | Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A+B umgesetzt, C–H danach |
 | Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
@@ -134,7 +134,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-1. **Q4-Saat (vorgezogen per Lauf-3-Entscheidung):** Spec für Geschenke-Guides + Black-Friday-/Deals-Struktur erarbeiten (gegen echtes Repo, Keyword-Basis aus keyword-strategie.md + Lauf-Daten) und Yasin zur Freigabe vorlegen; nach Freigabe bauen. Reifezeit bis November ist der Treiber.
+1. **Q4-Saat: Spec liegt zur Freigabe** (`06-specs/SPEC-q4-saat.md`, 07.08.): 3 Seiten (/geschenke/-Hub nach Preisklassen aus 42 belegten Produkten · Ratgeber-Artikel als Frage/Hub-Paar · /black-friday/-Landingpage ehrlich ohne erfundene Deals, Pflege am 27.11. per Yasin-Screenshots). Nach Yasins Ok: Bau in 1 Session.
 2. gsc-loop Lauf 4, sobald Yasins Paket kommt (~Mitte August; Checkliste mit 7 Punkten in gsc-loop.md — Punkt 1 ist die Einbruch-Kontrolle mit sauberem 7-Tage-Fenster).
 **Leitplanke bis Lauf 4: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen; Bauen ja (neue Seiten), Bestands-Metas nein.
 Longtail-Batches 2–5 bleiben geparkt. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
