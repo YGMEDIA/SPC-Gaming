@@ -1,0 +1,16 @@
+# 2026-08-07 · content · Q4-Saat gebaut: Geschenke-Hub + Ratgeber + Black-Friday-Guide
+
+**Was:** SPEC-q4-saat von Yasin freigegeben ("ok") und in derselben Session komplett umgesetzt — drei Seiten, damit die Weihnachts-/BF-Nachfrage bis November Rankings aufbauen kann (Lauf-3-Entscheidung: Q4 vorgezogen, weil der Einbruch den Bestand betrifft, nicht die Saison-Chance).
+
+**Gebaut:**
+1. **/geschenke/** — transaktionaler Hub: 14 Empfehlungen in 4 Preisklassen (unter 20 € Wichtel · 20-50 sicheres Geschenk · 50-100 Hauptgeschenk · 100+ Premium), kuratiert NUR aus Produkten ≥3,8 Sternen (die Schwachen werden in FAQ/Ratgeber ehrlich als Nicht-Geschenke benannt: Razer Phone Cooler 3,2, MGPXPRO 3,6). Karten driftfrei über gen_hubs.card_html gerendert (pcard-Standard → künftige Preis-Wellen erfassen die Seite automatisch über den pcard-Parser des preis-loops). ItemList (14) + FAQPage (4) + Breadcrumb.
+2. **/blog/geschenke-fuer-mobile-gamer/** — P-5-Ratgeber nach Frage/Hub-Paar-Muster (~750 W): die eine Frage vor dem Kauf (welches Handy?), 3 Preisklassen, die zwei Fehlkauf-Klassiker (Lightning-Falle Backbone One PS: passt NUR bis iPhone 14 · Datenblatt-Käufe unter 4,0), 4 FAQs, 11 Geld-Links, Byline Yannick Gerber, Article+FAQPage-Schema. Blog-Index Pos. 1, ItemList 18.
+3. **/black-friday/** — Saison-Landingpage, Ehrlichkeits-kritisch gelöst: Schwellen-Matrix "ab wann ist es ein Deal" (7 Top-Modelle, Schwelle ~ -20 % vom BELEGTEN Regulärpreis, products.json-Stand 21.07. mit sichtbarer Quellenangabe), 3 BF-Fallen (Vorgänger als Köder mit Link auf unsere Longtail-Datenblätter, Prozent-Falle <4,0 Sterne, Anschluss-Falle), Transparenz-Box: VOR dem 27.11. bewusst KEINE Deal-Behauptungen, keine Streichpreise, keine Preishistorien (§A5); Live-Pflege am BF-Wochenende per Yasin-Screenshots steht sichtbar auf der Seite.
+
+**Technik:** Statik pur (§A2) · KEIN Product-Schema (§A4-Lehre: ohne offers verboten; ItemList/FAQ tragen) · beide Key-Visuals als Corporate-SVG-Platzhalter (Prompts bei Braucht-Yasin, bewährter Foto-Workflow) · Sitemap 107 URLs (changefreq weekly für die Saison-Seiten) · llms.txt +2 · interne Verlinkung: Dreieck geschenke ↔ blog-Ratgeber ↔ black-friday plus Budget-/Testsieger-Links; Bestand bewusst NICHT angefasst (Meta-Freeze).
+
+**Verify:** verify.py GRÜN (122 Seiten, 236 Schemas, 42 Produkte) · Browser-Sichtung /geschenke/ (Hero + Wichtel-Sektion gerendert) · DOM-Prüfung: 14 pcards mit korrekten ASINs/Preisen, BF-Tabelle 7 Modelle, Transparenz-Box vorhanden, Blog 11 Geld-Links + Byline · alle 3 Seiten lokal 200 · Live-Check nach Deploy.
+
+**Erfolgskontrolle:** gsc-loop ab Oktober auf "geschenk"/"wichtel"/"black friday"-Queries; Titles der NEUEN Seiten dürfen trotz Meta-Freeze nachgeschärft werden (Ausnahme in der Spec definiert, weil ohne Bestands-Risiko). Erfolgskriterium: erste Saison-Impressionen bis Mitte Oktober.
+
+**Gelernt:** (1) Saison-Content ohne Keyword-Beleg ist vertretbar, wenn der Befund transparent dokumentiert ist und die Validierungs-Schleife steht — Saison-Queries sind vor der Saison prinzipiell nicht messbar. (2) Eine Deals-Seite VOR dem Event ist ehrlich baubar, wenn sie Schwellen aus belegten Regulärpreisen statt erfundener Historien liefert; die Transparenz-Box macht die Arbeitsteilung (Guide jetzt, echte Preise am 27.11.) zum sichtbaren Feature statt zum Makel.

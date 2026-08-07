@@ -29,7 +29,7 @@
 | Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket Lauf 4 ~Mitte August, sauberes 7-Tage-Fenster + Indexierungs-Gründe-Tabelle) + Dauerhinweis Chrome |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
-| Freigegebene/wartende Bauvorhaben | `06-specs/` | **SPEC-q4-saat: ZUR FREIGABE bei Yasin (07.08.)** · SPEC-sichtbarkeit-blockA-B komplett |
+| Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-q4-saat: freigegeben + UMGESETZT 07.08. · SPEC-sichtbarkeit-blockA-B komplett |
 | Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: G8-Plus-vs-V3-Pro-Vergleich + Zitier-Pass-Folgeläufe (beide nach GSC-Paket 2) · preis-loop: nächster Voll-Abgleich, Datenstand jetzt 21.07. |
 | Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A+B umgesetzt, C–H danach |
 | Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
@@ -55,7 +55,9 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
 1. **Nächstes GSC-Paket für Lauf 4, ~Mitte August (etwa 14.-17.08.):** Diesmal wichtig: (a) Leistung als SAUBERES 7-Tage-Fenster (nicht 3 Monate) + einmal 28 Tage zum Vergleich, (b) Indexierungs-Bericht MIT der Gründe-Tabelle unten (fehlte am 07.08.), (c) im Seiten-Tab einmal nach "vergleich" und "kishi-ultra" filtern (Screenshot), damit wir die neuen Seiten sehen. Kernfrage des Laufs: Erholt sich die Sichtbarkeit nach dem 25.07.-Einbruch?
-2. **Dauerhinweis:** Chrome offen lassen genügt — Bild-/Video-/Daten-Beschaffung läuft autonom (P-9/P-10).
+2. **Key-Visuals für 2 neue Seiten** (bewährtes Muster, Download slug-benannt): (a) `geschenke-fuer-mobile-gamer`: "Eine elegante Geschenkbox mit Schleife neben einem Smartphone-Gaming-Controller auf dunkler navy-blauer Fläche, weiches blaues Akzentlicht, festliche Produktfotografie, 16:9" · (b) `black-friday`: "Smartphone-Gaming-Controller mit einem schlichten Preisschild-Anhänger auf dunkler navy-blauer Fläche, dramatisches blaues Akzentlicht, minimalistische Produktfotografie, 16:9"
+3. **Termin 27.-30.11. (Black-Friday-Wochenende):** Amazon-Screenshots der echten Preise unserer Top-Modelle → ich pflege die Deal-Sektion auf /black-friday/ live.
+4. **Dauerhinweis:** Chrome offen lassen genügt — Bild-/Video-/Daten-Beschaffung läuft autonom (P-9/P-10).
 (Erledigt & ausgetragen 27.07.: **6 Indexierungs-Anträge von Yasin gestellt 27.07.** (Kontrolle = gsc-loop Lauf 3 Punkt 3) · Autoren-Paket 19.07. (Foto-Tausch jederzeit möglich: autor.jpg in Downloads) · Rich-Results-Test 19.07. · alle Key-Visuals 19.07. — Prompt-Muster für künftige Artikel: Motiv + "auf dunkler navy-blauer Fläche, blaues Akzentlicht, Produktfotografie, 16:9", Download slug-benannt.)
 
 ## Später-Merkposten
@@ -129,12 +131,14 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 32. **07.08.: gsc-loop Lauf 3 — Einbruch diagnostiziert, ratgeber-404-Fix deployed.** Kernbefund: Sichtbarkeit ab 25./26.07. auf nahe 0 (nach Peak 24.07.); Dreiklang-Diagnose: Technik-Ausschluss bestanden · externe Aug-Volatilität (unbestätigt, ab 01.08.) dokumentiert · Haupthypothese New-Site-Boost-Ende + Neubewertung nach Rating-Welle. Gegengewichte: Meilenstein 10 Klicks/28T (04.08.), 109 Queries, Indexierung 53→69. Maßnahmen: (1) 14 /ratgeber/-Redirect-Stubs gegen belegte 404-Klicks (verify-§B2-Invariante präzisiert: Stubs erlaubt, Voll-Content bleibt ROT — beide Richtungen bewiesen), (2) Meta-Freeze an Impressions-Trägern bis Lauf 4, (3) Q4-Saat vorgezogen als nächstes Bauvorhaben. Details: `05-protokoll/2026-08-07-gsc-lauf3-einbruch-diagnose.md`.
 
+33. **07.08.: Q4-Saat gebaut (Spec freigegeben + umgesetzt am selben Tag, deployed).** Drei Seiten: **/geschenke/** (14 kuratierte Empfehlungen in 4 Preisklassen aus den 42 belegten Produkten, nur ≥3,8-Sterne-Produkte, Wichtel-Sektion, Karten driftfrei über gen_hubs.card_html, ItemList+FAQ) · **/blog/geschenke-fuer-mobile-gamer/** (P-5, Frage/Hub-Paar, 4 FAQs, 11 Geld-Links, Fehlkauf-Warnungen inkl. Lightning-Falle) · **/black-friday/** (ehrlicher Deal-Guide: Schwellen-Matrix aus belegten Regulärpreisen, 3 BF-Fallen, transparent KEINE Deal-Behauptungen vor dem 27.11., Live-Pflege am BF-Wochenende per Yasin-Screenshots). Blog-Index Pos. 1 (18 Artikel), Sitemap 107, llms.txt +2. SVG-Platzhalter; 2 Bild-Prompts bei Braucht-Yasin. Details: `05-protokoll/2026-08-07-content-q4-saat.md`.
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-1. **Q4-Saat: Spec liegt zur Freigabe** (`06-specs/SPEC-q4-saat.md`, 07.08.): 3 Seiten (/geschenke/-Hub nach Preisklassen aus 42 belegten Produkten · Ratgeber-Artikel als Frage/Hub-Paar · /black-friday/-Landingpage ehrlich ohne erfundene Deals, Pflege am 27.11. per Yasin-Screenshots). Nach Yasins Ok: Bau in 1 Session.
+1. **Q4-Saat GEBAUT (07.08.)** — Erfolgskontrolle ab Oktober im gsc-loop ("geschenk"/"black friday"-Queries), Titles dann nachschärfen (neue Seiten sind vom Meta-Freeze ausgenommen). Am 27.11.: BF-Deal-Pflege mit Yasins Screenshots.
 2. gsc-loop Lauf 4, sobald Yasins Paket kommt (~Mitte August; Checkliste mit 7 Punkten in gsc-loop.md — Punkt 1 ist die Einbruch-Kontrolle mit sauberem 7-Tage-Fenster).
 **Leitplanke bis Lauf 4: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen; Bauen ja (neue Seiten), Bestands-Metas nein.
 Longtail-Batches 2–5 bleiben geparkt. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.

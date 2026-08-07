@@ -1,6 +1,6 @@
 # SPEC · Q4-Saat: Geschenke-Guide + Black-Friday-Struktur
 
-> Status: **zur Freigabe (Yasin)** · erstellt 07.08.2026 (Lauf-3-Entscheidung: Q4 vorgezogen)
+> Status: **FREIGEGEBEN 07.08.2026 (Yasin, Chat) · UMGESETZT 07.08.2026** (Lauf-3-Entscheidung: Q4 vorgezogen)
 > Ziel: Bis Anfang November ranken. Reifezeit 2-3 Monate → Bau sofort nach Freigabe.
 
 ## 1 · Warum jetzt
@@ -38,5 +38,5 @@ Statik zuerst (§A2), Karten über sync_new_products-Muster bzw. Hand nach P-6 �
 verify.py grün (Schemas, Links, Sitemap, §A6-Check der Kuratierung) · Browser-Sichtung · Rich-Results-Test der 3 Seiten nach Deploy (autonom) · gsc-loop ab Oktober: "geschenk"/"black friday"-Queries beobachten, Titles nachschärfen · Erfolgskriterium: erste Saison-Impressionen bis Mitte Oktober, Klicks in BF-Woche.
 
 ## 6 · Freigabe
-[ ] Yasin: freigegeben am ______ / Änderungen: ______
+[x] Yasin: freigegeben am 07.08.2026 (Chat "ok") / Änderungen: keine · Umsetzung: gleiche Session, alle 3 Seiten deployed
 Aufwand nach Freigabe: 1 Session (alle 3 Seiten + Verlinkung + Doku). Yasins Beiträge: 2 Bild-Prompts generieren (jederzeit) · BF-Wochenende Screenshots (27.11.).
