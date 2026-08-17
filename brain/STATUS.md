@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-08-07 (gsc-loop Lauf 3: Einbruch-Diagnose + ratgeber-Stubs)
+**Letzte Aktualisierung:** 2026-08-15 (gsc-loop Lauf 4: Einbruch verfestigt, Freeze differenziert)
 
 ---
 
@@ -13,9 +13,9 @@
 
 **Site:** LIVE, 104 Seiten, Sitemap 103 URLs, 42 Produkte, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
-**Marktdaten (GSC-Lauf 3, Paket 07.08., Mischfenster 3M/28T — Details raw/gsc/2026-08-07.md):**
-28 Tage: 13 Klicks · 723 Impressionen. 3 Monate: 14 Klicks · 736 Impr. · Ø Position 18,7. Meilenstein "10 Klicks/28 Tage" erreicht 04.08.
-**Kern-Erkenntnisse Lauf 3:** (1) **EINBRUCH: Nach Peak 24.07. (3 Klicks/47 Impr./Tag) fällt die Sichtbarkeit ab 25./26.07. auf nahe 0 und bleibt dort bis Datenende 04.08.** Technik-Ausschluss bestanden (robots/sitemap/noindex/www live geprüft); externe unbestätigte Google-Volatilität ab 01.08. dokumentiert, erklärt den 25.07.-Start aber nicht; Haupthypothese: Ende der New-Site-Boost-Phase + Neubewertung nach Rating-Welle (21.07.). Kontrolle = Lauf 4 Punkt 1. (2) **Meta-Freeze bis Lauf 4:** keine Title/Description-Änderungen an Seiten mit Impressionen (Lehre verbindet-nicht: nach Title-Änderung von 47 Impr./Woche auf unsichtbar). (3) Positiv: 109 Queries (Lauf 1: 57), Indexierung 53→69 (Stand 24.07.), welche-spiele wieder 2 Klicks, DE-Anteil 85 %. (4) 404-Fund behoben: alte /ratgeber/-Pfade bekamen noch Klicks → 14 noindex-Redirect-Stubs deployed (§B2-Invariante präzisiert statt aufgeweicht, rot/grün bewiesen). (5) Neue Seiten + Indexierungs-Gründe im Paket nicht sichtbar (Mischfenster/fehlende Tabelle) → Lauf-4-Checkliste präzisiert die Anforderung.
+**Marktdaten (GSC-Lauf 4, Paket 15.08., sauberes 7-Tage-Fenster 09.-15.08. — Details raw/gsc/2026-08-15.md):**
+**0 Klicks · 44 Impressionen · Ø Position 56,4.** Der 25.07.-Einbruch hat sich verfestigt (Lauf 2: 308 Impr./Pos. 13,6) — die Boost-Ende-Hypothese ist damit praktisch bestätigt: Das ist das echte Niveau einer 2-Monats-Domain ohne Autorität.
+**Kern-Erkenntnisse Lauf 4:** (1) Kein Erholungsansatz im Fenster; Geduld statt Aktionismus ist die Linie. (2) **Freeze differenziert:** Metas nur noch bei den 10 verbliebenen Impressions-Trägern eingefroren, Rest ist frei. (3) Lichtblicke: Indexierung 53→69→**72**, Query-Breite bleibt, **Hall-Effect-Cluster überlebt** (~8 Impr./Woche, Träger hall-effect-erklaert) → Verlinkungs-Ausbau in Warteschlange, **gamesir-oder-backbone erste 2 Impressionen**, ratgeber-Stubs wirken (keine Reste). (4) verbindet-nicht + Finder komplett unsichtbar; Title-Rückbau-Experiment nach Boden-Bestätigung. (5) Q4-Seiten am 15.08. noch zu jung für Daten. (6) Indexierungs-Gründe-Tabelle fehlt zum 2. Mal (Checklisten-Punkt 6 für Yasin).
 
 **Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A und Block B umgesetzt + deployed (18.07.)** — Spec #1 damit komplett abgearbeitet (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
 
@@ -54,7 +54,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 | GSC-Kritikmeldung Produkt-Snippets (Mail WNC-10030322, 20.07.): 10 Longtail-Datenblätter mit Product-Schema ohne offers/review/aggregateRating | §A4 | **GESCHLOSSEN 20.07. (gleicher Tag):** Product-Schema von den 10 Seiten entfernt (gen_longtail + Regeneration), verify-Invariante + §A4-Zusatz als Rückfluss. Details: 05-protokoll/2026-07-20-dev-gsc-product-schema-fix.md |
 
 ## Braucht Yasin (Entscheidungen & Handgriffe)
-1. **Nächstes GSC-Paket für Lauf 4, ~Mitte August (etwa 14.-17.08.):** Diesmal wichtig: (a) Leistung als SAUBERES 7-Tage-Fenster (nicht 3 Monate) + einmal 28 Tage zum Vergleich, (b) Indexierungs-Bericht MIT der Gründe-Tabelle unten (fehlte am 07.08.), (c) im Seiten-Tab einmal nach "vergleich" und "kishi-ultra" filtern (Screenshot), damit wir die neuen Seiten sehen. Kernfrage des Laufs: Erholt sich die Sichtbarkeit nach dem 25.07.-Einbruch?
+1. **ERLEDIGT 15.08. (Lauf 4 gefahren).** Nächstes Paket für Lauf 5 ~Ende August (22.-25.08.), gleiche Anforderungen — und diesmal bitte wirklich die Gründe-Tabelle der Indexierung (fehlt zum 2. Mal): unter "Warum Seiten nicht indexiert werden" die Tabelle screenshoten. Alte Anforderung: Diesmal wichtig: (a) Leistung als SAUBERES 7-Tage-Fenster (nicht 3 Monate) + einmal 28 Tage zum Vergleich, (b) Indexierungs-Bericht MIT der Gründe-Tabelle unten (fehlte am 07.08.), (c) im Seiten-Tab einmal nach "vergleich" und "kishi-ultra" filtern (Screenshot), damit wir die neuen Seiten sehen. Kernfrage des Laufs: Erholt sich die Sichtbarkeit nach dem 25.07.-Einbruch?
 2. **Key-Visuals für 2 neue Seiten** (bewährtes Muster, Download slug-benannt): (a) `geschenke-fuer-mobile-gamer`: "Eine elegante Geschenkbox mit Schleife neben einem Smartphone-Gaming-Controller auf dunkler navy-blauer Fläche, weiches blaues Akzentlicht, festliche Produktfotografie, 16:9" · (b) `black-friday`: "Smartphone-Gaming-Controller mit einem schlichten Preisschild-Anhänger auf dunkler navy-blauer Fläche, dramatisches blaues Akzentlicht, minimalistische Produktfotografie, 16:9"
 3. **Termin 27.-30.11. (Black-Friday-Wochenende):** Amazon-Screenshots der echten Preise unserer Top-Modelle → ich pflege die Deal-Sektion auf /black-friday/ live.
 4. **Dauerhinweis:** Chrome offen lassen genügt — Bild-/Video-/Daten-Beschaffung läuft autonom (P-9/P-10).
@@ -132,6 +132,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 32. **07.08.: gsc-loop Lauf 3 — Einbruch diagnostiziert, ratgeber-404-Fix deployed.** Kernbefund: Sichtbarkeit ab 25./26.07. auf nahe 0 (nach Peak 24.07.); Dreiklang-Diagnose: Technik-Ausschluss bestanden · externe Aug-Volatilität (unbestätigt, ab 01.08.) dokumentiert · Haupthypothese New-Site-Boost-Ende + Neubewertung nach Rating-Welle. Gegengewichte: Meilenstein 10 Klicks/28T (04.08.), 109 Queries, Indexierung 53→69. Maßnahmen: (1) 14 /ratgeber/-Redirect-Stubs gegen belegte 404-Klicks (verify-§B2-Invariante präzisiert: Stubs erlaubt, Voll-Content bleibt ROT — beide Richtungen bewiesen), (2) Meta-Freeze an Impressions-Trägern bis Lauf 4, (3) Q4-Saat vorgezogen als nächstes Bauvorhaben. Details: `05-protokoll/2026-08-07-gsc-lauf3-einbruch-diagnose.md`.
 
 33. **07.08.: Q4-Saat gebaut (Spec freigegeben + umgesetzt am selben Tag, deployed).** Drei Seiten: **/geschenke/** (14 kuratierte Empfehlungen in 4 Preisklassen aus den 42 belegten Produkten, nur ≥3,8-Sterne-Produkte, Wichtel-Sektion, Karten driftfrei über gen_hubs.card_html, ItemList+FAQ) · **/blog/geschenke-fuer-mobile-gamer/** (P-5, Frage/Hub-Paar, 4 FAQs, 11 Geld-Links, Fehlkauf-Warnungen inkl. Lightning-Falle) · **/black-friday/** (ehrlicher Deal-Guide: Schwellen-Matrix aus belegten Regulärpreisen, 3 BF-Fallen, transparent KEINE Deal-Behauptungen vor dem 27.11., Live-Pflege am BF-Wochenende per Yasin-Screenshots). Blog-Index Pos. 1 (18 Artikel), Sitemap 107, llms.txt +2. SVG-Platzhalter; 2 Bild-Prompts bei Braucht-Yasin. Details: `05-protokoll/2026-08-07-content-q4-saat.md`.
+
+34. **15.08.: gsc-loop Lauf 4 — Einbruch verfestigt, Kurs: Geduld + gezielte Nadelstiche.** 7-Tage-Fenster 09.-15.08.: 0 Klicks, 44 Impressionen, Position 56,4. Boost-Ende-Hypothese bestätigt; bewusst KEINE Panik-Umbauten. Maßnahmen: Freeze auf die 10 Impressions-Träger reduziert (Rest frei), Hall-Cluster-Verlinkung als nächster kleiner content-Lauf, Checkliste Lauf 5 mit Boden-Kontrolle + Q4-Erstmessung. Details: Rohdaten raw/gsc/2026-08-15.md (kein eigenes Protokoll, Doku-Lauf).
 
 ---
 
