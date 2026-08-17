@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket Lauf 4 ~Mitte August, sauberes 7-Tage-Fenster + Indexierungs-Gründe-Tabelle) + Dauerhinweis Chrome |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket Lauf 5 ~22.-25.08., 7-Tage-Fenster + ENDLICH die Indexierungs-Gründe-Tabelle) + Dauerhinweis Chrome |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-q4-saat: freigegeben + UMGESETZT 07.08. · SPEC-sichtbarkeit-blockA-B komplett |
@@ -61,6 +61,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 (Erledigt & ausgetragen 27.07.: **6 Indexierungs-Anträge von Yasin gestellt 27.07.** (Kontrolle = gsc-loop Lauf 3 Punkt 3) · Autoren-Paket 19.07. (Foto-Tausch jederzeit möglich: autor.jpg in Downloads) · Rich-Results-Test 19.07. · alle Key-Visuals 19.07. — Prompt-Muster für künftige Artikel: Motiv + "auf dunkler navy-blauer Fläche, blaues Akzentlicht, Produktfotografie, 16:9", Download slug-benannt.)
 
 ## Später-Merkposten
+- **Video-Indexierung (GSC meldet 8/0):** bewusst kein VideoObject-Schema in v1 (uploadDate nicht belegbar, §A5) — nur angehen, falls ehrlich belegbare Felder verfügbar werden.
 - **offers-Feld in 6 Review-Schemas nachrüsten** (razer-kishi-v3-pro, backbone-pro, backbone-one-ps, gamesir-x3-pro, turtle-beach-atom, asus-rog-tessen): Diese älteren Reviews tragen kein `offers` im Product-Schema, damit fehlt das Preis-Snippet in den Suchergebnissen. Kein Verstoß (review + aggregateRating vorhanden), aber verschenkte Sichtbarkeit. Preise sind seit 21.07. alle belegt.
 - **Microsoft Clarity** (Heatmaps) via GTM nachrüsten — kein Code-Deploy nötig, erst wenn genug Traffic für auswertbare Daten da ist.
 - **3 freie AnswerThePublic-Anfragen** ungenutzt — aufheben für gezielte Keyword-Vertiefung (z. B. vor Blog-Neuartikeln).
