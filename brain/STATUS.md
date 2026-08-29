@@ -11,7 +11,7 @@
 
 ## Wo wir stehen
 
-**Site:** LIVE, 104 Seiten, Sitemap 103 URLs, 42 Produkte, GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
+**Site:** LIVE, 123 Seiten (inkl. 14 ratgeber-Redirect-Stubs), Sitemap 108 URLs, 42 Produkte, 7 Direktvergleiche, Q4-Seiten seit 07.08., GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
 **Marktdaten (GSC-Lauf 5, Paket 26.08., 7-Tage-Fenster 20.-26.08. — Details raw/gsc/2026-08-26.md):**
 **0 Klicks · 25 Impressionen · Ø Position 55,9.** Position stabil zu Lauf 4 (56,4), Impressionen weiter rückläufig (44 → 25). Die Durststrecke hält an, hat aber ein erkennbares Niveau gefunden.
@@ -26,7 +26,7 @@
 ## Todo-Landkarte (wo liegt was — ein Blick von hier reicht)
 | Art des Todos | Ort | Aktuell dort |
 |---|---|---|
-| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 1 aktiver Punkt (GSC-Paket Lauf 5 ~22.-25.08., 7-Tage-Fenster + ENDLICH die Indexierungs-Gründe-Tabelle) + Dauerhinweis Chrome |
+| Entscheidungen & Handgriffe für Yasin | **hier unten: "Braucht Yasin"** | 3 Punkte: GSC-Paket Lauf 6 (~02.-05.09., mit Gründe-Tabelle) · 2 Key-Visuals für die Q4-Seiten · Termin 27.-30.11. BF-Screenshots |
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-q4-saat: freigegeben + UMGESETZT 07.08. · SPEC-sichtbarkeit-blockA-B komplett |
