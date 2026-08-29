@@ -30,7 +30,7 @@
 | Offene Mängel mit Gesetzes-Bezug | **hier: Befund-Tabelle** | 1 offen (Rechtstexte-Abnahme durch Yasin); Rating-Divergenzen und geschätzte reviewCounts am 21.07. geschlossen |
 | Fernes / bewusst Geparktes | **hier: Später-Merkposten** | Clarity, ATP-Anfragen, Pinterest, Unboxings, Loop-Automatisierung |
 | Freigegebene/wartende Bauvorhaben | `06-specs/` | SPEC-q4-saat: freigegeben + UMGESETZT 07.08. · SPEC-sichtbarkeit-blockA-B komplett |
-| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: G8-Plus-vs-V3-Pro-Vergleich + Zitier-Pass-Folgeläufe (beide nach GSC-Paket 2) · preis-loop: nächster Voll-Abgleich, Datenstand jetzt 21.07. |
+| Laufende Arbeits-Warteschlangen | `04-loops/LOOP-STATE.md` + Loop-Dateien | content-loop: Hall-Cluster (Prio gesenkt nach Lauf 5), X2s-Retro-Winkel, Zitier-Pass-Folgeläufe · preis-loop: **Voll-Abgleich fällig** (Belegstand 21.07., über einen Monat alt) |
 | Große Roadmap (Blöcke A–H) | `SPC-FRAMEWORK.md` Teil VI | E läuft (Yasin), A+B umgesetzt, C–H danach |
 | Detail-Doku alles Gemachten (Was+Wie) | `05-protokoll/` (+ `marketing-log.md` für Block E/F) | #1 Brain-Setup · #2 Block A · #3 Vollautonomie (alle 18.07.) |
 Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos landen zuerst hier in STATUS (Braucht Yasin / Befund / Merkposten) oder in einer Loop-Warteschlange — nie in Chat-Verläufen.
