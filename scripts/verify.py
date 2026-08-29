@@ -26,6 +26,15 @@ if os.path.isdir('ratgeber'):
         if not ok_stub:
             err(f"ZOMBIE: {stub} ist kein Redirect-Stub (§B2) — Voll-Content unter /ratgeber/ verboten")
 
+# §B2 (26.08.2026): Auch die am 08.07.2026 ausgelisteten Marken-Seiten dürfen NUR Redirect-Stubs
+# sein (Produkte nicht mehr verfügbar, die Longtail-Datenblätter sind der Ersatz).
+for _z in ('marken/ipega', 'marken/mocute'):
+    _f = f'{_z}/index.html'
+    if os.path.exists(_f):
+        _h = open(_f, encoding='utf-8').read()
+        if not ('noindex' in _h and 'http-equiv="refresh"' in _h and len(_h) < 1200 and '<main' not in _h):
+            err(f"ZOMBIE: {_f} ist kein Redirect-Stub (§B2) — Marken-Voll-Content bleibt gelöscht")
+
 pages = sorted(glob.glob('**/index.html', recursive=True))
 pages = [p for p in pages if not p.startswith(('brain/', 'scripts/', '.github/'))]
 
