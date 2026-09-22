@@ -2,7 +2,7 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-08-26 (gsc-Lauf 5)
+**Letzte Aktualisierung:** 2026-09-22 (gsc-Lauf 6)
 
 > **AKTIVE LEITPLANKE (differenziert seit Lauf 4, 15.08.):** Meta-Freeze NUR noch für die 10 Impressions-Träger aus raw/gsc/2026-08-15.md (Startseite, hall-effect-erklaert, Hubs ios/android/mini, gamesir-oder-backbone, g8-galileo-review, marken/8bitdo+gamesir, universal-Hub). Alle übrigen Seiten: Optimierung frei (nichts zu verlieren bei Position 56).
 
@@ -10,13 +10,14 @@
 ## Warteschlangen
 | Loop | Item | Stand |
 |---|---|---|
-| content-loop | (Priorität gesenkt in Lauf 5: Cluster fast verschwunden) **Hall-Cluster stärken** (stärkstes überlebendes Query-Cluster, Lauf 4): interne Links von allen Hall-Produkt-Seiten/Reviews auf blog/hall-effect-erklaert prüfen/ergänzen (Prosa-Links, KEINE Meta-Änderung am Träger-Artikel), hall-effect-vs-tmr als Stütze verzahnen | nächste Session, klein |
+| ~~content-loop~~ **ERLEDIGT 22.09.** (Hall-Cluster war in Lauf 6 wieder das stärkste Signal, 4 Hand-Reviews verlinkt) ~~Hall-Cluster stärken~~ (stärkstes überlebendes Query-Cluster, Lauf 4): interne Links von allen Hall-Produkt-Seiten/Reviews auf blog/hall-effect-erklaert prüfen/ergänzen (Prosa-Links, KEINE Meta-Änderung am Träger-Artikel), hall-effect-vs-tmr als Stütze verzahnen | nächste Session, klein |
 | content-loop | X2s-Retro-Winkel (Positionierung als Retro-/Emulator-Empfehlung, Markt-Signal 21.07.) | offen, kleiner Edit beim nächsten content-Lauf |
 | content-loop | **S1 Zitier-Pass Folgeläufe** (von Yasin freigegeben 20.07.): je Lauf die Sektions-Einstiege einer Seite zu eigenständigen Direktantworten mit belegten Zahlen formen. Reihenfolge GSC-getrieben (nach Paket 2 die Impressions-Gewinner zuerst). controller-verbindet-nicht GESPERRT bis Erfolgskontrolle gsc-loop Punkt 6; Hubs nur mit gen_hubs-Sync | wartet auf GSC-Paket 2 |
 
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-09-22 | gsc-loop | Lauf 6 (7T 13.-19.09.): **Position 43,5 (von 55,9), erste klare Erholung**. 28T-Sicht deckte "mini gamepad android" (15 Impr.) als stärkste Query auf → **Mini-Gamepad-Hub von Thin Page (118 W) auf Standard (499 W) ausgebaut**, Geister-Karte abxylute-retro beseitigt, Hall-Cluster über 4 Hand-Reviews verlinkt. Details: 05-protokoll/2026-09-22-gsc-lauf6-mini-hub-hall-cluster.md |
 | 2026-08-26 | gsc-loop | Lauf 5 (7T 20.-26.08.): 0 Klicks/25 Impr./Pos. 55,9 (Position stabil). Befund: 2 Duell-Queries gegen G8 Plus → **/vergleich/kishi-ultra-vs-g8-plus/ gebaut** (belegtes Urteil pro G8 Plus, Hub + Duell-Links + Sitemap 108). Indexierung 71, Stand endlich frisch. Rohdaten raw/gsc/2026-08-26.md |
 | 2026-08-15 | gsc-loop | Lauf 4 (7T 09.-15.08.): 0 Klicks/44 Impr./Pos. 56,4 — Einbruch verfestigt, Boost-Ende bestätigt. Lichtblicke: Indexierung 72, Hall-Cluster, gamesir-oder-backbone erste Impr., Stubs wirken. Freeze differenziert, Hall-Ausbau in Warteschlange. Rohdaten raw/gsc/2026-08-15.md |
 | 2026-08-07 | (Q4-Saat) | Spec freigegeben + komplett gebaut: /geschenke/ (14 kuratierte ≥3,8-Produkte, 4 Preisklassen) + Geschenk-Ratgeber (P-5-Paar) + /black-friday/ (Schwellen-Matrix aus belegten Preisen, keine Deal-Behauptungen). Sitemap 107, Blog 18 Artikel. Erfolgskontrolle ab Oktober. Details: 05-protokoll/2026-08-07-content-q4-saat.md |
