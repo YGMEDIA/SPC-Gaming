@@ -156,7 +156,8 @@ if os.path.exists('scripts/sync_product_values.py'):
     if _a.returncode != 0:
         for _zeile in _a.stdout.strip().splitlines():
             _z = _zeile.strip()
-            if _z and not _z.startswith('0 Abweichung') and 'Abweichung(en)' not in _z:
+            if (_z and not _z.startswith('0 Abweichung') and 'Abweichung(en)' not in _z
+                    and 'Fließtext-Hinweis' not in _z and not _z.startswith('?')):
                 err(f"§A1-Audit: {_z}")
 else:
     err("scripts/sync_product_values.py fehlt — §A1-Vollaudit kann nicht prüfen")

@@ -559,6 +559,14 @@ def check_numbers(text, s, allst, products):
     plain = re.sub(r'\b(iPhone|iPad|iOS|Android|Generation|Gen\.?)\s+\d+', ' ', plain)
 
     erlaubt = set(FREIE_ZAHLEN)
+    # Alle Produkte, nicht nur die vier Hub-Marken: der Text nennt auch Geraete
+    # anderer Marken (z. B. den Black Shark FunCooler als Alternative).
+    for _p in products:
+        if price_of(_p) is not None:
+            erlaubt.add(str(price_of(_p)))
+        _r, _c = rating_of(_p)
+        if _r is not None:
+            erlaubt.add(de(_r, 1)); erlaubt.add(de(_c))
     for st in allst.values():
         erlaubt |= {de(st['avg']), de(st['reviews']), str(st['n_ctrl']), str(st['n_all'])}
         for row in st['all']:
