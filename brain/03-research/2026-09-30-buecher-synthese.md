@@ -182,3 +182,89 @@ braucht Budget oder Outreach.
   dauerhaft ausgeschlossen.
 - **Die Umsatzversprechen der Affiliate-Ratgeberliteratur.** Die Bücher dieser Kategorie
   verkaufen sich über Einkommensbeispiele. Für unsere Planung sind sie wertlos.
+
+---
+
+# Teil 2: Die internationalen Standardwerke
+
+**Nachtrag auf Yasins Hinweis**, englischsprachige Titel gleichberechtigt einzubeziehen:
+"es geht ja um das Wissen". Der Einwand trifft. Meine erste Auswahl hatte die deutschen
+Titel bevorzugt, um nicht nur US-Bestseller zu listen. Das war zu vorsichtig: Die sechs
+Bücher unten sind zusammen auf **56.851 Bewertungen** gekommen, mehr als das
+Zweihundertfache des gesamten deutschen SEO-Buchmarkts in dieser Recherche.
+
+| Titel | Autor | Sterne | Bewertungen |
+|---|---|---|---|
+| $100M Offers | Alex Hormozi | 4,9 | **25.896** |
+| Building a StoryBrand | Donald Miller | 4,7 | **10.452** |
+| Influence, New and Expanded | Robert Cialdini | 4,7 | **7.849** |
+| Made to Stick | Chip & Dan Heath | 4,6 | **5.639** |
+| Don't Make Me Think, Revisited | Steve Krug | 4,6 | **4.622** |
+| Obviously Awesome | April Dunford | 4,6 | **2.392** |
+
+### Robert Cialdini — Influence
+Sechs Prinzipien der Überzeugung: Reziprozität, Commitment, **Social Proof**, Autorität,
+Sympathie, Knappheit.
+
+**Für uns entscheidend:** Social Proof ist unser stärkstes vorhandenes Werkzeug, und wir
+nutzen es halb. Wir zeigen Sterne. Die Bewertungs**zahl** ist aber das stärkere Signal:
+"3.147 Bewertungen" sagt mehr über Verbreitung als "4,4 Sterne" über Qualität. Autorität
+haben wir im Header stehen ("100+ Controller getestet"), aber auf keiner Produktkarte.
+
+### Steve Krug — Don't Make Me Think
+Nutzer lesen nicht, sie scannen. Jede Frage, die eine Seite offenlässt, kostet einen Teil
+der Besucher.
+
+**Für uns entscheidend:** Die erste Frage jedes Besuchers ist "Passt das an mein Handy?".
+Auf unseren Karten steht sie nirgends. Das ist dieselbe Lücke, die Maßnahme B1 schließen
+soll, hier aus der Usability-Perspektive begründet.
+
+### Donald Miller — Building a StoryBrand
+Der Kunde ist der Held, die Marke der Helfer. Ein Handlungsaufruf pro Seite.
+
+**Für uns entscheidend:** Wir schreiben oft aus unserer Perspektive ("Wir haben getestet")
+statt aus seiner ("Du spielst auf einem iPhone 14 und suchst...").
+
+### Alex Hormozi — $100M Offers
+Die Wert-Gleichung: Traumergebnis × Erfolgswahrscheinlichkeit, geteilt durch Zeitaufwand ×
+Mühe. Wert steigt am stärksten, wenn man den Nenner senkt.
+
+**Für uns entscheidend:** Als Affiliate haben wir kein eigenes Produkt, unser Angebot ist
+die Entscheidung selbst. Wir können den Nenner senken: Wer sonst zwanzig Amazon-Seiten
+und drei YouTube-Videos durchgeht, soll bei uns in zwei Minuten wissen, was er kauft. Das
+ist messbar über Verweildauer und Absprungrate, nicht nur über Rankings.
+
+### Chip & Dan Heath — Made to Stick
+Sechs Eigenschaften haftender Botschaften: Simple, Unexpected, **Concrete, Credible**,
+Emotional, Stories.
+
+**Für uns entscheidend:** Concrete und Credible sind exakt die §A6-Superlativregel, nur
+positiv formuliert. "Driftfreie Sticks" ist konkret, "hervorragende Qualität" ist es
+nicht. Unexpected ist der ungenutzte Teil: Ein Satz wie "Der teurere Kishi V3 Pro ist
+schlechter bewertet als der günstigere V3" bleibt hängen, weil er der Erwartung
+widerspricht.
+
+### April Dunford — Obviously Awesome
+Positionierung beginnt mit der Frage, was die echte Alternative des Kunden ist.
+
+**Für uns entscheidend, und es ist die unbequemste Erkenntnis dieser Recherche:** Unsere
+Alternative ist nicht ein anderer Controller-Blog. Sie ist **Amazon selbst** und
+**YouTube**. Wer einen Controller sucht, geht zuerst dorthin. Unsere Position kann nur
+sein: Wir sagen, was Amazon nicht sagt (welches Modell an welches Gerät passt, wo der
+Haken ist), und wir tun es in Textform, die man überfliegen kann, statt in einem
+14-Minuten-Video.
+
+---
+
+## Was Teil 2 der Maßnahmenliste hinzufügt
+
+| # | Maßnahme | Grundlage | Aufwand |
+|---|---|---|---|
+| 11 | **Bewertungszahl gleichberechtigt zur Sternzahl zeigen**, nicht nur im Spec-Chip. "4,4 Sterne aus 3.147 Bewertungen" ist zwei Signale, nicht eins. | Cialdini | gering |
+| 12 | **Autoritätssignal auf die Produktkarten**, nicht nur in den Header. | Cialdini | gering |
+| 13 | **Die "Unexpected"-Fälle sichtbar machen**: wo das teurere Modell schlechter bewertet ist, wo das günstigste gewinnt. Wir haben die Daten, wir zeigen sie nur nicht als Überraschung. | Heath | gering |
+| 14 | **Positionierung gegen Amazon und YouTube explizit machen**, statt gegen andere Blogs. Betrifft die Startseite und /ueber-uns/. | Dunford | mittel |
+| 15 | **Zeitversprechen als Nutzenargument**: "In zwei Minuten weißt du, welcher passt." Senkt den Nenner der Wert-Gleichung. | Hormozi | gering |
+
+Damit stehen 15 Maßnahmen. B1 bis B7 liegen in der content-loop-Warteschlange, B8 bis B15
+kommen aus diesem Nachtrag.

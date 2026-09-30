@@ -35,6 +35,9 @@ CHECK = '--check' in sys.argv
 
 SKIP_DIRS = {'.git', 'brain', 'assets', 'node_modules', 'scripts', '.github'}
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from gen_hubs import esc   # gleiche Escaping-Regel wie der Karten-Generator
+
 
 def load_products():
     with open(os.path.join(ROOT, 'assets', 'data', 'products.json'), encoding='utf-8') as f:
@@ -59,6 +62,24 @@ def spec(p, key):
     return None
 
 
+
+def karten_bloecke(html):
+    """Alle Produktkarten als (slug, start, ende) ab dem oeffnenden <article>.
+
+    Wichtig: NICHT ab data-product scannen. In 29 Karten steht das Attribut erst
+    im Kauf-Button, also hinter Claim und Preis; ein Scan ab dort laesst genau die
+    Felder aus, die gesynct werden sollen.
+    """
+    out = []
+    for m in re.finditer(r'<article class="pcard[^"]*"', html):
+        ende = html.find('</article>', m.end())
+        if ende == -1:
+            continue
+        dm = re.search(r'data-product="([^"]+)"', html[m.start():ende])
+        if dm:
+            out.append((dm.group(1), m.start(), ende))
+    return out
+
 def sync_cards(html, products):
     """Preis und ALLE Spec-Chips jeder Produktkarte gegen products.json setzen.
 
@@ -67,28 +88,68 @@ def sync_cards(html, products):
     "kabelgebunden" sagte: die Karte widersprach sich selbst.
     """
     hits = 0
-    for p in products:
-        slug = p['slug']
-        # Kartenbereich ab data-product bis zum schliessenden </article>
-        for m in list(re.finditer(r'data-product="' + re.escape(slug) + r'"', html)):
-            end = html.find('</article>', m.end())
-            if end == -1:
-                continue
-            block = html[m.end():end]
+    by = {p['slug']: p for p in products}
+    for slug, start, end in reversed(karten_bloecke(html)):
+        p = by.get(slug)
+        if p:
+            block = html[start:end]
             neu = block
             # Preis in der price-row
             neu = re.sub(r'(<span class="price">)[^<]*',
                          lambda mm: mm.group(1) + p['price'], neu)
+            # Claim (B2, 30.09.): Die Karten-Beschreibung folgt products.json. Sieben
+            # Produkte hatten gar keinen Claim, ihre Karten zeigten keine Beschreibung.
+            if p.get('claim'):
+                if '<p class="pcard-claim">' in neu:
+                    neu = re.sub(r'(<p class="pcard-claim">)[^<]*(</p>)',
+                                 lambda mm: mm.group(1) + esc(p['claim']) + mm.group(2), neu)
+                else:
+                    # Element fehlt ganz: hinter dem Produktnamen einsetzen. Betraf am
+                    # 30.09. sieben Karten, die dadurch voellig ohne Beschreibung dastanden.
+                    neu = re.sub(r'(</h[23]>)',
+                                 lambda mm: mm.group(1) + f'\n          <p class="pcard-claim">{esc(p["claim"])}</p>',
+                                 neu, count=1)
             # Alle Spec-Chips. Das \s* gehoert NICHT in die Gruppe, sonst steht am
             # Ende ein doppeltes Leerzeichen und der Lauf "aendert" korrekte Karten.
             for k, v in p.get('specs', []):
                 neu = re.sub(r'(<span class="k">' + re.escape(k) + r'</span>)\s*[^<]*',
                              lambda mm, v=v: mm.group(1) + ' ' + v, neu)
             if neu != block:
-                html = html[:m.end()] + neu + html[end:]
+                html = html[:start] + neu + html[end:]
                 hits += 1
     return html, hits
 
+
+
+def sync_leads(html, products, path_rel):
+    """Hero-Untertitel der Detailseiten gegen products.json setzen.
+
+    gen_pages.py rendert den Claim dort ein zweites Mal. Diese Stelle liegt
+    ausserhalb jeder Produktkarte und wird von sync_cards nicht erreicht.
+    """
+    hits = 0
+    for p in products:
+        if not p.get('detail') or p['detail'].strip('/') != path_rel.rsplit('/', 1)[0]:
+            continue
+        m = re.search(r'(<p class="lead">)(.*?)(</p>)', html, re.S)
+        if m and re.sub(r'<[^>]+>', '', m.group(2)).strip() != p['claim']:
+            html = html[:m.start()] + m.group(1) + esc(p['claim']) + m.group(3) + html[m.end():]
+            hits += 1
+    return html, hits
+
+
+def audit_leads(products, fehler):
+    """Lead-Drift melden. Gleiche Fehlerklasse wie die Karten, andere Renderstelle."""
+    for p in products:
+        if not p.get('detail'):
+            continue
+        f = os.path.join(ROOT, p['detail'].strip('/'), 'index.html')
+        if not os.path.exists(f):
+            continue
+        m = re.search(r'<p class="lead">(.*?)</p>', open(f, encoding='utf-8').read(), re.S)
+        if m and re.sub(r'<[^>]+>', '', m.group(1)).strip() != p['claim']:
+            rel = os.path.relpath(f, ROOT)
+            fehler.append(f'{rel}: Hero-Lead weicht vom Claim in products.json ab')
 
 def audit(products, mit_text=True):
     """§A1-Audit ueber das ganze Repo: Karten, Schema-Werte und Hub-Zugehoerigkeit
@@ -107,15 +168,21 @@ def audit(products, mit_text=True):
         html = open(path, encoding='utf-8').read()
 
         # 1. Karten: Preis und Spec-Chips
-        for slug, p in by.items():
-            for m in re.finditer(r'data-product="' + re.escape(slug) + r'"', html):
-                end = html.find('</article>', m.end())
-                if end == -1:
-                    continue
-                block = html[m.end():end]
+        for slug, start, end in karten_bloecke(html):
+            p = by.get(slug)
+            if p is None:
+                # Verwaiste Karte: Der Slug existiert in products.json nicht. Solche
+                # Karten wurden am 30.09. von Sync UND Audit uebersprungen und trugen
+                # noch Claims und Preise von vor Monaten.
+                fehler.append(f'{rel}: Karte "{slug}" hat keinen Eintrag in products.json')
+            if p:
+                block = html[start:end]
                 pm = re.search(r'<span class="price">([^<]*)', block)
                 if pm and pm.group(1).strip() != p['price']:
                     fehler.append(f'{rel}: Karte {slug} zeigt Preis "{pm.group(1).strip()}", products.json sagt "{p["price"]}"')
+                cl = re.search(r'<p class="pcard-claim">([^<]*)</p>', block)
+                if cl and p.get('claim') and cl.group(1).strip() != esc(p['claim']):
+                    fehler.append(f'{rel}: Karte {slug} zeigt einen anderen Claim als products.json')
                 for k, v in p.get('specs', []):
                     cm = re.search(r'<span class="k">' + re.escape(k) + r'</span>\s*([^<]*)', block)
                     if cm and cm.group(1).strip() != v:
@@ -192,6 +259,8 @@ def audit(products, mit_text=True):
                                 hinweise.append(f'{rel}: "{name}" gefolgt von "{am.group(1)} Bewertungen", '
                                               f'products.json sagt "{soll_anz}"')
 
+    audit_leads(products, fehler)
+
     # 3. Hub-Zugehoerigkeit gegen worksOn
     HUBS = {'controller/ios/index.html': 'ios', 'controller/android/index.html': 'android',
             'controller/tablet/index.html': 'tablet', 'controller/mini-gamepad/index.html': 'mini'}
@@ -257,6 +326,8 @@ def main():
         with open(path, encoding='utf-8') as f:
             original = f.read()
         html, k = sync_cards(original, products)
+        html, kl = sync_leads(html, products, os.path.relpath(path, ROOT))
+        k += kl
         html, r = sync_ratings(html, rating_map)
         html, t = sync_ratings(html, text_map)
         if html != original:
