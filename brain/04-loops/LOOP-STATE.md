@@ -11,6 +11,13 @@
 | Loop | Item | Stand |
 |---|---|---|
 | ~~content-loop~~ **ERLEDIGT 22.09.** (Hall-Cluster war in Lauf 6 wieder das stärkste Signal, 4 Hand-Reviews verlinkt) ~~Hall-Cluster stärken~~ (stärkstes überlebendes Query-Cluster, Lauf 4): interne Links von allen Hall-Produkt-Seiten/Reviews auf blog/hall-effect-erklaert prüfen/ergänzen (Prosa-Links, KEINE Meta-Änderung am Träger-Artikel), hall-effect-vs-tmr als Stütze verzahnen | nächste Session, klein |
+| content-loop | **B1 Kompatibilitäts-Antwort nach oben** auf allen Produktseiten ("Passt an / Passt nicht an") — die Frage, die Amazon offenlässt. Quelle: Bücher-Synthese (Jäckel, Sheridan) | offen, mittel |
+| content-loop | **B2 Produktkarten von Merkmal auf Nutzen** umstellen: `claim`-Felder in products.json ("Hall-Effect-Sticks" → "Driftfreie Sticks, auch nach zwei Jahren"). Wirkt über den Karten-Sync auf allen 125 Seiten. Quelle: Edwards | offen, gering |
+| content-loop | **B3 Ein Handlungsaufruf pro Seite** — prüfen, wo mehrere CTAs konkurrieren. Quelle: Miller/StoryBrand | offen, gering |
+| content-loop | **B4 Preisfrage-Seite** "Was kostet ein guter Handy-Controller 2026?" mit echten Spannen aus products.json, per Generator selbstaktualisierend. Quelle: Sheridan (Preis ist sein erstes gemiedenes Thema) | offen, mittel |
+| content-loop | **B5 Problem-Content ausbauen** ("Controller wird nicht erkannt") — direktester Weg zu jemandem mit Gerät in der Hand. Quelle: Sheridan, Jäckel | offen, mittel |
+| content-loop | **B6 Bestenlisten als eigener Seitentyp** mit begründeter Reihenfolge. Quelle: Sheridan | offen, mittel |
+| content-loop | **B7 Interne Verlinkung systematisch** statt punktuell — billigstes Instrument ohne Linkbudget. Quelle: Brem (On-Page-SEO) | offen, mittel |
 | content-loop | X2s-Retro-Winkel (Positionierung als Retro-/Emulator-Empfehlung, Markt-Signal 21.07.) | offen, kleiner Edit beim nächsten content-Lauf |
 | content-loop | **S1 Zitier-Pass Folgeläufe** (von Yasin freigegeben 20.07.): je Lauf die Sektions-Einstiege einer Seite zu eigenständigen Direktantworten mit belegten Zahlen formen. Reihenfolge GSC-getrieben (nach Paket 2 die Impressions-Gewinner zuerst). controller-verbindet-nicht GESPERRT bis Erfolgskontrolle gsc-loop Punkt 6; Hubs nur mit gen_hubs-Sync | wartet auf GSC-Paket 2 |
 

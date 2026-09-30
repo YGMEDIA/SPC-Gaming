@@ -15,6 +15,7 @@
 | `04-loops/` | Selbstkontroll-Loops (Preis, Content, GSC, Deploy) + `LOOP-STATE.md`. Jeder Lauf liest LOOP-STATE zuerst. | ✓ v1.0 |
 | `05-protokoll/` | Das Gedächtnis fürs Detail: datierte Einträge (dev/content/marketing/system) — WAS + WIE jeder Arbeit. Dazu `marketing-log.md` als lebende Aktivitäten-Tabelle. | ✓ |
 | `06-specs/` | Größere Vorhaben nur nach freigegebenem Spec. | #1 zur Freigabe |
+| `07-wissen/` | Aufbereitetes Fremdwissen als PDF. Aktuell: Marketing-Synthese aus zehn Standardwerken (30.09.2026); ihre zehn Maßnahmen stehen als B1–B7 in der content-loop-Warteschlange. | ✓ |
 
 Außerhalb des Brains, gehört zum System: `/CLAUDE.md` (Einstieg für Claude Code, <200 Zeilen) · `/scripts/` (verify.py als Pflicht-Gate, Generatoren) · `/.github/workflows/deploy.yml` (veröffentlicht die Site OHNE brain/, scripts/, CLAUDE.md).
 
