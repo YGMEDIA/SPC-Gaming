@@ -2,7 +2,7 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-09-30 (Marken-Keyword-Offensive)
+**Letzte Aktualisierung:** 2026-09-30 (Marken-Offensive + Amazon-Datenkern-Klärung)
 
 > **AKTIVE LEITPLANKE (differenziert seit Lauf 4, 15.08.):** Meta-Freeze NUR noch für die 10 Impressions-Träger aus raw/gsc/2026-08-15.md (Startseite, hall-effect-erklaert, Hubs ios/android/mini, gamesir-oder-backbone, g8-galileo-review, marken/8bitdo+gamesir, universal-Hub). Alle übrigen Seiten: Optimierung frei (nichts zu verlieren bei Position 56).
 
@@ -17,6 +17,7 @@
 ## Erledigt
 | Datum | Loop | Item |
 |---|---|---|
+| 2026-09-30 | preis-loop | **Amazon-Abgleich klärt den Datenkern-Konflikt** (Yasin: "öffne selbst in chrome amazon und schau selber nach"). 5 Produkte in Chrome geprüft: Beim 8BitDo Ultimate 2C und X3 Pro hatte die Review-Seite recht, beim Kishi V3 und X5 Lite products.json, beim Kishi V3 Pro lagen beide daneben. products.json korrigiert, ~30 Seiten gesynct, 3 Karten aus falschen Hubs entfernt, Tablet-Blog nachgezogen. Neu: `sync_product_values.py` und ein Aussagen-Gate gegen gekippte Vergleiche. **Nebenbefund: 5 von 5 Produkten hatten veraltete Preise oder Bewertungen → Vollabgleich überfällig.** Details: 05-protokoll/2026-09-30-amazon-datenkern-klaerung.md |
 | 2026-09-30 | content-loop | **Marken-Keyword-Offensive** (Yasins Anweisung nach der Wolf-of-SEO-Lektüre): Alle vier Marken-Hubs um Erfahrungs- und Plattform-Sektion erweitert (331-470 → 747-866 Wörter, FAQs 3 → 5). Bedient die in GSC belegten Marken-Queries (razer controller, razer controller android, backbone android, gamesir vs backbone ×3, 8bitdo controller). Neu: `scripts/gen_brand_sections.py` mit Drift-Gate + verify-Invariante (§A1), Pattern P-11, §A6-Superlativ-Regel. 4 eigene Falschaussagen vor dem Schreiben abgefangen. Details: 05-protokoll/2026-09-30-marken-keyword-offensive.md |
 | 2026-09-29 | gsc-loop | Lauf 7: **Trendwende bestätigt** (Position 41,8 nach 43,5 und 55,9; Impressionen 19 → 31). Indexierungs-Rückgang per Gründe-Tabelle als strukturell/unkritisch geklärt. **Alle 4 Marken-Seiten von Thin Pages (59-138 W) auf Standard (331-470 W) ausgebaut**, vollständiger Produktbestand, §A6-Warnung Razer Phone Cooler, Superlativ-Fehler abgefangen. Details: 05-protokoll/2026-09-29-gsc-lauf7-marken-hubs.md |
 | 2026-09-22 | gsc-loop | Lauf 6 (7T 13.-19.09.): **Position 43,5 (von 55,9), erste klare Erholung**. 28T-Sicht deckte "mini gamepad android" (15 Impr.) als stärkste Query auf → **Mini-Gamepad-Hub von Thin Page (118 W) auf Standard (499 W) ausgebaut**, Geister-Karte abxylute-retro beseitigt, Hall-Cluster über 4 Hand-Reviews verlinkt. Details: 05-protokoll/2026-09-22-gsc-lauf6-mini-hub-hall-cluster.md |

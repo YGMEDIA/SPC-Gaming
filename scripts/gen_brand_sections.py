@@ -218,10 +218,10 @@ def erfahrung_text(s, allst, L):
             f'GameSir bringt es mit fünf Modellen auf {de(gs["reviews"])} Bewertungen. Das heißt '
             f'nicht, dass Razer schlechter ist, aber die Urteile stehen auf dünnerem Eis, und '
             f'einzelne Ausreißer wiegen schwerer.</p>\n'
-            f'<p>Auffällig ist, wie eng die Kishi-Modelle beieinander liegen. Der '
+            f'<p>Auffällig ist, wie weit die Kishi-Modelle auseinanderliegen. Der '
             f'{L.link("razer-kishi-v3")} steht bei {L.rating("razer-kishi-v3")} Sternen. Der '
             f'{L.link("razer-kishi-v3-pro")} kostet {aufpreis} Euro mehr und steht bei '
-            f'{L.rating("razer-kishi-v3-pro")}. Der Mehrpreis kauft Ausstattung, nicht '
+            f'{L.rating("razer-kishi-v3-pro")}. Der Mehrpreis kauft Ausstattung und kostet '
             f'Zufriedenheit. Am '
             f'schwächsten schneidet unter den Controllern der {L.link("razer-kishi-ultra")} mit '
             f'{L.rating("razer-kishi-ultra")} Sternen ab.</p>\n'
@@ -237,19 +237,20 @@ def erfahrung_text(s, allst, L):
 
     if b == 'GameSir':
         return (
-            f'<p>GameSir hat mit Abstand die belastbarste Datenlage: {de(s["reviews"])} Amazon-'
-            f'Bewertungen über {zw(s["n_ctrl"])} Controller, mehr als Razer, Backbone und 8BitDo '
-            f'zusammen. Der gewichtete Schnitt liegt bei {de(s["avg"])} von 5 Sternen. Wenn eine '
+            f'<p>GameSir hat die breiteste Datenlage der vier Marken: {de(s["reviews"])} Amazon-'
+            f'Bewertungen über {zw(s["n_ctrl"])} Controller, mehr als jede andere Marke in diesem '
+            f'Vergleich. Der gewichtete Schnitt liegt bei {de(s["avg"])} von 5 Sternen. Wenn eine '
             f'Marke bei dieser Menge an Rückmeldungen stabil über 4 Sternen bleibt, ist das '
             f'aussagekräftiger als ein Spitzenwert aus wenigen Dutzend Stimmen.</p>\n'
             f'<p>Innerhalb der Marke liegen allerdings Welten zwischen den Modellen: '
             f'{de(s["best"]["rating"], 1)} Sterne beim {link(s["best"])}, '
             f'{de(s["worst"]["rating"], 1)} beim {link(s["worst"])}. Wer bei GameSir blind zum '
             f'teuersten Modell greift, kauft nicht automatisch das beste: Der '
-            f'{L.link("gamesir-x3-pro")} kostet {L.price("gamesir-x3-pro")} Euro und steht bei '
-            f'{L.rating("gamesir-x3-pro")} Sternen, der {L.link("gamesir-x5-lite")} kostet '
-            f'{L.price("gamesir-x5-lite")} Euro und liegt mit {L.rating("gamesir-x5-lite")} '
-            f'darüber.</p>\n'
+            f'{L.link("gamesir-g8-plus")} kostet {L.price("gamesir-g8-plus")} Euro und steht bei '
+            f'{L.rating("gamesir-g8-plus")} Sternen, der halb so teure {L.link("gamesir-x5-lite")} '
+            f'liegt mit {L.rating("gamesir-x5-lite")} darüber. Und der '
+            f'{L.link("gamesir-x3-pro")} kostet inzwischen dasselbe wie der X5 Lite, steht aber '
+            f'nur bei {L.rating("gamesir-x3-pro")}.</p>\n'
             f'<p><strong>Woran es bei den schwächeren Modellen liegt:</strong> Beim '
             f'{L.link("gamesir-x2s")} nennen wir in unserem Test die Verarbeitung als Schwachpunkt, '
             f'sie bleibt unter G8-Niveau, dazu kommt der kleinere Griff. Beim '
@@ -315,10 +316,12 @@ def plattform_text(s, L):
             '  <li><strong>Android:</strong> alle drei Modelle. Razer nennt für den Kishi V3 '
             'Android 14 als Mindestversion, ältere Systeme können also außen vor bleiben.</li>\n'
             '  <li><strong>iPhone:</strong> ab iPhone 15 alle drei Modelle, darunter keines.</li>\n'
-            '  <li><strong>Tablet:</strong> alle drei führen das iPad mini in ihren '
-            'Kompatibilitätslisten. Ausdrücklich für Tablets ausgelegt ist aber nur der '
-            '<a href="/produkte/razer-kishi-ultra/">Kishi Ultra</a>, den Razer bis 8 Zoll angibt. '
-            'Welche Controller sonst an ein Tablet passen, steht in '
+            '  <li><strong>Tablet:</strong> der '
+            '<a href="/produkte/razer-kishi-ultra/">Kishi Ultra</a> und der '
+            '<a href="/controller/universal/razer-kishi-v3-pro-review/">Kishi V3 Pro</a>, '
+            'beide bis 8 Zoll. Razer nennt für sie iPads und Android-Tablets ausdrücklich. '
+            'Der Kishi V3 ist dagegen nur für Smartphones ausgelegt. Welche Controller sonst '
+            'an ein Tablet passen, steht in '
             '<a href="/blog/controller-fuer-tablet/">Controller für Tablets</a>.</li>\n'
             '</ul>\n'
             '<p>Die Razer Nexus App läuft auf Android und iOS und kostet nichts. Ein Abo ist für '
@@ -327,8 +330,9 @@ def plattform_text(s, L):
 
     if b == 'GameSir':
         return (
-            '<p>GameSir deckt als einzige der vier Marken beide Verbindungsarten ab, und genau '
-            'daran entscheidet sich, ob ein Modell zu deinem Handy passt.</p>\n'
+            '<p>Bei GameSir entscheidet die Verbindungsart darüber, ob ein Modell zu deinem Handy '
+            'passt, und die Marke deckt die ganze Bandbreite ab: vom reinen USB-C-Stecker bis '
+            'zum Dual-Mode-Gerät.</p>\n'
             '<ul class="check-list">\n'
             '  <li><strong>Nur USB-C:</strong> '
             '<a href="/controller/universal/gamesir-x5-lite-review/">X5 Lite</a> und '
@@ -348,8 +352,8 @@ def plattform_text(s, L):
             'und hat kein '
             'Bluetooth. Er ist auf Android zugeschnitten; wer ihn am iPhone nutzen will, prüft '
             'vorher die Angaben auf seiner Produktseite.</li>\n'
-            '  <li><strong>Tablet:</strong> G8 Plus und X5 Lite reichen bis zum iPad mini. Die '
-            'übrigen Modelle sind auf Handy-Breite ausgelegt.</li>\n'
+            '  <li><strong>Tablet:</strong> nur der G8 Plus reicht bis zum iPad mini. Die übrigen '
+            'Modelle sind auf Handy-Breite ausgelegt.</li>\n'
             '</ul>\n'
             '<p>Die GameSir-App gibt es für Android und iOS, sie ist kostenlos und ohne Abo nutzbar. '
             'Unter Android lassen sich damit Tastenbelegungen und Stick-Kurven anpassen, unter iOS '
@@ -418,8 +422,8 @@ def extra_faqs(s, allst, L):
             ('Sind Razer-Controller ihr Geld wert?',
              f'Beim Kishi V3 für {L.price("razer-kishi-v3")} Euro ja: Er steht bei '
              f'{L.rating("razer-kishi-v3")} von 5 Sternen, der {L.price("razer-kishi-v3-pro")} Euro '
-             f'teure V3 Pro bei {L.rating("razer-kishi-v3-pro")}. Der Aufpreis kauft Ausstattung, '
-             f'nicht Zufriedenheit. Preis-Leistungs-Sieger der Marke ist damit das Einstiegsmodell. '
+             f'teure V3 Pro bei {L.rating("razer-kishi-v3-pro")}. Der Aufpreis kauft Ausstattung und '
+             f'kostet Zufriedenheit. Preis-Leistungs-Sieger der Marke ist damit das Einstiegsmodell. '
              f'Wer weniger ausgeben will, findet bei <a href="/marken/gamesir/">GameSir</a> ab '
              f'{gs["cheapest"]["price"]} Euro Hall-Effect-Technik.'),
         ]
@@ -636,11 +640,55 @@ def apply_to_file(path, s, allst, L, products):
 
 # ---------------------------------------------------------------- main
 
+def check_claims(allst, L, products):
+    """Vergleichsaussagen im Text gegen die Daten pruefen. Das Drift-Gate prueft nur,
+    ob eine Zahl belegt ist; hier geht es darum, ob die AUSSAGE noch traegt. Am 30.09.
+    kippte der Amazon-Abgleich zwei davon, obwohl jede Zahl im Text korrekt war."""
+    gs, rz, bb, eb = allst['GameSir'], allst['Razer'], allst['Backbone'], allst['8BitDo']
+    fehler = []
+    if gs['reviews'] <= max(s['reviews'] for b, s in allst.items() if b != 'GameSir'):
+        fehler.append('GameSir hat nicht mehr die meisten Bewertungen der vier Marken')
+    if eb['avg'] != max(s['avg'] for s in allst.values()):
+        fehler.append('8BitDo ist nicht mehr die bestbewertete der vier Marken')
+    if rz['reviews'] != min(s['reviews'] for s in allst.values()):
+        fehler.append('Razer hat nicht mehr die kleinste Bewertungsbasis der vier Marken')
+    if bb['dearest']['price'] != max(r['price'] for p in products
+                                     for r in [{'price': price_of(p)}]
+                                     if r['price'] is not None):
+        fehler.append('Backbone Pro ist nicht mehr das teuerste Geraet des Sortiments')
+    if L.price('gamesir-g8-plus') <= L.price('gamesir-x5-lite'):
+        fehler.append('G8 Plus ist nicht mehr teurer als der X5 Lite')
+    if rating_of(L('gamesir-x5-lite'))[0] <= rating_of(L('gamesir-g8-plus'))[0]:
+        fehler.append('X5 Lite liegt nicht mehr ueber dem G8 Plus')
+    if rating_of(L('razer-kishi-v3'))[0] < rating_of(L('razer-kishi-v3-pro'))[0]:
+        fehler.append('Kishi V3 liegt nicht mehr mindestens gleichauf mit dem V3 Pro')
+    # Plattform-Aussagen gegen worksOn: der Text nennt genau diese Tablet-Modelle
+    tablet_soll = {p['slug'] for p in products if 'tablet' in p.get('worksOn', [])}
+    if 'gamesir-g8-plus' not in tablet_soll:
+        fehler.append('G8 Plus hat kein tablet mehr in worksOn, der GameSir-Text nennt ihn aber')
+    if tablet_soll & {'gamesir-x5-lite', 'gamesir-g8-galileo', 'gamesir-x2s', 'gamesir-x3-pro'}:
+        fehler.append('ein weiterer GameSir hat tablet bekommen, die Tablet-Zeile nennt nur den G8 Plus')
+    if not {'razer-kishi-ultra', 'razer-kishi-v3-pro'} <= tablet_soll:
+        fehler.append('Kishi Ultra oder V3 Pro hat kein tablet mehr, der Razer-Text nennt beide')
+    if 'razer-kishi-v3' in tablet_soll:
+        fehler.append('Kishi V3 hat tablet bekommen, der Razer-Text schliesst ihn aber aus')
+    # Streuungsaussage: der Razer-Text behauptet WEITE Streuung
+    import statistics
+    def streuung(st):
+        return statistics.pstdev([r['rating'] for r in st['ctrl']])
+    if streuung(rz) < max(streuung(s2) for b, s2 in allst.items() if b != 'Razer'):
+        fehler.append('Razer ist nicht mehr die am weitesten gestreute Marke, der Text behauptet es aber')
+    if fehler:
+        raise SystemExit('AUSSAGEN-GATE: Der Text behauptet etwas, das die Daten nicht mehr '
+                         'hergeben:\n   ' + '\n   '.join(fehler))
+
+
 def main():
     check = '--check' in sys.argv
     products = load_products()
     allst = {v: brand_stats(products, v) for v in BRANDS.values()}
     L = Lookup(products)
+    check_claims(allst, L, products)
 
     changed = []
     for slug, brand in BRANDS.items():

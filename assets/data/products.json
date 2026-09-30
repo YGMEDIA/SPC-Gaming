@@ -195,9 +195,9 @@
   {
     "asin": "B0D72WYT8Z",
     "brand": "8BitDo",
-    "name": "Ultimate 2C Wireless",
-    "claim": "Standalone-Bluetooth für Android, PC & Switch — Hall-Effect inklusive.",
-    "price": "20 €",
+    "name": "Ultimate 2C Wired",
+    "claim": "Kabelgebundener Controller für Android und Windows-PC mit Hall-Effect-Sticks und Hall-Triggern.",
+    "price": "30 €",
     "img": "https://m.media-amazon.com/images/I/61lvnaOk4kL._SL1500_.jpg",
     "detail": "/controller/universal/8bitdo-ultimate-2c-review/",
     "slug": "8bitdo-ultimate-2c",
@@ -207,7 +207,7 @@
     "specs": [
       [
         "Verb.",
-        "Bluetooth"
+        "USB (kabelgebunden)"
       ],
       [
         "Sticks",
@@ -215,12 +215,11 @@
       ],
       [
         "Bew.",
-        "4,5 (854)"
+        "4,6 (2.188)"
       ]
     ],
     "worksOn": [
       "android",
-      "ios",
       "universal"
     ],
     "gallery": [
@@ -252,7 +251,7 @@
       ],
       [
         "Bew.",
-        "4,2 (1.655)"
+        "4,2 (1.953)"
       ]
     ],
     "worksOn": [
@@ -353,7 +352,7 @@
     "brand": "Razer",
     "name": "Kishi V3",
     "claim": "Premium-Alternative mit TMR-Sticks und 4 Rücktasten. Nexus-App kostenlos.",
-    "price": "93 €",
+    "price": "88 €",
     "img": "https://m.media-amazon.com/images/I/618HoYQQUrL._AC_SL1500_.jpg",
     "detail": "/controller/universal/razer-kishi-v3-review/",
     "slug": "razer-kishi-v3",
@@ -371,7 +370,7 @@
       ],
       [
         "Bew.",
-        "4,4 (126)"
+        "4,4 (153)"
       ]
     ],
     "worksOn": [
@@ -695,7 +694,7 @@
     "brand": "GameSir",
     "name": "X3 Pro",
     "claim": "",
-    "price": "90 €",
+    "price": "45 €",
     "img": "https://m.media-amazon.com/images/I/71LVpM24TaL._SL1500_.jpg",
     "detail": "/controller/android/gamesir-x3-pro-review/",
     "slug": "gamesir-x3-pro",
@@ -705,12 +704,11 @@
     "specs": [
       [
         "Bew.",
-        "3,9 (283)"
+        "4,0 (306)"
       ]
     ],
     "worksOn": [
       "android",
-      "ios",
       "universal"
     ],
     "gallery": [
@@ -871,7 +869,7 @@
     "brand": "Razer",
     "name": "Kishi V3 Pro",
     "claim": "",
-    "price": "149 €",
+    "price": "152 €",
     "img": "https://m.media-amazon.com/images/I/71+GwlwjuOL._AC_SL1500_.jpg",
     "detail": "/controller/universal/razer-kishi-v3-pro-review/",
     "slug": "razer-kishi-v3-pro",
@@ -881,12 +879,13 @@
     "specs": [
       [
         "Bew.",
-        "4,4 (125)"
+        "4,2 (151)"
       ]
     ],
     "worksOn": [
       "android",
       "ios",
+      "tablet",
       "universal"
     ],
     "gallery": [

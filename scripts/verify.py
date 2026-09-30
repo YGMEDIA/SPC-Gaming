@@ -144,6 +144,23 @@ if os.path.exists('scripts/gen_brand_sections.py'):
 else:
     err("scripts/gen_brand_sections.py fehlt — Marken-Hub-Invariante kann nicht prüfen")
 
+# ---------- 6b · §A1-Vollaudit: HTML gegen products.json (30.09.2026) ----------
+# Abschnitt 6 prüft nur die vier Marken-Hubs. Dieses Audit deckt das ab, was zwischen
+# den Generator-Markern NICHT geprüft wird und wo am 30.09. elf Abweichungen lagen:
+# jede Produktkarte auf allen Seiten (Preis und alle Spec-Chips), die Schema-Werte
+# (offers/price, ratingValue, reviewCount) und die Hub-Zugehörigkeit gegen worksOn.
+if os.path.exists('scripts/sync_product_values.py'):
+    import subprocess
+    _a = subprocess.run([sys.executable, 'scripts/sync_product_values.py', '--audit'],
+                        capture_output=True, text=True)
+    if _a.returncode != 0:
+        for _zeile in _a.stdout.strip().splitlines():
+            _z = _zeile.strip()
+            if _z and not _z.startswith('0 Abweichung') and 'Abweichung(en)' not in _z:
+                err(f"§A1-Audit: {_z}")
+else:
+    err("scripts/sync_product_values.py fehlt — §A1-Vollaudit kann nicht prüfen")
+
 # ---------- 7 · Widerlegte Aussagen dürfen nicht zurückkehren (§A5/§A6, 30.09.2026) ----------
 # Diese Formulierungen standen im Bestandstext, wurden gegen products.json bzw. gegen
 # unsere eigenen Review-Seiten widerlegt und korrigiert. Sie stehen teils in Bestand-FAQs,
@@ -157,9 +174,11 @@ else:
 # Ultra" ebenso (er ist tatsächlich der einzige mit Klinke und Passthrough).
 VERBOTEN = [
     ("doppelt so teure V3 Pro", "marken/razer/index.html",
-     "Kishi V3 Pro kostet 149 statt 93 Euro, also rund 60 Prozent mehr, nicht das Doppelte"),
+     "der Preisabstand ist kein Faktor zwei; die konkrete Prozentzahl steht im Text und folgt products.json"),
+    ("genauso gut bewertet wie der", "marken/razer/index.html",
+     "Amazon-Abgleich 30.09.: der V3 (4,4) steht besser da als der V3 Pro (4,2), nicht gleichauf"),
     ("V3 und V3 Pro sind für Smartphones ausgelegt", "marken/razer/index.html",
-     "beide führen das iPad mini laut eigener Review in der Kompatibilitätsliste"),
+     "Amazon-Abgleich 30.09.: der V3 Pro führt Tablets bis 8 Zoll ausdrücklich, nur der V3 nicht"),
     ("läuft an Android, PC und Switch", "marken/8bitdo/index.html",
      "die Ultimate-2C-Review sagt ausdrücklich 'Windows-PC + Android (nicht Switch)'"),
     ("MFi-fähige Gamepads", "marken/8bitdo/index.html",
