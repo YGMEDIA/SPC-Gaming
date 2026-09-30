@@ -125,6 +125,74 @@ for f, minimum in [('controller/ios/index.html', 20), ('controller/android/index
     else:
         err(f"Hub fehlt: {f}")
 
+# ---------- 6 · Marken-Hubs gegen products.json (§A1, 30.09.2026) ----------
+# Die Erfahrungs- und Plattform-Sektionen der vier Marken-Hubs werden generiert und
+# tragen Preise, Sterne und Bewertungszahlen im Fließtext. Ändert der preis-loop
+# products.json, müssen die Hubs nachgezogen werden, sonst divergiert Geld-Content
+# von der Produktwahrheit. Diese Invariante fängt genau das.
+if os.path.exists('scripts/gen_brand_sections.py'):
+    import subprocess
+    _r = subprocess.run([sys.executable, 'scripts/gen_brand_sections.py', '--check'],
+                        capture_output=True, text=True)
+    if _r.returncode != 0:
+        err(f"Marken-Hubs: gen_brand_sections.py --check schlägt fehl (§A1)\n"
+            f"         {_r.stdout.strip().splitlines()[-1] if _r.stdout.strip() else _r.stderr.strip()[:200]}")
+    elif 'wären geändert worden: keine' not in _r.stdout:
+        _last = _r.stdout.strip().splitlines()[-1]
+        err(f"Marken-Hubs sind nicht mehr deckungsgleich mit products.json (§A1). "
+            f"Fix: python3 scripts/gen_brand_sections.py — {_last}")
+else:
+    err("scripts/gen_brand_sections.py fehlt — Marken-Hub-Invariante kann nicht prüfen")
+
+# ---------- 7 · Widerlegte Aussagen dürfen nicht zurückkehren (§A5/§A6, 30.09.2026) ----------
+# Diese Formulierungen standen im Bestandstext, wurden gegen products.json bzw. gegen
+# unsere eigenen Review-Seiten widerlegt und korrigiert. Sie stehen teils in Bestand-FAQs,
+# die gen_brand_sections.py ins FAQPage-Schema rendert, ohne sie selbst zu erzeugen:
+# eine Handkorrektur dort ist verlierbar. Am 30.09. ist genau das passiert (der Fix
+# "doppelt so teure" ging durch ein git checkout verloren und fiel erst im dritten
+# Prüflauf auf). Diese Invariante fängt jede Rückkehr maschinell ab.
+# Die Strings sind bewusst eng gefasst: Sie müssen die widerlegte Aussage treffen und
+# dürfen legitime Formulierungen nicht blockieren. "Bluetooth-Gamepads" allein wäre zu
+# breit (die Tablet-Seiten empfehlen Bluetooth-Gamepads völlig zu Recht), "Nur der Kishi
+# Ultra" ebenso (er ist tatsächlich der einzige mit Klinke und Passthrough).
+VERBOTEN = [
+    ("doppelt so teure V3 Pro", "marken/razer/index.html",
+     "Kishi V3 Pro kostet 149 statt 93 Euro, also rund 60 Prozent mehr, nicht das Doppelte"),
+    ("V3 und V3 Pro sind für Smartphones ausgelegt", "marken/razer/index.html",
+     "beide führen das iPad mini laut eigener Review in der Kompatibilitätsliste"),
+    ("läuft an Android, PC und Switch", "marken/8bitdo/index.html",
+     "die Ultimate-2C-Review sagt ausdrücklich 'Windows-PC + Android (nicht Switch)'"),
+    ("MFi-fähige Gamepads", "marken/8bitdo/index.html",
+     "iOS-Eignung der 8BitDo-Modelle ist strittig (products.json gegen Review-Seite), siehe Befund in STATUS"),
+    ("Modelle sind Bluetooth-Gamepads", "marken/8bitdo/index.html",
+     "Verbindungsart des Ultimate 2C ist strittig (products.json 'Bluetooth' gegen Review 'Wired')"),
+    ("Modelle sind klassische Bluetooth-Gamepads", "marken/8bitdo/index.html",
+     "dieselbe strittige Verbindungsart, Variante im Bestandstext"),
+    ("weder Bluetooth noch iPhone", "marken/gamesir/index.html",
+     "der iPhone-Ausschluss des X3 Pro ist nicht belegt (products.json führt worksOn ios)"),
+    ("weder Bluetooth noch iOS", "marken/gamesir/index.html",
+     "dieselbe Aussage, andere Schreibweise — genau diese Variante ist am 30.09. einmal durchgerutscht"),
+]
+for _s, _f, _grund in VERBOTEN:
+    if os.path.exists(_f) and _s in open(_f, encoding='utf-8').read():
+        err(f"WIDERLEGT: \"{_s}\" steht wieder in {_f} — {_grund}")
+
+# Ratings im HTML folgen products.json, statt gegen einen festen Wert zu prüfen: Ein
+# fixer String würde rot, sobald Amazon sich ändert und der preis-loop korrekt nachzieht.
+for _slug, _f in [('8bitdo-ultimate-mobile', 'produkte/8bitdo-ultimate-mobile/index.html')]:
+    _p = next((x for x in items if x.get('slug') == _slug), None)
+    if _p and os.path.exists(_f):
+        _bew = next((v for k, v in _p.get('specs', []) if k.startswith('Bew')), None)
+        if _bew:
+            _m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', _bew)
+            if _m:
+                _html = open(_f, encoding='utf-8').read()
+                _stern, _anz = _m.group(1), _m.group(2)
+                if f'{_stern} Sterne' not in _html:
+                    err(f"§A1: {_f} zeigt nicht die {_stern} Sterne aus products.json")
+                if _anz.replace('.', '') not in _html and _anz not in _html:
+                    err(f"§A1: {_f} zeigt nicht die {_anz} Bewertungen aus products.json")
+
 # ---------- Ergebnis ----------
 print(f"Geprüft: {len(pages)} Seiten · {schema_count} JSON-LD-Blöcke · {len(items)} Produkte")
 for w in WARN: print(f"  WARN  {w}")

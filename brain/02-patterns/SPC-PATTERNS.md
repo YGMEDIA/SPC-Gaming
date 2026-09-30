@@ -68,8 +68,27 @@
 
 ---
 
+## P-11 · Daten-Fließtext-Pattern [bewiesen 30.09.2026]
+**Wann:** Immer wenn Fließtext Zahlen aus products.json trägt (Preise, Sterne, Bewertungszahlen, Durchschnitte, Preisdifferenzen). Von Hand geschriebener Text mit Datenzahlen ist ein §A1-Verstoß auf Zeit: Der nächste preis-loop ändert die Quelle, die Prosa bleibt alt.
+**Regel:** Solcher Text wird generiert, nie von Hand gepflegt. Jede Zahl geht durch einen Lookup auf products.json.
+**Drei Pflicht-Mechanismen (alle rot/grün beweisen, nicht nur behaupten):**
+1. **Idempotenz per Marker.** Generierter Block zwischen `<!-- X:START -->` / `<!-- X:END -->`; beim Lauf erst entfernen (inklusive nachgestelltem `\n`, sonst wächst die Datei pro Lauf um eine Leerzeile), dann neu einsetzen. Beweis: drei Läufe → identische Datei-Hashes.
+2. **Drift-Gate im Generator.** Erlaubte Zahlenmenge aus der Datenquelle bilden (alle Preise, Sterne, Counts, Aggregate, Preisdifferenzen), Text dagegen prüfen, Abbruch bei ungedeckter Zahl. Vorher herausfiltern: Produktnamen mit Ziffern (Kishi V3, FunCooler 6) und Fremdgeräte-/Versionsbezeichnungen (iPhone 12, iOS 13). Beweis: erfundene Zahl einschmuggeln → Abbruch.
+3. **verify-Invariante.** `verify.py` ruft den Generator mit `--check` und wird rot, sobald HTML und Datenquelle auseinanderlaufen. Beweis: Preis in products.json ändern → verify rot; zurück → grün.
+**Quellenregel für Sachaussagen [Kernlehre 30.09.]:** products.json ist die Wahrheit für PRODUKTDATEN (Preise, Specs, ASINs, §A1) — NICHT für Sachaussagen über Kompatibilität, Bauform, Verbindung oder Nutzererfahrung. Die stehen in unseren eigenen Review- und Blog-Seiten. Vor jeder solchen Aussage die betroffene Produktseite lesen und zitieren; `worksOn` und `specs` allein reichen NICHT. Beleg: sechs falsche Aussagen am 30.09., alle aus products.json abgeleitet, alle von den eigenen Review-Seiten widerlegt (Kishi V3 kann iPad mini, G8 Plus ist Dual-Mode, X3 Pro hat kein iOS, 8BitDo-Verbindungsart strittig). Widersprechen sich Datenkern und Seite: NICHTS behaupten, Aussage weglassen, Befund in STATUS, Screenshots anfordern (§A5).
+**Schema-Kopplung (§A4):** Wenn der Block FAQs erzeugt, das FAQPage-Schema aus dem FINALEN HTML neu rendern, nicht parallel pflegen. Assertion: Anzahl sichtbarer `<details>` == Anzahl Question-Objekte. Achtung: Jede falsche Aussage in einer FAQ steht damit doppelt, sichtbar und in den strukturierten Daten.
+**Bestandstext der Zielseite gegenlesen [Kernlehre 30.09., zweiter Teil]:** Ein Generator, der in eine Seite mit vorhandenem Text einfügt, muss den Bestandstext zum selben Thema kennen und angleichen. Sonst entstehen Widersprüche INNERHALB einer Seite, und die sind schlimmer als ein einheitlicher Fehler: Das FAQPage-Schema wird aus dem sichtbaren HTML gerendert, zieht die alte Antwort also aktiv in die strukturierten Daten. Beleg: Nach der ersten Korrekturrunde sagte marken/razer im neuen Block "alle drei führen das iPad mini", in der Bestands-FAQ zwölf Zeilen tiefer "Nur der Kishi Ultra". Praktisch: Nach jedem Generatorlauf die Zielseite nach den Schlüsselbegriffen des neuen Textes durchsuchen (Tablet, Bluetooth, Plattformnamen) und jede Trefferstelle lesen.
+**Korrigierte Formulierungen maschinell sperren.** Eine Korrektur an Bestandstext, den ein Generator anfasst, ist verlierbar: Am 30.09. hat ein `git checkout` auf dieselbe Datei eine Handkorrektur aus der Vorrunde überschrieben, und das fiel erst zwei Prüfrunden später auf. Widerlegte Formulierungen gehören deshalb als verbotene Strings mit Begründung in `verify.py` (dort Abschnitt 7), analog zu den CNAME- und Zombie-Invarianten.
+**Unabhängiger Prüflauf ist Pflicht, nicht Kür — und er endet nicht nach einer Runde.** Das Drift-Gate prüft Zahlen, keine Sachaussagen. Am 30.09. hielt ich den Stand nach vier selbst gefundenen Fehlern für sauber; Runde 1 fand zwölf weitere, sechs nachweislich falsch. Runde 2 fand drei NEUE Fehler aus meinen eigenen Korrekturen, Runde 3 eine Regression. Erst prüfen lassen, bis der Prüfer freigibt, dann committen — nicht, bis man selbst zufrieden ist.
+**Eigenkontrollen gegen den Wortlaut führen, nicht gegen die Erinnerung.** Ein grep auf "weder Bluetooth noch iOS" meldete null Treffer, im Text stand "weder Bluetooth noch iPhone".
+**Neue CSS-Klassen:** gegen style.css prüfen, bevor sie live gehen — verify.py fängt ungestyltes Markup NICHT. Fehlt eine Klasse, kommt sie nach dem Muster der Vergleichsseiten in einen Seiten-`<style>`-Block (dort liegt auch `.vs-table`).
+**Superlative:** nur mit explizitem Geltungsbereich im Satz ("der vier Marken mit eigenem Hub" statt "in unserem Sortiment"). Drei von vier abgefangenen Fehlern am 30.09. und der Fehler vom 29.09. waren Superlative mit unausgesprochenem Bezugsrahmen.
+**Vorlage:** `scripts/gen_brand_sections.py` → marken/{razer,gamesir,8bitdo,backbone}/ · Gesetze: §A1, §A4, §A6.
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v1.2 · 2026-07-19*
+*SPC Pattern-Katalog v1.3 · 2026-09-30*

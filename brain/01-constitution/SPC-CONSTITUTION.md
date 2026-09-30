@@ -26,6 +26,7 @@ Amazon blockt jeden programmatischen Zugriff (web_fetch 403, CDN-curl 403). Quel
 
 ### §A6 · Ehrlichkeit ist der Burggraben [bewiesen]
 Jedes Review ≥2 echte Cons. Produkte unter ~3,8 Sternen bekommen explizite Warnung oder "keine Kaufempfehlung" (RXKFIGX 3,5 · MGPXPRO 3,3). Wir listen sie transparent und empfehlen die Alternative — das ist Positionierung, kein Bug.
+**Superlativ-Regel [ergänzt 30.09.2026]:** Jeder Superlativ und jede Vergleichsaussage ("bestbewertet", "günstigster", "die meisten", "teuerste") nennt ihren Geltungsbereich im Satz selbst und wird vor dem Commit gegen products.json nachgerechnet — über den Bereich, den die Formulierung behauptet. "In unserem Sortiment" heißt alle 42 Produkte, nicht die gerade betrachtete Teilmenge. Belegt durch vier abgefangene Fehler am 30.09. und einen am 29.09., alle vom selben Typ: richtige Zahl, falscher Bezugsrahmen.
 
 ### §A7 · Design-Konstanz [bewiesen]
 Heller Shop-Look (weiß/navy/blau). Globale Styles in style.css, seitenlokale in <style>-Blöcken. Kein Dark-Theme, kein Scroll-Fade-in (bewusste Entscheidung 08.07.). Emotion über echte Testfotos.
