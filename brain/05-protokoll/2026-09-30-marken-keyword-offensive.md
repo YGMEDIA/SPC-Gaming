@@ -228,7 +228,11 @@ auf `controller/tablet/` löst keinen Fehlalarm aus.
   Marke hervorgehoben, Häkchenliste, Absatzabstände. Mobil kein horizontales Seiten-
   Scrollen (`scrollWidth == clientWidth == 375`), die 508px breite Tabelle scrollt
   innerhalb ihres Wrappers.
-- Unabhängiger Faktencheck in frischem Kontext (Macher ≠ Prüfer)
+- Vier unabhängige Prüfrunden in frischem Kontext (Macher ≠ Prüfer), Freigabe in Runde 4
+- Regressionssperre rot/grün bewiesen, plus Falsch-Alarm-Test gegen die legitime
+  "Bluetooth-Gamepads"-Empfehlung auf `controller/tablet/`
+- Live nach dem Deploy geprüft: alle vier Seiten HTTP 200 mit 822 bis 993 Wörtern
+  und gerenderter Vergleichstabelle; IndexNow für 5 URLs gemeldet (HTTP 200)
 - sitemap.xml: lastmod der vier Seiten auf 2026-09-30
 
 ## Gelernt
