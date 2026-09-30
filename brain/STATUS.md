@@ -144,15 +144,17 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 37. **29.09.: gsc-loop Lauf 7 — Trendwende bestätigt, alle Marken-Seiten ausgebaut (deployed).** Position 41,8 (dritter Lauf in Folge besser), Impressionen erstmals steigend. Das Thin-Page-Muster aus Lauf 6 erwies sich als systematisch: Alle vier Marken-Seiten hatten 59 bis 138 Wörter, zeigten zusammen nur 9 von 14 Produkten und trugen trotzdem messbare Nachfrage (marken/razer 11 Impr./28T). Ausgebaut auf 331-470 Wörter mit Überblicks-Sektion, je 3 FAQs, ItemList- und FAQPage-Schema, vollständigem Produktbestand und driftfrei gerenderten Karten. Der Razer Phone Cooler (3,2 Sterne) steht jetzt mit ausdrücklicher Warnung drin. Die Faktenkontrolle fing einen falschen Superlativ ab ("meistbewertetes Gerät des Sortiments" für den X5 Lite, tatsächlich Platz 3) und ersetzte ihn durch die belegbare Aussage. Indexierungs-Rückgang per Gründe-Tabelle als unkritisch bestätigt. Details: `05-protokoll/2026-09-29-gsc-lauf7-marken-hubs.md`.
 
+38. **30.09.: Fremdquelle gelesen — Wolf-of-SEO-Framework (92 Seiten).** Yasin schickte das Lead-Magnet-Dokument der Agentur Wolf of SEO (Niels Stuck). Vollständig gelesen (Canvas-Doc, nur per Screenshot lesbar), eingeordnet und als `03-research/2026-09-30-wolf-of-seo-framework.md` abgelegt. Kern: Bottom Funnel zuerst, Priorität Kategorien > Produkte > Blog, Cluster-Prinzip (eine Seite rankt für 200–500 Keywords). Bestätigt unabhängig unseren Thin-Page-Befund aus Lauf 6+7. Wichtigster verwertbarer Punkt: sein "Ziel 3 Brand Ownership" ist aus Shop-Sicht geschrieben und benennt dabei die offenen Flanken, durch die eine Vergleichsseite wie unsere reinkommt (Marken-Erfahrungs- und Angebots-Keywords). Nicht übernommen: kompletter Linkbuilding-Block (Outreach dauerhaft abgelehnt) und alle ROAS-Rechnungen (gelten für Shops mit eigener Marge).
+
 ---
 
 ## Nächster geplanter Schritt
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
-1. **Q4-Saat GEBAUT (07.08.)** — Erfolgskontrolle ab Oktober im gsc-loop ("geschenk"/"black friday"-Queries), Titles dann nachschärfen (neue Seiten sind vom Meta-Freeze ausgenommen). Am 27.11.: BF-Deal-Pflege mit Yasins Screenshots.
-2. gsc-loop Lauf 4, sobald Yasins Paket kommt (~Mitte August; Checkliste mit 7 Punkten in gsc-loop.md — Punkt 1 ist die Einbruch-Kontrolle mit sauberem 7-Tage-Fenster).
-**Leitplanke bis Lauf 4: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen; Bauen ja (neue Seiten), Bestands-Metas nein.
+1. **gsc-loop Lauf 8**, sobald Yasins Paket kommt (~Mitte Oktober; Checkliste Lauf 8 steht in `04-loops/gsc-loop.md`). Schwerpunkt: hält die Erholung (41,8 → ?), und greifen die Q4-Seiten ("geschenk"/"black friday"-Queries)?
+2. **Marken-Keyword-Offensive** (aus dem Wolf-of-SEO-Befund, siehe `03-research/2026-09-30-...`): die vier Marken-Hubs um Erfahrungs- und Entscheidungs-Content erweitern ("[Marke] Controller Erfahrungen / lohnt sich"). Erst nach Lauf 8, damit der Effekt des Ausbaus vom 29.09. sauber messbar bleibt.
+3. **preis-loop Voll-Abgleich** — überfällig, Datenstand 21.07.; braucht Yasins Screenshots (§A5).
+**Leitplanke: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen; Bauen und Content-Ausbau ja, Bestands-Metas nein. Q4-Seiten sind ausgenommen (neu, ohne Historie).
 Longtail-Batches 2–5 bleiben geparkt. Nach jedem Paket: verify grün, Commit+Push, indexnow_ping, STATUS/LOOP-STATE/Protokoll.
 
-**Yasin (asynchron, 4 Punkte):** GSC-Paket ~26.07. (Checkliste in gsc-loop.md) · Autoren-Entscheidung (Klarname/Pseudonym → dann Autoren-Boxen + Person-Schema durch Claude Code) · Galerie-Bild-URLs (Block H2) · Rich-Results-Test. Dazu jederzeit: Amazon-Screenshots für preis-loop (9 ASINs + 5 reviewCounts).
-**Loops:** preis-loop fällig ab 01.08. (Voll-Abgleich) · gsc-loop Lauf 2 nach nächstem Paket.
+**Yasin (asynchron, 3 Punkte):** GSC-Paket für Lauf 8 (~Mitte Oktober, 7-Tage + 28-Tage + Indexierungsbericht) · 2 Key-Visual-Prompts für die Q4-Seiten (geschenke-fuer-mobile-gamer, black-friday) · Black-Friday-Screenshots am 27.–30.11. Dazu jederzeit: Amazon-Screenshots für preis-loop.
