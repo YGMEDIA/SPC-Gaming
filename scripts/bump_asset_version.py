@@ -29,7 +29,8 @@ ASSETS = ['assets/css/style.css', 'assets/js/main.js', 'assets/js/finder.js',
 # die alte Version zurueck.
 ZIELE = sorted(glob.glob('**/index.html', recursive=True)) + \
         (['404.html'] if os.path.exists('404.html') else []) + \
-        ['scripts/gen_pages.py', 'scripts/gen_longtail.py', 'scripts/gen_hubs.py']
+        ['scripts/gen_pages.py', 'scripts/gen_longtail.py', 'scripts/gen_hubs.py',
+         'scripts/gen_preisfrage.py']
 
 
 def hashes():

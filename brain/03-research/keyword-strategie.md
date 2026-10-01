@@ -46,6 +46,18 @@ Abgrenzung: Das Modell-Duell "backbone one vs gamesir g8" bleibt bei /vergleich/
 | hall effect vs tmr · tmr sticks · tmr vs hall effect | /blog/hall-effect-vs-tmr/ |
 Abgrenzung: "hall effekt sticks" (Erklärung, GSC 0/2) bleibt bei /blog/hall-effect-erklaert/ (rankt bereits); der neue Artikel zielt auf die VERGLEICHS-Frage und verlinkt die Erklärung.
 
+## Preisfrage (01.10.2026, Maßnahme B4 aus der Bücher-Synthese)
+| Keyword | Zielseite |
+|---|---|
+| was kostet ein handy controller · handy controller preis · smartphone controller preis (Budget-Intention: womit muss ich rechnen?) | /blog/was-kostet-ein-handy-controller/ |
+
+Abgrenzung, dreifach: Die **Qualitätsfrage** zu billigen Geräten ("sind günstige gut?")
+bleibt bei /blog/guenstige-handy-controller/. Die **transaktionale Liste** ("beste budget
+controller unter 50 €") bleibt bei /vergleich/beste-budget-controller/. Die neue Seite
+nimmt ausschließlich die **Budgetfrage** und verlinkt beide anderen als Antwort, statt
+mit ihnen zu konkurrieren. Die Seite wird aus products.json generiert
+(`scripts/gen_preisfrage.py`) und aktualisiert sich mit jedem preis-loop selbst.
+
 ## Budget-Frage (19.07.2026, Content-Kalender)
 | Keyword-Cluster | Zielseite |
 |---|---|

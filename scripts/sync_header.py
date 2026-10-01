@@ -98,7 +98,8 @@ def main():
             n += 1
     # Die Generatoren tragen das leere Header-Element als Literal; sonst schreibt der
     # naechste Generatorlauf die Navigation wieder heraus.
-    for g in ['scripts/gen_pages.py', 'scripts/gen_longtail.py', 'scripts/gen_hubs.py']:
+    for g in ['scripts/gen_pages.py', 'scripts/gen_longtail.py', 'scripts/gen_hubs.py',
+              'scripts/gen_preisfrage.py']:
         if not os.path.exists(g):
             continue
         t = open(g, encoding='utf-8').read()

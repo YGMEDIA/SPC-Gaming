@@ -1976,3 +1976,81 @@ Abdeckung: 33 von 42 Produktseiten.
     Controller hatten kein `Verb.`, alle sechs nannten die Verbindung in ihrer eigenen
     Spec-Tabelle. Bevor man eine Angabe als "nicht vorhanden" behandelt, sucht man sie
     dort, wo sie schon einmal veröffentlicht wurde.
+
+---
+
+## B4 umgesetzt: die Preisfrage offensiv beantwortet (01.10.)
+
+Maßnahme 2 der Bücher-Synthese, Grundlage Sheridan: Der Preis ist das erste Thema, um
+das Anbieter einen Bogen machen. Neue Seite `/blog/was-kostet-ein-handy-controller/`,
+erzeugt von `scripts/gen_preisfrage.py`.
+
+### Keine Zahl im Quelltext
+
+Jede Zahl auf dieser Seite altert mit dem nächsten preis-loop. Von Hand geschrieben wäre
+sie in drei Monaten falsch. Der Generator rechnet alles: Spanne, Median, Preisbänder,
+Anzahl je Band, bestbewertetes Gerät je Band, Merkmalsgrenzen, Zubehörspannen, sogar die
+Lesezeit aus der fertigen Wortzahl. Gegenprobe: Preis des 8BitDo auf 27 € gesetzt, einmal
+generiert, die Zahl steht überall neu; zurückgesetzt, alles wieder bei 30 €.
+
+### Was die Daten hergaben, und warum es unbequem ist
+
+Der am besten bewertete Controller im Sortiment ist der **günstigste**: 8BitDo Ultimate 2C
+für 30 €, 4,6 Sterne aus 2.188 Bewertungen, zugleich das meistbewertete Gerät. Das
+teuerste Modell kostet 190 € und kommt auf 4,4 aus 459.
+
+Das ist für eine Affiliate-Seite die unangenehmste Auskunft, die man geben kann, weil an
+teuren Geräten mehr verdient wird. Es ist genau Sheridans Punkt: Wer die Preisfrage ehrlich
+beantwortet, gewinnt das Vertrauen, das die Kaufentscheidung trägt.
+
+Dazu die Merkmalsgrenzen, gerechnet statt behauptet:
+- **Hall-Effect-Sticks** ab 30 € (5 Modelle, bis 80 €) — die Stick-Technik ist nicht das,
+  wofür man mehr zahlt.
+- **Kabellos** über die ganze Spanne von 30 bis 190 € (17 Modelle).
+- **Tablet-Breite** erst ab 63 € (3 Modelle) — das ist eine echte Preisgrenze.
+
+### Drei Dinge, die die Gates sofort verlangt haben
+
+Die neue Seite war beim ersten Lauf dreifach rot, und jeder Fehler war berechtigt:
+fehlender Sitemap-Eintrag, fehlende Pflichtangaben im Footer, kein einziger interner Link.
+Genau die drei Dinge, die man bei einer neuen Seite vergisst. Das Waisen-Gate von heute
+früh hat sich damit beim ersten echten Einsatz bewährt.
+
+Dazu: Der Generator schrieb zunächst einen leeren Header und unversionierte Assets, weil
+er nicht in den Nachzieh-Listen von `sync_header.py` und `bump_asset_version.py` stand.
+Aufgenommen, jetzt erzeugt ein Alleinlauf einen grünen Stand.
+
+### Abgrenzung statt Kannibalisierung
+
+§B1 verlangt ein Keyword-Ziel pro Seite. Die Qualitätsfrage ("sind günstige gut?") bleibt
+bei `/blog/guenstige-handy-controller/`, die transaktionale Liste bei
+`/vergleich/beste-budget-controller/`. Die neue Seite nimmt nur die Budgetfrage und
+verlinkt beide anderen als Antwort. In `keyword-strategie.md` dokumentiert.
+
+### Kein erfundenes Bild
+
+Für die Karte im Blog-Index gab es kein passendes Foto. Das Standard-OG-Bild ist ein
+Marken-Banner mit eigener Headline und wäre in einer Liste von Artikelfotos ein
+Fremdkörper gewesen; ein Produktfoto hätte eine Aussage gemacht, die der Artikel nicht
+trifft. Die Karte trägt deshalb ein Icon auf Markenfläche. Ein echtes Key-Visual kann
+nachgereicht werden.
+
+### Verify
+
+Zehn Werkzeuge über drei Durchläufe hash-identisch, vier Gates grün, im Browser
+gegengeprüft. Selbstaktualisierung an einer Preisänderung bewiesen.
+
+### Gelernt
+
+86. **Die unbequeme Antwort ist die, die niemand sonst gibt.** Dass der bestbewertete
+    Controller der günstigste ist, steht in unseren Daten seit dem Amazon-Abgleich. Keine
+    Seite hat es ausgesprochen, weil die Rechnung niemand gemacht hat. Eine generierte
+    Seite macht sie bei jedem Lauf neu.
+
+87. **Eine neue Seite ist der ehrlichste Test für die Gates.** Sitemap, Pflichtangaben,
+    interner Link, statischer Header, Assetversionen: fünf Dinge, die bei neuem Content
+    typischerweise vergessen werden, und alle fünf wurden gemeldet statt übersehen.
+
+88. **Wer einen Generator baut, trägt ihn in die Nachzieh-Listen ein.** Sonst erzeugt sein
+    Alleinlauf einen roten Stand, und der nächste Durchgang sucht den Fehler in der Seite
+    statt in der Kette.
