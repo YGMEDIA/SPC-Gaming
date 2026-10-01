@@ -13,6 +13,68 @@ items = json.load(open(f'{ROOT}/assets/data/products.json'))
 
 def esc(s): return html.escape(str(s), quote=True)
 
+def marker(name, inhalt):
+    """Generierten Block zwischen Marker setzen, damit der naechste Lauf ihn findet."""
+    return f'<!-- {name}:START -->\n{inhalt}\n<!-- {name}:END -->'
+
+
+def _div_ende(s, start):
+    """Index hinter dem </div>, das das bei `start` geoeffnete <div> schliesst.
+    Regex kann das nicht: die Karten enthalten selbst </div>, ein nicht-gieriges
+    Muster bricht beim ersten ab, ein gieriges frisst den Rest der Seite."""
+    i, tiefe = start, 0
+    for m in re.finditer(r'<(/?)div\b[^>]*?(/?)>', s[start:]):
+        if m.group(2) == '/':
+            continue
+        tiefe += -1 if m.group(1) else 1
+        if tiefe == 0:
+            return start + m.end()
+    raise ValueError('kein schliessendes </div> gefunden')
+
+
+def setze_karten(s, grid_id, cards):
+    """Karten in ein Grid schreiben, egal ob es leer oder schon gefuellt ist.
+    Vorher verlangte das Muster ein LEERES Grid (`>\\s*</div>`): ein zweiter Lauf war
+    damit zwar folgenlos, aber der Generator hat seine Hauptaufgabe stumm uebersprungen.
+    Eine Aenderung an products.json waere auf diesen vier Seiten nie angekommen."""
+    m = re.search(rf'<div[^>]*id="{grid_id}"[^>]*>', s)
+    if not m:
+        raise ValueError(f'Grid #{grid_id} nicht gefunden')
+    ende = _div_ende(s, m.start())
+    return s[:m.end()] + cards + '\n</div>' + s[ende:]
+
+# Der Altbestand traegt noch keine Marker. Damit der erste Lauf nach dieser Aenderung
+# aufraeumt statt ein drittes Exemplar danebenzusetzen, kennt jeder Blockname zusaetzlich
+# die Form, in der er frueher geschrieben wurde.
+_ALTFORM = {
+    # seo_text() + faq_html() stehen immer zusammen; das <style> am Ende von faq_html()
+    # ist der eindeutige Abschluss.
+    'HUB-SEO': re.compile(r'\s*<div class="hub-seo".*?<style>\.hub-faq .*?</style>', re.S),
+}
+# Die drei Schema-Typen, die dieser Generator erzeugt. Auf den Hub-Seiten stammt jeder
+# Block dieser Typen von hier; handgepflegte gibt es dort nicht (Stand HEAD 781ef1c: genau
+# drei Bloecke je Hub, alle aus diesem Script).
+_SCHEMA_TYPEN = {'ItemList', 'BreadcrumbList', 'FAQPage'}
+
+
+def entferne_block(s, name):
+    """Block aus frueheren Laeufen entfernen, inklusive nachgestelltem Zeilenumbruch.
+    Ohne das Entfernen haengt jeder Lauf an: am 30.09. standen SEO-Text und alle drei
+    Schemas doppelt auf allen drei Haupt-Hubs, FAQPage inklusive."""
+    s = re.sub(rf'\n?<!-- {name}:START -->.*?<!-- {name}:END -->\n?', '', s, flags=re.S)
+    if name in _ALTFORM:
+        s = _ALTFORM[name].sub('', s)
+    if name == 'HUB-SCHEMA':
+        def weg(m):
+            try:
+                d = json.loads(m.group(1))
+            except Exception:
+                return m.group(0)
+            return '' if isinstance(d, dict) and d.get('@type') in _SCHEMA_TYPEN else m.group(0)
+        s = re.sub(r'\n?<script type="application/ld\+json">\s*(\{.*?\})\s*</script>',
+                   weg, s, flags=re.S)
+    return s
+
 def card_html(p, featured=False):
     """Identisches Markup wie hub-render.js/produkte.js — JS überschreibt später 1:1."""
     specs = ''.join(f'<span class="spec-tag"><span class="k">{esc(s[0])}</span> {esc(s[1])}</span>'
@@ -115,7 +177,7 @@ HUBS = {
         'Achte beim Kauf auf zwei Dinge: Hall-Effect-Sticks für Langlebigkeit (GameSir G8, Kishi V3 Pro, EasySMX M15) und die Verbindungsart — USB-C-Modelle wie der <a href="/produkte/viture-8bitdo/">VITURE × 8BitDo</a> haben keinen Input-Lag, Bluetooth-Modelle sind flexibler einsetzbar.'],
    faqs=[('Was ist ein Universal-Controller?','Ein Controller, der mehrere Plattformen unterstützt — typischerweise iOS, Android, PC und oft Nintendo Switch. Der Plattform-Modus wird meist per Tastenkombination beim Einschalten gewählt.'),
          ('Funktioniert ein Controller wirklich an iPhone UND Android?','Ja — alle Bluetooth-Controller in dieser Kategorie koppeln sich mit beiden Systemen. Bei USB-C-Clips gilt: iPhone ab Modell 15 (USB-C-Port), Android sowieso.'),
-         ('Welcher Universal-Controller ist der beste?','Als Clip-Controller: der GameSir G8 Galileo (Testsieger, ca. 80 €). Als klassisches Multi-Plattform-Gamepad: der abxylute S8 (ca. 39 €, inkl. Switch-2-Support, 4,4 Sterne).')]),
+         ('Welcher Universal-Controller ist der beste?','Als Clip-Controller: der GameSir G8 Galileo (Testsieger, ca. 80 €). Als klassisches Multi-Plattform-Gamepad: der abxylute S8 (ca. 46 €, inkl. Switch-2-Support, 4,3 Sterne).')]),
 }
 
 # ============================================================
@@ -134,26 +196,31 @@ if __name__ == '__main__':
         count_label = f'{len(lst)} Modelle'
 
         # 1) Statisches Pre-Rendering in den hubGrid
-        s = re.sub(r'(<div class="grid-auto" id="hubGrid"[^>]*>)\s*(</div>)',
-                   lambda m: m.group(1) + cards + '\n' + m.group(2), s)
+        s = setze_karten(s, 'hubGrid', cards)
         # 2) Zähler statisch
         s = s.replace('<span class="hub-count" id="hubCount">Lädt …</span>',
                       f'<span class="hub-count" id="hubCount">{count_label}</span>')
         # 3) Meta-Description ersetzen
         s = re.sub(r'(<meta name="description" content=")[^"]*(")',
                    r'\g<1>' + cfg['new_desc'] + r'\g<2>', s)
-        # 4) SEO-Text + FAQ vor dem "Alle Controller"-Backlink einfügen
-        insert = seo_text(cfg['seo'], cfg['seo_h2']) + faq_html(cfg['faqs'])
+        # 4) SEO-Text + FAQ vor dem "Alle Controller"-Backlink einfügen.
+        # Marker-Idempotenz (P-11): erst den Block der Vorlaeufe entfernen, dann neu setzen.
+        # Ohne das haengte jeder Lauf an — am 30.09. standen nach einem zweiten Lauf SEO-Text
+        # und alle drei Schemas doppelt auf allen drei Haupt-Hubs, inklusive FAQPage. Das ist
+        # ein §A4-Verstoss und ein Rich-Results-Risiko, und verify zaehlte die Bloecke nur.
+        s = entferne_block(s, 'HUB-SEO')
+        insert = marker('HUB-SEO', seo_text(cfg['seo'], cfg['seo_h2']) + faq_html(cfg['faqs']))
         anchor = '<div class="text-center mt-8">'
         if anchor in s:
             s = s.replace(anchor, insert + '\n' + anchor, 1)
         else:
             s = s.replace('</main>', insert + '\n</main>', 1)
         # 5) Schema in <head>
+        s = entferne_block(s, 'HUB-SCHEMA')
         schemas = [itemlist_schema(cfg['list_name'], DOMAIN + '/' + path.replace('index.html',''), lst),
                    bc_schema(cfg['crumbs']), faq_schema(cfg['faqs'])]
         block = '\n'.join(f'<script type="application/ld+json">\n{json.dumps(x, ensure_ascii=False)}\n</script>' for x in schemas)
-        s = s.replace('</head>', block + '\n</head>', 1)
+        s = s.replace('</head>', marker('HUB-SCHEMA', block) + '\n</head>', 1)
         open(f, 'w', encoding='utf-8').write(s)
         print(f'✓ {path}: {len(lst)} Karten statisch, SEO-Text, {len(cfg["faqs"])} FAQs, 3 Schemas')
 
@@ -163,11 +230,11 @@ if __name__ == '__main__':
     f = f'{ROOT}/produkte/index.html'
     s = open(f, encoding='utf-8').read()
     cards = ''.join(card_html(p) for p in items)
-    s = re.sub(r'(<div[^>]*id="productGrid"[^>]*>)\s*(</div>)',
-               lambda m: m.group(1) + cards + '\n' + m.group(2), s)
+    s = setze_karten(s, 'productGrid', cards)
     s = s.replace('id="resultCount">Lädt …<', f'id="resultCount">{len(items)} Produkte<')
     s = s.replace('id="resultCount"><', f'id="resultCount">{len(items)} Produkte<')
     open(f, 'w', encoding='utf-8').write(s)
-    import subprocess
-    n = subprocess.run(['grep', '-c', 'class="pcard', f], capture_output=True, text=True).stdout.strip()
+    # Karten zaehlen, nicht Zeilen mit dem Praefix: grep -c 'class="pcard' traf auch
+    # pcard-img, pcard-body und pcard-title und meldete 378 Karten fuer 42 Produkte.
+    n = len(re.findall(r'<article class="pcard', s))
     print(f'✓ produkte/index.html: {n} Karten statisch pre-rendert')

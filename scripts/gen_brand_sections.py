@@ -106,6 +106,15 @@ def zw(n):
     return ZAHLWORT.get(n, str(n))
 
 
+def vergleichswort(a, b):
+    """"unter", "ueber" oder "gleichauf mit" — je nach Datenlage.
+
+    Der Satz hatte "unter" fest verdrahtet. Nach dem Amazon-Abgleich kosten beide
+    Einstiegsmodelle 63 Euro, und die Seite behauptete, 63 liege unter 63.
+    """
+    return 'unter' if a < b else ('über' if a > b else 'gleichauf mit')
+
+
 def de(x, dec=2):
     """Deutsche Zahlschreibweise: 4.46 -> '4,46'; 1655 -> '1.655'."""
     if isinstance(x, int):
@@ -204,6 +213,12 @@ def comparison_table(stats_all, current):
 
 
 def erfahrung_text(s, allst, L):
+    # Den teuersten GameSir rechnen statt ihn zu benennen: Er war als G8 Plus (76 €)
+    # verdrahtet, teuerster ist der G8 Galileo (80 €). Und "halb so teure" stand als
+    # festes Wort gegen dynamische Preise - bei 45 zu 76 Euro sind es 59 Prozent.
+    _gs = [p for p in L._by_slug.values()
+           if p.get('brand') == 'GameSir' and p.get('type') == 'controller']
+    _gs_teuerster = max(_gs, key=price_of)['slug'] if _gs else 'gamesir-g8-galileo'
     """Sektion 1 je Marke: was die Bewertungslage wirklich hergibt.
     Jede Zahl kommt aus products.json, keine steht fest im Text (§A1)."""
     b = s['brand']
@@ -246,9 +261,10 @@ def erfahrung_text(s, allst, L):
             f'{de(s["best"]["rating"], 1)} Sterne beim {link(s["best"])}, '
             f'{de(s["worst"]["rating"], 1)} beim {link(s["worst"])}. Wer bei GameSir blind zum '
             f'teuersten Modell greift, kauft nicht automatisch das beste: Der '
-            f'{L.link("gamesir-g8-plus")} kostet {L.price("gamesir-g8-plus")} Euro und steht bei '
-            f'{L.rating("gamesir-g8-plus")} Sternen, der halb so teure {L.link("gamesir-x5-lite")} '
-            f'liegt mit {L.rating("gamesir-x5-lite")} darüber. Und der '
+            f'{L.link(_gs_teuerster)} ist mit {L.price(_gs_teuerster)} Euro der teuerste GameSir '
+            f'bei uns und steht bei {L.rating(_gs_teuerster)} Sternen, der '
+            f'{L.link("gamesir-x5-lite")} liegt bei {L.rating("gamesir-x5-lite")} und kostet '
+            f'{L.price("gamesir-x5-lite")} Euro. Und der '
             f'{L.link("gamesir-x3-pro")} kostet inzwischen dasselbe wie der X5 Lite, steht aber '
             f'nur bei {L.rating("gamesir-x3-pro")}.</p>\n'
             f'<p><strong>Woran es bei den schwächeren Modellen liegt:</strong> Beim '
@@ -290,7 +306,8 @@ def erfahrung_text(s, allst, L):
         f'wir führen sie trotzdem, statt sie wegzulassen.</p>\n'
         f'<p>Bei Backbone steht das teuerste Gerät unseres gesamten Sortiments: der '
         f'{link(s["dearest"])} für {s["dearest"]["price"]} Euro. Der Einstieg liegt mit '
-        f'{s["cheapest"]["price"]} Euro aber unter dem günstigsten Razer-Controller, der '
+        f'{s["cheapest"]["price"]} Euro {vergleichswort(s["cheapest"]["price"], allst["Razer"]["cheapest"]["price"])} '
+        f'dem günstigsten Razer-Controller, der '
         f'{allst["Razer"]["cheapest"]["price"]} Euro kostet. Bezahlt wird das Ökosystem, also '
         f'die App, die Spielebibliothek und Streaming-Dienste zusammenführt, und die '
         f'Verarbeitung.</p>\n'

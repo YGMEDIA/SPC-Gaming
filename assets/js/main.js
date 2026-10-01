@@ -51,11 +51,11 @@
     </span>
     <span class="ts">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      100+ Controller getestet
+      42 Modelle im Sortiment
     </span>
     <span class="ts">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12l5 5L20 7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Datenstand Juni 2026
+      Datenstand September 2026
     </span>
   </div>
 </div>
@@ -100,7 +100,7 @@
     </div>
     <div class="foot-promo">
       <span class="foot-promo-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M4 7l8-4 8 4v6c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9V7z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
-      <div><div class="foot-promo-t">Aktuelle Daten</div><div class="foot-promo-s">Preise & Specs laufend geprüft</div></div>
+      <div><div class="foot-promo-t">Aktuelle Daten</div><div class="foot-promo-s">Preise und Specs aus Amazon-Belegen</div></div>
     </div>
     <div class="foot-promo">
       <span class="foot-promo-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2-7 4 14 2-7h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
@@ -108,7 +108,7 @@
     </div>
     <div class="foot-promo">
       <span class="foot-promo-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3v18M5 8l7-5 7 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      <div><div class="foot-promo-t">Bestpreis-Links</div><div class="foot-promo-s">Direkt zum günstigsten Händler</div></div>
+      <div><div class="foot-promo-t">Amazon-Links</div><div class="foot-promo-s">Direkt zum Produkt bei Amazon</div></div>
     </div>
   </div>
 </div>
@@ -125,14 +125,7 @@
       </div>
       <p>Das unabhängige Fachportal für Smartphone-Gaming-Controller. Wir testen, vergleichen und erklären – damit du den passenden Controller findest, nicht nur den teuersten.</p>
       <div class="foot-rating">
-        <div class="foot-stars" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-          <svg viewBox="0 0 24 24" class="star-half"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-        </div>
-        <div class="foot-rating-text">Wir empfehlen nur Controller mit <strong>4★+ auf Amazon</strong> — top-bewertete Modelle, ehrlich getestet.</div>
+        <div class="foot-rating-text">Unsere Empfehlungsschwelle liegt bei <strong>3,8 Sternen</strong>. Modelle darunter listen wir trotzdem, aber mit ausdrücklicher Warnung statt Kaufempfehlung.</div>
       </div>
     </div>
     <div class="foot-col">
@@ -182,7 +175,7 @@
     <div class="foot-pay">
       <span class="foot-amazon-badge">
         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M4 8h16M4 8l1.5 9.5a2 2 0 002 1.5h5a2 2 0 002-1.5L16 8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-        Offizieller <strong>Amazon</strong>-Partner
+        Teilnehmer am <strong>Amazon</strong>-PartnerNet
       </span>
     </div>
   </div>

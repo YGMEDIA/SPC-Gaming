@@ -25,6 +25,15 @@ PLATFORM_HUB = {
 
 def esc(s): return html.escape(str(s), quote=True)
 
+
+def voller_name(p):
+    """Marke + Name, ohne die Marke zu verdoppeln.
+
+    Drei Backbone-Produkte tragen "Backbone" bereits im name-Feld; die bedingungslose
+    Verkettung ergab "Backbone Backbone Pro" im sichtbaren Text von acht Seiten.
+    """
+    return p['name'] if p['brand'].lower() in p['name'].lower() else f"{p['brand']} {p['name']}"
+
 def parse_rating(specs):
     for k, v in specs or []:
         if k == 'Bew.':
@@ -50,6 +59,44 @@ def detail_url(p):
 
 ALT_PLATFORM = {'Universal': 'für Android & iPhone', 'Android': 'für Android', 'iPhone': 'fürs iPhone',
                 'Tablet': 'für Tablet & Smartphone', 'Mini-Gamepad': 'für unterwegs'}
+
+def rating_of(p):
+    """Bewertung als float, oder None. Nur für Vergleiche innerhalb dieses Generators."""
+    v, c, _ = parse_rating(p.get('specs'))
+    return (float(v), int(c)) if v and c else (None, None)
+
+A6_SCHWELLE = 3.8
+
+def a6_warnbox(prod):
+    """§A6: Produkte unter 3,8 Sternen bekommen eine sichtbare Warnung statt Kaufempfehlung.
+
+    Der Kasten wird aus products.json gerechnet, nicht getextet: Wenn eine Bewertung die
+    Schwelle überschreitet, verschwindet er von selbst, und wenn eine kippt, erscheint er.
+    Handgepflegte Warnkästen sind genau daran gescheitert (MGPXPRO trug 'keine
+    Kaufempfehlung' weiter, als er längst bei 4,3 stand).
+
+    Die Alternative kommt aus derselben Unterkategorie (platform), bestbewertet zuerst,
+    und muss selbst mindestens 4,0 tragen. Findet sich keine, nennt der Kasten keine.
+    """
+    r, c = rating_of(prod)
+    if r is None or r >= A6_SCHWELLE:
+        return ''
+    pool = [(rating_of(x), x) for x in items
+            if x['slug'] != prod['slug'] and x['platform'] == prod['platform']]
+    besser = sorted(((rc[0], rc[1], x) for rc, x in pool if rc[0] and rc[0] >= 4.0),
+                    key=lambda t: (-t[0], -t[1]))
+    alt = ''
+    if besser:
+        br, _, bx = besser[0]
+        bname = bx['name'] if bx['brand'].lower() in bx['name'].lower() else f"{bx['brand']} {bx['name']}"
+        # Ohne Artikel formuliert: Produktnamen sind teils Plural ("Finger Sleeves") und
+        # tragen selbst Klammern, "Der X (4,2 Sterne)" wird damit falsch und doppelt geklammert.
+        alt = (f' Besser bewertet in derselben Kategorie: <a href="{detail_url(bx)}">{esc(bname)}</a> '
+               f'mit {str(br).replace(".", ",")} Sternen.')
+    return (f'<div class="note note-warn"><strong>Eingeschränkte Empfehlung:</strong> Mit '
+            f'<strong>{str(r).replace(".", ",")} von 5 Sternen aus {c} Bewertungen</strong> liegt '
+            f'dieses Produkt unter unserer Empfehlungsschwelle von '
+            f'{str(A6_SCHWELLE).replace(".", ",")}.{alt}</div>')
 
 def alt_text(prod, full_name):
     """Beschreibender, keyword-relevanter Alt-Text: Produktname + Merkmal + Kontext (§ Block A4)."""
@@ -85,7 +132,14 @@ def build(prod, c):
     schema_prod = {
         "@context": "https://schema.org", "@type": "Product",
         "name": full_name,
-        "image": [img] + gallery if gallery else img,
+        # NUR das Hauptbild. Google liest Product.image als DAS Produktbild; in den
+        # Amazon-Galerien liegen nachweislich A+-Werbebanner mit eingebrannter
+        # Herstellerwerbung (Razer 3/3, ASUS 3/3, dazu GameSir und Backbone). Welche der
+        # 116 Galeriebilder Banner sind, klaert nur Ansehen. Das Hauptbild ist die einzige
+        # Klasse, die garantiert werbefrei ist: Amazon schreibt dafuer weissen Hintergrund
+        # ohne Text vor. Sichtbar bleiben die Galerien, sie sind als Katalogbilder
+        # ausgewiesen -- in den strukturierten Daten haben Werbebanner nichts zu suchen.
+        "image": img,
         "description": c['verdict'],
         "brand": {"@type": "Brand", "name": prod['brand']},
         "url": url,
@@ -114,7 +168,9 @@ def build(prod, c):
     for k, v in prod.get('specs') or []:
         label = {'Verb.': 'Verbindung', 'Bew.': 'Amazon-Bewertung'}.get(k, k)
         val = f'{v.split("(")[0].strip()} / 5 ({v.split("(")[1].rstrip(")")} Bewertungen)' if k == 'Bew.' and '(' in v else v
-        specs_rows += f'<tr><td>{esc(label)}</td><td>{val}</td></tr>\n'
+        # Wert escapen wie das Label daneben: ohne esc() stand "Tablet/iPad <10mm" roh
+        # im Markup, waehrend dieselbe Angabe auf den Karten korrekt "&lt;10mm" trug.
+        specs_rows += f'<tr><td>{esc(label)}</td><td>{esc(val)}</td></tr>\n'
     specs_rows += f'<tr><td>Kategorie</td><td><a href="{hub_url}">{esc(hub_label)}</a></td></tr>'
 
     pros = '\n'.join(f'<li class="pro-item">✓ {esc(x)}</li>' for x in c['pros'])
@@ -147,9 +203,16 @@ def build(prod, c):
     rel_cards = ''
     for r in related(prod):
         rel_cards += (f'<a href="{detail_url(r)}" class="related-card"><span class="rc-icon">🎮</span>'
-                      f'<div><div class="rc-name">{esc(r["brand"])} {esc(r["name"])}</div>'
+                      f'<div><div class="rc-name">{esc(voller_name(r))}</div>'
                       f'<div class="rc-price">{esc(r["price"] or "Preis auf Amazon")}</div></div>'
                       f'<span class="rc-arrow">›</span></a>')
+
+    # cta_link=(url, label) im CONTENT-Dict: zusätzlicher Button in der Kaufleiste,
+    # z. B. zur passenden Vergleichsseite. Ohne das Feld bleibt die Leiste unverändert.
+    cta_extra = ''
+    if c.get('cta_link'):
+        _u, _l = c['cta_link']
+        cta_extra = f'<a class="btn btn-secondary" href="{esc(_u)}">{esc(_l)}</a>'
 
     rating_badge = ''
     if rating_val:
@@ -178,7 +241,7 @@ def build(prod, c):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css?v=1d1abd23">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -196,6 +259,7 @@ def build(prod, c):
 .pros-box h3,.cons-box h3{{font-size:14px;font-weight:800;margin-bottom:10px}}
 .pro-item,.con-item{{font-size:14px;line-height:1.55;padding:4px 0;list-style:none}}
 .pro-item{{color:#1d7a3a}}.con-item{{color:#a04434}}
+.note-warn{{background:var(--red-bg);border-left:4px solid var(--red);padding:16px 18px;border-radius:var(--radius);margin:22px 0;font-size:14px;line-height:1.6}}
 .sticky-cta{{position:sticky;top:184px}}
 .cta-box{{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-md)}}
 .cta-box .cta-name{{font-weight:800;font-size:17px;text-align:center;margin-bottom:4px}}
@@ -230,7 +294,28 @@ def build(prod, c):
 {schemas}
 </head>
 <body>
-<header class="site-header" id="site-header" data-active="/produkte/"></header>
+<header class="site-header" id="site-header" data-active="/produkte/">
+<div class="trust-strip"><div class="container">
+<span class="ts">Unabhängig &amp; herstellerneutral</span>
+<span class="ts">42 Modelle im Sortiment</span>
+<span class="ts">Datenstand September 2026</span>
+</div></div>
+<div class="header-main">
+<a href="/" class="logo" aria-label="smartphone-controller.com – Startseite"><span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span></a>
+</div>
+<nav class="main-nav" aria-label="Hauptnavigation"><div class="container">
+<a href="/produkte/" class="nav-link">🛒 Alle Produkte</a>
+<a href="/controller-finder/" class="nav-link">🎮 Controller-Finder</a>
+<a href="/controller/ios/" class="nav-link">iPhone</a>
+<a href="/controller/android/" class="nav-link">Android</a>
+<a href="/controller/universal/" class="nav-link">Universal</a>
+<a href="/zubehoer/finger-sleeves/" class="nav-link">Finger Sleeves</a>
+<a href="/zubehoer/trigger/" class="nav-link">Trigger</a>
+<a href="/vergleich/" class="nav-link">Vergleiche</a>
+<a href="/blog/" class="nav-link">Blog</a>
+<a href="/marken/gamesir/" class="nav-link">GameSir ★<span class="nav-badge">Top-Marke</span></a>
+</div></nav>
+</header>
 <main>
   <section class="page-hero">
     <div class="container">
@@ -253,6 +338,8 @@ def build(prod, c):
           </div>
 
           {paras}
+
+          {a6_warnbox(prod)}
 
           <h2>Technische Daten</h2>
           <table class="specs-table" aria-label="Technische Daten {esc(full_name)}">
@@ -286,6 +373,7 @@ def build(prod, c):
             <div class="cta-price">{esc(prod['price'] or 'Preis auf Amazon')}</div>
             <div class="cta-available">✓ Auf Amazon verfügbar</div>
             <a class="btn btn-primary" data-asin="{esc(prod['asin'])}" data-product="{esc(slug)}" href="#">Kaufen →</a>
+            {cta_extra}
             <a class="btn btn-secondary" href="/produkte/">← Alle Produkte</a>
             <p class="cta-note">Affiliate-Link · Preis auf Amazon.de prüfen · keine Zusatzkosten für dich</p>
             {rating_badge}
@@ -295,36 +383,64 @@ def build(prod, c):
     </div>
   </section>
 </main>
-<footer class="site-footer" id="site-footer"></footer>
-<script src="/assets/js/main.js"></script>
+<footer class="site-footer" id="site-footer">
+  <div class="container">
+    <p class="foot-affiliate">Transparenz-Hinweis: Einige Links auf dieser Seite sind Affiliate-Links (Amazon PartnerNet). Kaufst du über einen solchen Link, erhalten wir eine kleine Provision &mdash; für dich ändert sich der Preis nicht. Das beeinflusst unsere Tests und Bewertungen nicht.</p>
+    <p class="foot-legal"><a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a> · <a href="/affiliate-hinweis/">Affiliate-Hinweis</a> · © 2026 YG MEDIA</p>
+  </div>
+</footer>
+<script src="/assets/js/main.js?v=b9adbc20"></script>
 </body></html>'''
+
+def generierte_seiten():
+    """(slug, pfad, Soll-HTML) für jede Seite, die dieser Generator besitzt.
+
+    verify.py nutzt das, um Datei gegen Generator zu vergleichen. Solange beide
+    deckungsgleich sind, sind alle fünf Renderstellen des CONTENT-Texts abgedeckt
+    (meta/og/twitter description, Schema-description, Einordnungs-Box, Fließtext,
+    Stärken/Schwächen) und Handkorrekturen an der Datei können nicht mehr stumm
+    verloren gehen.
+    """
+    for prod in items:
+        if not (prod.get('detail') or '').startswith('/produkte/'):
+            continue
+        c = CONTENT.get(prod['slug'])
+        if not c:
+            continue
+        yield prod['slug'], f"{ROOT}/produkte/{prod['slug']}/index.html", build(prod, c)
+
 
 # ---- Erzeugen ----
 # Normalmodus: nur Produkte OHNE detail (Erstanlage).
 # --regen [slug ...]: bestehende /produkte/-Seiten neu bauen (alle oder nur die genannten);
 # Review-Seiten (detail außerhalb /produkte/) werden NIE angefasst.
-import sys
-regen = '--regen' in sys.argv
-regen_slugs = {a for a in sys.argv[1:] if not a.startswith('-')}
-created = []
-for prod in items:
-    if regen:
-        if not (prod.get('detail') or '').startswith('/produkte/'):
+# Der Lauf steht unter __main__, damit verify.py build() importieren kann, ohne
+# dabei Seiten zu schreiben und products.json neu zu serialisieren.
+if __name__ == '__main__':
+    import sys
+    regen = '--regen' in sys.argv
+    regen_slugs = {a for a in sys.argv[1:] if not a.startswith('-')}
+    created = []
+    for prod in items:
+        if regen:
+            if not (prod.get('detail') or '').startswith('/produkte/'):
+                continue
+            if regen_slugs and prod['slug'] not in regen_slugs:
+                continue
+        elif prod['detail']:
             continue
-        if regen_slugs and prod['slug'] not in regen_slugs:
-            continue
-    elif prod['detail']:
-        continue
-    c = CONTENT.get(prod['slug'])
-    if not c:
-        print('FEHLT IM CONTENT-DICT:', prod['slug']); continue
-    d = f"{ROOT}/produkte/{prod['slug']}"
-    os.makedirs(d, exist_ok=True)
-    open(f'{d}/index.html', 'w', encoding='utf-8').write(build(prod, c))
-    prod['detail'] = f"/produkte/{prod['slug']}/"
-    created.append(prod['slug'])
+        c = CONTENT.get(prod['slug'])
+        if not c:
+            print('FEHLT IM CONTENT-DICT:', prod['slug']); continue
+        d = f"{ROOT}/produkte/{prod['slug']}"
+        os.makedirs(d, exist_ok=True)
+        open(f'{d}/index.html', 'w', encoding='utf-8').write(build(prod, c))
+        prod['detail'] = f"/produkte/{prod['slug']}/"
+        created.append(prod['slug'])
 
-json.dump(items, open(f'{ROOT}/assets/data/products.json', 'w'), ensure_ascii=False, indent=2)
-mode = 'regeneriert' if regen else 'erzeugt'
-print(f"✓ {len(created)} Detailseiten {mode}:")
-for s in created: print('  /produkte/' + s + '/')
+    with open(f'{ROOT}/assets/data/products.json', 'w', encoding='utf-8') as fh:
+        json.dump(items, fh, ensure_ascii=False, indent=2)
+        fh.write('\n')
+    mode = 'regeneriert' if regen else 'erzeugt'
+    print(f"✓ {len(created)} Detailseiten {mode}:")
+    for s in created: print('  /produkte/' + s + '/')

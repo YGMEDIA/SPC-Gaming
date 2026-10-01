@@ -17,6 +17,11 @@ by_slug = {p['slug']: p for p in products}
 
 def esc(s): return html.escape(str(s), quote=True)
 
+def voller_name(p):
+    """Marke + Name, ohne die Marke zu verdoppeln (siehe gen_pages.voller_name)."""
+    return p['name'] if p['brand'].lower() in p['name'].lower() else f"{p['brand']} {p['name']}"
+
+
 def detail_url(p):
     return p['detail'] if p['detail'] else f"/produkte/{p['slug']}/"
 
@@ -57,10 +62,19 @@ def build(item):
         f'<div class="faq-item"><h3 class="faq-q">{esc(q)}</h3><p class="faq-a">{esc(a)}</p></div>'
         for q, a in item['faqs'])
 
-    alts = [by_slug[s] for s in item['alternatives']]
+    # Eine Alternative, die products.json nicht (mehr) kennt, war bis 01.10. ein
+    # KeyError. Der brach den ganzen Generator-Abgleich in verify.py ab, und dessen
+    # breites except ersetzte 40 Pruefungen durch eine Zeile — ausgerechnet beim
+    # Entfernen eines Produkts, also genau dem Fall, fuer den das Verwaisten-Gate
+    # gebaut wurde. 13 der 42 Produkte sind als Longtail-Alternative verdrahtet.
+    # Der Generator stirbt daran nicht mehr: Er laesst die unbekannte Alternative
+    # weg. Gemeldet wird der haengende Verweis von verify.py, wo er hingehoert --
+    # ein Generator, der an einem Datenfehler abbricht, nimmt jede Pruefung mit,
+    # die hinter ihm steht.
+    alts = [by_slug[s] for s in item['alternatives'] if s in by_slug]
     alt_cards = ''.join(
         f'<a href="{detail_url(a)}" class="related-card"><span class="rc-icon">🎮</span>'
-        f'<div><div class="rc-name">{esc(a["brand"])} {esc(a["name"])}</div>'
+        f'<div><div class="rc-name">{esc(voller_name(a))}</div>'
         f'<div class="rc-price">{esc(a["price"] or "Preis auf Amazon")}</div></div>'
         f'<span class="rc-arrow">›</span></a>' for a in alts)
     top_alt = alts[0]
@@ -85,7 +99,7 @@ def build(item):
   <meta name="twitter:title" content="{esc(full_name)} — Datenblatt & Alternativen">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{og_img}">
-  <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="stylesheet" href="/assets/css/style.css?v=1d1abd23">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -121,7 +135,28 @@ def build(item):
 {schemas}
 </head>
 <body>
-<header class="site-header" id="site-header" data-active="/produkte/"></header>
+<header class="site-header" id="site-header" data-active="/produkte/">
+<div class="trust-strip"><div class="container">
+<span class="ts">Unabhängig &amp; herstellerneutral</span>
+<span class="ts">42 Modelle im Sortiment</span>
+<span class="ts">Datenstand September 2026</span>
+</div></div>
+<div class="header-main">
+<a href="/" class="logo" aria-label="smartphone-controller.com – Startseite"><span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span></a>
+</div>
+<nav class="main-nav" aria-label="Hauptnavigation"><div class="container">
+<a href="/produkte/" class="nav-link">🛒 Alle Produkte</a>
+<a href="/controller-finder/" class="nav-link">🎮 Controller-Finder</a>
+<a href="/controller/ios/" class="nav-link">iPhone</a>
+<a href="/controller/android/" class="nav-link">Android</a>
+<a href="/controller/universal/" class="nav-link">Universal</a>
+<a href="/zubehoer/finger-sleeves/" class="nav-link">Finger Sleeves</a>
+<a href="/zubehoer/trigger/" class="nav-link">Trigger</a>
+<a href="/vergleich/" class="nav-link">Vergleiche</a>
+<a href="/blog/" class="nav-link">Blog</a>
+<a href="/marken/gamesir/" class="nav-link">GameSir ★<span class="nav-badge">Top-Marke</span></a>
+</div></nav>
+</header>
 <main>
   <section class="page-hero">
     <div class="container">
@@ -178,25 +213,41 @@ def build(item):
     </div>
   </section>
 </main>
-<footer class="site-footer" id="site-footer"></footer>
-<script src="/assets/js/main.js"></script>
+<footer class="site-footer" id="site-footer">
+  <div class="container">
+    <p class="foot-affiliate">Transparenz-Hinweis: Einige Links auf dieser Seite sind Affiliate-Links (Amazon PartnerNet). Kaufst du über einen solchen Link, erhalten wir eine kleine Provision &mdash; für dich ändert sich der Preis nicht. Das beeinflusst unsere Tests und Bewertungen nicht.</p>
+    <p class="foot-legal"><a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a> · <a href="/affiliate-hinweis/">Affiliate-Hinweis</a> · © 2026 YG MEDIA</p>
+  </div>
+</footer>
+<script src="/assets/js/main.js?v=b9adbc20"></script>
 </body></html>'''
 
-created = []
-for item in longtail:
-    d = f"{ROOT}/produkte/{item['slug']}"
-    os.makedirs(d, exist_ok=True)
-    page = build(item)
-    open(f'{d}/index.html', 'w', encoding='utf-8').write(page)
-    # Gate: Schema-FAQ == sichtbarer Text, >=2 interne Links auf kaufbare Produkte
-    import re as _re
-    text = _re.sub(r'<[^>]+>', '', page)
-    for q, a in item['faqs']:
-        assert q in text and a in text, f"{item['slug']}: FAQ nicht sichtbar"
-    buyable = set(_re.findall(r'href="(/(?:produkte|controller)/[a-z0-9-]+[^"]*?)"', page))
-    buyable = {b for b in buyable if any(detail_url(p) == b for p in products)}
-    assert len(buyable) >= 2, f"{item['slug']}: nur {len(buyable)} kaufbare Links"
-    created.append(item['slug'])
+def generierte_seiten():
+    """(slug, pfad, Soll-HTML) fuer jede Longtail-Seite, die dieser Generator besitzt.
 
-print(f"✓ {len(created)} Longtail-Seiten erzeugt:")
-for s in created: print('  /produkte/' + s + '/')
+    Gegenstueck zu gen_pages.generierte_seiten(). Damit deckt der Zeichenvergleich in
+    verify.py auch die zehn Datenblaetter ab, die bisher nur wertweise geprueft wurden.
+    """
+    for item in longtail:
+        yield item['slug'], f"{ROOT}/produkte/{item['slug']}/index.html", build(item)
+
+
+if __name__ == '__main__':
+    created = []
+    for item in longtail:
+        d = f"{ROOT}/produkte/{item['slug']}"
+        os.makedirs(d, exist_ok=True)
+        page = build(item)
+        open(f'{d}/index.html', 'w', encoding='utf-8').write(page)
+        # Gate: Schema-FAQ == sichtbarer Text, >=2 interne Links auf kaufbare Produkte
+        import re as _re
+        text = _re.sub(r'<[^>]+>', '', page)
+        for q, a in item['faqs']:
+            assert q in text and a in text, f"{item['slug']}: FAQ nicht sichtbar"
+        buyable = set(_re.findall(r'href="(/(?:produkte|controller)/[a-z0-9-]+[^"]*?)"', page))
+        buyable = {b for b in buyable if any(detail_url(p) == b for p in products)}
+        assert len(buyable) >= 2, f"{item['slug']}: nur {len(buyable)} kaufbare Links"
+        created.append(item['slug'])
+
+    print(f"✓ {len(created)} Longtail-Seiten erzeugt:")
+    for s in created: print('  /produkte/' + s + '/')

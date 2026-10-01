@@ -657,9 +657,6 @@ ul, ol { list-style: none; }
 .foot-amazon-badge strong { color: #ff9900; font-weight: 800; }
 /* Footer Sterne-Rating */
 .foot-rating { margin-top: 16px; }
-.foot-stars { display: flex; gap: 2px; margin-bottom: 7px; }
-.foot-stars svg { width: 16px; height: 16px; fill: #ffb400; }
-.foot-stars .star-half { opacity: .45; }
 .foot-rating-text { font-size: 12.5px; line-height: 1.5; color: #93a6bd; max-width: 260px; }
 .foot-rating-text strong { color: #c3d2e3; font-weight: 700; }
 

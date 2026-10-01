@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 """Rüstet neu aufgenommene Produkte in die bereits statisch gerenderten Seiten nach.
 
-Warum ein eigenes Script: gen_hubs.py ist NICHT idempotent (SEO-Text und Schemas
-würden bei erneutem Lauf doppelt eingefügt). Dieses Script fasst ausschließlich
-Karten, Zähler und ItemList-Schemas an und ist idempotent: Produkte, deren Karte
-schon im HTML steht, werden übersprungen.
+Warum ein eigenes Script: Es fasst ausschließlich Karten, Zähler und ItemList-Schemas
+an und überspringt Produkte, deren Karte schon im HTML steht.
+
+Stand 01.10.2026: Die frühere Begründung, gen_hubs.py sei nicht idempotent, stimmt
+nicht mehr. Sie war bis zum 30.09. richtig (SEO-Text und alle drei Schemas wurden bei
+jedem Lauf erneut eingefügt), ist seit der Marker-Idempotenz aber überholt — zwei
+Läufe liefern denselben Hash. Ein Kommentar, der eine behobene Schwäche weiter
+behauptet, schickt den nächsten Durchgang auf die falsche Fährte.
 
 Karten-Markup und ItemList kommen aus gen_hubs.py (Import ohne Nebenwirkung),
 damit kein Drift zwischen Generator und Nachrüstung entsteht.
