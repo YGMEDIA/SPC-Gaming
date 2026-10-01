@@ -2,7 +2,7 @@
 
 > Zentrale Zustandsdatei aller Loops. JEDER Lauf liest sie zuerst; erledigte Arbeit wird nie wiederholt (Loop-Regel 3). Max. 3 Versuche pro Item, dann → blockiert (Regel 4). Menschen-Gates → "braucht Yasin" (Regel 5).
 
-**Letzte Aktualisierung:** 2026-09-30 (Renderstellen + Generator-Quelle + Fließtext-Gate + Bildebene + statisches Chrome)
+**Letzte Aktualisierung:** 2026-10-01 (Bildebene + statisches Chrome + 19 Prüfrunden, deployed 2b5a0fa/6a04778)
 
 > **AKTIVE LEITPLANKE (differenziert seit Lauf 4, 15.08.):** Meta-Freeze NUR noch für die 10 Impressions-Träger aus raw/gsc/2026-08-15.md (Startseite, hall-effect-erklaert, Hubs ios/android/mini, gamesir-oder-backbone, g8-galileo-review, marken/8bitdo+gamesir, universal-Hub). Alle übrigen Seiten: Optimierung frei (nichts zu verlieren bei Position 56).
 

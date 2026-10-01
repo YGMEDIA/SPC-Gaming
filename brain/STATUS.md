@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-09-30 (Marken-Offensive · Vollabgleich · Bücher-Synthese · B2 Claims · Renderstellen · Generator-Quelle · Bildebene · statische Navigation)
+**Letzte Aktualisierung:** 2026-10-01 (Bildebene · statisches Chrome · 19 Prüfrunden · DEPLOYED 2b5a0fa + 6a04778)
 
 ---
 
@@ -238,7 +238,11 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 ## Nächster geplanter Schritt
 
+**Stand 01.10.: Das Bildebenen-/Chrome-Paket ist deployed** (2b5a0fa, 6a04778), IndexNow gemeldet, Live-Check bestanden. Neunzehn unabhängige Prüfrunden, Freigabe in Runde 19. Vier Gates: `verify.py`, `audit_prosa.py`, `sync_product_values.py --audit`, `mess_bilder.py --check`.
+
 **Claude Code (nächste Session, autonom — Reihenfolge):**
+0. **Restliche ungegatete Flächen** (aus der Landkarte, keine Auslieferungs-Blocker, nach Aufwand sortiert): `robots.txt`-Inhalt wird nicht geprüft (ein `Disallow: /` wäre grün) · kein `404.html` · Sitemap-Rückrichtung ist `warn()` statt `err()` · `platformLabel` deckt 25 von 42 Produkten · `products.json`-Feld `platform` nur auf Nicht-Leer geprüft · `video.duration` in keinem Gate · `longtail.json` nur als Rohtext statt als Struktur · Rückrichtung (verwaiste Seiten) nur für `produkte/`, nicht für `controller/`, `vergleich/`, `blog/`. Einzeln klein, zusammen ein halber Tag.
+
 1. **gsc-loop Lauf 8**, sobald Yasins Paket kommt (~Mitte Oktober; Checkliste Lauf 8 steht in `04-loops/gsc-loop.md`). Schwerpunkt: hält die Erholung (41,8 → ?), greifen die Q4-Seiten ("geschenk"/"black friday"-Queries), und **zeigen die Marken-Seiten nach der Offensive vom 30.09. mehr Impressionen auf Marken-Queries?** Konkret zu beobachten: `razer controller`, `razer controller android`, `backbone android`, `gamesir vs backbone`, `8bitdo controller`, dazu die Seitenzeilen `marken/razer` (Basis 11 Impr./28T), `marken/gamesir`, `marken/8bitdo`, `marken/backbone`.
 2. **preis-loop Voll-Abgleich** — überfällig, Datenstand 21.07.; braucht Yasins Screenshots (§A5). Neu zu beachten: Nach jeder products.json-Änderung `python3 scripts/gen_brand_sections.py` laufen lassen, sonst wird verify rot (die Marken-Hubs tragen jetzt Preise und Bewertungen im Fließtext).
 **Leitplanke: Meta-Freeze** — keine Title/Description-Änderungen an Seiten mit Impressionen; Bauen und Content-Ausbau ja, Bestands-Metas nein. Q4-Seiten sind ausgenommen (neu, ohne Historie).
