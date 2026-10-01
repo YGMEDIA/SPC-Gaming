@@ -1095,6 +1095,39 @@ for _u, _f in sorted(_url_zu_datei.items()):
     err(f"§B: {_f} ist indexierbar, wird aber von keiner einzigen Seite verlinkt — "
         f"eine Seite ohne internen Link wird selten gecrawlt")
 
+# Kompatibilitaets-Antwort (Massnahme B1, §A1). Auf den 29 generierten /produkte/-Seiten
+# deckt das der Zeichenvergleich in 6c ab. Die 13 handgepflegten Review-Seiten haben
+# keinen Generator: Dort setzt scripts/sync_kompat.py den Block, und ohne dieses Gate
+# koennte eine Handaenderung ihn still von products.json wegdriften lassen — genau das
+# Muster, das diese Session reihenweise veraltet vorgefunden hat.
+try:
+    from kompat import kompat_html as _kompat_html
+    from gen_hubs import esc as _kesc
+except Exception as _e:
+    _kompat_html = None
+    err(f"§A1: Kompatibilitaets-Block nicht pruefbar ({type(_e).__name__}: {_e})")
+if _kompat_html:
+    for _p in items:
+        _d = (_p.get('detail') or '').strip('/')
+        if not _d or _d.startswith('produkte/'):
+            continue
+        _f = _d + '/index.html'
+        if not os.path.exists(_f):
+            continue
+        _h = open(_f, encoding='utf-8').read()
+        _soll = _kompat_html(_p, _kesc)
+        _hat = '<div class="kompat-box"' in _h
+        if _soll and not _hat:
+            err(f"§A1: {_f} fuehrt keinen Kompatibilitaets-Block — "
+                f"'python3 scripts/sync_kompat.py' laufen lassen")
+        elif _soll and _soll not in _h:
+            err(f"§A1: {_f} hat einen Kompatibilitaets-Block, der von products.json "
+                f"abweicht — 'python3 scripts/sync_kompat.py' laufen lassen; die Ursache "
+                f"gehoert in products.json (worksOn, Verb.), nicht in die HTML-Datei")
+        elif not _soll and _hat:
+            err(f"§A1: {_f} fuehrt einen Kompatibilitaets-Block, obwohl products.json "
+                f"fuer {_p['slug']} nichts belegbares hergibt")
+
 # Doppelte Schema-Bloecke (§A4). Ein nicht-idempotenter Generator haengt bei jedem Lauf
 # an: am 30.09. standen nach einem zweiten `gen_hubs.py`-Lauf ItemList, BreadcrumbList UND
 # FAQPage doppelt auf allen drei Haupt-Hubs. verify hat die Bloecke bis dahin nur GEZAEHLT

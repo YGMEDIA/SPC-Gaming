@@ -1901,3 +1901,78 @@ hash-identisch, vier Gates grün.
     zweiten Mal an zwei Tagen: Erst 19 angeblich leere Schwächen-Listen (falsche
     Anführungszeichen), jetzt 19 angebliche Waisen (nur das nav-Array gelesen, nicht den
     Footer). Beide Male hätte die ungeprüfte Übernahme korrekten Bestand zerstört.
+
+---
+
+## B1 umgesetzt: Kompatibilitäts-Antwort auf jeder Produktseite (01.10.)
+
+Maßnahme 1 der Bücher-Synthese, Grundlage Jäckel und Sheridan: *"Kompatibilitäts-Antwort
+auf jeder Produktseite ganz nach oben. Passt an: iPhone 15 und neuer, Android mit USB-C.
+Passt nicht an: iPhone 14 und älter. Das ist die Frage, die Amazon offenlässt, und wir
+beantworten sie derzeit weiter unten oder gar nicht."*
+
+### Die Entscheidung, die alles andere bestimmt hat
+
+42 handgepflegte Kompatibilitätsblöcke wären exakt die Sorte Text, die diese Session
+reihenweise veraltet vorgefunden hat. Der Block wird deshalb **abgeleitet**, aus genau
+zwei Feldern von products.json: `worksOn` und dem Spec-Feld `Verb.`.
+
+Die einzige Schlussfolgerung, die der Code zieht, ist Gerätegeschichte und keine
+Produktbehauptung: Das iPhone 15 ist das erste mit USB-C. Ein kabelgebundener
+USB-C-Controller passt daher nicht an iPhone 14 und älter, ein Lightning-Controller nicht
+an iPhone 15 und neuer. Dieselbe Herleitung steht seit Juli in den FAQ mehrerer
+Review-Seiten.
+
+### Was die Datenlage erzwungen hat
+
+Sechs Controller hatten **kein** `Verb.`-Feld. Ohne Anschlussart lässt sich die
+iPhone-Generation nicht ableiten. Alle sechs nennen die Verbindung auf ihrer **eigenen
+Review-Seite** — die Information war da, nur nicht im Datenkern. Übernommen, wörtlich,
+ohne etwas zu erfinden (§A5). Damit haben jetzt alle 28 Controller ein `Verb.`.
+
+Dabei kam ein Fall heraus, den nichts prominent zeigte: **Der Backbone One PlayStation
+Edition ist ein Lightning-Gerät.** Er passt an iPhone bis 14 und **nicht** an iPhone 15
+und neuer — die Umkehrung des Normalfalls. Die Seite sagte das im Fließtext ("Passt nur
+an iPhones bis Generation 14"), aber nicht dort, wo jemand es sucht.
+
+Neun Zubehörteile bekommen **keinen** Block: Sie führen keine Maßangabe, und "passt an
+alle Smartphones" wäre eine Behauptung ohne Beleg. Lieber kein Block als ein beliebiger.
+Die fünf Trigger mit Maßangabe zeigen die Gehäusedicke, denn bei ihnen ist genau das die
+Kompatibilitätsfrage.
+
+### Zwei Wege, eine Quelle
+
+Die 29 generierten `/produkte/`-Seiten bekommen den Block von `gen_pages.py`, die 13
+handgepflegten Review-Seiten von `scripts/sync_kompat.py`. Beide ziehen Inhalt und
+Escaping aus derselben Funktion (`scripts/kompat.py`) — nach drei Rissen zwischen zwei
+Kopien derselben Regel an zwei Tagen war das keine Stilfrage mehr.
+
+Für die generierten Seiten deckt der Zeichenvergleich alles ab. Für die handgepflegten
+gibt es ein eigenes Gate: fehlender Block, abweichender Block und ein Block, den die
+Daten nicht mehr hergeben, werden alle drei rot.
+
+### Verify
+
+Drei Rot-Proben bestanden (Block von Hand verfälscht · Block entfernt · `worksOn`
+geändert ohne Nachziehen), `sync_kompat.py` über drei Läufe idempotent, neun Werkzeuge
+hash-identisch, vier Gates grün. Im Browser auf beiden Seitentypen und auf 375 px
+gegengeprüft, kein horizontaler Überlauf.
+
+Abdeckung: 33 von 42 Produktseiten.
+
+### Gelernt
+
+83. **Eine Maßnahme aus einem Buch wird erst brauchbar, wenn man fragt, woher der Text
+    kommt.** "Kompatibilitäts-Antwort nach oben" klingt nach Schreibarbeit. Als
+    Datenableitung gebaut, kostet sie einmal Nachdenken und altert nie — als Handtext
+    wäre sie in drei Monaten so falsch gewesen wie alles andere, was diese Session
+    gefunden hat.
+
+84. **Wo die Daten nichts hergeben, gehört kein Block hin.** Neun Zubehörteile bleiben
+    ohne. Die Versuchung, die Lücke mit "passt an alle Smartphones" zu füllen, ist genau
+    der Mechanismus, über den unbelegte Behauptungen entstehen.
+
+85. **Eine fehlende Angabe im Datenkern kann auf der eigenen Seite längst stehen.** Sechs
+    Controller hatten kein `Verb.`, alle sechs nannten die Verbindung in ihrer eigenen
+    Spec-Tabelle. Bevor man eine Angabe als "nicht vorhanden" behandelt, sucht man sie
+    dort, wo sie schon einmal veröffentlicht wurde.

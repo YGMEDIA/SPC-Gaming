@@ -108,7 +108,7 @@ def build(item):
   <meta name="twitter:title" content="{esc(full_name)} — Datenblatt & Alternativen">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{og_img}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=1d1abd23">
+  <link rel="stylesheet" href="/assets/css/style.css?v=62c88cd1">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}

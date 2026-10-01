@@ -545,6 +545,10 @@
     "platformLabel": "Android",
     "specs": [
       [
+        "Verb.",
+        "USB-C"
+      ],
+      [
         "Bew.",
         "3,9 (135)"
       ]
@@ -574,6 +578,10 @@
     "platformLabel": "iPhone",
     "specs": [
       [
+        "Verb.",
+        "Lightning"
+      ],
+      [
         "Bew.",
         "4,1 (331)"
       ]
@@ -600,6 +608,10 @@
     "platform": "universal",
     "platformLabel": "Universal",
     "specs": [
+      [
+        "Verb.",
+        "BT/USB-C"
+      ],
       [
         "Bew.",
         "4,4 (459)"
@@ -700,6 +712,10 @@
     "platform": "android",
     "platformLabel": "Android",
     "specs": [
+      [
+        "Verb.",
+        "USB-C"
+      ],
       [
         "Bew.",
         "4,0 (306)"
@@ -876,6 +892,10 @@
     "platformLabel": "Universal",
     "specs": [
       [
+        "Verb.",
+        "USB-C"
+      ],
+      [
         "Bew.",
         "4,2 (151)"
       ]
@@ -910,6 +930,10 @@
     "platform": "android",
     "platformLabel": "Android",
     "specs": [
+      [
+        "Verb.",
+        "Bluetooth"
+      ],
       [
         "Bew.",
         "3,5 (649)"

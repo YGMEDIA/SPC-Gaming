@@ -11,7 +11,7 @@
 | Loop | Item | Stand |
 |---|---|---|
 | ~~content-loop~~ **ERLEDIGT 22.09.** (Hall-Cluster war in Lauf 6 wieder das stärkste Signal, 4 Hand-Reviews verlinkt) ~~Hall-Cluster stärken~~ (stärkstes überlebendes Query-Cluster, Lauf 4): interne Links von allen Hall-Produkt-Seiten/Reviews auf blog/hall-effect-erklaert prüfen/ergänzen (Prosa-Links, KEINE Meta-Änderung am Träger-Artikel), hall-effect-vs-tmr als Stütze verzahnen | nächste Session, klein |
-| content-loop | **B1 Kompatibilitäts-Antwort nach oben** auf allen Produktseiten ("Passt an / Passt nicht an") — die Frage, die Amazon offenlässt. Quelle: Bücher-Synthese (Jäckel, Sheridan) | offen, mittel |
+| ~~content-loop~~ **ERLEDIGT 01.10.** ~~B1 Kompatibilitäts-Antwort nach oben~~ — abgeleitet aus `worksOn` und `Verb.` statt getextet (`scripts/kompat.py`), auf 33 von 42 Produktseiten; die neun übrigen sind Zubehör ohne Maßangabe. Sechs Controller bekamen dabei ihr fehlendes `Verb.` aus der eigenen Review-Seite. Befund nebenbei: Der Backbone One PS ist ein Lightning-Gerät und passt **nicht** an iPhone 15+. Gate gegen Drift auf den handgepflegten Seiten. | erledigt |
 | content-loop | **B3 Ein Handlungsaufruf pro Seite** — prüfen, wo mehrere CTAs konkurrieren. Quelle: Miller/StoryBrand | offen, gering |
 | content-loop | **B4 Preisfrage-Seite** "Was kostet ein guter Handy-Controller 2026?" mit echten Spannen aus products.json, per Generator selbstaktualisierend. Quelle: Sheridan (Preis ist sein erstes gemiedenes Thema) | offen, mittel |
 | content-loop | **B5 Problem-Content ausbauen** ("Controller wird nicht erkannt") — direktester Weg zu jemandem mit Gerät in der Hand. Quelle: Sheridan, Jäckel | offen, mittel |

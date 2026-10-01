@@ -67,6 +67,9 @@ def rating_of(p):
 
 A6_SCHWELLE = 3.8
 
+from kompat import kompat_html   # Massnahme B1, eine Quelle fuer Generator und Sync
+
+
 def a6_warnbox(prod):
     """§A6: Produkte unter 3,8 Sternen bekommen eine sichtbare Warnung statt Kaufempfehlung.
 
@@ -241,7 +244,7 @@ def build(prod, c):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=1d1abd23">
+  <link rel="stylesheet" href="/assets/css/style.css?v=62c88cd1">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -330,6 +333,8 @@ def build(prod, c):
     <div class="container">
       <div class="review-grid">
         <div class="review-body">
+
+          {kompat_html(prod, esc)}
 
           <h2>Kurz-Einschätzung</h2>
           <div class="verdict-box">

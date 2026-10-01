@@ -1245,3 +1245,15 @@ main .container[style*="760px"] a.btn, main .container[style*="760px"] a.btn-pri
 .author-name a{color:var(--ink)}
 .author-role{font-size:12px;color:var(--ink-dim);margin:2px 0 6px}
 .author-bio{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:0}
+
+/* Kompatibilitaets-Antwort (Massnahme B1): die Frage, die Amazon offenlaesst.
+   Steht auf jeder Produktseite ganz oben, erzeugt aus products.json. */
+.kompat-box{border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--surface);padding:16px 18px;margin:20px 0}
+.kompat-zeile{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 12px;padding:6px 0}
+.kompat-zeile + .kompat-zeile{border-top:1px solid var(--line-soft)}
+.kompat-label{flex:0 0 auto;min-width:112px;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.kompat-ja .kompat-label{color:var(--good)}
+.kompat-nein .kompat-label{color:var(--red)}
+.kompat-werte{font-size:15px;font-weight:700;color:var(--ink);line-height:1.5}
+.kompat-hinweis{font-size:13px;color:var(--ink-soft);line-height:1.6;margin:8px 0 0}
+@media(max-width:520px){.kompat-label{min-width:100%}}
