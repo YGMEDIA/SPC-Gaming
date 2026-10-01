@@ -1128,6 +1128,36 @@ if _kompat_html:
             err(f"§A1: {_f} fuehrt einen Kompatibilitaets-Block, obwohl products.json "
                 f"fuer {_p['slug']} nichts belegbares hergibt")
 
+# Ein Handlungsaufruf pro Seite (Massnahme B3, Grundlage Miller/StoryBrand). Eine Seite
+# darf denselben Aufruf mehrfach zeigen -- Wiederholung ist richtig --, aber nicht zwei
+# verschiedene primaere Ziele anbieten. Gemessen am 01.10.: Drei Zubehoer-Artikel trugen
+# je zwei primaere Aufrufe, einen themennahen und einen generischen Finder-Block, waehrend
+# 16 von 19 Artikeln genau einen hatten. Dazu ein Button auf der Startseite, dessen
+# BESCHRIFTUNG den Finder versprach und dessen LINK zur Produktliste fuehrte -- schlimmer
+# als Redundanz, weil er etwas anderes tut als er sagt.
+# Kartenbuttons zaehlen nicht mit: "Kaufen" und "Zum Test" gehoeren zum Eintrag, nicht zur
+# Seite. Gezaehlt werden nur btn-primary ausserhalb von Karten, und zwar VERSCHIEDENE
+# Ziele, nicht Vorkommen.
+_OHNE_KARTEN = [
+    (re.compile(r'<(script|style)\b[^>]*>.*?</\1>', re.S), ' '),
+    (re.compile(r'<(header|footer)[^>]*id="site-(?:header|footer)".*?</\1>', re.S), ' '),
+    (re.compile(r'<article class="pcard.*?</article>', re.S), ' '),
+]
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    if 'http-equiv="refresh"' in _h:
+        continue
+    for _re, _ersatz in _OHNE_KARTEN:
+        _h = _re.sub(_ersatz, _h)
+    _ziele = set()
+    for _m in re.finditer(r'<a[^>]*href="([^"]*)"[^>]*class="[^"]*btn-primary[^"]*"'
+                          r'|<a[^>]*class="[^"]*btn-primary[^"]*"[^>]*href="([^"]*)"', _h):
+        _ziele.add(_m.group(1) or _m.group(2))
+    if len(_ziele) > 1:
+        err(f"§B3: {_f} bietet {len(_ziele)} verschiedene primaere Handlungsaufrufe an "
+            f"({', '.join(sorted(_ziele))}) — eine Seite fuehrt an genau ein Ziel, "
+            f"Wiederholung desselben Aufrufs ist erlaubt")
+
 # Doppelte Schema-Bloecke (§A4). Ein nicht-idempotenter Generator haengt bei jedem Lauf
 # an: am 30.09. standen nach einem zweiten `gen_hubs.py`-Lauf ItemList, BreadcrumbList UND
 # FAQPage doppelt auf allen drei Haupt-Hubs. verify hat die Bloecke bis dahin nur GEZAEHLT

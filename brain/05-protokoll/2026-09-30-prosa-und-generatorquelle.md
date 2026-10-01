@@ -2054,3 +2054,70 @@ gegengeprüft. Selbstaktualisierung an einer Preisänderung bewiesen.
 88. **Wer einen Generator baut, trägt ihn in die Nachzieh-Listen ein.** Sonst erzeugt sein
     Alleinlauf einen roten Stand, und der nächste Durchgang sucht den Fehler in der Seite
     statt in der Kette.
+
+---
+
+## B3 umgesetzt: ein Handlungsaufruf pro Seite (01.10.)
+
+Maßnahme 4 der Bücher-Synthese, Grundlage Miller/StoryBrand: Prüfen, wo mehrere
+Handlungsaufrufe konkurrieren, und auf einen reduzieren.
+
+### Die erste Messung war die falsche
+
+Zählt man alle Buttons, liegt die Startseite bei 15 und `/produkte/` bei 85. Das sieht
+nach einem massiven Problem aus und ist keins: Jede Produktkarte trägt "Kaufen" und
+"Zum Test". Diese Buttons gehören zum Eintrag, nicht zur Seite. Millers Regel meint den
+**seitenweiten** Aufruf.
+
+Ohne Kartenbuttons gerechnet, blieben vier Fälle übrig, von denen drei keine waren:
+- Die fünf Vergleichsseiten tragen zwei Kauf-Buttons, aber bereits richtig gewichtet:
+  ein `btn-primary` für den empfohlenen Controller, der Rest sekundär. Nachgeprüft, ob
+  der primäre Button auch wirklich auf das Produkt zeigt, das die Seite empfiehlt: bei
+  allen fünf ja.
+- Die 42 Produktseiten mit `['Kaufen →', '← Alle Produkte']`: Der zweite ist ein
+  Zurück-Link, kein konkurrierender Aufruf.
+
+### Was echt war
+
+**Ein Button auf der Startseite tat etwas anderes, als er sagte.** Beschriftung
+"Passenden Controller finden →", Ziel `/produkte/`. Das ist schlimmer als Redundanz,
+weil es ein Versprechen bricht. Jetzt zeigt er auf den Finder.
+
+**Drei Zubehör-Artikel trugen zwei primäre Aufrufe.** 16 von 19 Blog-Artikeln haben genau
+einen. Die Artikel zu Finger Sleeves, Kühlern und Triggern hatten zusätzlich zum
+themennahen Aufruf noch den generischen Finder-Block, also einen zweiten `btn-primary`
+in eine andere Produktkategorie. Der Finder-Block ist laut eigener Überschrift ohnehin
+ein Rückfall ("Noch unsicher, welcher Controller passt?") und steht jetzt sekundär.
+
+**Zwei Formulierungen für dieselbe Bestenliste** auf der Startseite, vereinheitlicht.
+
+### Ein eigener Fehler, beim Messen gefunden
+
+Die Prüfung, ob der Finder wirklich drei Fragen stellt, hat eine Falschangabe
+aufgedeckt, die ich **heute selbst** eingebaut habe: Die 404-Seite sagte "In vier Fragen
+zur Empfehlung". Der Finder fragt drei Dinge ab (Budget, Plattform, Priorität), und 22
+Stellen im Repo sagen korrekt "3 Fragen". Korrigiert.
+
+### Gate
+
+Eine Seite darf denselben Aufruf mehrfach zeigen, aber nicht zwei verschiedene primäre
+Ziele anbieten. Gezählt werden `btn-primary` außerhalb von Karten, und zwar verschiedene
+**Ziele**, nicht Vorkommen. Zwei Proben: zweiter primärer Aufruf zurückgeholt → rot;
+derselbe Aufruf ein viertes Mal auf der Startseite → grün.
+
+Stand jetzt: alle 83 Seiten mit primärem Aufruf haben genau ein Ziel.
+
+### Gelernt
+
+91. **Die naheliegende Messung ist oft die falsche.** "Wie viele Buttons hat die Seite"
+    liefert 85 für eine Listenseite und beschreibt nichts. Die Frage war "wie viele
+    verschiedene Ziele drängt die Seite dem Leser auf" — dieselbe Zahl, anders gezählt,
+    von 85 auf 1.
+
+92. **Ein Button, der etwas anderes tut als er sagt, ist schlimmer als ein überflüssiger.**
+    Die Redundanz kostet Aufmerksamkeit, der Etikettenschwindel kostet Vertrauen. Beim
+    Zählen von Aufrufen also immer auch Beschriftung gegen Ziel halten.
+
+93. **Eine Messung deckt Fehler auf, die mit ihrem Anlass nichts zu tun haben.** Die
+    Frage "stellt der Finder wirklich drei Fragen?" war nur eine Nebenprüfung und hat
+    eine falsche Zahl gefunden, die ich Stunden vorher selbst geschrieben hatte.
