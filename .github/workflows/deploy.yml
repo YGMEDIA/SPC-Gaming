@@ -15,7 +15,32 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Pflicht-Gate vor jedem Deploy (Yasin, 01.10.2026).
+  # Bis dahin lief verify.py ausschliesslich von Hand: Ein Push, bei dem das vergessen
+  # wurde, ging ungeprueft live. Als eigener Job statt als Schritt im Deploy, damit die
+  # Abhaengigkeit strukturell ist (needs) und nicht von der Reihenfolge der Schritte
+  # abhaengt.
+  # verify.py braucht nur die Standardbibliothek und endet mit Exit 1, sobald ein Gate
+  # rot ist; genau das stoppt hier den Deploy.
+  verify:
+    name: Gate - verify.py
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          # Geprueft: die Skripte nutzen keine Konstrukte oberhalb von 3.9, die
+          # Festlegung dient nur der Reproduzierbarkeit.
+          python-version: '3.12'
+
+      - name: verify.py
+        run: python3 scripts/verify.py
+
   deploy:
+    needs: verify
     runs-on: ubuntu-latest
     environment:
       name: github-pages
