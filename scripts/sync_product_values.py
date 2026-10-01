@@ -37,6 +37,7 @@ SKIP_DIRS = {'.git', 'brain', 'assets', 'node_modules', 'scripts', '.github'}
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gen_hubs import esc   # gleiche Escaping-Regel wie der Karten-Generator
+from schema_util import typen_von   # eine Definition fuer beide Skripte
 
 # Reichweite EINES Spec-Chips, gemeinsam von Schreiber und Audit benutzt. Getrennte
 # Muster sind am 30.09. zweimal auseinandergelaufen (erst beim Escaping, dann bei der
@@ -55,14 +56,6 @@ from gen_hubs import esc   # gleiche Escaping-Regel wie der Karten-Generator
 # fehlendes </span> nicht den NAECHSTEN Chip mitfrisst -- dann gibt es gar keinen Treffer,
 # und genau das meldet der else-Zweig im Audit.
 CHIP_REST = r'</span>\s*((?:(?!</span>|<span)[\s\S])*)</span>' 
-
-
-def typen_von(obj):
-    """@type kann ein String ODER eine Liste sein. Eine Kopie dieser Logik stand hier
-    inline, waehrend verify.py dieselbe als Funktion fuehrt — zwei Orte fuer dieselbe
-    Regel laufen zuverlaessig auseinander (dreimal an einem Tag passiert)."""
-    t = obj.get('@type') if isinstance(obj, dict) else None
-    return [t] if isinstance(t, str) else (list(t) if isinstance(t, (list, tuple)) else [])
 
 
 def load_products():

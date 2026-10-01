@@ -15,13 +15,8 @@ ERRORS, WARN = [], []
 def err(msg): ERRORS.append(msg)
 def warn(msg): WARN.append(msg)
 
-def _typen_von(_obj):
-    """@type kann ein String ODER eine Liste sein. Ein Vergleich `_obj.get('@type') in
-    MENGE` stuerzt bei einer Liste mit TypeError ab — statt Befunden kaeme ein Traceback,
-    und alle uebrigen Befunde des Laufs gingen verloren."""
-    _t = _obj.get('@type') if isinstance(_obj, dict) else None
-    return [_t] if isinstance(_t, str) else (list(_t) if isinstance(_t, (list, tuple)) else [])
-
+sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+from schema_util import typen_von as _typen_von   # eine Definition fuer beide Skripte
 
 # ---------- 1 · Invarianten ----------
 for f in ['CNAME', '.nojekyll', 'llms.txt', 'robots.txt', 'sitemap.xml', 'assets/data/products.json']:
@@ -923,11 +918,22 @@ if os.path.exists(_LT):
         _ltd = []
     _slugs = {x["slug"] for x in items}
     for _e in (_ltd if isinstance(_ltd, list) else []):
-        for _a in (_e.get("alternatives") or []):
-            if _a not in _slugs:
+        _alt = _e.get("alternatives") or []
+        _bekannt_alt = [_a for _a in _alt if _a in _slugs]
+        for _a in _alt:
+            if _a == _e.get("slug"):
+                err(f"§A1: {_LT}: {_e.get('slug')} fuehrt sich selbst als Alternative")
+            elif _a not in _slugs:
                 err(f"§A1: {_LT}: {_e.get('slug')} verweist als Alternative auf "
                     f"\"{_a}\", das products.json nicht kennt — der Verweis laeuft ins "
                     f"Leere und die Karte fehlt still auf der Seite")
+        # Der leere Fall war bis zur 19. Runde ungemeldet, waehrend der Generator daran
+        # mit IndexError starb: Die Reparatur der Vorrunde hatte den Fehler nur zwei
+        # Zeilen weiter geschoben. Diese Seiten leben davon, auf etwas Aktuelles zu
+        # verweisen — ohne Alternative sind sie eine Sackgasse.
+        if not _bekannt_alt:
+            err(f"§A1: {_LT}: {_e.get('slug')} hat keine einzige bekannte Alternative — "
+                f"die Seite verweist auf kein aktuelles Produkt mehr")
 
 # Doppelte Schema-Bloecke (§A4). Ein nicht-idempotenter Generator haengt bei jedem Lauf
 # an: am 30.09. standen nach einem zweiten `gen_hubs.py`-Lauf ItemList, BreadcrumbList UND
@@ -1151,7 +1157,6 @@ try:
     #     gen_longtail.py hat jetzt einen __main__-Guard und generierte_seiten().
     _handgepflegt = [p['slug'] for p in items
                      if (p.get('detail') or '') and not (p['detail']).startswith('/produkte/')]
-    _bekannt = {(p.get('detail') or '').lstrip('/') + 'index.html' for p in items}
     # Verwaiste Detailseiten: Seite liegt unter /produkte/, kein Generator baut sie und
     # products.json kennt den Slug nicht. Entsteht, wenn ein Produkt aus dem Datenkern
     # entfernt wird und die Seite live stehen bleibt — dann zeigt sie dauerhaft Werte,

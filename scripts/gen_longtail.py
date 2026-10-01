@@ -77,7 +77,16 @@ def build(item):
         f'<div><div class="rc-name">{esc(voller_name(a))}</div>'
         f'<div class="rc-price">{esc(a["price"] or "Preis auf Amazon")}</div></div>'
         f'<span class="rc-arrow">›</span></a>' for a in alts)
-    top_alt = alts[0]
+    # Ohne verbleibende Alternative gibt es keine Top-Empfehlung. Das war bis zur
+    # 19. Pruefrunde ein IndexError an genau der Stelle, an der der KeyError eine
+    # Runde vorher behoben wurde — die Reparatur hatte den Fehler nur zwei Zeilen
+    # weiter geschoben. Gemeldet wird der leere Fall jetzt vom Gate in verify.py.
+    top_alt = alts[0] if alts else None
+    alt_button = (
+        f'<a class="btn btn-primary" href="{detail_url(top_alt)}">'
+        f'Beste Alternative: {esc(top_alt["name"])} →</a>'
+        if top_alt else
+        '<a class="btn btn-primary" href="/produkte/">Alle aktuellen Modelle →</a>')
 
     return f'''<!DOCTYPE html>
 <html lang="de">
@@ -204,7 +213,7 @@ def build(item):
             <div class="cta-name">{esc(full_name)}</div>
             <div class="cta-brand">{esc(item['brand'])} · Altmodell</div>
             <div class="cta-avail">Nicht mehr regulär erhältlich — wir verlinken deshalb keinen Kauf-Button.</div>
-            <a class="btn btn-primary" href="{detail_url(top_alt)}">Beste Alternative: {esc(top_alt['name'])} →</a>
+            {alt_button}
             <a class="btn btn-secondary" href="/controller-finder/">Controller finden →</a>
             <p class="cta-note">Alternative führt zu unserem Test bzw. Kurzcheck mit aktuellem Preis.</p>
           </div>

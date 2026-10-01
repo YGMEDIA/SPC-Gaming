@@ -78,10 +78,10 @@ for p in items:
 for mehrdeutig in ('Backbone One', 'Bluetooth Controller (weiß)'):
     ALIAS.pop(mehrdeutig, None)
 NAMEN = sorted(ALIAS, key=len, reverse=True)
-# Alle im Sortiment vorkommenden Preise. Ein Wert, der zu GAR KEINEM Produkt gehört,
-# ist der verlässliche Hinweis auf einen veralteten Stand.
-ALLE_PREISE = {p2 for p2 in (int(re.search(r'(\d+)', (x.get('price') or '0').replace('.', '')).group(1))
-                             for x in items) if p2}
+# ALLE_PREISE stand hier als Freigabeliste aller im Sortiment vorkommenden Preise und
+# hat vier Pruefrunden lang einen falschen Preis gedeckt (46 statt 53 EUR auf der
+# X2s-Seite). Sie ist in Runde 5 aus der Logik entfernt worden, die Definition blieb
+# stehen — und verify.py beschreibt die Loeschung seitdem als erfolgt. Jetzt ist sie weg.
 
 # Anhängende Konstruktionen. Alles davor ist der Produktname, die Gruppe der Wert.
 # \s*(?:</a>)? faengt "…G8 Plus</a> für 76 Euro" mit ab.
@@ -167,8 +167,11 @@ def luecke_ok(m):
 # Zusätzlich zu den HTML-Seiten werden Textquellen gelesen, die Produktwerte tragen:
 # llms.txt (die GEO-Datei für KI-Crawler) und longtail.json (Quelle der zehn verwaisten
 # Datenblätter, ein zweiter Generator mit demselben Veraltungsrisiko).
-# scripts/gen_hubs.py traegt Produktwerte als Literal im HUBS-Dict und ist laut eigenem
-# Kommentar NICHT idempotent: Ein veralteter Wert dort faellt nie durch einen Regen auf.
+# scripts/gen_hubs.py traegt Produktwerte als Literal im HUBS-Dict: Ein veralteter Wert
+# dort faellt nie durch einen Regen auf, deshalb steht die Datei hier.
+# (Der frueher an dieser Stelle genannte Grund "nicht idempotent" gilt seit dem
+# Marker-Umbau vom 30.09. nicht mehr — zwei Laeufe liefern denselben Hash. Eine behobene
+# Schwaeche weiter zu behaupten schickt den naechsten Durchgang auf die falsche Faehrte.)
 # Dritte Generator-Quelle nach gen_content.py und longtail.json.
 # assets/js/*.js war die siebte ungeprüfte Quelle: Kein Gate las sie, obwohl main.js
 # den Footer in 109 Seiten injiziert und dort eine Empfehlungsschwelle behauptet hat,
