@@ -1793,3 +1793,111 @@ grün.
 79. **Eindeutigkeit prüft man für jedes Feld, das als Schlüssel benutzt wird.** `detail`
     wurde in Runde 16 zur Identität befördert, ohne die Prüfung mitzunehmen, die `slug`
     und `asin` längst hatten. Wer ein Feld zum Schlüssel macht, erbt dessen Pflichten.
+
+---
+
+## Nachtrag: die restlichen ungegateten Flächen (01.10.)
+
+Nach der Freigabe die Liste aus der Landkarte abgearbeitet. Acht Flächen, zwei echte
+Befunde darin, beide von mir selbst verursacht.
+
+### Was gebaut wurde
+
+**robots.txt inhaltlich.** Bis dahin wurde nur geprüft, DASS die Datei existiert. Ein
+versehentliches `Disallow: /` hätte die komplette Domain aus dem Index genommen, und alle
+vier Gates wären grün geblieben: der teuerste denkbare Fehler mit der billigsten
+denkbaren Ursache. Geprüft werden jetzt: kein `Disallow: /` im Block für `User-agent: *`,
+die `Sitemap:`-Zeile zeigt auf unsere Sitemap, und keine URL der Sitemap ist durch eine
+Disallow-Regel gesperrt.
+
+**Sitemap-Rückrichtung von `warn()` auf `err()`.** Eine indexierbare Seite, die nicht in
+der Sitemap steht, wird schlechter gefunden. Vor der Verschärfung gemessen: 0 Seiten
+betroffen.
+
+**longtail.json als Struktur.** Zwei Gates lasen die Datei, aber nur als Zeichenkette.
+Dass ein Pflichtfeld leer ist, zwei Einträge denselben Slug oder dasselbe Keyword tragen
+oder ein Slug zugleich in products.json steht, hätte keins gemerkt — products.json hat
+diese Prüfungen seit Langem.
+
+**products.json gegen das Vokabular in produkte.js.** `platform` und `type` waren nur auf
+Nicht-Leer geprüft, steuern im Browser aber Filterleiste und Label. Ein Wert, den
+`PLAT_ORDER` nicht kennt, erzeugt gar keinen Filter-Chip. Und `platformLabel` ist nicht
+frei wählbar, sondern genau das Label zu `platform`.
+
+**Verwaiste Seiten im SEO-Sinn.** Die Rückrichtung war nur für `/produkte/` gegen die
+Generatoren geprüft, nicht gegen die Verlinkung — und die ist es, die zählt.
+
+**video gegen products.json.** `url` und `poster` waren auf Herkunft geprüft, aber nie
+gegen den Datenkern; `duration` kam in keinem der vier Gates vor, wird aber sichtbar als
+"Länge N Min." ausgespielt.
+
+**Eine eigene 404-Seite**, die es vorher nicht gab (GitHub lieferte seine generische).
+
+### Die zwei Befunde
+
+**`viture-8bitdo` trug `platform: "universal"` und `platformLabel: "Android"`** — meine
+eigene halbe Korrektur aus Runde 16. Damals habe ich das Label geändert, weil
+`ALT_PLATFORM["Universal"]` zu "für Android & iPhone" wird und das dem Claim "Kein iOS"
+widersprach. Den Schlüssel daneben habe ich stehen lassen.
+Beim Nachsehen stellte sich auch meine damalige Annahme als falsch heraus: `worksOn:
+universal` heißt nicht "läuft auf iPhone", sondern ist eine Kategoriezugehörigkeit — alle
+18 Zubehörteile tragen sie. Richtig ist `platform: "android"`, weil die zwei Geschwister
+mit identischem `worksOn` (8BitDo Ultimate 2C, GameSir X3 Pro) genau das tragen. Jetzt
+angeglichen, und das neue Gate hält die Regel fest.
+
+**`produkte/gamesir-g4s/` war verwaist.** Indexierbar, in der Sitemap, von keiner
+einzigen Seite verlinkt. Die neun anderen Longtail-Datenblätter werden alle von einem
+Marken-Hub verlinkt; im GameSir-Hub listet ein handgeschriebener Satz X2, X3 und T4 Pro,
+der G4s fehlte. Ergänzt.
+
+### Zwei Beinahe-Fehler beim Bauen
+
+**Die erste Verlinkungsmessung meldete 19 Waisen.** Sie las nur das `nav`-Array aus
+main.js, nicht die Links im Footer, der ebenfalls dort entsteht. Mit allen JS-Dateien
+blieb genau eine übrig. Hätte ich die 19 übernommen, hätte ich 18 korrekt unverlinkte
+Redirect-Stubs "repariert".
+
+**Die 404-Seite rendete unformatiert.** Ich hatte `related-card` benutzt — eine Klasse,
+die nur in einem Seiten-`<style>` von `gen_longtail.py` existiert, nicht in style.css.
+Der Pattern-Katalog warnt davor seit Juli, und verify fängt ungestyltes Markup
+ausdrücklich nicht. Gesehen habe ich es erst im Browser. Jetzt `cat-card`/`cat-grid` aus
+style.css, plus eine Prüfung, dass keine Klasse der Seite ohne Stil dasteht.
+
+Dazu: Die 404 erbte aus dem Kontakt-Gerüst einen BreadcrumbList, der einen Pfad
+"Home > Rechtliches > Kontakt" behauptete, den es auf einer Fehlerseite nicht gibt.
+Entfernt.
+
+### Werkzeuge mitgezogen
+
+`404.html` wäre die einzige ausgelieferte HTML-Datei ohne Gate gewesen: Alle drei
+Werkzeuge globben `**/index.html`. `verify.py`, `sync_header.py` und
+`bump_asset_version.py` nehmen sie jetzt mit — sonst hätte das Schließen einer
+ungegateten Fläche eine neue geöffnet.
+Das canonical-Gate gilt jetzt für **indexierbare** Seiten statt für alle: Eine 404 hat
+keine eigene URL, sie antwortet unter jeder, ein Selbst-canonical wäre dort falsch. Das
+ist eine Regel, keine Ausnahme für einen Einzelfall.
+
+### Verify
+
+Siebzehn Rot-Proben, alle bestanden: `Disallow: /` · fehlende Sitemap-Zeile · falsche
+Sitemap-Zeile · robots sperrt eine Sitemap-URL · Seite fehlt in der Sitemap · leeres
+Longtail-Feld · Slug doppelt · Keyword doppelt · Slug-Kollision mit products.json ·
+platformLabel passt nicht zu platform · unbekanntes platform · unbekannter type ·
+geschrumpftes JS-Vokabular · unverlinkte Seite · fremdes Video-Poster · fehlende
+Videolänge · 404 im Browser gegengeprüft. Acht Generatoren über drei Durchläufe
+hash-identisch, vier Gates grün.
+
+### Zusätzlich gelernt
+
+80. **Eine Datei, die nur auf Existenz geprüft wird, ist nicht geprüft.** `robots.txt`
+    stand seit Juli in der Invariantenliste — als Dateiname. Ein `Disallow: /` darin wäre
+    durch alle vier Gates gegangen.
+
+81. **Wer eine ungegatete Fläche schließt, prüft zuerst, ob er dabei eine neue öffnet.**
+    Die 404-Seite wäre die einzige ausgelieferte HTML ohne Gate gewesen, weil alle
+    Werkzeuge `**/index.html` globben.
+
+82. **Eine Messung, die 19 Treffer meldet, ist verdächtig, nicht alarmierend.** Zum
+    zweiten Mal an zwei Tagen: Erst 19 angeblich leere Schwächen-Listen (falsche
+    Anführungszeichen), jetzt 19 angebliche Waisen (nur das nav-Array gelesen, nicht den
+    Footer). Beide Male hätte die ungeprüfte Übernahme korrekten Bestand zerstört.

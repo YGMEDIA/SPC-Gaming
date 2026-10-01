@@ -86,7 +86,7 @@ def main():
     inhalt = header_html(nav, trust)
     muster = re.compile(r'(<header[^>]*id="site-header"[^>]*>)(.*?)(</header>)', re.S)
     n = 0
-    for f in sorted(glob.glob('**/index.html', recursive=True)):
+    for f in sorted(glob.glob('**/index.html', recursive=True)) + (['404.html'] if os.path.exists('404.html') else []):
         if f.startswith(('brain/', 'node_modules/')):
             continue
         t = open(f, encoding='utf-8').read()

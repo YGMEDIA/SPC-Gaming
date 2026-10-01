@@ -504,7 +504,7 @@
     "detail": "/produkte/viture-8bitdo/",
     "slug": "viture-8bitdo",
     "type": "controller",
-    "platform": "universal",
+    "platform": "android",
     "platformLabel": "Android",
     "specs": [
       [

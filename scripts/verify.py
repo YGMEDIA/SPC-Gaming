@@ -44,6 +44,12 @@ for _z in ('marken/ipega', 'marken/mocute'):
 
 pages = sorted(glob.glob('**/index.html', recursive=True))
 pages = [p for p in pages if not p.startswith(('brain/', 'scripts/', '.github/'))]
+# 404.html gehoert dazu: GitHub Pages liefert sie unter jeder nicht existierenden URL, sie
+# traegt also Kopf, Fuss, Pflichtangaben und Assets wie jede andere Seite. Ohne sie hier
+# waere sie die einzige ausgelieferte HTML-Datei ohne Gate — und damit haette das
+# Schliessen einer ungegateten Flaeche eine neue geoeffnet.
+if os.path.exists('404.html'):
+    pages.append('404.html')
 
 # ---------- 2 · products.json ----------
 try:
@@ -130,9 +136,48 @@ try:
         s = open(p, encoding='utf-8').read()
         if 'noindex' in s: continue
         url = 'https://smartphone-controller.com/' + ('' if p == 'index.html' else os.path.dirname(p) + '/')
-        if url not in locs: warn(f"Indexierbare Seite fehlt in Sitemap: {url}")
+        # err statt warn: Eine indexierbare Seite, die nicht in der Sitemap steht,
+        # wird schlechter gefunden — das ist ein Fehler, keine Randnotiz. Gemessen
+        # vor der Umstellung: 0 Seiten betroffen, die Verschaerfung bricht nichts.
+        if url not in locs:
+            err(f"§B: Indexierbare Seite fehlt in der Sitemap: {url}")
 except Exception as e:
     err(f"Sitemap: {e}")
+
+# robots.txt inhaltlich (§B). Bis 01.10. wurde nur geprueft, DASS die Datei existiert.
+# Ein versehentliches "Disallow: /" haette die komplette Domain aus dem Index genommen,
+# und alle vier Gates waeren gruen geblieben — der teuerste denkbare Fehler mit der
+# billigsten denkbaren Ursache.
+if os.path.exists('robots.txt'):
+    _rb = open('robots.txt', encoding='utf-8').read()
+    # Nur der Block fuer "User-agent: *" zaehlt; die KI-Crawler-Bloecke duerfen eigene
+    # Regeln haben.
+    _bloecke = re.split(r'(?mi)^User-agent:', _rb)
+    _stern = next((b for b in _bloecke if b.strip().startswith('*')), '')
+    if not _stern:
+        err("§B: robots.txt hat keinen Block fuer \"User-agent: *\"")
+    _dis = re.findall(r'(?mi)^\s*Disallow:\s*(\S*)', _stern)
+    if '/' in _dis:
+        err("§B: robots.txt sperrt mit \"Disallow: /\" die komplette Domain")
+    # Die Sitemap-Zeile muss auf unsere Sitemap zeigen.
+    _smz = re.search(r'(?mi)^\s*Sitemap:\s*(\S+)', _rb)
+    if not _smz:
+        err("§B: robots.txt nennt keine Sitemap")
+    elif _smz.group(1) != 'https://smartphone-controller.com/sitemap.xml':
+        err(f"§B: robots.txt verweist auf die Sitemap {_smz.group(1)}, erwartet ist "
+            f"https://smartphone-controller.com/sitemap.xml")
+    # Keine URL der Sitemap darf von robots.txt gesperrt sein. Eine Seite anzubieten und
+    # gleichzeitig das Crawlen zu verbieten ist ein Widerspruch, den Google meldet.
+    if os.path.exists('sitemap.xml'):
+        _locs2 = re.findall(r'<loc>([^<]+)</loc>', open('sitemap.xml', encoding='utf-8').read())
+        for _u in _locs2:
+            _pfad = _u.replace('https://smartphone-controller.com', '') or '/'
+            for _d in _dis:
+                if not _d:
+                    continue
+                if re.match('^' + re.escape(_d).replace(r'\*', '.*'), _pfad):
+                    err(f"§B: sitemap.xml fuehrt {_pfad}, robots.txt sperrt es mit "
+                        f"\"Disallow: {_d}\"")
 
 # ---------- 5 · No-JS-Statik (§A2) ----------
 for f, minimum in [('controller/ios/index.html', 20), ('controller/android/index.html', 20),
@@ -833,7 +878,11 @@ for _f in pages:
 # aendert. 109 von 109 sind korrekt, geprueft hat es bisher nichts.
 for _f in pages:
     _h = open(_f, encoding='utf-8').read()
-    if 'http-equiv="refresh"' in _h:
+    # Das Gate schuetzt INDEXIERBARE Seiten: Nur dort entscheidet ein falscher canonical
+    # darueber, ob die Seite im Index landet. Redirect-Stubs zeigen bewusst auf ihr Ziel,
+    # und 404.html hat gar keine eigene URL — sie antwortet unter jeder. Ein
+    # Selbst-canonical waere dort sogar falsch.
+    if 'http-equiv="refresh"' in _h or 'noindex' in _h:
         continue
     _soll = 'https://smartphone-controller.com/' + ('' if _f == 'index.html' else os.path.dirname(_f) + '/')
     _m = re.search(r'<link[^>]*rel="canonical"[^>]*href="([^"]*)"', _h) or \
@@ -856,6 +905,21 @@ for _f in pages:
                                                   'https://m.media-amazon.com/images/S/')):
                 err(f"§A5: {_f} bindet ein Video mit {_attr} \"{_a.group(1)}\" ein — "
                     f"Produktvideos und ihre Poster muessen aus dem Amazon-Katalog kommen")
+    # Und gegen products.json: url, poster und duration sind dort gepflegt, auf der Seite
+    # standen sie bisher ungeprueft. duration kam in keinem der vier Gates vor, wird aber
+    # sichtbar als "Laenge N Min." ausgespielt.
+    _pv = _externes_produkt(_f)
+    _vd = (_pv or {}).get('video') or {}
+    if _vd:
+        for _feld, _muster in (('url', r'<video[^>]*src="([^"]*)"'),
+                               ('poster', r'<video[^>]*poster="([^"]*)"')):
+            _vm = re.search(_muster, _h)
+            if _vm and _vd.get(_feld) and _vm.group(1) != _vd[_feld]:
+                err(f"§A1: {_f} zeigt video.{_feld} \"{_vm.group(1)}\", products.json "
+                    f"fuehrt fuer {_pv['slug']} \"{_vd[_feld]}\"")
+        if _vd.get('duration') and '<video' in _h and str(_vd['duration']) not in _h:
+            err(f"§A1: {_f} nennt die Videolaenge {_vd['duration']} aus products.json "
+                f"nirgends, bindet das Video aber ein")
 
 # Ungueltige "<" im Markup (§A2). Zwei Klassen, mit unterschiedlicher Schwere:
 #   1. Ein "<", das ein Tag EROEFFNET, aber nie mit ">" schliesst — der Parser
@@ -917,6 +981,26 @@ if os.path.exists(_LT):
         err(f"§A1: {_LT} ist kein gueltiges JSON ({_e})")
         _ltd = []
     _slugs = {x["slug"] for x in items}
+    # Struktur statt nur Rohtext. longtail.json wurde von zwei Gates gelesen, aber nur als
+    # Zeichenkette (Datenstand, verbotene Formulierungen, Preise im Fliesstext). Dass ein
+    # Pflichtfeld leer ist oder zwei Eintraege denselben Slug tragen, haette keins gemerkt
+    # — products.json hat beide Pruefungen seit Langem.
+    _lt_slugs, _lt_kw = set(), set()
+    for _e in (_ltd if isinstance(_ltd, list) else []):
+        for _feld in ('slug', 'brand', 'name', 'keyword', 'claim', 'verdict', 'desc',
+                      'specs', 'availability', 'faqs', 'alternatives'):
+            if not _e.get(_feld):
+                err(f"§A1: {_LT}: {_e.get('slug', '?')} hat kein \"{_feld}\"")
+        if _e.get('slug') in _lt_slugs:
+            err(f"§A1: {_LT}: Slug doppelt: {_e.get('slug')}")
+        if _e.get('keyword') in _lt_kw:
+            err(f"§A1: {_LT}: Keyword doppelt: {_e.get('keyword')} — zwei Seiten auf "
+                f"dasselbe Suchwort machen sich gegenseitig Konkurrenz")
+        _lt_slugs.add(_e.get('slug'))
+        _lt_kw.add(_e.get('keyword'))
+        if _e.get('slug') in _slugs:
+            err(f"§A1: {_LT}: {_e.get('slug')} steht auch in products.json — ein Slug "
+                f"gehoert in genau eine der beiden Quellen")
     for _e in (_ltd if isinstance(_ltd, list) else []):
         _alt = _e.get("alternatives") or []
         _bekannt_alt = [_a for _a in _alt if _a in _slugs]
@@ -934,6 +1018,82 @@ if os.path.exists(_LT):
         if not _bekannt_alt:
             err(f"§A1: {_LT}: {_e.get('slug')} hat keine einzige bekannte Alternative — "
                 f"die Seite verweist auf kein aktuelles Produkt mehr")
+
+# products.json gegen das Vokabular in assets/js/produkte.js (§A1). Die Felder `platform`
+# und `type` waren bis 01.10. nur auf Nicht-Leer geprueft, obwohl sie im Browser die
+# Filterleiste und die Label steuern: Ein Wert, den PLAT_ORDER nicht kennt, erzeugt gar
+# keinen Filter-Chip, ein unbekannter `type` zeigt den Rohwert statt eines Labels.
+# `platformLabel` ist nicht frei waehlbar, sondern genau das Label zu `platform`. Diese
+# Regel hat sofort eine Abweichung gefunden, die ich selbst eingebaut hatte: viture-8bitdo
+# trug platform "universal" und label "Android", waehrend seine zwei Geschwister mit
+# identischem worksOn beides auf "android" haben.
+_PJS = 'assets/js/produkte.js'
+if os.path.exists(_PJS):
+    _pjs = open(_PJS, encoding='utf-8').read()
+
+    def _js_karte(_name):
+        _m = re.search(_name + r"\s*=\s*\{(.*?)\}", _pjs, re.S)
+        return dict(re.findall(r"'?([\w-]+)'?\s*:\s*'([^']*)'", _m.group(1))) if _m else {}
+
+    def _js_liste(_name):
+        _m = re.search(_name + r"\s*=\s*\[(.*?)\]", _pjs, re.S)
+        return re.findall(r"'([^']+)'", _m.group(1)) if _m else []
+
+    _PLAT_LABELS = _js_karte('PLATFORM_LABELS')
+    _TYPE_LABELS = _js_karte('TYPE_LABELS')
+    _PLAT_ORDER = _js_liste('PLAT_ORDER')
+    if not (_PLAT_LABELS and _TYPE_LABELS and _PLAT_ORDER):
+        err(f"§A1: Vokabular in {_PJS} nicht lesbar (PLATFORM_LABELS / TYPE_LABELS / "
+            f"PLAT_ORDER) — ohne es laesst sich products.json nicht dagegen pruefen")
+    else:
+        for _p in items:
+            _pl, _ty = _p.get('platform'), _p.get('type')
+            if _pl not in _PLAT_ORDER:
+                err(f"§A1: {_p['slug']} hat platform \"{_pl}\", das PLAT_ORDER in {_PJS} "
+                    f"nicht kennt — fuer diesen Wert entsteht kein Filter-Chip")
+            if _pl not in _PLAT_LABELS:
+                err(f"§A1: {_p['slug']} hat platform \"{_pl}\" ohne Label in {_PJS}")
+            elif _p.get('platformLabel') != _PLAT_LABELS[_pl]:
+                err(f"§A1: {_p['slug']} traegt platformLabel \"{_p.get('platformLabel')}\", "
+                    f"zu platform \"{_pl}\" gehoert aber \"{_PLAT_LABELS[_pl]}\"")
+            if _ty not in _TYPE_LABELS:
+                err(f"§A1: {_p['slug']} hat type \"{_ty}\", das TYPE_LABELS in {_PJS} nicht "
+                    f"kennt — die Seite zeigt dann den Rohwert statt eines Labels")
+
+# Verwaiste Seiten im SEO-Sinn (§B): indexierbar, in der Sitemap, aber von keiner
+# einzigen Seite verlinkt. Die Rueckrichtung war bis 01.10. nur fuer /produkte/ gegen die
+# Generatoren geprueft, nicht gegen die Verlinkung — und die ist es, die zaehlt: Eine Seite
+# ohne einen einzigen internen Link wird selten gecrawlt und rankt entsprechend.
+# Gefunden hat die erste Messung genau eine: produkte/gamesir-g4s/, waehrend die neun
+# anderen Longtail-Datenblaetter alle von einem Marken-Hub verlinkt sind.
+# Links aus den JS-Dateien zaehlen mit (Navigation und Footer entstehen dort), noindex-
+# Seiten und Redirect-Stubs sind ausgenommen — die sollen bewusst unverlinkt sein.
+_url_zu_datei = {('/' if _f == 'index.html' else '/' + os.path.dirname(_f).replace(os.sep, '/') + '/'): _f
+                 for _f in pages}
+_verlinkt = set()
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    for _m in re.finditer(r'href="(/[^"#?]*)"', _h):
+        _u = _m.group(1)
+        if not _u.endswith('/'):
+            _u += '/'
+        if _u in _url_zu_datei and _url_zu_datei[_u] != _f:
+            _verlinkt.add(_u)
+for _js in sorted(glob.glob('assets/js/*.js')):
+    _s = open(_js, encoding='utf-8').read()
+    for _m in re.finditer(r"""href=["'](/[^"'#?]*)|href:\s*['"](/[^'"]+)""", _s):
+        _u = _m.group(1) or _m.group(2)
+        if not _u.endswith('/'):
+            _u += '/'
+        _verlinkt.add(_u)
+for _u, _f in sorted(_url_zu_datei.items()):
+    if _u == '/' or _u in _verlinkt:
+        continue
+    _h = open(_f, encoding='utf-8').read()
+    if 'noindex' in _h or 'http-equiv="refresh"' in _h:
+        continue
+    err(f"§B: {_f} ist indexierbar, wird aber von keiner einzigen Seite verlinkt — "
+        f"eine Seite ohne internen Link wird selten gecrawlt")
 
 # Doppelte Schema-Bloecke (§A4). Ein nicht-idempotenter Generator haengt bei jedem Lauf
 # an: am 30.09. standen nach einem zweiten `gen_hubs.py`-Lauf ItemList, BreadcrumbList UND

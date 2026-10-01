@@ -28,6 +28,7 @@ ASSETS = ['assets/css/style.css', 'assets/js/main.js', 'assets/js/finder.js',
 # Auch die Generatoren tragen die Pfade als Literal, sonst schreibt der naechste Lauf
 # die alte Version zurueck.
 ZIELE = sorted(glob.glob('**/index.html', recursive=True)) + \
+        (['404.html'] if os.path.exists('404.html') else []) + \
         ['scripts/gen_pages.py', 'scripts/gen_longtail.py', 'scripts/gen_hubs.py']
 
 
