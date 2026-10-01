@@ -20,10 +20,14 @@ jobs:
   # wurde, ging ungeprueft live. Als eigener Job statt als Schritt im Deploy, damit die
   # Abhaengigkeit strukturell ist (needs) und nicht von der Reihenfolge der Schritte
   # abhaengt.
-  # verify.py braucht nur die Standardbibliothek und endet mit Exit 1, sobald ein Gate
-  # rot ist; genau das stoppt hier den Deploy.
+  # Alle drei Gates brauchen nur die Standardbibliothek und enden mit Exit 1, sobald sie
+  # etwas finden; genau das stoppt hier den Deploy. Geprueft wurde das einzeln mit
+  # eingeschleusten Defekten, und zwar ohne Pipe: hinter einer Pipe zeigt $? den Code des
+  # letzten Glieds, nicht den von Python.
+  # mess_bilder.py --check fehlt bewusst: Es laedt jedes Bild bei Amazon nach und wuerde
+  # in CI an deren Bot-Schutz scheitern. Dieses Gate bleibt Handarbeit.
   verify:
-    name: Gate - verify.py
+    name: Gate - verify, prosa, sync
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,6 +42,12 @@ jobs:
 
       - name: verify.py
         run: python3 scripts/verify.py
+
+      - name: audit_prosa.py
+        run: python3 scripts/audit_prosa.py
+
+      - name: sync_product_values.py --audit
+        run: python3 scripts/sync_product_values.py --audit
 
   deploy:
     needs: verify
