@@ -1153,6 +1153,35 @@ for _f in pages:
             err(f"§A4: {_f} traegt {_typen.count(_t)}x {_t} — doppelte Schema-Bloecke auf "
                 f"einer URL sind ein Rich-Results-Risiko (nicht-idempotenter Generator?)")
 
+# Statischer Pflicht-Footer (§A2/§C2), zeichengleich gegen scripts/sync_footer.py.
+# Bis 01.10.2026 pruefte das Gate darunter nur die ANWESENHEIT von Impressum-Link,
+# Datenschutz-Link und Transparenz-Hinweis. Der Text selbst lag als Literal an vier Orten
+# (drei Generatoren und 111 HTML-Dateien) und haette dort beliebig auseinanderlaufen
+# koennen -- genau die Lage, die der Header vor sync_header.py hatte, und genau das
+# Muster, nach dem an einem einzigen Tag dreimal zwei Kopien derselben Regel gedriftet
+# sind. Quelle ist jetzt buildFooter() in main.js; damit sagen die Fassung ohne JS und
+# die mit JS zwangslaeufig dasselbe.
+try:
+    import sync_footer as _sf
+    _SOLL_FOOTER = _sf.footer_html(*_sf.aus_mainjs())
+except Exception as _e:
+    _SOLL_FOOTER = None
+    err(f"§C2: Pflicht-Footer nicht ableitbar ({type(_e).__name__}: {_e}) — ohne die "
+        f"Quelle in main.js laesst er sich nicht pruefen")
+if _SOLL_FOOTER:
+    for _f in pages:
+        _h = open(_f, encoding='utf-8').read()
+        if 'http-equiv="refresh"' in _h:
+            continue
+        _m = re.search(r'<footer[^>]*id="site-footer"[^>]*>(.*?)</footer>', _h, re.S)
+        if not _m:
+            err(f"§C2: {_f} hat kein site-footer-Element — ohne JavaScript keine "
+                f"Pflichtangaben (python3 scripts/sync_footer.py)")
+        elif _m.group(1) != _SOLL_FOOTER:
+            err(f"§C2: {_f} weicht im site-footer von scripts/sync_footer.py ab — "
+                f"'python3 scripts/sync_footer.py' laufen lassen; steht die Abweichung "
+                f"absichtlich dort, gehoert sie in buildFooter() in main.js")
+
 # Statische Hauptnavigation (§A2). Bis 30.09.2026 stand auf allen 109 Seiten nur
 # <header id="site-header"></header>: ohne JavaScript hatte KEINE Seite eine Navigation,
 # die zehn wichtigsten internen Links der Domain existierten fuer jeden nicht-JS-Crawler
