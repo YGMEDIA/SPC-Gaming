@@ -77,13 +77,19 @@ def sync_grid(path, produkte, count_pattern=None, count_text=None, schema_cfg=No
     if refreshed: info.append(f'{refreshed} aktualisiert')
     print(f'✓ {path}: {have} Karten' + (f' ({" · ".join(info)})' if info else ' (unverändert)'))
 
-for path, (platform, list_name, url) in HUB_NAMES.items():
-    lst = G.hub_list(platform)
-    sync_grid(path, lst,
-              count_pattern=r'<span class="hub-count" id="hubCount">[^<]*</span>',
-              count_text='<span class="hub-count" id="hubCount">{n} Modelle</span>',
-              schema_cfg=(list_name, url), refresh=REFRESH)
+# Guard nachgetragen (02.10.2026, Befund aus der Idempotenzprobe): Die zwei Aufrufe
+# standen auf Modulebene, das Skript schrieb also beim bloßen Import drei Hub-Seiten und
+# /produkte/ um. Niemand importiert es heute (geprueft), aber genau diese Klasse hat das
+# Repo am 30.09. schon einmal getroffen (gen_longtail.py ohne Guard), und ein Schreiber
+# ohne Guard ist eine Falle fuer jeden, der die Hilfsfunktionen hier wiederverwenden will.
+if __name__ == '__main__':
+    for path, (platform, list_name, url) in HUB_NAMES.items():
+        lst = G.hub_list(platform)
+        sync_grid(path, lst,
+                  count_pattern=r'<span class="hub-count" id="hubCount">[^<]*</span>',
+                  count_text='<span class="hub-count" id="hubCount">{n} Modelle</span>',
+                  schema_cfg=(list_name, url), refresh=REFRESH)
 
-sync_grid('produkte/index.html', items,
-          count_pattern=r'(<div class="pf-count" id="resultCount" aria-live="polite">)[^<]*(</div>)',
-          count_text=r'\g<1>{n} Produkte\g<2>', refresh=REFRESH)
+    sync_grid('produkte/index.html', items,
+              count_pattern=r'(<div class="pf-count" id="resultCount" aria-live="polite">)[^<]*(</div>)',
+              count_text=r'\g<1>{n} Produkte\g<2>', refresh=REFRESH)

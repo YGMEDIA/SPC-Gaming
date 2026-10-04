@@ -77,9 +77,17 @@
     return s;
   }
 
+  // §A6: Produkte unter dieser Bewertung bekommen eine Warnung statt einer
+  // Kaufempfehlung. Der Finder gibt Empfehlungen aus, also darf er sie nicht ausspielen.
+  // Bis zum 02.10.2026 stand die 3.8 nur als Ranking-Gewicht in score(); dass kein Modell
+  // darunter in die Top 3 kam, war ein Ergebnis der Gewichtung, keine Garantie.
+  // verify.py haelt diese Konstante gegen A6_SCHWELLE.
+  const A6_SCHWELLE = 3.8;
+
   function renderResults() {
     let ranked = PRODUCTS
       .filter(p => p.type === 'controller')
+      .filter(p => ratingOf(p) >= A6_SCHWELLE)
       .map(p => ({ p, s: score(p) }))
       .filter(x => x.s > 0)
       .sort((a, b) => b.s - a.s)

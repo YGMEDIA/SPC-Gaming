@@ -1,0 +1,6 @@
+# Python-Bytecode. scripts/__pycache__/gen_hubs.cpython-314.pyc lag seit dem
+# 22.09.2026 im Index (Commit 181538d) und wurde damit von GitHub Pages ausgeliefert:
+# kompiliertes Bytecode einer Python-Version, die CI nicht benutzt (dort 3.12).
+# Aufgefallen beim Pruefen, ob die neuen Module in CI ankommen.
+__pycache__/
+*.py[cod]

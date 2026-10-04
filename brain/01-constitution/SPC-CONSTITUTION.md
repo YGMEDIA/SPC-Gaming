@@ -9,7 +9,7 @@
 ## TEIL A · Site-Gesetze
 
 ### §A1 · products.json ist die einzige Produkt-Wahrheit [bewiesen]
-40 Produkte, alle Preise/Specs/ASINs/Detail-Links leben dort. HTML wird generiert (gen_pages.py, gen_hubs.py) oder per Script gesynct. Divergenz zwischen JSON und HTML ist ein Befund (Historie: 7 fehlende Preise, 6 Preis-Abweichungen — behoben 11.07.).
+42 Produkte (gemessen 02.10.2026; hier stand bis dahin 40, waehrend §A6 in derselben Datei schon 42 nannte), alle Preise/Specs/ASINs/Detail-Links leben dort. HTML wird generiert (gen_pages.py, gen_hubs.py) oder per Script gesynct. Divergenz zwischen JSON und HTML ist ein Befund (Historie: 7 fehlende Preise, 6 Preis-Abweichungen — behoben 11.07.).
 
 ### §A2 · Statik zuerst — GEO-Gesetz [bewiesen]
 Jede Seite zeigt ihren vollen Inhalt ohne JavaScript (KI-Crawler führen kein JS aus). JS hydratisiert identisches Markup, überschreibt nie mit anderem. Bewiesen per No-JS-Playwright-Test (11.07.): Hubs 26/25/25 Karten, /produkte/ 40. verify.py wacht darüber.
@@ -25,7 +25,7 @@ aggregateRating immer `bestRating: "5"`, `reviewCount` > 1, jeder Schema-Wert (P
 Amazon blockt jeden programmatischen Zugriff (web_fetch 403, CDN-curl 403). Quelle für Preise/Ratings/Verfügbarkeit sind ausschließlich Yasins Screenshots; Bild-URLs kommen per Rechtsklick → Grafikadresse. Jede Datenänderung trägt ihr Screenshot-Datum in STATUS. Nie verfügbare Produkte werden entfernt, nicht schöngeredet (Historie: iPega, Mocute, RedMagic).
 
 ### §A6 · Ehrlichkeit ist der Burggraben [bewiesen]
-Jedes Review ≥2 echte Cons. Produkte unter ~3,8 Sternen bekommen explizite Warnung oder "keine Kaufempfehlung" (RXKFIGX 3,5 · MGPXPRO 3,3). Wir listen sie transparent und empfehlen die Alternative — das ist Positionierung, kein Bug.
+Jedes Review ≥2 echte Cons. Produkte unter ~3,8 Sternen bekommen explizite Warnung oder "keine Kaufempfehlung" (Stand 02.10.2026, nachgerechnet: 6 Produkte liegen darunter — turtle-beach-atom 3,5 als einziger Controller, dazu razer-phone-cooler 3,3, rxkfigx-sleeves 3,6, magnet-peltier-cooler 3,6, ozkak-trigger-gamepad 3,6, ozkak-6finger 3,7. Die vorige Fassung nannte "RXKFIGX 3,5 · MGPXPRO 3,3"; der MGPXPRO liegt inzwischen bei 4,3, und die RXKFIGX-Zahl war veraltet. Wer diese Beispiele liest, prueft sie gegen products.json — eine getippte Bewertung in der Constitution altert wie jede andere). Wir listen sie transparent und empfehlen die Alternative — das ist Positionierung, kein Bug.
 **Superlativ-Regel [ergänzt 30.09.2026]:** Jeder Superlativ und jede Vergleichsaussage ("bestbewertet", "günstigster", "die meisten", "teuerste") nennt ihren Geltungsbereich im Satz selbst und wird vor dem Commit gegen products.json nachgerechnet — über den Bereich, den die Formulierung behauptet. "In unserem Sortiment" heißt alle 42 Produkte, nicht die gerade betrachtete Teilmenge. Belegt durch vier abgefangene Fehler am 30.09. und einen am 29.09., alle vom selben Typ: richtige Zahl, falscher Bezugsrahmen.
 
 ### §A7 · Design-Konstanz [bewiesen]

@@ -36,7 +36,7 @@ Testsieger 2026: GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect-Sticks, iPho
 - [Hall-Effect-Sticks erklärt](https://smartphone-controller.com/blog/hall-effect-erklaert/)
 - [USB-C vs. Bluetooth](https://smartphone-controller.com/blog/usb-c-vs-bluetooth/): Latenz-Vergleich
 - [Sind Trigger bei PUBG erlaubt?](https://smartphone-controller.com/blog/trigger-erlaubt-pubg/)
-- [Controller verbindet sich nicht — 5 Lösungen](https://smartphone-controller.com/blog/controller-verbindet-nicht/)
+- [Controller verbindet sich nicht: 5 Ursachen und 4 weitere Störungsbilder](https://smartphone-controller.com/blog/controller-verbindet-nicht/)
 
 ## Hinweise
 

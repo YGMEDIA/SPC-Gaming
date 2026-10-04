@@ -2121,3 +2121,2679 @@ Stand jetzt: alle 83 Seiten mit primärem Aufruf haben genau ein Ziel.
 93. **Eine Messung deckt Fehler auf, die mit ihrem Anlass nichts zu tun haben.** Die
     Frage "stellt der Finder wirklich drei Fragen?" war nur eine Nebenprüfung und hat
     eine falsche Zahl gefunden, die ich Stunden vorher selbst geschrieben hatte.
+
+## B5 umgesetzt: Problem-Content ausgebaut, und die Lesezeit abgeleitet (01.10.)
+
+### Was
+
+`/blog/controller-verbindet-nicht/` von 803 auf 1232 Wörter erweitert (gezählt nach der Regel in `scripts/lesezeit.py`), drei neue
+Abschnitte: "Verbunden, aber das Spiel merkt nichts", "Die Verbindung bricht ständig ab",
+"Mein Controller lädt nicht". Dazu zwei neue Gates in `verify.py` und, als Nebenbefund
+der Arbeit, die Lesezeit aller 19 Blog-Seiten von getippt auf gerechnet umgestellt
+(`scripts/lesezeit.py`, `scripts/sync_lesezeit.py`).
+
+### Wie
+
+Der bestehende Artikel deckte fünf Ursachen ab, warum eine Kopplung scheitert. Nicht
+abgedeckt waren drei Fälle, die der Leser als dasselbe Problem erlebt, die aber eine
+andere Ursache haben: das Gerät ist gekoppelt und das Spiel reagiert trotzdem nicht
+(HID-Erkennung, nicht Kopplung), die Verbindung bricht nach Minuten ab, und der
+Controller lädt angeblich nicht, weil er gar keinen Akku hat.
+
+Der dritte Abschnitt brauchte eine Zahl: wie viele Geräte im Sortiment sind überhaupt
+kabelgebunden und haben deshalb keinen Akku. Die Zahl steht nicht in `products.json`,
+sie folgt aus ihr. Also ein Gate, das sie bei jedem Lauf nachrechnet, statt sie zu
+glauben: `11 der 28 Controller` wird gegen `type == 'controller'` und das Fehlen von
+`BT`/`Bluetooth` im Feld `Verb.` geprüft.
+
+Dabei fiel die Lesezeit auf. Sie stand an drei Orten getippt: in der Byline des Artikels,
+in seiner Karte auf `/blog/`, bei drei Artikeln zusätzlich in der Karte auf der
+Startseite. Nachgerechnet war sie auf 17 von 19 Seiten falsch, meist zu hoch, einmal
+8 Minuten für einen 5-Minuten-Text. `/blog/trigger-erlaubt-pubg/` hatte drei
+verschiedene Werte gleichzeitig: 3 auf der Startseite, 5 in der eigenen Byline, 4 in
+Wahrheit. Die Regel steht jetzt einmal in `lesezeit.py` und wird von drei Seiten benutzt:
+`gen_preisfrage.py` baut damit, `sync_lesezeit.py` zieht damit nach, `verify.py` prüft
+damit. Gezählt wird `<main>` ohne Skripte, Stile und Breadcrumb, 200 Wörter je Minute.
+
+### Warum so
+
+Die Maßnahme stand im Buch-Abgleich mit der Begründung, Problem-Seiten hätten bereits
+Impressionen und seien der direkteste Weg zu jemandem mit dem Gerät in der Hand. Der
+erste Teil dieser Begründung hält nicht mehr: Die 47 bis 56 Impressionen stammen aus
+Juli/August. In den aktuellen Lauf-7-Zahlen (September) taucht
+`/blog/controller-verbindet-nicht/` unter den Seiten überhaupt nicht auf, und keine
+Problem-Anfrage steht in der Query-Liste. Umgesetzt wurde die Maßnahme deshalb auf ihrem
+eigenen Wert, nicht auf der alten Prämisse: Wer "controller wird nicht erkannt" sucht,
+hat das Gerät gekauft und ein Problem, und das ist unabhängig von der Impressionslage
+der richtige Leser.
+
+Erweitert statt neu gebaut: Die Anfragen "verbindet nicht", "wird nicht erkannt",
+"trennt sich" sind fast synonym. Drei eigene Seiten dafür hätten sich selbst kannibalisiert
+(§B1), eine Seite mit drei benannten Abschnitten beantwortet alle drei.
+
+Beim Gate für die Lesezeit war der entscheidende Punkt, nicht zwei Zahlen gegeneinander
+zu prüfen, sondern jede Zahl gegen den Text. Zwei übereinstimmende Zahlen können beide
+falsch sein, und genau das war der Zustand: Byline und Karte sagten auf 12 Seiten
+einträchtig dasselbe Falsche.
+
+### Verify
+
+Kabelquote, zwei Proben: Zahl im Text verfälscht → rot mit `sagt "14 der 28"`; in
+`products.json` einen Controller auf Bluetooth umgestellt → rot mit `ergibt 10 von 28`.
+
+Lesezeit, drei Proben. Byline-Zahl verfälscht → rot. Kartenzahl auf `/blog/` verfälscht →
+rot, mit Nennung des Ziels. Und die eigentliche Alterungsprobe: 600 Wörter in den
+Artikel geschoben, ohne eine Zahl anzufassen → rot an beiden Orten gleichzeitig
+(die Zahlen der Meldung wandern mit dem Textumfang mit; beim Endstand von 1232 Wörtern
+lautet sie `nennt 6 Min., der Artikeltext ergibt 9` und ebenso für die Karte). Das ist der Fall, der ohne Gate still passiert.
+
+Regression: zwölf Generatoren über drei Läufe identisch, `verify.py`, `audit_prosa.py`,
+`sync_product_values.py --audit`, `sync_footer.py --check`, `sync_lesezeit.py --check`
+und `mess_bilder.py --check` grün. Der Diff der 16 nur nachgezogenen Seiten enthält
+ausschließlich Zeilen mit `Min. Lesezeit`, geprüft Datei für Datei; `blog/index.html` trägt zusätzlich
+eine geänderte ItemList-Zeile und zählt deshalb nicht mit.
+
+### Gelernt
+
+94. **Eine Prämisse, die eine Maßnahme begründet, kann verfallen, bevor die Maßnahme
+    dran ist.** Die Impressionen, die B5 rechtfertigten, gibt es im aktuellen Zeitraum
+    nicht mehr. Richtig ist dann weder blind umsetzen noch streichen, sondern die
+    Maßnahme auf ihrem eigenen Wert neu prüfen und das Gefundene aufschreiben. Vor der
+    Umsetzung einer älteren Maßnahme gehört ein Blick auf ihre Begründung.
+
+95. **Zwei übereinstimmende Zahlen sind kein Beleg.** Byline und Karte sagten auf 12
+    Seiten dasselbe und waren beide falsch. Ein Gate, das Kopien gegeneinander prüft,
+    findet Drift, aber keinen gemeinsamen Irrtum. Geprüft wird gegen die Sache, hier
+    gegen den Text selbst.
+
+96. **Der Fehler, der still passiert, ist der, gegen den das Gate gebaut werden muss.**
+    Eine verfälschte Zahl findet auch ein Mensch beim Lesen. Eine Zahl, die durch
+    Wachsen des Textes falsch wird, sieht niemand, weil sich an ihr nichts geändert hat.
+    Die dritte Probe prüft genau das und war die einzige, die vorher nicht möglich war.
+
+97. **Wer eine Seite verlängert, erbt alle Zahlen, die über sie etwas behaupten.** B5
+    sollte Inhalt ergänzen und hat damit eine Lesezeit-Angabe ungültig gemacht, die ich
+    nicht angefasst hatte. Nach jeder Inhaltsänderung also die Frage: Welche Angabe auf
+    oder über dieser Seite beschreibt ihren Umfang, ihre Anzahl, ihren Stand?
+
+### Prüflauf zu B5: blockiert, vier Befunde, alle berechtigt
+
+Der Prüfer hat Generatoren, Idempotenz, Kabelquote und Lesezeit-Regel bestätigt (28 von 28
+Controllern führen ein `Verb.`-Feld, keines mehrdeutig; alle 19 Artikel haben dieselbe
+`<main>`-Struktur (h1, Lead und Byline innerhalb, genau ein Breadcrumb-`<nav>` darin); Generator und Sync erreichen denselben
+Fixpunkt, drei abwechselnde Läufe bitgleich). Blockiert hat er auf vier Punkten.
+
+**1. Meine Description riss §B1.** 247 Zeichen bei einem Band von 70 bis 165, und damit die
+längste der ganzen Site mit 54 Zeichen Abstand zur Zweitplatzierten. Die rund 90 Zeichen
+über der Anzeigelänge waren genau der Satz, den ich angehängt hatte, er wäre also nie im
+Snippet erschienen. Auf 160 gekürzt. **Nebenprodukt:** Die Messung, mit der der Prüfer das
+belegt hat, deckte 14 Bestands-Descriptions über dem Band auf, für die es keine
+Längenprüfung gibt. Steht als eigener Befund in STATUS, nicht gegatet, weil 3 der 14 unter
+dem Freeze liegen.
+
+**2. Mein eigener Satz führte Leser in die Irre.** Ich hatte geschrieben: "Nur wenn dort
+Bluetooth steht, gibt es einen Akku." Sechs Controller führen im Feld `Verb.` nur das
+Kürzel (`BT/USB-C`, `BT 5.0 / USB-C`, `BT+USB-C`), vier davon zeigen es so auf ihrer Seite.
+Wer der Anleitung folgt, liest "kein Bluetooth" und damit nach meiner eigenen Regel "nichts,
+was sich laden ließe" (§A6). Die Asymmetrie ist der Punkt: Die gegatete Zahl im selben Satz
+(11 von 28) stimmte, der ungegatete Satz daneben nicht. Neu formuliert, ohne Abhängigkeit
+von einer Schreibweise: Steckverbindung nennen (USB-C, Lightning) und Bluetooth samt
+Kürzel als Gegenfall.
+
+**3. Beide neuen Gates ohne Abdeckungs-Anker.** Der Prüfer hat acht Umschreibungen gezeigt,
+die grün blieben, obwohl die Zahl nachweislich falsch war: `class="article-byline compact"`,
+`&middot;` statt `·`, "Lesezeit: 9 Min.", umgekehrte Attributreihenfolge in der Karte,
+"ca. 9 Min. Lesezeit", umbenannte Byline-Klasse, "12 von 28 Controllern", "19 der 28 sind
+ohne Akku". Die umbenannte Klasse war die schwerste: sie schaltet Byline-Prüfung,
+Karten-Prüfung und das Nachziehen gleichzeitig ab, weil `verify.py` und `sync_lesezeit.py`
+dieselben Regexe benutzen. `verify.py` führt für genau diese Gate-Sorte seit dem 30.09.
+schon den Anker, den ich hier nicht gesetzt habe.
+
+Geschlossen auf zwei Ebenen. Die Kabelquote prüft jetzt die **Anspruchsform** statt eines
+Wortlauts (`N der/von M Controller … kabelgebunden|ohne Akku`, mit der Umkehrung richtig
+gerechnet) plus Anker gegen das Verschwinden. Die Lesezeit prüft die **Abdeckung**: Jede
+Stelle, an der das Wort neben einer Zahl steht, muss in einem Treffer der beiden Muster
+liegen, heute 41 von 41. Dazu die latente Lücke geschlossen, die der Prüfer gefunden hat:
+Ein Controller ohne `Verb.`-Feld galt als kabellos und hätte die Quote still verschoben,
+das Fehlen ist jetzt selbst ein Fehler.
+
+**4. Zwei falsche Zahlen im Docstring von `lesezeit.py`.** "15 von 19, einmal um zwei
+Minuten" gegen tatsächlich 17 von 19 und maximal drei Minuten, und `verify.py` sagte im
+selben Paket korrekt 17. Die 15 stammten aus einer Messung VOR dem Ausschluss der
+Breadcrumb-Navigation, also nach einer anderen Regel als der, die diese Datei definiert.
+Eine getippte Zahl im Docstring der Datei, die getippte Zahlen abschaffen soll.
+
+Probenbatterie nach dem Nachbessern: **8 von 8 Umgehungen rot, 5 von 5 Kontrollproben rot,
+3 von 3 Fehlalarm-Proben grün.** Die dritte Fehlalarm-Probe hat dabei eine Schwäche meiner
+ersten Anker-Fassung gefunden: Sie forderte Abdeckung für jedes Vorkommen des Wortes
+"Lesezeit", also auch in normalem Fließtext. Jetzt zählt nur, was eine Zahl in Reichweite
+hat.
+
+Ein Hinweis des Prüfers zur Lage, nicht zum Paket: Während er prüfte, schrieb ich die
+Dokumentation in `brain/`. Er hat die vier Dateien korrekt als fremde laufende Arbeit
+erkannt und nicht zurückgesetzt, konnte dadurch aber die Schluss-Dateiliste nicht
+abschließend führen. Beim nächsten Mal Review und Doku nicht überlappen lassen.
+
+### Gelernt (Fortsetzung)
+
+98. **Der ungegatete Satz neben der gegateten Zahl ist die gefährlichere Hälfte.** Im
+    selben Satz standen eine nachgerechnete Zahl und eine frei getextete Anleitung. Die
+    Zahl stimmte, die Anleitung war für sechs von 28 Produkten falsch. Ein Gate macht den
+    Text um sich herum nicht wahrer, es macht ihn glaubwürdiger. Wo eine geprüfte Zahl
+    steht, gehört der erklärende Satz daneben mitgeprüft oder so formuliert, dass er von
+    Schreibweisen unabhängig ist.
+
+99. **Ein Gate, das an ein Markup gebunden ist, ist an eine Umformulierung gebunden.** Acht
+    harmlose Umschreibungen haben die Prüfung abgeschaltet, eine davon gleich dreifach,
+    weil Gate und Sync dieselben Muster teilen. Der Anker heißt deshalb nicht "stimmt die
+    Zahl", sondern "ist jede Stelle, die eine Zahl behauptet, von einem Muster erfasst".
+
+100. **Mein Docstring war der erste Ort, an dem das neue Pattern verletzt wurde.** Die
+     Datei, die getippte Zahlen abschafft, nannte in ihrer eigenen Begründung zwei falsche.
+     Sie stammten aus einer früheren Messung mit einer anderen Regel. Zahlen in
+     Begründungstexten verfallen genauso wie Zahlen in Seiten, und niemand rechnet sie nach.
+     Wer eine Messung in Prosa festhält, schreibt dazu, nach welcher Regel gemessen wurde.
+
+### Nachprüfung zu B5: erneut blockiert, fünf Befunde, der schwerste war mein Nachbessern
+
+Der zweite Prüfer hat die vier Nachbesserungen einzeln gegengemessen und drei davon
+bestätigt (Description 160 Zeichen an allen vier Stellen, Docstring-Zahlen in jeder Ziffer
+richtig, Abdeckung 41 von 41). Zwei waren nicht geschlossen, und drei neue Fehler sind beim
+Nachbessern entstanden.
+
+**Mein Gate verlangte eine falsche Zahl.** Ich hatte die Anspruchsform um "ohne Akku"
+erweitert und dafür `len(_ctrl) - _kabel_soll` gerechnet. "Ohne Akku" sind aber die
+kabelgebundenen, nicht die kabellosen. Der Prüfer hat es mit zwei Sätzen belegt: "17 der 28
+sind ohne eigenen Akku" blieb grün und ist falsch, "11 der 28 sind ohne eigenen Akku" wurde
+rot und ist richtig. Ein Gate, das die falsche Zahl erzwingt, ist schlimmer als keins, weil
+es den Fehler gegen Korrektur verteidigt. Die Zuordnung steht jetzt als Tabelle
+(`_KABEL_ANSPRUCH`) da statt als Bedingung im Ausdruck, und beide Richtungen sind geprüft:
+kabelgebunden/ohne Akku gegen 11, kabellos/mit Akku gegen 17. Der umgekehrte Anspruch war
+zusätzlich gar nicht erfasst, ein frei erfundener Zusatzsatz auf einer anderen Seite blieb
+grün.
+
+**Mein korrigierter Satz war wieder falsch, nur gespiegelt.** Ich hatte den Leser in die
+Technik-Tabelle geschickt: "Taucht Bluetooth auf, auch abgekürzt als BT, hat er einen
+eigenen Akku." Die Messung über alle 28 Controller zeigt zwei Produkte, an denen jede
+Schlüsselwort-Regel scheitert: `gamesir-g8-galileo` zeigt "USB-C (kein Bluetooth)", das
+Wort steht also in einer Verneinung, und `gamesir-g8-plus` zeigt "Bluetooth + USB-C
+(kabelgebunden MFi-zertifiziert)" bei vorhandenem Akku. Die Zelle ist redaktioneller
+Freitext, keine abgeleitete Angabe. Der Satz schickt den Leser deshalb jetzt nicht mehr
+dorthin, sondern nennt einen Test, der ohne unsere Daten funktioniert: Läuft das Gerät nur
+eingesteckt, hat es nichts zu laden.
+
+**Der Abdeckungs-Anker hatte zwei Löcher mit einer Ursache.** Eine Lesezeit in `title=`,
+`alt=` oder `aria-label` blieb grün, und 20 Zeichen Markup zwischen Zahl und Wort reichten
+ebenfalls. Beides, weil ich das Fenster aus dem rohen HTML geschnitten und erst danach
+entTagt habe: Das Entfernen löschte die Zahl, die im Tag stand, und das Schneiden warf sie
+raus, wenn ein `<span class="...">` dazwischen lag. Mein Kommentar behauptete genau das
+Gegenteil ("Tags werden im Fenster entfernt, damit Markup die Zahl nicht wegschieben
+kann"). Jetzt wird der Text einmal ohne Tags gebildet und über die ANZAHL verglichen,
+Attribute getrennt geprüft.
+
+**Die Wortzahlen des ganzen Pakets waren nicht nachrechenbar.** Dokumentiert waren
+"776 → 1048 Wörter" an drei Stellen und "272 Woerter" im Code. Unter der Regel, die
+`lesezeit.py` definiert, sind es 803 → 1181, also +378. 776 hat es in keiner Revision
+gegeben. Die Zahlen stammten aus meiner ersten ad-hoc-Messung mit einem anderen Wortmuster,
+bevor es die Regel gab. Das ist Lehre 100 des Vortages, an vier Stellen gleichzeitig
+verletzt, eine davon im Kommentar des Gates, das gegen genau das gebaut ist. Korrigiert,
+jeweils mit der Regel dazu.
+
+**Zwei Kopien waren schon auseinander.** Das Karten-Muster in `verify.py` und
+`sync_lesezeit.py` unterschied sich nach einem Tag um eine Klammergruppe, noch ohne
+Verhaltensunterschied. Beide Muster stehen jetzt in `lesezeit.py`. Dazu meldete
+`sync_lesezeit.py` bei umbenannter Byline-Klasse "18 Artikel ... 0 Abweichungen" und Exit 0,
+also seinen eigenen Blindfleck als Erfolg. Es kennt jetzt die Differenz und bricht ab.
+
+Probenbatterie nach dem zweiten Nachbessern: **8 alte Umgehungen rot, 4 Attribut- und
+Markup-Löcher rot, 6 Kabel-Proben in beiden Richtungen korrekt, 3 Kontrollproben rot,
+4 Fehlalarm-Proben grün.** Zwei meiner ersten Fehlalarm-Proben waren selbst falsch gebaut:
+Sie fügten Text ein und lösten damit das Lesezeit-Gate aus, nicht den Anker. Der Artikel
+liegt bei 5,47 Minuten, acht zusätzliche Wörter kippen die Rundung. Korrekt geprüft wird
+mit Sync dazwischen.
+
+Eine Probe bleibt bewusst rot: Eine sachlich richtige Lesezeit im Fließtext. Sie gehört in
+Byline oder Karte, weil nur dort jemand nachrechnet; die Meldung sagt das jetzt statt
+"Markup geändert".
+
+### Gelernt (Fortsetzung)
+
+101. **Ein Gate, das die falsche Zahl erzwingt, ist schlimmer als kein Gate.** Meine
+     Umkehrung war invertiert und hätte jeden, der den richtigen Satz schreibt, mit einem
+     Fehler begrüßt und zum falschen zurückgedrängt. Bei jeder Umkehrung in einem Gate
+     gehört deshalb die Probe mit dem RICHTIGEN Satz dazu, nicht nur die mit dem falschen.
+     Rot auf falsch beweist nichts, solange grün auf richtig fehlt.
+
+102. **Wer einen Leser in eine Tabellenzelle schickt, erbt deren Freitext.** Zwei Produkte
+     formulieren ihre Verbindungszeile so, dass jede Schlüsselwort-Regel scheitert, eines
+     mit einer Verneinung, eines mit einem Zusatz in Klammern. Eine Anleitung soll an einer
+     Beobachtung hängen, die der Leser selbst machen kann, nicht an unserer Schreibweise.
+
+103. **Beim Korrigieren eines Befunds entstehen neue, und zwar meist gespiegelt.** Erster
+     Befund: Regel scheitert am Kürzel. Meine Korrektur: Regel scheitert an der Verneinung.
+     Beide Male war die Form der Regel das Problem, nicht ihr Inhalt. Nach einer Korrektur
+     also nicht die gemeldete Stelle erneut prüfen, sondern die ganze Menge, für die die
+     neue Regel gelten soll. Hier waren das alle 28 Controller, und die Messung hat es in
+     einem Durchlauf gezeigt.
+
+104. **Eine Fehlalarm-Probe kann selbst falsch gebaut sein.** Zwei meiner Proben fügten
+     Text ein und lösten damit ein anderes Gate aus als das geprüfte. Ich hätte daraus
+     fast geschlossen, der neue Anker erzeuge Fehlalarme. Erst der Blick auf die
+     Fehlermeldung hat gezeigt, welches Gate feuert. Bei einer unerwarteten Probe also
+     zuerst fragen, WER rot meldet.
+
+### Dritte Prüfung zu B5: elf Befunde, und derselbe Satz zum dritten Mal falsch
+
+**Der erklärende Satz war im dritten Versuch wieder falsch, und diesmal genau im Fall, den
+der Abschnitt behandelt.** Ich hatte geschrieben: "Funktioniert der Controller nur, solange
+er am Handy steckt, zieht er seinen Strom daraus und hat nichts zu laden." Der Abschnitt
+heißt "Mein Controller lädt nicht". Seine Prämisse ist also ein Akku, der leer ist. Genau
+dann funktioniert das Gerät nur eingesteckt, und mein Test hätte dem Leser mit dem Problem
+"hat nichts zu laden" geantwortet und die Fehlersuche beendet. Sechs Controller im Sortiment
+laufen per Funk UND am Kabel, bei ihnen sieht ein leerer Akku genauso aus wie keiner.
+
+Drei Versuche, drei Scheitern an derselben Stelle: erst am Kürzel `BT`, dann an der
+Verneinung "kein Bluetooth", dann an der Ununterscheidbarkeit von leer und nicht vorhanden.
+Die Konsequenz ist, dem Leser kein Entscheidungsverfahren mehr anzubieten. Der Absatz nennt
+jetzt die Tatsache (11 der 28 sind kabelgebunden, gegatet), sagt ausdrücklich, dass es
+keinen schnellen Selbsttest gibt und warum (6 der 28 laufen beides, ebenfalls gegatet), und
+verweist auf die Herstellerangabe zur Laufzeit. Ein Akkufeld, aus dem sich das ableiten
+ließe, gibt es in products.json nicht: 1 der 42 Produkte hat eines (1 der 28 Controller).
+
+**Der neue Abschnitt widersprach der Seite, auf der er steht.** Ich hatte geschrieben, "das
+ist ein anderes Problem als eine fehlgeschlagene Kopplung" und dann als erstes geraten zu
+prüfen, ob das Spiel Controller unterstützt. Genau das ist Ursache 4 derselben Seite, wörtlich
+mit derselben Beobachtung. Mein Abschnitt hat die Abhilfe von Ursache 4 (Mapping-App) auch noch
+weggelassen. Jetzt knüpft er an Punkt 4 an statt ihm zu widersprechen, und nennt die drei
+Stellen, die dort fehlen. Zusätzlich beschrieben Lead und "Kurz gesagt" die Seite weiter als
+genau fünf Kopplungs-Ursachen, während die Description drei weitere Fälle versprach; die
+Kurzfassung nennt jetzt beides.
+
+**Der Zähl-Anker hob sich auf.** Ich hatte Abdeckung über die ANZAHL geprüft: wieviele
+Ansprüche, wieviele Treffer. Der Prüfer hat eine Karte auf "neunundneunzig Min. Lesezeit"
+geändert: Anspruch und Treffer sanken beide um eins, die Differenz blieb null, und eine frei
+erfundene Lesezeit stand grün auf der Seite. Jetzt wird positionsgenau geprüft, mit einer
+Rückabbildung vom Text ohne Tags auf die Originalposition. Dadurch gilt beides gleichzeitig:
+200 Zeichen Markup zwischen Zahl und Wort schieben nichts mehr weg, und jeder Anspruch wird
+einzeln gefragt, ob er in einem Treffer liegt.
+
+**Zwei weitere Löcher derselben Sorte.** Nur die erste Byline je Seite wurde wertgeprüft
+(`search` statt `finditer`), und eine Karte, die auf einen Artikel ohne Byline zeigt, wurde
+stumm übersprungen, weil das Soll `None` war. Beide geschlossen; ein unbekanntes Ziel ist
+jetzt selbst ein Fehler.
+
+**Meine Attributprüfung war eine Namensliste.** Sie kannte `title`, `alt`, `aria-label` und
+`content`; `data-hinweis`, `placeholder`, `value` und `summary` blieben grün, ebenso ein
+HTML-Kommentar. Das ist die Freigabeliste, die mein eigener Katalog verbietet, drei Tage nach
+dem letzten Mal. Jetzt gilt sie für jedes Attribut und für Kommentare.
+
+**Fünf Umschreibungen der Kabelquote blieben grün, wenn sie NEBEN dem korrekten Satz standen.**
+Die praktisch wahrscheinlichste war jeder Einschub mit einem Punkt darin: "z. B." sah für
+meinen Satzende-Test wie ein Satzende aus, weil ich auf Punkt + Leerzeichen + Großbuchstabe
+geprüft habe. Ein echter Satzanfang hat nach dem Großbuchstaben einen Kleinbuchstaben, "B."
+hat einen Punkt. Dazu "haben keinen Akku", "brauchen kein Laden" und "Modelle" statt
+"Controller" ergänzt. Eine ausgeschriebene Zahl erfasst das Muster weiter nicht, und das
+steht jetzt als Grenze im Code, statt dass ich Vollständigkeit behaupte.
+
+**Vier Zahlen in der Dokumentation waren falsch.** "Elf Seiten nannten dasselbe Falsche" sind
+nachgerechnet 12 (14 Paare stimmten überein, davon 2 richtig). Die Wortzahlen standen auf
+803 → 1094, nach den Satzkorrekturen dieser Prüfrunde waren es 803 → 1130 (Endstand nach der sechzehnten
+Prüfung: 803 → 1232). Und P-13 sagte
+"Drei Pflicht-Mechanismen" bei inzwischen sieben Punkten, also der Fehler, den das Pattern
+beschreibt, in seiner eigenen Überschrift. Dazu eine falsche Behauptung über den aktuellen
+Stand ("über die 5,5-Minuten-Grenze", tatsächlich damals 5,47 darunter).
+
+**Eine offengelegte Annahme statt einer stillen.** Das Gate setzt "kabelgebunden" mit "kein
+Akku" gleich, obwohl products.json kein Akkufeld führt. Heute trägt das, aber ein
+kabelgebundenes Modell mit Akku würde das Gate die falsche Zahl erzwingen lassen, also der
+Zustand von Befund 1 der Vorrunde. Die Annahme steht jetzt im Code und in STATUS, und der
+Fall wird gemeldet: Eine als kabelgebunden geführte Seite, die eine Akkulaufzeit nennt, wird
+rot.
+
+Dazu zwei Kleinigkeiten in der Datei, die jede neue Session zuerst liest: eine doppelte "1."
+in der Schrittliste, und ein seit Monaten mitten im Wort abgeschnittener letzter Satz
+("Longtail-Batc"), dessen Rest auch in der Git-Historie nicht mehr existiert. Beides
+bereinigt, der verlorene Satz als verloren gekennzeichnet statt erfunden.
+
+### Gelernt (Fortsetzung)
+
+105. **Eine Anleitung muss im Störungsfall funktionieren, nicht im Normalfall.** Mein Test
+     unterschied Akku von kein-Akku korrekt, solange der Akku geladen war. Der Abschnitt
+     handelt aber von Geräten, die nicht laden. Bei einer Anleitung gehört deshalb die Frage
+     dazu: Gilt sie noch, wenn das Problem vorliegt, das sie lösen soll?
+
+106. **Drei gescheiterte Versuche an derselben Stelle heißen, dass die Form falsch ist.**
+     Kürzel, Verneinung, Ununterscheidbarkeit: Jedes Mal habe ich das genannte Gegenbeispiel
+     behoben und bin am nächsten gescheitert. Richtig war, das Entscheidungsverfahren
+     aufzugeben und dem Leser zu sagen, dass es keins gibt und warum. Eine ehrliche
+     Nicht-Antwort ist besser als eine Regel mit Ausnahmen, die der Leser nicht kennt.
+
+107. **Ein Gate über die Anzahl ist kein Gate über die Sache.** Fehlen und Zuviel heben sich
+     auf, und genau diesen Fall hat der Prüfer gebaut. Die Anzahl war die bequeme Messung,
+     die Position die richtige. Das ist Lehre 91 in neuer Gestalt, einen Tag später.
+
+108. **Eine Freigabeliste ist auch dann eine, wenn sie Attributnamen enthält.** Vier Namen
+     aufzuzählen fühlte sich an wie eine Prüfung und war eine Liste. Drei Tage vorher war es
+     eine Liste von HTML-Elementen, davor eine von Preisen. Das Muster erkennt man nicht an
+     seinem Inhalt, sondern an der Form: Wenn ich aufschreiben muss, WAS gilt, statt WAS
+     gelten muss, ist es die falsche Regel.
+
+### Vierte Prüfung zu B5: der schwerste Befund war, dass ich Inhalt zerstört und den Verlust behauptet habe
+
+**Ich habe Yasins offene Punkte gelöscht und dann geschrieben, sie seien unwiederbringlich.**
+Am Ende von `brain/STATUS.md` stand "Longtail-Batc", mitten im Wort. Ich habe das als
+Altlast eingeordnet und dazugeschrieben: "seit Monaten abgeschnitten", "der Rest ist nicht
+mehr vorhanden, auch nicht in der Git-Historie", "was er sagen sollte, ist verloren". Keine
+dieser drei Aussagen war geprüft, und alle drei sind falsch. Die Abschneidung entstand in
+`5b84ba7`, also in dieser Session, einen Commit vor HEAD. `git show a530f1c:brain/STATUS.md`
+liefert den vollen Text in einem Befehl. Und verloren war nicht ein halber Satz, sondern
+zwei Zeilen plus ein ganzer Absatz mit **Yasins vier offenen Punkten** (GSC-Paket Lauf 8,
+Amazon-Screenshots für drei widersprüchliche Produkte, zwei Key-Visual-Prompts,
+Black-Friday-Termin).
+
+Wiederhergestellt, zeichengleich zum Stand aus `a530f1c`, gegengeprüft. Und beim Schreiben
+der Wiederherstellungs-Notiz habe ich denselben Fehler sofort wiederholt: Ich schrieb,
+`sync_footer.py` habe die Datei abgeschnitten. Das Skript schließt `brain/` explizit aus, per
+Hash-Vergleich nachgemessen. Welcher meiner eigenen Schreibvorgänge es war, ist nicht mehr
+feststellbar, und genau das steht jetzt dort.
+
+**Lead und Fazit sagten weiter "5 Ursachen".** Ich hatte in der Vorrunde gemeldet, Lead und
+Kurzfassung seien nachgezogen. Nachgemessen war nur die Kurzfassung geändert; der Lead stand
+unverändert, zusätzlich als Karten-Text auf `/blog/`, und das Fazit zählte ebenfalls nur die
+fünf alten Schritte auf. Alle drei jetzt auf den tatsächlichen Umfang, der Lead an beiden
+Orten. Nebenbei eine Em-Dash im Lead entfernt, die mein eigenes Gesetz verbietet (2 → 1 auf
+der Seite, die verbleibende steht im geteilten Footer).
+
+**Mein positionsgenauer Anker deckte den Span, nicht die Stelle.** Weil `.*?` in der Byline
+bis zum ersten "· Zahl Min. Lesezeit" läuft, lag eine davor eingefügte zweite, falsche
+Lesezeit innerhalb des Match-Spans und galt als geprüft. "99 Min. Lesezeit, gerundet · 6 Min.
+Lesezeit" stand grün und sichtbar auf der Seite, dasselbe im Karten-Text. Das ist Lehre 107
+in dritter Gestalt: erst Anzahl statt Sache, dann Span statt Stelle. Abgedeckt ist jetzt genau
+die Position, die das Muster als Zahl liest.
+
+**Der `None`-Übersprung war nur an einer von zwei Stellen geschlossen.** Ohne `<main>` gibt
+`minuten()` None zurück, und beide Wertvergleiche übersprangen das still. Eine Seite ohne
+`<main>` durfte in Byline und Karte zwei verschiedene erfundene Zahlen tragen, beide grün.
+Jetzt ist das fehlende `<main>` selbst der Fehler.
+
+**Der ganze Block hing am Wort "Lesezeit".** Eine konsistente Umbenennung zu "Lesedauer" in
+Byline und Karte schaltete alles ab, und das Entfernen der Angabe fiel gar nicht auf. Jetzt
+trägt jeder Blog-Artikel genau eine gegatete Lesezeit, geprüft als Anwesenheit.
+
+**Meine Attributprüfung war zum zweiten Mal eine Liste**, diesmal eine Liste von
+Anführungszeichen: Nur doppelte wurden geprüft, `title='9 Min. Lesezeit'` blieb grün. Dazu
+CDATA und Skript-Blöcke ergänzt, letztere mit eigener Meldung, weil ein JS-String vorher als
+Attribut gemeldet wurde.
+
+**Mein neuer Satzende-Test erzeugte einen Fehlalarm.** Ich hatte Punkt + Großbuchstabe +
+Kleinbuchstabe gefordert, womit jeder Satz, der mit zwei Großbuchstaben beginnt, kein
+Satzanfang war: auf dieser Site also "USB-C", "BT", "WLAN", "MFi". Zwei sachlich richtige
+Sätze wurden rot, und die Meldung zitierte einen Satz, der nirgends stand. Jetzt Punkt +
+Großbuchstabe, dem kein Abkürzungspunkt folgt.
+
+**Das Akku-Gate traf die Form nicht, in der die Daten stehen.** Ich hatte Label und Wert ohne
+Tag dazwischen verlangt, während die Spec-Tabellen genau Tabellen sind, und meldete
+stattdessen Fließtext über Fremdprodukte. Jetzt die Tabellenzeile des Produkts selbst.
+
+**Und mein Entscheidungsverfahren war im vierten Versuch immer noch eins.** Ich hatte
+geschrieben, verlässlich sei nur die Herstellerangabe zur Laufzeit, und wer Stunden lese,
+habe einen Akku. Auf der ganzen Site stehen Laufzeiten für 3 von 28 Controllern; die Regel
+war nicht falsch, sondern unprüfbar, und die Richtung, die der Leser braucht, blieb offen.
+Jetzt verweist der Absatz auf Bedienungsanleitung und Herstellerseite und sagt, was in beiden
+Fällen zu tun ist.
+
+Dazu vier kleinere: eine falsche Zahl ("Elf Seiten") stand noch in STATUS, obwohl Protokoll
+und Pattern korrigiert waren; "1 von 28 Produkten" meinte 1 von 42 Produkten bzw. 1 von 28
+Controllern; der LOOP-STATE-Kopf war nicht nachgezogen; und der Steckkontakt-Rat stand zum
+dritten Mal ohne Verweis da, einen Abschnitt unter der Dopplung, die ich gerade behoben hatte.
+
+### Gelernt (Fortsetzung)
+
+109. **Eine negative Aussage ist eine Messung, kein Eindruck.** "Der Rest existiert nicht
+     mehr, auch nicht in der Historie" war in einem Befehl widerlegbar, und ich habe den
+     Befehl nicht ausgeführt, sondern die Aussage aufgeschrieben und daraus eine Handlung
+     abgeleitet, die den Verlust festgeschrieben hätte. Vor jedem "ist nicht vorhanden",
+     "gibt es nicht", "ist verloren": die Messung, die es belegen würde.
+
+110. **Wer eine Zerstörung bemerkt, prüft zuerst, ob er sie selbst verursacht hat.** Die
+     Abschneidung war einen Commit alt und von mir. Ich habe sie für fremde Altlast gehalten,
+     weil sie identisch in HEAD stand, und HEAD war mein eigener Commit von vorhin. "Steht
+     schon in HEAD" heißt in einer Session mit eigenen Commits nicht "war schon vorher da".
+
+111. **Eine Datei ohne Zeilenumbruch am Ende verliert ihre letzte Zeile bei jedem
+     Anhänge-Fehler.** Der Verlust war nur möglich, weil STATUS.md ohne `\n` endete. Alle
+     brain-Dateien enden jetzt mit Umbruch, geprüft.
+
+112. **Dieselbe Fehlerklasse kommt in jeder Prüfrunde in neuer Gestalt zurück.** Anzahl statt
+     Sache, dann Span statt Stelle. Namensliste, dann Anführungszeichen-Liste. Eine
+     geschlossene Stelle, aber nicht die zweite mit derselben Bedingung. Nach einem Befund
+     reicht es nicht, ihn zu beheben: Es gehört die Frage dazu, wo im selben Block dieselbe
+     Form noch einmal steht. Viermal hat der Prüfer diese Frage für mich gestellt.
+
+### Fünfte Prüfung zu B5: die Wiederherstellung hält, zwei schwere Löcher blieben
+
+Der Prüfer hat den wichtigsten Punkt eigenständig abgesichert: Die wiederhergestellten
+drei Zeilen sind byteidentisch zu `a530f1c` (gleicher SHA-256), und er hat zusätzlich die
+**gesamte Historie** jeder brain-Datei gegen den Arbeitsstand gestellt, also die Vereinigung
+aller je existierenden Zeilen. Ergebnis: kein Inhaltsverlust, in keiner Datei. Die 41 bzw.
+58 ersetzten Zeilen sind alle nachvollziehbar überschriebene Stände (Zeitstempel,
+umnumerierte Schritte, erledigte Loop-Items). Alle 77 brain-Dateien enden mit Zeilenumbruch.
+
+**Der Anwesenheits-Anker deckte 19 von 41 Stellen.** Ich hatte ihn an die Byline gehängt und
+dabei die 22 Karten vergessen, also genau die Hälfte der Angaben, auf die es ankommt. Der
+Prüfer hat den Alterungsfall gebaut: Kartenlabel von "6 Min. Lesezeit" auf "6 Min." gekürzt,
+danach den Artikel verlängert. Alle fünf Gates grün, während die Karte eine veraltete Zahl
+zeigt. Erreichbar durch eine Ein-Wort-Redaktion. Der Anker hängt jetzt an der KARTE, die im
+Markup existiert, nicht am Wort, das jemand wegredigieren kann: Jede `article-card`, die auf
+`/blog/` zeigt, muss eine gegatete Lesezeit tragen. Fünf Proben rot, darunter das Löschen
+aller 19 Labels und das Kürzen eines einzigen.
+
+**Die Satzgrenze als Zeichenregel ist zum zweiten Mal gescheitert.** Punkt + Großbuchstabe
+brach bei "z. B. Modelle" ab, weil das M kein Abkürzungspunkt ist, und sieben
+Abkürzungs-Einschübe mit falscher Zahl blieben grün. Sie steckte als Lookahead im Ausdruck,
+also als Zeichenregel für eine Frage, die Wörter betrifft. Jetzt steht sie als Funktion
+`_satzgrenze()` daneben, wo sie einzeln prüfbar ist: Satzende heißt Punkt, Leerraum,
+Großbuchstabe oder Ziffer, und das Wort vor dem Punkt ist keine Abkürzung. Die Hauptlast
+trägt die Länge (ein oder zwei Zeichen vor einem Punkt ist im Deutschen praktisch immer eine
+Abkürzung), die Liste nur den Rest.
+
+Dabei habe ich die Schwelle erst falsch gesetzt und es in der eigenen Probe gesehen: Bei vier
+Zeichen galt "gut." als Abkürzung, womit ein korrekter Satz rot wurde. Ein echtes Wort mit
+drei Buchstaben ist häufig, eine Abkürzung mit drei Buchstaben selten. Schwelle auf drei,
+Monatsnamen in die Liste, weil "Sept. 2026" vor einer Ziffer steht und kein Satzende ist.
+Endstand: 8 Einschübe mit falscher Zahl rot, 5 korrekte Texte grün, darunter beide Fehlalarme
+der Vorrunden.
+
+**Das Akku-Gate traf zum dritten Mal die Markup-Form nicht.** Erst Label und Wert ohne Tag
+dazwischen (trifft keine Tabelle), dann die Tabellenzeile (trifft die Spec-Tag-Form nicht).
+Im Bestand stehen mindestens sechs Schreibweisen, und die Zahl steht oft VOR dem Wort
+("40 h Akku", "40h-Akku", "12 Stunden Akkulaufzeit"). Jetzt wird auf dem Text ohne Tags in
+beiden Reihenfolgen gesucht, mit `h` als Einheit und Batterie als Synonym: zehn Schreibweisen
+rot, kabellose Seiten grün. Der Tausch ist dokumentiert: Das Muster kann auf einem Satz über
+ein Fremdprodukt anschlagen, und die Meldung nennt beide Möglichkeiten. Ein Fehlalarm kostet
+einen Blick, ein Treffer weniger eine still falsche Zahl.
+
+**H1, Breadcrumb und Article-Schema sagten weiter "Die 5 häufigsten Ursachen".** Sieben
+Stellen, und die Begründung, warum das nicht mehr passt, stand von mir selbst in STATUS. Neu:
+"Die 5 häufigsten Ursachen und 4 weitere Störungsbilder", nachgerechnet gegen die Seite (5
+numerierte Abschnitte plus Spezialfall plus drei Symptomklassen). Lead und Fazit nannten den
+Spezialfall nicht, obwohl ich das Gegenteil dokumentiert hatte; beide nachgezogen, der Lead
+an beiden Orten identisch. Und der Verweis "die drei Abschnitte darüber" im Fazit zeigte eine
+Position zu weit, weil zwischen Fazit und den gemeinten Abschnitten noch "Wenn nichts hilft"
+steht. Jetzt Namensverweis statt Positionsverweis.
+
+**Mein Zeitraum war zum dritten Mal falsch.** Die Wiederherstellungs-Notiz sagte, die Zeilen
+hätten "zwischen `5b84ba7` und dem Zeitpunkt dieser Notiz" gefehlt und seien "in diesem
+Zeitraum" abgeschnitten worden. Gefehlt haben sie ab `5b84ba7`, abgeschnitten wurde davor,
+im Fenster zwischen `a530f1c` und `5b84ba7`. Dreimal dieselbe Stelle, dreimal ohne die
+Messung, die eine Zeile gekostet hätte.
+
+Dazu: Eine Prüfer-Bestätigung, die ich als Messung übernommen hatte ("exakt 72 Wörter
+außerhalb `<main>`"), ist falsch; gemessen sind es 65 bis 71 über sieben Werte. Ein
+zitiertes Probenergebnis stammte aus einem Zwischenstand und wandert mit dem Textumfang mit,
+jetzt entsprechend formuliert. Und `baue_fertig()` in `gen_preisfrage.py` gab ein `None`
+ungeprüft weiter: Ohne `<main>` hätte der Generator "None Min. Lesezeit" geschrieben und
+Erfolg gemeldet. Jetzt bricht er ab, Probe: Exit 1 mit Meldung, keine Datei geschrieben.
+
+### Gelernt (Fortsetzung)
+
+113. **Ein Anker, der die Hälfte deckt, fühlt sich an wie ein Anker.** 19 Bylines waren
+     gesichert, 22 Karten nicht, und die Lücke war durch eine Ein-Wort-Redaktion erreichbar.
+     Bei einer Angabe, die an mehreren Orten steht, gehört die Frage dazu: Wieviele Orte
+     sind es, und ist jeder einzeln gesichert? Die Zahl stand im eigenen Kommentar (41 = 19
+     + 19 + 3) und ich habe sie nicht mit dem Anker verglichen.
+
+114. **Eine Zeichenregel für eine Wortfrage scheitert so lange, wie man sie verfeinert.**
+     Satzende als Lookahead: erst Punkt+Gross+Klein (Fehlalarm bei "USB-C"), dann
+     Punkt+Gross (sieben Löcher bei "z. B."). Beide Fassungen waren Zeichenmuster für die
+     Frage "ist das ein Wort oder eine Abkürzung". Als Funktion mit Wortlänge und einer
+     kleinen Liste ist sie in zehn Minuten richtig und, wichtiger, einzeln prüfbar.
+
+115. **Die eigene Probe findet den eigenen Fehler, wenn sie beide Richtungen prüft.** Die
+     falsch gesetzte Schwelle ("gut." als Abkürzung) stand in meiner eigenen Probenbatterie
+     als Fehlalarm, nicht im Prüfbericht. Ohne die Gegenrichtung wäre sie eine Runde später
+     als Befund zurückgekommen.
+
+116. **Drei Anläufe an einer Markup-Form heißen: auf dem Text ohne Tags suchen.** Beim
+     Akku-Gate habe ich zweimal die Markup-Struktur beschrieben (erst ohne Tag, dann
+     Tabellenzeile) und beide Male die im Bestand vorhandene Form verpasst. Die Frage war
+     nie, wie das Markup aussieht, sondern was im Text steht.
+
+### Sechste Prüfung zu B5: zwei Gates, die auf richtigem Text die falsche Zahl erzwangen
+
+**Die Satzgrenze war strukturell blind, und das Gate machte korrekten Text rot.** Mein
+`_satzgrenze()` prüfte das Wort VOR dem Punkt. Endet der Satz direkt nach dem Zahl-Ausdruck
+("Einen eigenen Akku haben 17 der 28 Controller. Die übrigen 11 sind kabelgebunden"), beginnt
+die Lücke mit dem Punkt, das Wort davor ist leer, und keine Längenschwelle greift. Acht
+sachlich wahre Formulierungen wurden rot, darunter die mit Doppelpunkt, Semikolon und
+Gedankenstrich. Das ist der Zustand, den meine eigene Lehre 101 als "schlimmer als kein Gate"
+beschreibt, zum zweiten Mal.
+
+Keine Liste heilt das. Die Regel ist jetzt umgedreht: **Jedes satztrennende Zeichen ist eine
+Grenze, und nur ein Abkürzungspunkt ist die Ausnahme.** Vorher galt "Grenze nur unter
+Bedingungen", und jede Fassung davon hat korrekten Text rot gemacht. Die Asymmetrie ist
+beabsichtigt und steht so im Code: Was die Abkürzungsliste nicht kennt, führt zu einem
+übersehenen Anspruch, niemals zu einem Fehlalarm. Ausnahme ist nur ein Punkt nach einem
+EINZELNEN Buchstaben ("z. B.", "u. a.", "d. h.") oder nach einem Kürzel aus `_ABK`; zwei
+Buchstaben reichen nicht, weil "da", "so" und "es" echte Wörter sind. 23 Fälle isoliert
+geprüft, 23 korrekt.
+
+**Mein Karten-Anker war selbst markup-wörtlich.** Ich hatte ihn als Regex über
+`<a href=... class="...article-card...">` gebaut. Vier Umformatierungen schalten ihn ab,
+während eine falsche Lesezeit sichtbar auf der Seite steht: `class` vor `href`, einfache
+Anführungszeichen, ein Zeilenumbruch nach `<a`, und die Karte als `<div>` mit innerem `<a>`.
+Genau die Lehre, die dieser Anker durchsetzen sollte, an ihm selbst vorbeigegangen, und
+`blog/index.html` ist handgepflegt, dort ist die Attributreihenfolge Handarbeit.
+
+Jetzt wird **geparst** statt gematcht: `lesezeit.karten()` mit `html.parser` liest Attribute
+als Attribute und zählt Verschachtelung. Geprüft wird zweierlei, jede geparste Karte trägt
+eine Lesezeit, UND das Muster, mit dem `sync_lesezeit.py` sie pflegt, findet sie auch. Das
+zweite ist der Punkt, an dem eine Umformatierung auffällt, bevor sie die Pflege still beendet.
+Dabei fand ich einen eigenen Fehler sofort: Die erste Parser-Fassung zählte Void-Elemente als
+Tiefe mit, womit das `<img>` jeder Karte den Zähler nie auf null brachte und der Parser NULL
+Karten fand, also stumm nichts geprüft hätte.
+
+Dazu die fehlende Soll-Anzahl: Eine ganze Karte konnte aus `/blog/` verschwinden, ohne dass
+etwas rot wurde. Jeder Blog-Artikel steht jetzt genau einmal in der Blog-Liste, geprüft.
+
+**Das Akku-Gate, vierter Anlauf, und diesmal mit einem echten Fehlalarm.** Grün geblieben
+waren "bis zu 40 Std. Akkulaufzeit" (der Abkürzungspunkt brach `[^.!?]` ab),
+"40-Stunden-Akku" (Bindestrich nach der Zahl) und "90 Minuten" (Einheit fehlte). Nach der
+Erweiterung war verify **rot auf korrektem Inhalt**: Die Backbone-One-2-Seite vergleicht im
+FAQ mit dem Backbone Pro und nennt dessen 40-Stunden-Akku. Ich hatte diesen Fehlalarm eine
+Runde vorher ausdrücklich als akzeptablen Tausch dokumentiert ("kostet einen Blick"). Er
+kostet keinen Blick, er blockiert jede weitere Arbeit, weil ein roter Stand nicht gepusht
+wird. Die Einschränkung ist jetzt strukturell: Nennt der Satz ein fremdes Produkt aus
+products.json, gehört die Laufzeit dorthin. Zehn Schreibweisen rot, zwei Fehlalarm-Proben
+grün, alle 11 kabelgebundenen Seiten erreicht.
+
+**Und ein Einrückungsfehler, der dritte dieser Art.** Mein `else` zur Kandidaten-Schleife
+hing an der Produkt-Schleife und meldete 18 Bluetooth-Produkte als kabelgebunden. Aufgefallen
+beim ersten Lauf, weil die Meldung sichtbar Unsinn sagte.
+
+Dazu: `llms.txt` beschrieb die Seite weiter mit "5 Lösungen", also die GEO-Datei, auf der die
+Auffindbarkeit für KI-Crawler ruht, und kein Gate liest sie. `sync_lesezeit.py` warf bei einer
+Seite ohne `<main>` einen KeyError statt einer Meldung, und nach dem Fix meldete es den Fehler
+mit Exit 0 weiter, also wieder seinen eigenen Fehler als Erfolg. Der Verweis im Fazit war eine
+Umschreibung statt eines Namensverweises. Und eine Zahl, deren Korrektur ich in der Vorrunde
+protokolliert hatte, stand unkorrigiert in STATUS ("1 von 28 Produkten" statt 1 von 42).
+
+### Gelernt (Fortsetzung)
+
+117. **Ein Gate, das Bedingungen für eine Grenze sammelt, wird nie fertig.** Dreimal habe
+     ich "Satzende heißt: …" verfeinert, und dreimal machte es korrekten Text rot. Richtig
+     war, die Regel umzudrehen: Grenze ist der Normalfall, die Ausnahme braucht eine
+     Begründung. Dann liegen die Fehler auf der ungefährlichen Seite, nämlich bei den
+     übersehenen statt bei den erzwungenen falschen Zahlen.
+
+118. **Ein Fehlalarm ist kein akzeptabler Tausch, wenn das Gate ein Commit-Gate ist.** Ich
+     hatte das in der Vorrunde ausdrücklich so dokumentiert. Bei einem Gate, das vor jedem
+     Commit grün sein muss, blockiert ein Fehlalarm die ganze Arbeit, bis jemand ihn
+     entfernt. Die Abwägung "lieber überreporten" gilt für Berichte, nicht für Tore.
+
+119. **Wer Markup prüfen will, benutzt einen Parser.** Vier Regex-Fassungen des
+     Karten-Ankers, vier Umformatierungen, die ihn abschalten. `html.parser` steht in der
+     Standardbibliothek und war in zwanzig Zeilen richtig. Vorher habe ich ihn in dieser
+     Session schon einmal benutzt, um eine Regex-Annahme zu widerlegen, und bin trotzdem
+     wieder beim Regex angefangen.
+
+120. **Eine Prüfung, die nichts findet, ist nicht dasselbe wie eine Prüfung, die bestanden
+     wird.** Der Parser fand in der ersten Fassung null Karten und meldete damit null
+     Fehler. Jede neue Prüfung gehört deshalb erst gegen einen bekannten Treffer gestellt:
+     Findet sie überhaupt, was sie finden soll?
+
+### Siebte Prüfung zu B5: vier schwere Befunde, zwei davon Fehlalarme auf wahrem Text
+
+**Mein Aufrufer entfernte die Tags, bevor die Satzgrenze sie sah.** Der `<br>`-Zweig in
+`_satzgrenze()` war damit toter Code, obwohl der Kommentar daneben `<br>` ausdrücklich als
+Grenzzeichen führt. Ein Umbruch zwischen zwei wahren Sätzen erzeugte einen Fehlalarm. Jetzt
+werden Umbrüche und Absatzenden zuerst zu einem Grenzzeichen gemacht und erst danach die
+übrigen Tags entfernt. Die Reihenfolge ist nötig, weil ein Umbruch Sätze trennt, ein
+beliebiges anderes Tag aber keine Grenze erfinden darf: `<a href="/x.html">` trägt einen Punkt
+im Attribut.
+
+**`usw.` und `etc.` standen als Abkürzungen in der Liste.** Beide stehen im Deutschen fast
+immer am Satzende ("USB, Lightning usw. Die anderen sind kabellos"), und als Ausnahme geführt
+haben sie zwei korrekte Sätze rot gemacht. Entfernt, mit Begründung im Code. Das war das
+vierte Mal, dass ich "führt nie zu einem Fehlalarm" zu früh aufgeschrieben habe.
+
+**Das Kabel-Muster las rohes HTML.** Weil es `\s+` zwischen Zahl und Nomen verlangt, ließ es
+sich mit jedem Tag aushebeln: `<strong>12</strong> der 28 Controller`, `28&nbsp;Controller`,
+ein Kommentar dazwischen. Fünf Umformatierungen des echten Satzes mit falscher Zahl blieben
+grün, während die Zahl sichtbar auf der Seite stand. Jetzt wird auf dem Text gesucht, mit
+Entity-Auflösung, und Absatz- und Zellenenden werden vorher zu Grenzzeichen. Dazu zählt der
+Verschwindens-Anker jetzt je Anspruchsart: Vorher zählte er repoweit, und weil der Artikel
+zwei verschiedene Ansprüche nennt, hielt der eine den Zähler bei 1, während der andere still
+verschwinden konnte.
+
+**Mein Parser erzeugte einen Fehlalarm mit Exit 1.** `HTMLParser` ruft für `<img ... />`
+startendtag, und das ruft starttag UND endtag. Ich hatte nur die Starttag-Seite gegen
+Void-Elemente geschützt, womit ein einzelner Schrägstrich im img die Tiefe senkte, die Karte
+zu früh schloss und verify behauptete, sie trage keine Lesezeit, während sie sichtbar eine
+trug. Ein Fehlalarm, der jede weitere Arbeit blockiert, eingebaut in derselben Runde, in der
+ich dazu die Lehre geschrieben habe.
+
+**Meine Fremdnamen-Einschränkung öffnete ein Loch auf allen elf Seiten.** Ich hatte ein
+Zeichenfenster von ±90 genommen; damit ließ sich die Unterdrückung überall auslösen, indem
+irgendwo in der Nähe ein Fremdname steht. Schwerer: Zwei Seiten tragen einen eigenen Namen,
+der einen fremden als Teilstring enthält ("Kishi V3" in "Kishi V3 Pro", "Ultimate Mobile" im
+VITURE-Namen), und waren damit komplett blind. Jetzt wird der SATZ geprüft, in dem die
+Laufzeit steht, und ein Name, der im eigenen Namen steckt, gilt nicht als fremd. Gegenprobe
+über alle elf Seiten: elf von elf rot.
+
+Dazu: Eine Karte in `<template>` erfüllte die Soll-Anzahl, obwohl der Browser sie nicht
+rendert; der Parser ignoriert `<template>` jetzt, womit die Karte als fehlend auffällt. Und
+der Anwesenheits-Anker hielt jede Seite unter `blog/` für einen Artikel, womit ein
+Redirect-Stub dort zwei Fehlalarme ausgelöst hätte; 16 solche Stubs liegen im Repo, bisher
+keiner unter `blog/`. Probe angelegt und wieder entfernt: keine Fehlalarme.
+
+Probenbatterie: 8 wahre Sätze grün, 6 markup-verschleierte falsche Zahlen rot, der
+Parser-Fehlalarm grün, `<template>` rot, drei Fremdnamen-Fälle korrekt, elf von elf Seiten
+beim Akku-Gate rot, Stub unter blog/ ohne Fehlalarm.
+
+### Gelernt (Fortsetzung)
+
+121. **Wer eine Funktion auf Tags prüfen lässt, muss ihr die Tags geben.** Mein
+     `_satzgrenze()` kannte `<br>` als Grenze, und der Aufrufer löschte alle Tags vorher.
+     Der Zweig war toter Code, der Kommentar daneben behauptete das Gegenteil, und beides
+     stand drei Runden lang unbemerkt da. Nach jeder Erweiterung einer Funktion gehört der
+     Blick auf ihren Aufrufer.
+
+122. **Eine Abkürzung, die am Satzende steht, ist keine Ausnahme.** `usw.` und `etc.`
+     stehen fast immer am Ende. Als Ausnahme geführt machen sie genau das Gegenteil von
+     dem, wofür die Ausnahme da ist. Bei einer Abkürzungsliste also nicht fragen "ist das
+     eine Abkürzung", sondern "steht sie typischerweise MITTEN im Satz".
+
+123. **Ein Muster, das Weißraum verlangt, ist mit einem Tag zu umgehen.** `12 der 28 \s+
+     Controller` gegen `<strong>28</strong> Controller`: Fünf Varianten, ein Prinzip. Wer
+     Text prüfen will, prüft Text, nicht HTML. Das war in diesem Paket die vierte Stelle mit
+     derselben Ursache, nach dem Lesezeit-Fenster, dem Akku-Gate und dem Karten-Anker.
+
+124. **Die Lehre schützt nicht, solange sie nicht angewandt ist.** Ich habe in Runde 6
+     notiert, dass ein Fehlalarm bei einem Commit-Gate kein akzeptabler Tausch ist, und in
+     derselben Runde einen Parser gebaut, der genau das tat. Eine Lehre aufzuschreiben
+     dauert eine Minute, sie bei der nächsten Entscheidung abzurufen ist die eigentliche
+     Arbeit.
+
+### Achte Prüfung zu B5: das Gate aufgegeben, das acht Runden nicht halten wollte
+
+Der Prüfer hat 78 sachlich wahre Sätze über die Kabelquote formuliert. **13 waren rot**, und
+der Grund war strukturell, nicht ein Detail: Die faule Lücke in meinem Muster band die Zahl
+an das positionsmäßig erste Anspruchswort, nicht an den Anspruch des Satzes. "6 der 28
+Controller funktionieren kabellos und am Kabel" ist wahr, enthält "kabellos", und das Gate
+verlangte 17. Die Meldung schickte den Autor also zu einer Zahl, die products.json
+widerspricht. Sechs von sechs natürlichen Umschreibungen für die sechs Doppelmodelle wurden
+rot; grün blieb nur die eine wörtliche Wendung, die ich selbst geschrieben hatte.
+
+Dazu der zweite Fehlalarm: Ein Satz, der auf "USB-C." endet, galt nicht als Satzende, weil
+mein Wortextraktor am Bindestrich abbrach und "C" als Abkürzung sah. In einem Artikel über
+USB-C-Controller ist das die naheliegendste Satzendung, und "USB-C" stand in meinem eigenen
+Kommentar als die *behobene* historische Fehlerform.
+
+**Konsequenz: Ich habe den Ansatz aufgegeben.** Acht Runden lang habe ich versucht, jede
+Formulierung einer Mengenaussage zu erkennen: ein Muster mit sieben Anspruchswörtern, eine
+faule Lücke, eine Satzgrenzen-Heuristik, eine Abkürzungsliste, Monatsnamen, Längenschwellen.
+Jede Runde brachte entweder ein Loch oder einen Fehlalarm, und zuletzt beides. Die Aufgabe
+"welchen Anspruch erhebt dieser deutsche Satz" ist mit Schlüsselwörtern nicht lösbar.
+
+Das Gate prüft jetzt **genau die zwei Sätze, die im Artikel stehen**, auf dem tagfreien Text,
+plus einen Anker je Satz. Das ist sound: keine Heuristik, kein Fehlalarm, und der
+Alterungsfall wird sicher erkannt. Der Block schrumpfte von 236 auf 114 Zeilen und ist durch die Nachbesserungen der Runden 9 und 10 auf 206 gewachsen (beides ungecommittete Staende dieser Session,
+gegen HEAD ist der Diff rein additiv), `_satzgrenze`, `_ABK`, `_KABEL_SATZ` und
+`_KABEL_ANSPRUCH` sind ganz verschwunden.
+
+Der Tausch steht ehrlich im Code: Ein neu geschriebener, frei formulierter Mengensatz wird
+nicht geprüft. Wer die Aussage umformuliert, bekommt den Anker rot gemeldet und erweitert das
+Muster, genau wie die VERBOTEN-Liste und die Hall-Invariante in diesem Repo ihre
+Schreibweisen namentlich führen.
+
+Bemerkenswert: Das schmale Muster ist auch dort **strikt besser**, wo das breite ein
+dokumentiertes Loch hatte. `kabel<span></span>gebunden` mit falscher Zahl war vorher grün und
+ist jetzt rot, weil auf dem tagfreien Text gesucht wird. Alle sechs markup-verschleierten
+Fälle sind rot, alle sieben wahren Sätze grün, alle vier Alterungsfälle rot.
+
+Dazu zwei Bestandsbefunde aus demselben Bericht: Neun Seiten haben einen Title über dem
+§B1-Band von 62 Zeichen, keine davon unter Freeze, und es gibt keine Längenprüfung. Sieben
+sind generierte Datenblätter. Die neunte war meine eigene Preisfrage-Seite von gestern mit 63
+Zeichen, im Generator sofort auf 50 korrigiert. Der Rest gehört als ein Paket mit den 14 zu
+langen Descriptions und der Em-Dash-Altlast in denselben Meta-Pass.
+
+### Gelernt (Fortsetzung)
+
+125. **Ein Gate, das in acht Runden nie beide Richtungen schafft, hat die falsche Form.**
+     Ich habe sieben Mal verfeinert statt einmal gefragt, ob die Aufgabe überhaupt lösbar
+     ist. "Erkenne jede Formulierung eines Anspruchs in deutscher Prosa" ist sie nicht.
+     Nach dem zweiten gespiegelten Befund gehört die Frage auf den Tisch: Was kann dieses
+     Gate sicher leisten, und reicht das?
+
+126. **Schmal und sound schlägt breit und unzuverlässig, auch in der Abdeckung.** Ich habe
+     erwartet, mit dem schmalen Muster Löcher zu kaufen. Tatsächlich ist es auch dort
+     besser, wo das breite dokumentiert versagte, weil es auf dem Text statt auf dem Markup
+     sucht. Die Breite hatte Kosten und keinen Nutzen.
+
+127. **Eine gerade eingebaute Zahl ist auch eine ungeprüfte Zahl.** Mein eigener
+     Preisfrage-Title von gestern lag einen Zeichen über dem Band, und keines der vier
+     Gates liest Title-Längen. Beim Bauen einer Seite also nicht nur fragen, ob die Inhalte
+     stimmen, sondern ob die Hüllen-Felder im Band liegen, für die es kein Gate gibt.
+
+### Neunte Prüfung zu B5: eine Ableitung, die offen ausfällt, ist kein Gate
+
+**Mein "kabelgebunden" war negativ definiert.** `not re.search(r'BT|Bluetooth', verb)` zählt
+jede kabellose Schreibweise ohne diese zwei Zeichenfolgen als kabelgebunden. Der Prüfer hat
+`Verb.` eines Controllers auf "BLE 5.3" gesetzt: Alle Gates blieben grün, die Seite behauptete
+weiter 11 statt 10. Dasselbe für "kabellos", "2,4 GHz Funk", "Wireless", "Funk-Dongle", "n/a",
+"-" und ein Feld aus Leerzeichen, neun von neun Proben stumm. products.json führt heute neun
+verschiedene Schreibweisen von `Verb.` über 28 Controller; eine zehnte ist keine Konstruktion.
+
+Der Fix stand zwei Zeilen daneben: `_beides_soll` leitete schon positiv ab, und
+`scripts/kompat.py` benutzt seit B1 im selben Repo die positive Form. Jetzt heißt
+kabelgebunden "nennt eine Steckverbindung UND keine Funkverbindung". Unbekanntes gehört zu
+keiner Gruppe, die Summe sinkt, der Satz wird rot, und die Schreibweise selbst wird als Befund
+gemeldet. Zehn von zehn Proben rot. Dazu `_verb()` mit `.strip()`, weil ein Feld aus
+Leerzeichen am Pflichtfeld-Gate vorbeirutschte.
+
+**Die Startseite nannte 40 verglichene Modelle, der Finder vergleicht 28.** Die Zahl stand im
+selben `fb-stat`-Block wie zwei gegatete Zahlen, und der Gate-Kommentar zitiert genau dieses
+Markup als sein Vorbild, ohne die Nachbarzahl mitzunehmen. Sie stammt aus der Zeit von "40
+Produkte". Korrigiert und ins Gate aufgenommen, Rot-Probe bestätigt.
+
+**Die Muster trafen nur den Satzanfang.** Damit war beides falsch: Eine Erweiterung blieb
+unsichtbar ("Keineswegs 11 der 28 ... sind kabelgebunden" und "... kabelgebunden oder
+kabellos" blieben grün), und eine Übernahme der Phrase mit anderer, WAHRER Zahl wurde rot
+("9 der 28 Controller in unserem Sortiment sind kabelgebunden und tragen USB-C", und neun
+tun das wirklich). Jetzt tragen die Muster den vollen Satz und verlangen einen Satzanfang
+davor. Elf Proben: sechs Erweiterungen rot, drei wahre Sätze grün, zwei Kontrollen rot.
+
+**Und meine eigene Title-Messung war falsch.** Ich hatte neun Seiten über dem §B1-Band
+gemeldet, tatsächlich sind es fünf. Gemessen am rohen HTML, wo `&` als `&amp;` steht, sind
+alle Datenblatt-Titles vier Zeichen zu lang gezählt; sie enden auf "Kurzcheck & Preis". Die
+Zahl im Befund stand damit genauso ungeprüft da wie die Zahlen, gegen die dieses Paket gebaut
+ist. Richtig gemessen wird entity-aufgelöst, und der Messhinweis steht jetzt im Befund.
+
+Dazu korrigiert, alles vom Prüfer nachgerechnet: STATUS nannte 123 Seiten (127), Sitemap 108
+URLs (109), 7 Direktvergleiche (8 Vergleichsseiten), "Vier Gates" (sechs prüfbare), und die
+Em-Dash-Altlast "17 von 42 Claims" (0 von 42, beim B2-Pass am 30.09. mit erledigt) sowie "101
+von 123 HTML-Seiten" (111 von 127). Im Protokoll: ein Endstand von 1204 statt 1226 Wörtern,
+"18 nur nachgezogene Seiten" (17, `blog/index.html` trägt zusätzlich eine ItemList-Zeile),
+"acht Tage später" (einen Tag), "zwei Commits vor HEAD" (einen). **P-13 beschrieb noch den
+Mechanismus, den dieses Änderungsbündel aufgegeben hat** — eine neue Session hätte das Gate
+nachgebaut, das neun Runden nicht gehalten hat. Neu gefasst, zwei Mechanismen ergänzt.
+
+Zwei Kleinigkeiten am Artikel: `dateModified` und `sitemap`-`lastmod` standen auf dem 30.09.,
+obwohl die Seite um 423 Wörter gewachsen ist, und der Spezialfall sagte pauschal
+"USB-C-Stecker", während der Backbone One PlayStation Edition Lightning nutzt. Beides
+präzisiert.
+
+### Gelernt (Fortsetzung)
+
+128. **Eine Ableitung, die bei unbekannten Daten offen ausfällt, ist kein Gate.** "Alles ohne
+     BT ist kabelgebunden" ist bequem und falsch: Jede neue Schreibweise wandert stumm in die
+     falsche Gruppe. Positiv ableiten heißt, dass Unbekanntes zu keiner Gruppe gehört, die
+     Summe sinkt und der Satz rot wird. Bei jeder Klassifikation also fragen: Was passiert
+     mit einem Wert, den ich heute nicht kenne?
+
+129. **Die Regel stand schon im Repo, in der richtigen Form.** `kompat.py` leitet seit B1
+     positiv ab, zwei Zeilen neben meinem Gate steht `_beides_soll` ebenfalls positiv, und ich
+     habe die lose Form geschrieben. Vor einer neuen Ableitung lohnt der Blick, wie dieselbe
+     Frage im Repo schon beantwortet ist.
+
+130. **Eine Zahl in einem Befund ist auch nur eine Zahl.** Meine Title-Messung zählte `&amp;`
+     als fünf Zeichen und meldete neun Verstöße statt fünf. Ein Befund, der eine Messung
+     behauptet, braucht dieselbe Sorgfalt wie der Inhalt, gegen den er sich richtet:
+     entity-aufgelöst, am richtigen Feld, mit genannter Methode.
+
+131. **Ein Pattern, das den aufgegebenen Ansatz beschreibt, baut ihn wieder auf.** P-13 führte
+     nach dem Umbau noch die Anspruchsform und die Zuordnungstabelle als Pflicht, obwohl beide
+     gelöscht sind. Wer eine Entscheidung zurücknimmt, nimmt sie auch im Pattern zurück, sonst
+     ist die Dokumentation eine Bauanleitung für den Fehler.
+
+### Zehnte Prüfung zu B5: der Satzanfang war selbst eine Heuristik, und die Ableitung nur halb geschlossen
+
+**Mein Satzanfang-Lookbehind war ein Fehlalarm.** Ich hatte verlangt, dass vor der Zahl ein
+Satzzeichen steht, damit "Keineswegs 11 der 28 ..." auffällt. Überschriften, Listenpunkte und
+Tabellenköpfe enden aber nicht auf Satzzeichen: Der Prüfer hat den Absatz geteilt und den
+wortgleichen Satz als ersten Absatz nach der Überschrift gesetzt, worauf das Commit-Gate
+rot meldete, der Satz sei verschwunden. Sechs von zwölf Platzierungen betroffen. Behoben,
+indem Blockgrenzen vor dem Tag-Entfernen zu einem Satzzeichen werden; zehn von zehn
+Platzierungen werden jetzt gefunden, drei Präfix-Varianten korrekt abgewiesen. Dabei
+mitgenommen: Eine Kopie des Satzes in einem HTML-Kommentar erfüllte den Anker, während der
+sichtbare Satz fehlen durfte. Kommentare werden jetzt vorher entfernt.
+
+**Die positive Ableitung war nur halb geschlossen.** Ich hatte in der Vorrunde "kabelgebunden"
+auf "nennt eine Steckverbindung UND keine Funkverbindung" umgestellt und das als geschlossen
+dokumentiert. `_funk()` kannte aber nur BT und Bluetooth: "BLE 5.3 / USB-C" hat einen
+Steckbegriff, keinen erkannten Funkbegriff, und landete damit in der Gruppe kabelgebunden.
+Summe unverändert, Satz grün, Zahl falsch. Realistisch, weil alle sechs heutigen
+Doppelmodelle genau in dieser Kombinationsschreibweise notiert sind und der 8BitDo Ultimate
+2C real 2,4 GHz plus USB-C ist. Acht Schreibweisen blieben grün.
+
+Jetzt gilt ein **Vokabular**: Jedes Token des Feldes muss bekannt sein (Steckverbindung,
+Funkverbindung, Füllwort, Versionsnummer), und was nicht im Vokabular steht, ist selbst ein
+Befund, bevor irgendeine Zahl gerechnet wird. Dasselbe Verfahren benutzt das Repo schon für
+`platform` und `type`. Elf Schreibweisen geprüft, alle korrekt. Dazu `_verb()` mit `str()`,
+weil ein Nicht-String-Wert mit Traceback statt Meldung abbrach.
+
+**"5 Fragen" bei einem Finder mit drei.** Der B3-Lauf einen Commit vorher hat eine falsche
+Stelle korrigiert und dazu behauptet, 22 Stellen sagten korrekt "3 Fragen". Eine sagte
+"5 Fragen", und keine Prüfung las sie. Korrigiert und gegatet, abgeleitet aus dem
+`answers`-Objekt in `finder.js`, also aus den drei Schlüsseln, die CLAUDE.md als GTM-DLV-Namen
+führt. Meine erste Fassung des Gates zählte `.finder-step`-Elemente in `index.html`, von denen
+es dort null gibt, weil der Finder per JS rendert: ein stiller Leerlauf, zwei Runden nach der
+Lehre, dass eine Prüfung, die nichts findet, nicht dasselbe ist wie eine, die bestanden wird.
+
+**Die Reichweite war wieder an eine Dateiliste gebunden.** Der Satz-Block lief über `pages`
+statt über `_zu_pruefen`, womit eine falsche Kopie in `llms.txt` oder als Literal in einem
+Generator grün blieb. Das ist Lehre 11 aus diesem Protokoll, zum wiederholten Mal nicht
+angewandt. Jetzt repoweit, drei Proben rot. Zusätzlich musste der Zeilenumbruch als Grenze
+dazukommen, weil `llms.txt` keine Block-Tags hat.
+
+**Und eine Behauptung in STATUS stand da, bevor sie stimmte.** Der §A6-Befund zum
+Controller-Finder war als geschlossen geführt mit "Schwelle als benannte Konstante mit Filter
+vor der Ausgabe". In `finder.js` lag die 3.8 nur als Ranking-Gewicht in `score()`, es gab
+weder Konstante noch Filter, und `A6_SCHWELLE` wurde ausschließlich gegen den Footer-Text in
+`main.js` gehalten. Dass kein Modell unter 3,8 in die Top 3 kam, war ein Ergebnis der
+Gewichtung, keine Garantie. Statt die Zeile abzuschwächen habe ich sie wahr gemacht:
+`const A6_SCHWELLE = 3.8` plus Filter vor der Ausgabe, verify prüft Konstante und Filter,
+drei Proben rot. Betroffen ist genau ein Produkt, der Turtle Beach Atom mit 3,5.
+
+Dazu sechs weitere falsche Zahlen in Protokoll und Code-Kommentaren korrigiert (Endstand
+1226, 16 nur nachgezogene Seiten, Blockumfang, "einen Commit vor HEAD", Footer in 111 statt
+109 Seiten, 119 statt 112 Stellen) und `CLAUDE.md` von "P-1…P-8" auf "P-1…P-13".
+
+### Gelernt (Fortsetzung)
+
+132. **Auch ein Satzanfang ist eine Heuristik.** Ich hatte die Satzgrenzen-Heuristik
+     aufgegeben und zwei Runden später mit dem Satzanfang-Lookbehind dieselbe Sorte Regel
+     wieder eingebaut, nur kleiner. Jede Bedingung über die Umgebung eines Textes ist eine
+     Annahme über Formatierung, und Formatierung ändert sich. Wenn eine solche Bedingung
+     nötig ist, gehört ihre Vorbereitung dazu: Blockgrenzen zu Satzzeichen machen, bevor
+     man nach Satzzeichen sucht.
+
+133. **Halb geschlossen ist offen.** "Nennt eine Steckverbindung UND keine Funkverbindung"
+     klang geschlossen und war es auf der Funkseite nicht, weil `_funk()` zwei Begriffe
+     kannte. Eine Klassifikation ist erst geschlossen, wenn JEDER Wert in eine benannte
+     Gruppe fällt oder gemeldet wird. Ein Vokabular leistet das, zwei Suchbegriffe nicht.
+
+134. **Eine Behauptung in STATUS kann älter sein als ihre Umsetzung.** Der §A6-Finder-Befund
+     stand als geschlossen da, während der Code nur zufällig unauffällig war. Richtig ist
+     dann nicht, die Zeile abzuschwächen, sondern sie wahr zu machen, wenn es um ein hartes
+     Gesetz geht. Beim Schließen eines Befunds gehört die Frage dazu: Steht das, was ich
+     aufschreibe, auch im Code?
+
+### Elfte Prüfung zu B5: das Gate aus Runde 10 war selbst der Blocker
+
+Beide Blocker betrafen das Fragenzahl-Gate, das ich eine Runde vorher eingebaut hatte, und
+beide hatten eine Ursache: Es suchte die Zahl am Wort „Fragen" statt am Anspruch.
+
+**Als Fehlalarm:** Ein sachlich wahrer Satz über einen fremden Fragebogen („das
+Garantieformular stellt 7 Fragen") wurde rot, mit der falschen Begründung, der Finder stelle
+drei. Dasselbe hätte die seiteneigene Leser-Checkliste in `blog/huellen-kompatibilitaet`
+getroffen, sobald sie mit Ziffer geschrieben wird.
+
+**Als Loch:** Vier ausgelieferte Stellen versprechen dieselbe Zahl in anderer Schreibweise und
+wurden nicht geprüft: „3 kurze Fragen" auf der Startseite und auf der Finder-Seite, „in drei
+Fragen" in einem Blog-Artikel und in `404.html`. Der Prüfer hat den vollen Alterungspfad
+gespielt (vierte Frage in `answers`, alle 24 Ziffernstellen nachgezogen): verify grün,
+während vier falsche Zahlen sichtbar standen, darunter auf der Startseite.
+
+Gelöst wie bei den Mengensätzen, nur mit einem Bindeglied statt mit einer Liste: Gezählt wird
+nur, wo im **rohen** HTML in Reichweite ein Finder-Bezug steht, also ein Link oder der Name.
+Gemessen trennt das die Gruppen exakt, 29 von 30 Vorkommen haben einen Bezug, und das eine
+ohne ist genau die Leser-Checkliste. Ausgeschriebene Zahlen werden mitgelesen, weil vier der
+Versprechen so formuliert sind. Entscheidend war, im rohen Markup zu suchen: Nach dem
+Tag-Entfernen ist der Finder-Link weg, und dann trennt die Nähe nicht mehr.
+
+**Dabei ist aufgefallen, dass ich mein eigenes §A6-Gate gelöscht hatte.** Die
+Block-Ersetzung für das Fragen-Gate hat den `FINDER_JS`-Abschnitt mit überschrieben,
+inklusive der Prüfung, die ich in Runde 10 für den Finder-Filter gebaut hatte. Aufgefallen
+ist es nur, weil der Prüfer die Wirkung gemessen hat und nicht die Anwesenheit der Zeile.
+Wiederhergestellt und gleich verschärft: Der Prüfer hatte gezeigt, dass das Gate vier
+Verschlechterungen grün ließ, weil es im Rohtext suchte (Filterzeile auskommentiert, `<=`
+statt `>=` mit dem Original als Kommentar, Konstante auf 0 mit der 3.8 als Kommentar, Filter
+in eine nie aufgerufene Funktion verschoben). Jetzt werden JS-Kommentare vorher entfernt, die
+Konstante muss genau einmal gesetzt sein, der Filter muss IN `renderResults` stehen, und
+`ratingOf()` muss das Bew.-Feld noch lesen. Sechs Verschlechterungen, sechs rot.
+
+Dazu: Der Anwesenheits-Anker der Mengensätze zählte repoweit, womit eine Kopie in `llms.txt`
+ihn erfüllte, während der Satz von der Seite verschwinden durfte. Der Wert wird weiter
+repoweit geprüft, gezählt werden jetzt nur Seiten. Und fünf Zahlen in STATUS waren falsch
+(112 statt 119 Stellen, 22 statt 26 Fragen-Stellen, 18 statt 14 Zubehörteile, dazu „60
+Antwortkombinationen" statt 36 an zwei Orten). Beim Korrigieren der 36 habe ich erst selbst
+eine 0 hineingeschrieben, weil meine Messung die Optionen am falschen Attribut zählte; die
+richtige Ableitung ist `data-key` mal `data-value`, also platform 3 mal budget 4 mal prio 3.
+
+### Gelernt (Fortsetzung)
+
+135. **Ein Gate, das einen Befund schließt, ist der nächste Kandidat für einen Befund.** Das
+     Fragenzahl-Gate war die Antwort auf einen Blocker aus Runde 10 und wurde in Runde 11
+     selbst zu zwei Blockern, in beide Richtungen gleichzeitig. Ein neues Gate gehört in
+     derselben Runde gegen beide Richtungen geprüft, nicht nur gegen den Fall, der es
+     ausgelöst hat.
+
+136. **Eine Block-Ersetzung löscht, was im Block stand.** Mein `FINDER_JS`-Abschnitt lag im
+     Bereich, den ich für das Fragen-Gate neu geschrieben habe, und war danach weg, ohne
+     dass etwas rot wurde. Vor einer Ersetzung über mehr als ein paar Zeilen gehört die
+     Frage dazu: Was steht noch in diesem Bereich, und prüft etwas dessen Anwesenheit?
+
+137. **Wer Markup-Nähe braucht, darf die Tags nicht vorher entfernen.** Die Finder-Nähe
+     trennt im rohen HTML exakt und im tagfreien Text gar nicht, weil der Link das
+     Bindeglied ist. Zwei Runden vorher war es derselbe Fehler in der anderen Richtung: Die
+     Satzgrenze brauchte die Tags und bekam sie nicht. Vor jedem Suchen also die Frage:
+     Welche Information trägt die Entscheidung, und überlebt sie meine Vorbereitung?
+
+### Zwölfte Prüfung zu B5: dasselbe Gate zum dritten Mal, und zum zweiten Mal selbst gelöscht
+
+**Das Fragenzahl-Gate ist zum dritten Mal in beide Richtungen gescheitert.** Die
+±400-Zeichen-Reichweite war zu grob: Auf `controller-finder/` liegen 75 Prozent des Textes
+in Reichweite eines „finder", auf `404.html` 56 Prozent. Der Prüfer hat den stärksten Beleg
+ohne erfundenen Satz geführt und die seiteneigene Leser-Checkliste in
+`blog/huellen-kompatibilitaet` von drei auf vier Punkte erweitert, also eine gewöhnliche und
+danach wahre Redaktion: Das Commit-Gate wurde rot. Sieben von zwanzig wahren Sätzen waren
+betroffen. Gleichzeitig blieben neun falsche Varianten grün, darunter „in 4 kurzen Fragen"
+(die flektierte Form, während das Repo selbst „3 kurze Fragen" schreibt) und der
+ausgelieferte Satz „Finder in drei Schritten", also dieselbe Zusage mit anderem Substantiv.
+
+Konsequenz wie bei den Mengensätzen in Runde 8: nicht jede denkbare Formulierung erkennen,
+sondern die **neun, die das Repo tatsächlich benutzt**. Gemessen erfassen sie alle Zusagen
+und lassen genau die zwei Checklisten-Sätze aus, die keine sind. Fünfzehn Proben: acht wahre
+Sätze grün, darunter die Checklisten-Erweiterung, sechs falsche Zusagen rot, Alterungspfad
+48 Meldungen.
+
+**Und ich habe mein §A6-Gate zum zweiten Mal gelöscht.** Die Block-Ersetzung für das
+Fragen-Gate lag darüber, und der Finder-Abschnitt war danach weg, ohne dass etwas rot wurde.
+Die Lehre dazu hatte ich eine Runde vorher selbst aufgeschrieben (136). Wiederhergestellt,
+diesmal in einem eigenen Abschnitt mit Trennmarken, die eine künftige Ersetzung sichtbar
+begrenzen, und gleich verschärft: Der Prüfer hatte zwei weitere Umgehungen gezeigt
+(`.filter(p => true || ...)` trägt die Zeile und wirkt nicht; `const ratingOf = (p) => 5`
+ließ meine Prüfung still ausfallen, weil ihr Muster nicht traf und ich den Nichttreffer nicht
+gemeldet habe). Dazu zwei Fehlalarme auf harmloser Umformatierung. Zwölf Proben, zwölf
+korrekt: acht Verschlechterungen rot, vier Umformatierungen grün.
+
+**Der „Kurz gesagt"-Kasten trug den Widerspruch weiter.** Lead und Fazit hatte ich in Runde 5
+nachgezogen, den Kasten nicht: Er nennt „fehlende Spielunterstützung" als eine der fünf
+Ursachen und gleichzeitig „keine Reaktion im Spiel" als anders gelagerten Fall, während
+Abschnitt 7 selbst sagt, Punkt 4 nenne den häufigsten Grund dafür. Jetzt heißt es „drei
+Störungsbilder, die sich ähnlich anfühlen und eigene Abschnitte haben: keine Reaktion im
+Spiel trotz bestehender Verbindung", ohne die falsche Abgrenzung.
+
+Dazu: Ein stiller Übersprung im §A6-Gate reichte bis grün, während jeder Controller die
+Bewertung 5 bekam. Ein Nicht-String in `Verb.` brach an zwei weiteren Stellen mit Traceback
+statt Meldung ab (`kompat.py` und eine Behauptungszeile in `verify.py`); fünf Werttypen
+geprüft, alle liefern jetzt eine Meldung. „117 Stellen" war an vier Orten falsch, die
+Gate-Zählung ergibt 119, und die Zahl war schon in HEAD falsch. „Zehn Prüfrunden" waren elf.
+Und eine Nebenaussage in meinem Kommentar behauptete, der 8BitDo Ultimate 2C sei real
+2,4 GHz plus USB-C: products.json führt ihn als „Ultimate 2C Wired", USB kabelgebunden.
+
+**Verlustabgleich gegen HEAD**, vom Prüfer angemahnt und selbst nachgerechnet: 115
+Prüfmeldungen in HEAD, 142 jetzt, **keine aus HEAD fehlt**.
+
+### Gelernt (Fortsetzung)
+
+138. **Eine Reichweite ist keine Bindung.** „In der Nähe steht ein Finder-Link" trennt nicht,
+     wenn drei Viertel der Seite in dieser Nähe liegen. Proximität fühlt sich wie eine
+     semantische Bindung an und ist eine geometrische. Wenn die Entscheidung am Sinn hängt,
+     hilft nur, die konkreten Stellen zu benennen.
+
+139. **Dieselbe Lehre zweimal zu brauchen ist das normale Maß.** Mengensätze in Runde 8,
+     Fragenzahl in Runde 12: zweimal drei Anläufe, bis ich von „alles erkennen" auf „das
+     Vorhandene prüfen" umgestellt habe. Beim nächsten Gate über Prosa ist die Frage also
+     nicht, ob ein Muster reicht, sondern warum es diesmal reichen sollte.
+
+140. **Ein Nichttreffer muss gemeldet werden, nicht übersprungen.** `if _ro and not ...`
+     fiel wortlos aus, sobald das Muster nicht traf, und genau das war der Angriff. Jede
+     Suche, deren Ergebnis eine Prüfung trägt, braucht einen Zweig für „nicht gefunden" mit
+     einer Meldung. Zum dritten Mal in diesem Paket.
+
+141. **Trennmarken um einen Abschnitt sind billiger als der zweite Verlust.** Nach dem ersten
+     gelöschten Gate habe ich die Lehre aufgeschrieben, nach dem zweiten den Abschnitt
+     eingerahmt. Die Einrahmung hätte das erste Mal verhindert und kostet zwei Zeilen.
+
+### Dreizehnte Prüfung zu B5: drei Blocker, einen davon hat dieses Paket selbst erzeugt
+
+Alle zwölf Behauptungen der Vorrunde haben gehalten, bis auf eine halb (eine
+Fragen-Formulierung war noch nicht erfasst). Drei neue Blocker, alle derselben Klasse: eine
+sichtbar falsche Zahl, verify grün, mit gewöhnlicher Redaktion erreichbar.
+
+**Mein eigener §A6-Filter hat die Startseiten-Zahl falsch gemacht, und mein Gate hat sie
+verteidigt.** Seit dem Einbau des Filters vergleicht der Finder nur Modelle ab 3,8, also 27
+statt 28. Die Startseite sagte weiter 28, und mein Gate leitete die Zahl allein aus dem Typ
+ab: Wer die wahre 27 einträgt, bekommt verify rot. Das ist wörtlich Mechanismus 6 des
+Patterns, das in diesem Paket neu geschrieben wurde, und ich habe den Fehler drei Runden
+nach dem Aufschreiben selbst gebaut. Die Ableitung bindet jetzt an denselben Filter wie der
+Finder: Typ UND Bewertung über der Schwelle.
+
+**Die Finder-Seite zählt ihre Fragen selbst mit, ungegatet.** „Frage 1 von 3" bis „Frage 3
+von 3" traf keine der neun Formulierungen. Vier Proben blieben grün, darunter ein kompletter
+vierter statischer Schritt mit „Frage 4 von 4". Und der Beweis aus der Gegenrichtung: Nach
+einer vierten Frage in `answers` und korrekt nachgezogenen 48 Textstellen, also am Ende des
+regulären, vom Gate abgesegneten Änderungswegs, zeigte die Seite weiter „von 3" und verify
+blieb grün. Jetzt sind die Zähler, die statischen Schritte, die Fortschrittspunkte und die
+Antwortgruppen alle an `answers` gebunden. Fünf Proben, fünf rot.
+
+**Die Abschnittszahlen des Artikels standen an 13 Stellen getippt.** P-13 nennt „Anzahl
+Abschnitte" ausdrücklich im Geltungsbereich, und genau diese Zahl habe ich in Runde 5 an
+Title, drei Descriptions, Schema, Breadcrumb, H1, Lead, Kurzfassung, Blog-Liste und llms.txt
+geschrieben, ohne sie abzuleiten. Fünf Proben blieben grün, darunter der Regelfall
+redaktioneller Arbeit: ein h2 zu h3 heruntergestuft, der Abschnitt also weg, die Zahlen
+unverändert. Abgeleitet wird jetzt aus der Struktur, die Ursachen sind als h2 „1." bis „5."
+numeriert, die weiteren Störungsbilder sind die übrigen Problem-h2. Fünf Proben rot, und die
+Gegenprobe grün: neuer Abschnitt plus nachgezogene Zahlen.
+
+Dazu vier Kleinigkeiten: Mein Kommentar sprach von „den FÜNF Formulierungen", es sind neun.
+Die Muster akzeptierten nur „drei" und „vier" als Zahlwort, jetzt zwei bis sieben. Ein reines
+Umbenennen des Filter-Parameters (`prod` statt `p`) war ein Fehlalarm mit falscher Ursache.
+Und die Akku-Gegenprobe brach nach dem ersten Kandidatenpfad ab, womit eine später ergänzte
+Produktseite ausgenommen gewesen wäre.
+
+### Gelernt (Fortsetzung)
+
+142. **Ein Filter verändert jede Zahl, die über das Gefilterte spricht.** Der §A6-Filter war
+     richtig und hat die Startseiten-Statistik falsch gemacht. Beim Einbau eines Filters
+     also die Frage stellen: Welche Zahl im Repo beschreibt die Menge, die ich gerade
+     verkleinere? Die Antwort stand zwei Zeilen neben dem Gate, das sie prüft.
+
+143. **Eine Seite, die ihre eigene Struktur beschreibt, ist eine Datenquelle.** „Frage 1 von
+     3" und drei `finder-step`-Elemente sind Aussagen über `answers`, genauso wie der
+     Werbetext auf anderen Seiten. Beim Gaten einer abgeleiteten Zahl gehört die Frage dazu:
+     Zählt die Seite selbst mit, und wie?
+
+144. **Der Regelfall redaktioneller Arbeit ist die beste Probe.** Nicht „jemand schreibt eine
+     falsche Zahl", sondern „jemand stuft einen Abschnitt zu h3 herunter" hat das Loch
+     gezeigt. Eine Probe sollte deshalb eine gewöhnliche Änderung sein, nicht eine
+     Verfälschung, denn gegen Verfälschungen baut man ohnehin.
+
+### Vierzehnte Prüfung zu B5: eine Zahl war heute falsch, und das war die zweite Folge meines Filters
+
+**Die Finder-Seite sagte „allen 28 Controllern aus dem Sortiment".** Seit meinem §A6-Filter
+sind es 27, und mein Gate für genau diese Aussagenklasse las nur das Label „Modelle
+verglichen", das an einer einzigen Stelle steht, nämlich der, die ich eine Runde vorher
+korrigiert hatte. Dieselbe Frage, zwei Runden später, zweiter Fund. Die Lehre ist nicht „ich
+habe eine Stelle übersehen", sondern: Ein Filter betrifft jede Zahl über die gefilterte
+Menge, und man findet nicht alle, indem man die erste korrigiert. Jetzt ist auch das zweite
+Label gegatet, Rot-Probe bestätigt.
+
+**Zwei weitere Zusagen waren ungegatet**, beide in Formulierungen, die meine Aufzählung nicht
+hatte: „Genau diese drei Punkte fragt unser Finder ab", sichtbar und im FAQPage-Schema, und
+die Kurzfassung des Artikels mit ihrer eigenen Zahl („drei Störungsbilder" neben dem
+Spezialfall, während alle anderen Stellen vier nennen). Der Prüfer hat beide über einen
+vollständigen, saubereren Umbau nachgewiesen: vierte Frage im Code, Zähler, Schritte,
+Fortschrittspunkte und alle gegateten Textstellen korrekt nachgezogen, verify grün, Seite und
+Schema sagen weiter drei. Beim Nachbessern wichtig war, den Nachbarsatz „Unsere Reviews
+bewerten alle drei Punkte" NICHT mitzufangen, denn das ist keine Finder-Zusage; das Muster
+verlangt deshalb „fragt unser Finder ab".
+
+**Mein eigenes neues Abschnittszahlen-Gate war ein Fehlalarm.** Ich hatte die
+Störungsbild-Abschnitte per Ausschluss gezählt: alle nicht numerierten h2 minus drei
+Literale. Damit erhöhte jede andere Überschrift die Zahl, und drei gewöhnliche Redaktionen
+wurden rot, obwohl der Inhalt wahr bleibt: „Fazit" in „Fazit: Was wirklich hilft" umbenannt,
+„Wenn nichts hilft" umformuliert, ein neuer Einleitungsabschnitt. Das Gate verlangte eine 5,
+die der Artikel nicht hergibt, also wieder Mechanismus 6, diesmal in einem Gate, das zwei
+Stunden alt war. Die vier Abschnitte tragen jetzt `data-rolle="stoerung"` im Markup, und die
+Zahl wird daraus gelesen. Vier wahre Redaktionen grün, vier Strukturänderungen rot.
+
+Dazu: Mein Finder-Gate las rohes Markup und wurde bei einfachen Anführungszeichen rot, von
+denen im Repo 101 stehen (alles generierte Seiten). Das Lesezeit-Gate in derselben Datei hat
+dieses Problem längst gelöst, dieses hatte es nicht übernommen. Sechs Umformatierungen jetzt
+grün.
+
+**Zwei Befunde aus meinem B4-Paket vom Vortag**, gefunden auf die Frage nach weiteren Folgen:
+Das ItemList-Schema auf `/blog/` führte 18 von 19 Artikeln, die Preisfrage-Seite fehlte seit
+sie als Generator dazukam. Und die Karte zu dieser Seite nannte einen anderen Titel als die
+Seite, seit ich den Generator-Titel wegen §B1 gekürzt habe. Beides behoben und gegatet: Die
+Liste muss alle Artikel führen, kein Eintrag darf auf eine nicht existierende Seite zeigen,
+und Kartentitel wie Schema-Name müssen dem H1 der Zielseite entsprechen. Vier Proben rot.
+
+Robustheit: Zwei weitere Nicht-String-Stellen gehärtet, `max()`/`min()` über leere Mengen
+melden jetzt statt abzubrechen, und `next(... slug ...)` ohne Default ist durch einen Helfer
+ersetzt, der den fehlenden Slug meldet. Die restlichen Tracebacks liegen tief im Bestand von
+`verify.py`; sie fallen geschlossen aus und melden ihre Fehler jetzt vorher, die vollständige
+Härtung ist ein eigenes Paket (als Befund in STATUS).
+
+### Gelernt (Fortsetzung)
+
+145. **Nach einer Folge sucht man nicht die Stelle, sondern die Klasse.** Der §A6-Filter hat
+     zwei Zahlen falsch gemacht. Nach dem ersten Fund habe ich die Stelle korrigiert und
+     das Gate erweitert, aber nicht gefragt, welche ANDEREN Formulierungen dieselbe Menge
+     beschreiben. Die zweite stand zwei Klicks entfernt auf der Finder-Seite.
+
+146. **Ein Gate, das per Ausschluss zählt, zählt jede neue Überschrift mit.** „Alles außer
+     diesen drei" ist eine Freigabeliste mit umgekehrtem Vorzeichen und hat denselben
+     Fehler: Sie veraltet beim ersten neuen Element. Ein Marker im Markup kostet vier
+     Attribute und ist gegen Umbenennungen immun.
+
+147. **Was ein Gate in derselben Datei schon gelöst hat, gehört übernommen.** Das
+     Lesezeit-Gate normalisiert Markup seit Runde 7, mein Finder-Gate aus Runde 13 nicht.
+     Beim Bau eines neuen Gates lohnt der Blick auf das Nachbargate: Welche Probleme hat es
+     schon hinter sich?
+
+### Fünfzehnte Prüfung zu B5: meine Korrektur hat die Zahl verschoben, nicht den Rahmen
+
+**Ein Blocker, und er trifft ins Prinzip.** In Runde 14 habe ich „allen 28 Controllern aus dem
+Sortiment" auf 27 korrigiert. Der Prüfer hat gezeigt, dass das die falsche Hälfte war: „im
+Sortiment" sind 28, das sagt der Problem-Artikel zweimal und das prüft verify, und „allen"
+behauptet Vollständigkeit über genau die Eigenschaft, die der Filter aufgegeben hat. Zwei
+ausgelieferte Seiten nannten damit denselben Bezugsrahmen mit zwei Zahlen, und mein Gate
+verteidigte beide: Die ehrlichen Fassungen („27 der 28 Controller", „27 ab 3,8 Sternen")
+wurden rot, weil das Gate an das Label „Controllern aus dem Sortiment" gebunden war. Das ist
+Mechanismus 6 zum zweiten Mal an derselben Zahl.
+
+Jetzt sagt der Satz „mit 27 der 28 Controller im Sortiment ab … Der eine, der fehlt, liegt
+unter unserer Empfehlungsschwelle von 3,8 Sternen", und das Gate prüft die
+Verhältnis-Aussage: N der M, N = Pool ab Schwelle, M = alle Controller. Damit ist die
+ehrliche Fassung die grüne. Fünf Proben: Pool falsch rot, Gesamtmenge falsch rot, Rückfall
+auf die alte Fassung rot, Satz entfernt rot, Datenänderung rot.
+
+Der Prüfer hat außerdem repoweit nach weiteren Folgen des Filters gesucht und bestätigt, dass
+es genau diese zwei Aussagen gab. Die Kachelzahlen, „42 Modelle im Sortiment" und die
+Preisgrenzen sind vom Filter unberührt.
+
+**Sieben Hinweise, alle eingebaut.** Mein Abschnittszahlen-Gate aus Runde 14 las rohes Markup:
+Ein auskommentierter Störungsbild-Abschnitt blieb grün, und `data-rolle='stoerung'` mit
+einfachen Anführungszeichen war ein Fehlalarm. Beide Lösungen standen in derselben Datei zwei
+Bildschirmseiten entfernt, im Mengensatz-Gate seit Runde 10 und im Finder-Gate seit Runde 14,
+und waren hier nicht übernommen.
+
+Die letzte faule Lücke im Fragenzahl-Gate ist weg: Form 5 hat drei wahre Sätze rot gemacht
+(„Unser Finder und diese Liste in vier Schritten ergänzen sich") und deckte genau eine echte
+Zusage, die jetzt als konkrete Fassung dasteht. Nach dem Umbau sind neun Vorkommen nicht
+erfasst, und alle neun sind nachgemessen Nicht-Zusagen.
+
+Drei Stellen prüften Anwesenheit statt Richtigkeit: `ratingOf` mit `const bew = 5; return
+bew;` blieb grün, obwohl dann jeder Controller 5 bekommt und die 27 auf der Seite falsch
+wird; ein doppelter ItemList-Eintrag war unsichtbar, weil ich die Liste als Menge gelesen
+habe, und die `position`-Werte wurden nie geprüft; ein fehlender H1 ließ Kartentitel- und
+Schema-Prüfung still ausfallen. Alle drei geschlossen.
+
+**Robustheit abgeschlossen, soweit sie verify.py betrifft.** Zehn kaputte Datenzustände melden
+jetzt ihren Fehler, keiner bricht mehr in `verify.py` ab. Offen bleibt `gen_brand_sections.py`
+als Unterprozess; verify nennt dann die Datei, aber nicht den Grund. Das steht als eigenes,
+kleineres Paket in STATUS.
+
+Und ein eigener Fehler beim Nachbessern: Ich habe zuerst für alle 21 geänderten Seiten das
+`lastmod` auf heute gezogen. 15 davon haben nur ihre Minutenzahl geändert, und der Prüfer
+hatte in Runde 5 selbst festgehalten, dass ein Bump dafür falsch wäre. Zurückgenommen, sechs
+substanziell geänderte Seiten behalten den neuen Stand.
+
+### Gelernt (Fortsetzung)
+
+148. **Eine falsche Zahl kann die richtige Antwort auf die falsche Frage sein.** „28" war
+     falsch, „27" war auch falsch, weil der Fehler im Bezugsrahmen lag: „allen … aus dem
+     Sortiment" über eine gefilterte Teilmenge. Bei einer Korrektur also nicht nur fragen
+     „welche Zahl stimmt", sondern „über welche Menge rede ich hier eigentlich".
+
+149. **Ein Gate, das ein Label prüft, erzwingt die Formulierung dieses Labels.** Solange es
+     an „Controllern aus dem Sortiment" hing, war die unehrliche Fassung die grüne und jede
+     ehrliche rot. Ein Gate über eine Zahl gehört an die Aussage gebunden, nicht an die
+     Wortwahl, in der sie zufällig zuerst dastand.
+
+150. **Was zwei Bildschirmseiten entfernt schon gelöst ist, muss man nicht neu finden.**
+     Kommentar-Strip und Notations-Normalisierung stehen seit Runde 10 bzw. 14 in derselben
+     Datei, und mein Gate aus Runde 14 hatte beides nicht. Vor einem neuen Gate lohnt ein
+     Blick auf die Nachbarn: Welche Markup-Fallen haben die schon hinter sich?
+
+### Sechzehnte Prüfung zu B5: acht Blocker, und alle acht sind dieselbe Klasse
+
+Der Bericht hat acht Blocker gemeldet, und die Zusammenfassung ist kürzer als die Liste:
+**Jedes Gate, das rohes Markup liest, scheitert in beide Richtungen, und jeder Anker, der
+repoweit zählt, deckt das Verschwinden von der Seite.** Beides habe ich für die Mengensätze
+gelöst und danach fünf weitere Gates gebaut, die es nicht übernommen haben.
+
+Im Einzelnen: `<strong>27</strong> der 28` machte den richtigen Pool-Satz rot, und dieselbe
+Zahl falsch plus Markup blieb auf einer anderen Seite grün. `in <strong>9 Fragen</strong>`
+war ungeprüft. Ein auskommentierter Störungsbild-Abschnitt blieb grün, während elf Stellen
+weiter vier nannten. `data-rolle='stoerung'` mit einfachen Anführungszeichen war ein
+Fehlalarm, und das ist die Notation von 101 Attributen im Repo. Der Pool-Anker ließ sich mit
+einer Zeile in `llms.txt` erfüllen, während die Seite auf die als falsch belegte Fassung
+zurückfiel. Und `_ZAHLWORT` kannte „sieben" nicht, während acht der zehn Muster es zulassen,
+also sprang die Prüfung still ab.
+
+Konsequenz: **eine Funktion statt sechs Einzellösungen.** `_klartext()` entfernt Kommentare,
+macht Block-Grenzen zu einem Pilcrow, löst Entities auf und entfernt Tags; `_text_und_metas()`
+ergänzt die Attributwerte, weil Zusagen auch in Meta-Descriptions stehen. Beim Umstellen hat
+genau diese Stelle rot geleuchtet, was die Notwendigkeit gezeigt hat. Alle Anker zählen jetzt
+nur Seiten.
+
+**Zwei Befunde waren inhaltlich:** Der Begründungssatz „Der eine, der fehlt, liegt unter
+unserer Empfehlungsschwelle" war ungegatet. Der Prüfer hat einen Routinefall Ende zu Ende
+gespielt: Ein zweiter Controller rutscht unter 3,8, der reguläre Änderungsweg zieht die
+Verhältniszahl nach, weil das Gate es verlangt, und der Begründungssatz sagt weiter „der
+eine". Jetzt nennt er die abgeleitete Zahl, und auch die Schwelle selbst ist gegen
+`A6_SCHWELLE` gebunden.
+
+Und die vier Nummern-Querverweise im Artikel („Punkt 4 oben", „derselbe Punkt wie in
+Ursache 5") waren ungegatet: Der Prüfer hat Ursache 4 und 5 getauscht und korrekt neu
+numeriert, was das Gate ausdrücklich erlaubt, und alle vier Verweise zeigten auf den falschen
+Abschnitt bei grünem verify. Sie heißen jetzt die Abschnitte beim Namen, und ein Gate prüft,
+dass jeder genannte Name als h2 existiert. Ein falscher Name fällt dem Leser auf, eine
+falsche Nummer nicht.
+
+**Der unangenehmste Teil:** Zwei der acht Blocker (B-3 und B-4) waren exakt die Hinweise aus
+Runde 15, die ich als behoben gemeldet hatte. Mein Batch-Skript war an einer Assertion
+abgebrochen, bevor es schrieb, und ich habe aus dem Umstand, dass die übrigen Einzelfixes
+danach funktionierten, geschlossen, der ganze Batch sei gelandet. Nachgesehen habe ich nicht.
+
+Probenbatterie nach dem Nachbessern: 14 Proben über alle sechs Gates, 14 korrekt. Drei
+Markup-Varianten im Pool-Satz grün, die falsche Kopie mit Tag rot, drei Begründungssatz-Proben
+rot, der auskommentierte Abschnitt rot, zwei Attributnotationen grün, der Anker über llms.txt
+rot, Markup im Fragen-Satz in beiden Richtungen korrekt, „sieben" rot.
+
+### Gelernt (Fortsetzung)
+
+151. **Ein Batch-Skript, das abbricht, hat nichts geschrieben.** Mein Skript aus Runde 15
+     enthielt vier Fixes, scheiterte am dritten und schrieb die Datei nie. Ich habe die
+     beiden ersten als gesetzt gemeldet, weil die später separat angewandten funktionierten.
+     Nach jedem Schreibvorgang gehört die Gegenprobe, und nach einem Abbruch die Frage, was
+     aus dem Rest geworden ist.
+
+152. **Dieselbe Lösung sechs Mal einzeln zu bauen heißt, sie fünf Mal zu vergessen.** Nach
+     dem dritten Gate mit Markup-Problem war klar, dass es kein Einzelfall ist, und ich habe
+     trotzdem weiter pro Gate geflickt. Eine geteilte Funktion kostet zwanzig Zeilen und
+     hätte fünf Blocker verhindert.
+
+153. **Ein Nummern-Verweis ist eine Zahl ohne Leser-Kontrolle.** „Punkt 4 oben" wird beim
+     Umsortieren still falsch, und niemand sieht es. Ein Namensverweis wird beim Umbenennen
+     auffällig falsch, und ein Gate kann ihn prüfen. In Prosa also auf Namen verweisen, nicht
+     auf Positionen.
+
+154. **Eine Zahl in einem Begründungssatz ist auch eine Zahl.** „Der eine, der fehlt" klingt
+     wie Sprache und ist eine Mengenangabe. Beim Gaten einer Zahl gehört die Frage dazu: Wird
+     sie im Nachbarsatz noch einmal erklärt, und zwar mit einer zweiten Zahl?
+
+### Siebzehnte Prüfung zu B5: drei Hinweise, und einer war prinzipiell unlösbar gemeldet
+
+Der Bericht hat drei Hinweise gebracht, keine Blocker. Zwei waren Handwerk, der dritte hat
+die Arbeitsweise dieses Pakets verändert.
+
+**Hinweis 1, Robustheit.** Zwei Stellen in `verify.py` brachen bei kaputten `products.json`
+mit Traceback ab statt zu melden. Ich habe sie gemessen und dabei festgestellt, dass es
+keine zwei Stellen sind, sondern eine Klasse: `specs` ist eine LISTE von Paaren, und beide
+Schreibweisen, mit denen das Repo sie liest, brechen bei einem Eintrag ab, der nicht genau
+zwei Elemente hat. `dict(specs)` mit ValueError, `for k, v in specs` beim Entpacken. Das
+stand an neun Stellen in `verify.py` und an acht weiteren in den Generatoren. Ein Gate, das
+bei kaputten Daten abbricht, prüft genau diese Daten nicht und meldet dafür auch die 200
+Dinge nicht, die dahinter gestanden hätten.
+
+Die Leser stehen jetzt in `scripts/produktdaten.py`, geteilt mit `kompat.py`: `spec`,
+`spec_wie`, `spec_paare`, `preis_zahl`, `formfehler`. Kaputte Einträge werden übersprungen
+UND gemeldet, denn nur überspringen wäre der Blindfleck, den `unerfasst()` in
+`sync_lesezeit.py` schon einmal hatte.
+
+Beim Aufräumen dieser zehn Kopien habe ich erst eine elfte gebaut: eine eigene Fassung in
+`verify.py`, obwohl `kompat.py` längst eine hatte. Gefunden hat sie nicht ich, sondern die
+Probe, weil `verify.py` über `kompat.py` abbrach.
+
+**Meine erste Probe hat drei der fünf Abbruchstellen nicht erreicht.** Ich hatte einen
+Defekt in EIN Produkt injiziert; drei der Stellen liegen hinter Filtern, die dieses Produkt
+nicht passiert (Hall-Sticks, GameSir, ein fester Slug). Die Probe über ALLE 42 Produkte hat
+sie sofort gezeigt. Endstand: zwölf Defektformen, elf gemeldet, keine bricht ab, unverändert
+grün. Zwei der ursprünglich als Traceback gemeldeten Fälle waren keine: Dort bricht
+`gen_brand_sections.py` ab, und `verify.py` MELDET diesen Abbruch als Fehler, statt
+mitzusterben. Das ist der bekannte offene Befund, nicht ein neuer.
+
+**Hinweis 3, das §A6-Gate im Finder, war als nicht schließbar gemeldet** -- „prüft nur
+Anwesenheit, nicht Korrektheit, und das geht ohne JS-Ausführung nicht". Node ist vorhanden,
+also wird der Finder jetzt ausgeführt: `scripts/finder_probe.js` ersetzt document, window
+und fetch, lädt die echte `products.json`, klickt alle 36 Antwortkombinationen durch und
+berichtet, welche Slugs der Finder je empfiehlt. Die Fragen und Optionen kommen aus der
+SEITE, nicht aus dem Skript.
+
+**Und diese Ausführungsprobe allein hat den gemeldeten Defekt trotzdem nicht gefangen.** Mit
+einem `if (p) return 5;` vor der Schleife in `ratingOf` ist der Filter wirkungslos, und die
+Ausgabe bleibt über alle 36 Kombinationen identisch: Die Rangfolge hält den schwachen
+Controller ohnehin aus den Top 3. Genau das Muster, das die 3,8 vorher schon hatte, als sie
+„nur" ein Ranking-Gewicht war -- ein Ergebnis der Gewichtung, keine Garantie. Entscheidend
+ist erst die **Gegenprobe**: Der Finder bekommt einen Produktsatz, der ausschließlich aus
+Modellen unter der Schwelle besteht. Empfiehlt er dann irgendetwas, filtert er nicht. Gibt
+es kein schwaches Modell mehr im Sortiment (heute genau eines, Turtle Beach Atom mit 3,5),
+baut `verify.py` ein Prüfmittel aus einem echten Eintrag mit gesenkter Bewertung; das ist
+ein Testwert in `verify.py` und berührt `products.json` nicht.
+
+**Zwei meiner eigenen Proben haben falsch gemessen.** „ratingOf gibt immer 5" und „fetch-Pfad
+kaputt" wurden rot, und beide Male war die einzige Meldung das Asset-Hash-Gate: Ich hatte die
+Datei verändert, also stimmte der Hash nicht mehr. Beide Defekte waren tatsächlich
+unentdeckt. Seitdem urteile ich nur nach §A5/§A6-Meldungen und rufe `bump_asset_version.py`
+in der Probe auf.
+
+Dieselbe Proben-Runde hat zwei weitere Löcher gezeigt: Ein `.finder-opt` ohne `data-key`
+blieb grün, weil die Probe dann einen kleineren Kombinationsraum durchläuft und das stumm
+bestätigt. Und der `fetch`-Pfad ist für die Probe unsichtbar, weil ihr Stub die URL ignoriert
+-- ein kaputter Pfad lässt den Finder dauerhaft „Keine perfekte Übereinstimmung" zeigen.
+Beides sind jetzt eigene Prüfungen.
+
+**Der NameError im Rückfallzweig.** Die Attrappe für „kein schwaches Modell vorhanden"
+brach mit `NameError: _spec_paare` ab, weil ich den Leser nicht importiert hatte. Die
+Defekt-Matrix hatte das nicht gezeigt: Dieser Zweig läuft nur, wenn kein Controller unter
+3,8 liegt, und das ist heute nicht der Fall. Erst die Probe, die genau dieses Szenario baut,
+hat ihn erreicht.
+
+**Hinweis 7, die falsche Ursache.** Bei Inline-Markup in einer Karte (`<strong>6</strong>
+Min. Lesezeit`) meldete das Lesezeit-Gate korrekt, aber mit dem Satz „Sie gehört in die
+Byline oder in eine Artikel-Karte" -- während die Zahl genau dort stand. Die Meldung
+unterscheidet jetzt, ob die Stelle in einem `article-meta`- oder `article-byline`-Kasten
+liegt, und nennt dann die wirkliche Ursache. Vier Proben, vier richtige Ursachen.
+
+**Verify-Gate:** `verify.py` grün (0/0, 127 Seiten, 250 Schema-Blöcke). Elf Generatoren je
+dreimal idempotent. Sechs Gates exit 0. Problemartikel 803 → 1232 Wörter, Lesezeit 4 → 6 Min.
+(abgeleitet, nicht getippt). Zwölf Robustheitsproben, elf Defekt-Proben am §A6-Gate, vier
+Ursachen-Proben am Lesezeit-Gate.
+
+### Gelernt (Fortsetzung)
+
+155. **Eine Probe an einem Produkt beweist nichts über eine Stelle hinter einem Filter.**
+     Drei von fünf Abbruchstellen lagen hinter Bedingungen, die mein Probe-Produkt nicht
+     erfüllte, und meine Messung meldete sie als nicht existent. Robustheitsproben gehören
+     über den ganzen Bestand, nicht über ein Exemplar.
+
+156. **Ein Gate, das abbricht, prüft nicht nur diesen einen Punkt nicht.** Es prüft alles
+     dahinter nicht. Der Traceback kostete den gesamten restlichen Lauf, und keine Meldung
+     sagte das. Darum gilt: melden statt abbrechen, und ein fremder Abbruch wird selbst zur
+     Meldung.
+
+157. **Anwesenheit eines Filters ist nicht seine Wirkung, und seine Wirkung ist nicht am
+     Ergebnis ablesbar.** `ratingOf` auf konstant 5 gesetzt lässt jedes Quelltext-Muster
+     grün UND die Ausgabe unverändert, weil die Rangfolge das schwache Produkt ohnehin
+     verdeckt. Ein Filter wird bewiesen, indem man ihm einen Eingabesatz gibt, bei dem er
+     alles aussortieren MUSS.
+
+158. **Wenn eine Probe eine Datei verändert, misst man zuerst das Hash-Gate.** Zwei
+     Fehlalarme aus derselben Ursache: „rot" hieß nur „Datei geändert". Eine Probe muss
+     benennen, WELCHE Meldung sie erwartet, sonst ist jedes Rot ein Scheinbeweis.
+
+159. **Was nur in einem seltenen Zweig läuft, ist ungeprüft, bis die Probe diesen Zweig
+     erzwingt.** Der `NameError` im Attrappen-Zweig stand in grünem Code, weil der Zweig
+     heute nie läuft. Jeder Rückfallpfad braucht eine Probe, die seine Bedingung herstellt.
+
+160. **Eine richtige Meldung mit falscher Ursache schickt den Leser in die falsche
+     Richtung.** „Gehört in eine Artikel-Karte" für eine Zahl, die in einer Artikel-Karte
+     steht, ist schlimmer als keine Begründung. Dieselbe Klasse wie `sync_footer` als
+     angebliche Ursache der abgeschnittenen STATUS und „filtert nicht" bei bloß anderem
+     Parameternamen. Die Ursache in einer Meldung ist eine Behauptung und wird belegt.
+
+### Achtzehnte Prüfung zu B5: der Finder konnte auf der Seite tot sein, bei grünem Lauf
+
+Vier Befunde, einer schwer. Die Zahlenarbeit hielt: der Prüfer hat jede Mengenaussage des
+Pakets gegen `products.json` nachgerechnet, ohne eine Abweichung, und zehn eigene
+Angriffs-Kontrollen haben korrekt rot gemeldet.
+
+**BEF-1, der schwere: der DOM-Vertrag war halb gegatet.** Dieses Paket hat vier Gates
+gebaut, die Seite gegen Skript halten (Fragenzahl gegen `answers`, Optionen gegen
+`data-key`, Schrittgrenze, fetch-Pfad). Die andere Hälfte des Vertrags, die fünf
+Element-Namen und das Script-Tag, prüfte niemand. Der Prüfer hat sechs Eingriffe gezeigt,
+die den Finder **vollständig** töten, während alle Gates grün blieben und die Seite weiter
+zusagt, sie gleiche die Antworten "mit 27 der 28 Controller im Sortiment" ab: `id="finder"`
+umbenannt (finder.js kehrt in Zeile 6 sofort zurück), vier weitere Namen umbenannt
+(TypeError auf `null`), oder einfach das `<script src>` entfernt.
+
+Und meine Ausführungsprobe konnte das prinzipiell nicht sehen: Sie baut ihr DOM selbst, sie
+beweist also etwas über `finder.js` im Leerlauf, nie über `controller-finder/index.html` wie
+ausgeliefert. Der Prüfer hat den Beweis mitgeliefert: mit entferntem `id="finder"` meldet
+die Probe weiter 36 Kombinationen und 16 Slugs.
+
+Die Liste der geforderten Elemente wird jetzt **aus finder.js gelesen** (alle
+`getElementById`, alle `querySelector(All)` mit Klasse oder Attribut), nicht hier getippt.
+Wer dort umbenennt, zieht die Prüfung mit. Dazu die Trefferzahl: `.slice(0, 3)` gegen die
+"Top-3"-Zusagen, ein Hinweis aus demselben Bericht. Zehn Proben, zehn richtig.
+
+**BEF-2: die breite Typprobe fand elf weitere Abbruchstellen.** Runde 17 hatte fünf
+`specs`-Lesarten gehärtet und den Stand für sauber erklärt. Der Prüfer hat `name`, `brand`,
+`claim` und `img` als Nicht-String gesetzt: vier weitere Tracebacks. Ich habe daraufhin
+nicht diese vier geflickt, sondern die Probe verbreitert. Ergebnis nach dem Flicken der
+vier: sieben weitere Abbrüche (`name` als
+Zahl in einem `len()`, `name` als None in einem `in`-Test, `platform` und `type` als Liste
+oder Objekt als dict-Schlüssel, `worksOn` als Zahl in einem `set()`). Zwei Runden
+Einzelflicken waren der Beweis, dass es keinen Grund gibt, warum die nächste Lesestelle es
+besser machen sollte: `text()` und `liste()` kamen ins geteilte Modul, die Feldformen meldet
+`formfehler()` zentral.
+
+**Beim Importieren dieser zwei Leser habe ich dieselbe Kollision gebaut wie eine Runde
+vorher.** `_txt` und `_liste` sind in verify.py bereits lokale Variablen (Zeile 344, 471,
+1906), der Import wurde überschrieben, und der Lauf starb mit "'list' object is not
+callable". Genau der `_klartext`-Fehler aus Runde 17, zwei Stunden später. Die Namen heißen
+jetzt `_pfeld`/`_pliste`, und die Umbenennung prüft vorher auf bestehende Zuweisungen.
+
+**BEF-4 hat ein größeres Loch aufgedeckt.** Zwei neu geschriebene Zitate schlossen mit
+geradem `"` statt `"`. Repoweit gemessen: genau diese zwei, der Bestand ist sauber, also
+kann das Gate scharf stehen. Beim Scharfstellen wurde es rot auf `suche/index.html` -- und
+die Ursache war nicht die Seite, sondern **`_klartext()` entfernt `<script>`-Inhalt nicht**.
+Das ist in beide Richtungen falsch: der Fehlalarm war eine JS-Zeichenkette (`„' + q + '"`),
+und das Loch ist schwerer -- **jeder Anwesenheits-Anker dieses Pakets ließ sich von einer
+Zeichenkette in einem Skript erfüllen**, während die Seite den Satz nicht zeigt. Dieselbe
+Klasse wie die Kopie in `llms.txt`, die in Runde 16 einen Anker gedeckt hat. Probe: Pool-Satz
+von der Seite entfernt und in ein `<script>` gelegt -- jetzt rot, vorher grün.
+
+**Eine Zahl habe ich gestrichen statt korrigiert.** STATUS behauptete "26 Stellen sagen
+korrekt 3 Fragen". Der Prüfer maß 27, ich 24 und dann 28, je nach Dateimenge und
+Textbildung. Drei Messungen, drei Ergebnisse, keine Messvorschrift in der Doku: die Zahl
+steht jetzt nicht mehr da, das Gate schon.
+
+**Einen Hinweis habe ich belegt zurückgewiesen:** "Stand September 2026" in der Byline
+widerspricht nicht `dateModified: 2026-10-02`. "Stand" ist der Datenstand der Produktdaten
+(Konstante über 22 Seiten, letzte Preispflege 30.09.), `dateModified` das Textdatum. Auf
+Oktober zu ziehen hieße, eine Datenaktualität ohne Screenshot zu behaupten (§A5).
+
+### Gelernt (Fortsetzung)
+
+161. **Ein Skript und seine Seite haben einen Vertrag, und er hat zwei Hälften.** Dieses
+     Paket hat vier Gates für die eine Hälfte gebaut (welche Daten die Seite zusagt) und
+     die andere übersehen (welche Elemente das Skript braucht). Beide Hälften gehören
+     gegatet, und die Liste gehört aus dem Skript gelesen, nicht in das Gate getippt.
+
+162. **Eine Probe, die ihre Umgebung selbst baut, beweist nichts über die echte
+     Umgebung.** Mein DOM-Ersatz ließ den Finder 36 Kombinationen durchlaufen, während auf
+     der Seite kein einziges Element mehr da war, auf das er zugreift. Eine Simulation
+     braucht daneben eine Prüfung der Schnittstelle, die sie simuliert.
+
+163. **Nach dem zweiten Einzelflicken derselben Klasse hört das Flicken auf.** Runde 17
+     härtete fünf Stellen und erklärte den Stand für sauber, Runde 18 fand vier weitere,
+     und die breite Probe danach sieben. Der Zeitpunkt für den geteilten Leser war nach
+     dem zweiten Fund, nicht nach dem sechzehnten.
+
+164. **Einen Import so benennen, dass er nichts überschreibt, und das prüfen.** `_txt` und
+     `_liste` waren beide schon lokale Variablen. Dieselbe Kollision wie `_klartext` eine
+     Runde vorher. Vor dem Benennen: nach bestehenden Zuweisungen des Namens greppen.
+
+165. **Skript-Inhalt ist kein Seitentext, und ein Gate, das ihn mitliest, hat ein Loch.**
+     Jeder Anwesenheits-Anker ließ sich von einer Zeichenkette in einem `<script>`
+     erfüllen. Beim Bilden von "sichtbarem Text" fallen `script` und `style` zuerst heraus,
+     vor Kommentaren und Tags.
+
+166. **Vor dem Scharfstellen eines Gates den Bestand messen.** Bei den Anführungszeichen
+     waren es repoweit genau die zwei eigenen Stellen, also konnte das Gate sofort scharf
+     stehen. Wäre der Bestand rot gewesen, wäre es wie bei den Em-Dashes: erst der Pass,
+     dann die Invariante, in einem Commit.
+
+### Neunzehnte Prüfung zu B5: drei schwere Befunde, einen hat meine letzte Nachbesserung erzeugt
+
+Sechs Befunde. Der unangenehmste zuerst.
+
+**BEF-C: Meine Nachbesserung aus Runde 18 hat ein Gate stillgelegt.** Ich hatte
+`<script>`-Inhalt aus `_klartext()` entfernt, weil sich sonst jeder Anwesenheits-Anker von
+einer Zeichenkette in einem Skript erfüllen ließ. Richtig, aber zu breit: Die
+Abschnittszahlen stehen auch in `headline` und `description` des Article-Schemas, also in
+einem `<script type="application/ld+json">`. Der Prüfer hat 9 Ursachen und 7
+Störungsbilder **nur** ins Schema geschrieben, sichtbar blieben 5 und 4, und der Lauf blieb
+grün. Mein eigener Begründungskommentar trug die Prüfung nicht mehr: Er sagte, die Zahlen
+stünden "auch in den Descriptions und im Article-Schema, also in Attributen" -- das Schema
+steht nicht in einem Attribut.
+
+Die Unterscheidung, auf die es ankommt: **JSON-LD ist ausgelieferter Inhalt** (Google liest
+es, und §A4 verlangt für jeden Schema-Wert eine sichtbare Entsprechung), **ein beliebiger
+JS-String ist Programmtext.** `_klartext()` entfernt weiter alle Skripte; `_jsonld_texte()`
+holt genau die Zeichenketten-Werte der JSON-LD-Blöcke zurück und `_text_und_metas()` nimmt
+sie dazu. Damit ist das Loch aus Runde 18 zu und das Gate aus Runde 16 wieder scharf.
+
+**BEF-A: Der DOM-Vertrag war nach meiner Nachbesserung noch für vier Formen offen.** Ich
+hatte die Element-Liste aus finder.js gelesen und für neun Eingriffe rot gemessen. Der
+Prüfer hat vier gefunden, die durchliefen, und jeder einzelne tötet den Finder:
+
+- **Script-Tag auskommentiert.** Mein Muster las rohes Markup. In derselben Datei entfernt
+  `_klartext()` Kommentare genau aus diesem Grund, und ein Kommentar zwanzig Zeilen weiter
+  benennt die Kommentar-Falle selbst.
+- **Script-Tag in `<noscript>` gewickelt.** Läuft nie, Muster erfüllt.
+- **`data-step` umbenannt.** finder.js liest es über `s.dataset.step`, nicht über einen
+  Selektor, also stand es in keiner meiner Listen. Wirkung: `+undefined === 1` ist für
+  jeden Schritt falsch, kein Schritt bekommt `is-active`, und wegen
+  `.finder-step{display:none}` bleibt der Finder-Bereich **leer**.
+- **`class="finder-step"` → `finder-step-alt`.** `\bfinder-step\b` trifft das auch, weil
+  der Bindestrich eine Wortgrenze ist. Dazu derselbe Fehler beim Attribut-Anker: `data-back`
+  entfernt, das Wort nur noch in einem CSS-Kommentar, Gate grün, Zurück-Knöpfe tot.
+
+Jetzt fallen Kommentare, `<style>` und `<noscript>` zuerst heraus, Klassen werden als Token
+in einem `class`-Attribut geprüft, Attribute nur an echten Tags, und `dataset.X` wird in
+`data-x` übersetzt und mitverlangt. Sieben Proben rot, Gegenproben grün.
+
+**BEF-B: Das Top-N-Gate prüfte einen Stellvertreter.** Mein Muster nahm den ersten
+`.slice(0, N)` der Datei. Entfernt man die ergebnisbegrenzende Zeile, ist der erste Treffer
+die Spec-Chip-Zeile `(p.specs || []).slice(0, 3)` -- das Gate las weiter 3, während der
+Finder ausführbar "Deine Top 27 Empfehlungen" ausgab. Mein erster Fix hat die Klammer
+ausgeklammert und ihr `.slice` stehen gelassen, blieb also grün; erst die Bindung an die
+Zuweisung von `ranked` trifft die Sache. Zweites Loch: Es fehlte der Abdeckungs-Anker, also
+Mechanismus 4 des eigenen P-13. Zusage umformuliert plus `slice(0, 8)` war grün.
+
+**BEF-D: Ein leeres `name`-Feld lässt verify.py HÄNGEN, nicht abbrechen.** `re.escape('')`
+trifft an jeder Zeichenposition jeder Seite, der Belegt-Scan in `audit_prosa.py` wird
+quadratisch, und verify rief das Script ohne `timeout` auf. Das leere Feld war als Fehler
+erkannt -- die Meldung kam nie, weil der Lauf nicht endete. Das ist eine Stufe schlimmer als
+ein Abbruch: kein Exit-Code, kein Befund, nichts. Zwei Fixes: Namen unter drei Zeichen
+kommen nicht in die Alias-Tabelle, und jeder Unterprozess-Aufruf hat ein `timeout` samt
+Meldung.
+
+**BEF-E: Elf weitere Abbruchstellen, in genau den drei Feldern, die ich vergessen hatte.**
+`platformLabel`, `gallery` und `video` standen in keiner meiner Feldlisten, also meldete
+`formfehler()` sie nicht und die Lesestellen brachen ab. Dritter Anlauf derselben Klasse.
+Konsequenz: Alle 15 Felder sind deklariert, und **ein Feld, das in keiner Liste steht, ist
+selbst ein Befund** -- sonst fehlt beim nächsten neuen Feld wieder eines.
+
+**BEF-F: Vier Zahlen im heute geschriebenen Text deckt das Repo nicht.** "339 Dateien"
+(340), ein Gate-Kommentar mit "16 Stellen … und 11" (das Gate sieht andere Zahlen), und
+dieselbe Messung in drei Fassungen: "12 Felder x 4 Typen, sieben weitere" in
+`produktdaten.py` gegen "12 Felder x 6 Typen, elf weitere" in STATUS. Ich hatte die Lehre
+dazu am selben Tag selbst aufgeschrieben. Die Zahlen sind entfernt, wo keine Messvorschrift
+dabei stand, und die eine, die bleibt, nennt sie: 15 Felder x 7 Typen plus 12 Sonderformen
+= 117 Formen, Skript im Scratchpad.
+
+**Bestätigt hat der Prüfer:** jede Mengenaussage des Pakets gegen `products.json`
+nachgerechnet, keine Abweichung; §A2 für alle neuen Aussagen (Text steht da, nachdem jedes
+`<script>` entfernt wurde); §A6; keine neue Em-Dash; 18 Prüfrunden; und ausdrücklich die
+**Zurückweisung** des Datenstand-Hinweises aus Runde 18 -- mit dem Zusatz, dass das
+`dateModified`-Gate absichtlich einseitig ist und ein neueres Textdatum konstruktiv vorsieht.
+
+### Gelernt (Fortsetzung)
+
+167. **Eine Nachbesserung ist eine Änderung und braucht ihre eigene Gegenprobe.** Das
+     Entfernen von Skript-Inhalt hat ein Loch geschlossen und ein Gate stillgelegt, und ich
+     habe nur das Loch geprüft. Nach einer Änderung an einer geteilten Funktion gehört
+     gemessen, was alle ihre Aufrufer danach noch sehen.
+
+168. **"Nicht sichtbar" und "nicht ausgeliefert" sind zwei verschiedene Dinge.** JSON-LD ist
+     unsichtbar und trotzdem Inhalt; ein JS-String ist unsichtbar und Programmtext. Wer
+     beides gleich behandelt, hat entweder ein Loch oder einen stillgelegten Anker.
+
+169. **Ein Wortgrenzen-Muster prüft keinen Namen.** `\bfinder-step\b` trifft
+     `finder-step-alt`, weil der Bindestrich eine Wortgrenze ist. Ein Klassenname wird als
+     Token in einem `class`-Attribut geprüft, ein Attribut an einem echten Tag.
+
+170. **Was ein Skript ohne Selektor liest, steht in keiner Selektor-Liste.** `dataset.step`
+     war unsichtbar für eine Prüfung, die `getElementById` und `querySelector` einsammelt.
+     Beim Ableiten einer Schnittstelle gehören alle Zugriffsarten dazu, nicht die
+     naheliegenden.
+
+171. **Der erste Treffer in einer Datei ist ein Stellvertreter, nicht die Sache.** Das
+     Top-N-Gate las irgendein `.slice(0, N)`. Eine Prüfung wird an die Anweisung gebunden,
+     um die es geht, nicht an das erste Vorkommen ihrer Form.
+
+172. **Ein Gate, das nicht endet, ist schlimmer als eines, das abbricht.** Kein Exit-Code,
+     keine Meldung, auch nicht für die Befunde, die es schon hatte. Jeder
+     Unterprozess-Aufruf bekommt ein `timeout`, und jede Suche nach einem Datenwert prüft,
+     dass der Wert überhaupt etwas eingrenzt.
+
+173. **Eine Feldliste ist eine Fehlerquelle, solange ein fehlendes Feld still bleibt.**
+     Dreimal hat dieselbe Härtung an den Feldern gescheitert, die ich nicht aufgezählt
+     hatte. Erst "jedes undeklarierte Feld ist ein Befund" schließt die Klasse.
+
+### Zwanzigste Prüfung zu B5: vier schwere Befunde, alle vier Nachbarformen der Nachbesserung
+
+Der Bericht hat sieben Befunde gebracht, und die Zusammenfassung ist eine Diagnose über
+mich: **Ich habe drei Runden lang die gemeldete Form reparariert statt die Klasse.** Runde
+18 fand sechs Eingriffe, die den Finder töten, Runde 19 fand fünf weitere, Runde 20 fand
+fünf weitere. Jedes Mal habe ich die Muster erweitert, und jedes Mal lag daneben eine Form,
+die durchlief:
+
+- **`data-step` am falschen Element.** Mein Anker verlangte das Attribut irgendwo in der
+  Datei. An den Fortschrittspunkten steht es ohnehin, also durften die drei Frage-Abschnitte
+  es komplett verlieren. Der Prüfer hat im echten Browser gemessen:
+  `datasetStep: [null,null,null]`, nach dem ersten Klick alle drei Fragen **und** das
+  Ergebnis auf `display:none`, `#finder` leer.
+- **`data-step` gedoppelt.** Dieselbe Klasse, andere Form.
+- **Die Klassen-ZÄHLUNG benutzte weiter `\b`.** Die Token-Prüfung aus Runde 19 war nur in
+  der Anwesenheitsprüfung gelandet, nicht in der Zählung 130 Zeilen darüber. Eine von drei
+  Klassen mit Suffix umbenannt hielt beide grün, während Frage 1 und Frage 3 dauerhaft
+  gleichzeitig auf der Seite standen.
+- **Script-Tag in den `<head>` ohne `defer`.** Geprüft war nur, DASS es existiert, nicht
+  wo. finder.js kehrt dann in Zeile 6 wortlos zurück, kein Klick wirkt, keine Konsolen-
+  meldung.
+- **Startzustand `is-active` entfernt.** finder.js ruft beim Laden kein `show(0)`. Ohne das
+  Markup-`is-active` ist keine Frage sichtbar, mit JS und ohne JS, also auch ein
+  §A2-Verstoß.
+- **Top-N blieb ein Stellvertreter.** Meine Bindung an `ranked` suchte weiter den ERSTEN
+  `.slice(0, N)` in der Kette; ein dekoratives `slice` im `.map()` genügte. Ausführbar
+  belegt: "Deine Top 27 Empfehlungen" bei grünem Lauf, während die Startseite "Top-3" sagt.
+
+**Konsequenz: Das Mustervergleichen hört auf.** Die Seite wird geparst
+(`scripts/dom_baum.py`, html.parser, ohne `template`- und `noscript`-Inhalt), finder.js
+läuft gegen diesen Baum (`scripts/finder_probe.js` mit einem Minimal-DOM: `classList`,
+`dataset`, `querySelectorAll` mit Token-Vergleich), und geprüft werden **Zustände**: wie
+viele Schritte, welcher ist am Anfang aktiv, welche `data-step`-Werte tragen die Abschnitte
+(0…n-1, jede genau einmal), wie viele Schritte nach jedem Klick aktiv sind, ob das Ergebnis
+am Ende erscheint, wie viele Karten höchstens gerendert werden, ob Zurück zum
+vorhergehenden Schritt führt, und was der Finder empfiehlt.
+
+Drei Dinge bleiben Quelltext-Prüfung, weil sie keinen Zustand erzeugen, und das steht als
+Begründung im Code: die Ladeordnung des Script-Tags, die CSS-Bindung der umgeschalteten
+Klasse (`.finder-step{display:none}` plus `.finder-step.is-active{display:block}`) und der
+fetch-Pfad, weil der Harness fetch stubbt und die URL ignoriert.
+
+**Die Probe ist die eigentliche Arbeit:** 19 Formen aus den Runden 18, 19 und 20 in einer
+Batterie. 18 rot, eine grün -- die Zurück-Knöpfe waren im neuen Block nicht mehr abgedeckt.
+Also auch die als Wirkung gemessen (zwei Antworten vorwärts, einmal zurück, genau der
+vorhergehende Schritt muss aktiv sein), sechs weitere Proben, alle sechs richtig. Die Zahl
+der Zurück-Knöpfe ist abgeleitet: einer je Schritt außer dem ersten.
+
+**BEF-6, meine eigene Frage von vorher, mit Ja beantwortet.** Ich hatte in Runde 19
+JSON-LD-Werte in `_text_und_metas` geholt, um das Abschnittszahlen-Gate wieder scharf zu
+machen, und selbst gefragt, ob sich damit ein Anker von einem JSON-LD-Wert erfüllen lässt.
+Der Prüfer hat es gezeigt: Zusage von der Startseite genommen, als `"slogan"` ins
+Organization-Schema gelegt, Lauf grün. §A4 fängt das nicht, denn es gibt keine maschinelle
+Prüfung "Schema-Zeichenkette steht sichtbar". Die Auflösung trennt zwei Fragen, die ich
+vermischt hatte: **Der WERT wird überall geprüft** (eine falsche Zahl ist auch in einer
+Description falsch), **die ABDECKUNG nur dort, wo die Zusage den Leser erreicht.** Jede
+Zusage-Form trägt jetzt ihren Ort: `sichtbar` im Seitentext, `meta` in der Description,
+`quelle` für die Kopie im Quelltext, die ausdrücklich keine Leser-Zusage ist. Das Gate, das
+die Länge dieser Ortsliste gegen die Formenliste hält, hat im ersten Lauf meinen eigenen
+Fehler gemeldet: acht Orte für zehn Formen.
+
+**BEF-D aus Runde 19 bestätigt behoben** (leeres `name` endet nach 5,5 s mit 21 Fehlern
+statt zu hängen). **BEF-7:** "achtzehn Prüfläufe" im heute geschriebenen Protokoll, während
+derselbe Satz die Spanne bis zur neunzehnten Prüfung nennt und zwei Brain-Dateien 19 sagen.
+Korrigiert, mit Messvorschrift.
+
+### Gelernt (Fortsetzung)
+
+174. **Nach dem zweiten Nachbarbefund wird die Prüfmethode gewechselt, nicht das Muster
+     erweitert.** Drei Runden, sechzehn Formen, jedes Mal eine daneben. Ein Vertrag zwischen
+     zwei Dateien lässt sich nicht durch Suchen nach Schreibweisen prüfen. Er wird
+     ausgeführt, und geprüft wird der Zustand, der dabei entsteht.
+
+175. **"Attribut existiert" ist nicht "Attribut am richtigen Element".** `data-step` stand
+     an den Fortschrittspunkten und fehlte an den Frage-Abschnitten: Anwesenheitsprüfung
+     erfüllt, Finder leer. Eine Zuordnung wird als Zuordnung geprüft, am besten als
+     Zustand nach Ausführung.
+
+176. **Eine Nachbesserung gehört an JEDE Stelle derselben Datei, die dieselbe Regel
+     benutzt.** Die Token-Prüfung aus Runde 19 landete in der Anwesenheitsprüfung und nicht
+     in der Zählung 130 Zeilen darüber. Nach einem Fix: nach weiteren Vorkommen derselben
+     Form greppen, nicht nur die gemeldete Zeile ändern.
+
+177. **Wert und Abdeckung sind zwei Fragen.** Wo eine Zahl falsch sein kann, ist überall;
+     wo eine Zusage den Leser erreicht, ist genau ein Ort. Beide Prüfungen auf dieselbe
+     Textmenge zu stellen erzeugt entweder ein Loch (Schema deckt die Seite) oder einen
+     Fehlalarm (eine Quellkopie gilt nicht als Zusage).
+
+178. **Wenn eine Liste zu einer anderen passen muss, prüft das ein Gate.** Meine Ortsliste
+     hatte acht Einträge für zehn Formen. Das Gate darunter hat es im ersten Lauf gemeldet
+     -- geschrieben in derselben Minute wie der Fehler.
+
+### Einundzwanzigste Prüfung zu B5: die Methode trägt, aber sie maß den Vertrag statt die Bedienbarkeit
+
+Acht Befunde, fünf schwer. Zuerst das Gute, und der Prüfer hat es selbst gemessen: **die
+alte Fehlerklasse ist zu.** Acht der Formen aus den Runden 18, 19 und 20 eigenständig
+nachgebaut, 8 von 8 rot. Der Wechsel von Mustersuche auf Ausführung trägt.
+
+Der Befund liegt eine Ebene darüber: **Die Probe misst den JS-Vertrag, nicht die
+Bedienbarkeit.** Vier der Lücken lagen innerhalb dessen, was die Probe zu messen behauptet,
+und der Prüfer hat drei davon im echten Browser gegengeprüft, bei grünem Lauf:
+
+- **`disabled` an den Antwort-Knöpfen.** Mein Harness rief den Handler direkt auf; ein
+  Browser feuert auf einem deaktivierten Knopf kein Ereignis. Die Probe meldete 36
+  Kombinationen und 3 Karten, der Leser konnte den Finder nicht einmal starten. Gleiche
+  Klasse: `<fieldset disabled>`.
+- **Frage und Antwortgruppe waren nicht aneinander gebunden.** Die Gruppen entstanden aus
+  der Dokumentreihenfolge der `data-key`-Werte, ohne Bezug zu dem Schritt, in dem der Knopf
+  liegt. Die beiden Antwortgruppen von Schritt 2 und 3 vertauscht: Die Budget-Überschrift
+  stand über den Prioritäts-Antworten, alle Zustände blieben korrekt.
+- **Die fetch-Prüfung bewies Existenz, nicht Ziel.** Ein Zeiger auf `longtail.json` lief
+  durch, weil ich nur `os.path.exists` prüfte und der Stub die URL ignorierte. Der Finder
+  zeigte für jede Kombination "Keine perfekte Übereinstimmung" -- genau das Schadensbild,
+  das die Meldung derselben Prüfung wörtlich ankündigt.
+- **`data-product` als Kartenmaß.** Kartenvorlage ausgehöhlt, nur `data-product` stehen
+  gelassen: Probe meldete weiter 3 Karten, im Browser drei leere `<article>` und **null
+  `data-asin`** -- die Geldleitung aus dem Finder war weg (§A3).
+- **Die "CSS-Bindung" prüfte Anwesenheit einer Regel, nicht ihre Wirkung.** Eine spätere
+  Regel gewinnt in der Kaskade; eine Zeile am Ende von style.css oder im seiteneigenen
+  `<style>`, das das Gate gar nicht las, machte den Finder komplett leer, auch ohne
+  JavaScript. Das ist "Anwesenheit statt Wirkung" in einer der drei Quelltext-Prüfungen,
+  die ich selbst als solche benannt hatte.
+
+Dazu drei mittlere: `hidden`, inline `display:none` und `aria-hidden` wurden eingelesen und
+nie ausgewertet. Der Ort `meta` in `_FORM_ORT` hieß "irgendein Attributwert" -- die Zusage
+aus allen drei Descriptions entfernt und in ein `title=` gelegt hielt den Anker erfüllt,
+und erreichte über Suchergebnisse niemanden mehr. Und die Reinraum-Zahl im Protokoll stand
+zum zweiten Mal falsch, weil ich sie gemessen und dann nicht mitgezogen hatte, als eine
+Datei dazukam.
+
+**Geschlossen wurde genau das, was der Prüfer als schließbar benannt hat**, und nicht mehr:
+Alles, was schon im geparsten Baum steht, wird jetzt ausgewertet (`disabled` samt
+`fieldset`, `hidden`, inline `display`/`visibility`, `aria-hidden`, die Zuordnung Frage zu
+Antwortgruppe, der Karteninhalt mit `data-asin`). Der Harness lädt den fetch-Pfad aus
+finder.js statt products.json fest zu verdrahten, und verify prüft zusätzlich, dass die
+geladene Datei den Produktbestand führt. Die CSS-Prüfung nimmt die **letzte passende
+Regel** über style.css UND den `<style>`-Block der Seite.
+
+**Was NICHT geschlossen wurde, steht als GRENZE im Code**, mit der Begründung: Spezifität,
+`@media`, `!important`, `opacity`, `pointer-events`, `height:0`, Überlagerung per z-index
+und alles, was erst beim Rendern entsteht. Ein vollständiger Browser-Nachbau wäre der
+Regress, vor dem Lehre 174 warnt. Dazu die benannte Abweichung, dass der Harness je
+Ereignis einen Handler registriert und der Browser mehrere.
+
+**Probenbatterie: 21 Defektformen, 21 rot, unverändert grün.** Elf aus Runde 21, zehn aus
+den Runden 18 bis 20 als Rückfall-Kontrolle.
+
+### Gelernt (Fortsetzung)
+
+179. **Ein Gate, das eine Benutzerschnittstelle prüft, muss die Bedienbarkeit prüfen, nicht
+     die Verdrahtung.** Mein Harness rief Handler direkt auf und bewies damit, dass die
+     Verkabelung stimmt -- während ein `disabled` am Knopf dieselbe Oberfläche für jeden
+     Leser unbenutzbar machte. Wer eine Interaktion simuliert, muss die Bedingungen
+     nachbilden, unter denen sie im Original NICHT stattfindet.
+
+180. **"Die Datei existiert" ist nicht "die Datei ist die richtige".** Der fetch-Pfad zeigte
+     auf vorhandenes JSON, und die eigene Fehlermeldung beschrieb den Schaden, der dann
+     eintrat. Wo ein Pfad geprüft wird, gehört der INHALT am Ziel geprüft -- oder das Ziel
+     wird wirklich geladen.
+
+181. **Ein Zähler über Markup zählt Markup, nicht Sache.** `data-product` kam zweimal pro
+     Karte vor, dann einmal pro leerer Karte. Gezählt wird das Ding (`<article>`), und was
+     es tragen MUSS, wird mitgeprüft (§A3: ohne `data-asin` ist eine Empfehlung keine).
+
+182. **Bei CSS gewinnt die letzte Regel, und die Seite hat ihr eigenes Stylesheet.** Eine
+     Anwesenheitsprüfung auf "irgendeine Regel" ist bei Kaskaden wertlos. Und wer nur
+     style.css liest, übersieht den `<style>`-Block, der auf der Seite steht.
+
+183. **Wo eine Prüfung aufhört, gehört es in den Code geschrieben.** Der Prüfer hat sechs
+     weitere Angriffe gezeigt, die grün bleiben (opacity, pointer-events, Höhe 0,
+     Überlagerung). Die wären nur mit einem Browser-Nachbau zu fangen. Die ehrliche Antwort
+     ist eine GRENZE-Liste im Gate, nicht ein halber Interpreter -- sonst liest der nächste
+     Durchgang Grün als "geprüft".
+
+### Zweiundzwanzigste Prüfung zu B5: sieben Blocker, und zwei davon waren Fehlalarme auf richtigem Code
+
+Der Bericht hat sieben Blocker und drei Doku-Befunde gebracht. Das Neue daran: **zwei
+Blocker waren keine Löcher, sondern Fehlalarme.** Ein Gate, das in beide Richtungen
+scheitert, ist das Abbruchkriterium aus Mechanismus 7 des eigenen Patterns, und diesmal traf
+es die CSS-Prüfung aus Runde 21:
+
+- **Loch:** `.finder-options{display:none}` oder `.finder{display:none}` am Ende von
+  style.css blieb grün. Dieselbe Schadensform wie in Runde 21, nur am Nachbarelement, weil
+  meine Kaskaden-Auswertung genau zwei Klassennamen abfragte.
+- **Fehlalarm:** Ein völlig korrektes `#finder .finder-step{display:none}` wurde rot, mit
+  der Begründung "dann stehen alle Schritte gleichzeitig auf der Seite" -- was nicht
+  stimmte. Ursache: Ich verlangte, dass der GANZE Selektor eine einfache Klassenkette ist.
+
+Beides hing an einer Zeile. Jetzt entscheidet die **letzte Verbundgruppe** des Selektors
+(Pseudoklassen abgestreift, an Kombinatoren getrennt), und abgefragt wird **jede Klasse und
+ID auf dem Weg** von `#finder` bis zu den Schritten, dem Ergebnis und den Antwort-Knöpfen.
+Diese Ketten kommen aus dem geparsten Baum, nicht aus einer Liste im Gate. Damit sind auch
+die zwei Angriffe zu, die der Prüfer in Runde 21 noch als "unter der GRENZE" eingeordnet
+hatte -- er hatte recht, dass die Grenze dort zu weit gezogen war: Der Umweg kostete ein
+vorangestelltes Token.
+
+**Beim ersten Lauf war die neue Fassung selbst ein Fehlalarm.** Sie meldete die
+Antwort-Knöpfe von Schritt 2 und 3 als "per CSS versteckt" -- die liegen unter einem
+`.finder-step` ohne die aktive Klasse, also korrekt versteckt. Die Lösung steht nicht im
+Gate, sondern im Harness: Er kennt die echten Knoten und markiert, welche Elemente
+finder.js umschaltet. Ein umgeschalteter Vorfahr darf im Ruhezustand verborgen sein.
+
+**Drei Blocker waren Messlücken in meinem eigenen Harness**, und jede einzelne ist eine
+Variante von "ich habe das Maximum gemessen statt den schlechtesten Fall":
+
+- Ein Antwortzweig lieferte **0 Karten** bei Titel "Deine Top 3 Empfehlungen" (9 der 36
+  Kombinationen). Ich maß nur `max_karten`. Jetzt wird je Kombination das Paar
+  (Kartenzahl, Titel) berichtet, und ein leeres Gitter ist nur mit dem Ausweichtitel
+  erlaubt -- der aus finder.js gelesen wird, nicht getippt.
+- Der Kommentar in meinem Harness behauptete "schlechtester Zustand gewinnt", und der Code
+  übernahm einen späteren Wert nur, wenn er `!== 1` war. **An der letzten Position ist der
+  Defektwert aber 1** (die Frage bleibt neben dem Ergebnis stehen), also war dort jede
+  Kombination außer der ersten blind, 12 der 36 Fälle. Jetzt werden je Position ALLE
+  beobachteten Werte berichtet.
+- **Dreimal dasselbe Modell als "Top 3"** blieb grün, weil die Slugs in ein Set gingen,
+  bevor etwas geprüft wurde.
+
+**Ein Blocker war Inhalt:** `data-value` von iPhone und Android vertauscht, Beschriftungen
+unverändert -- ein Leser mit iPhone drückt "iPhone" und bekommt die Android-Auswahl. Das
+Gate prüfte nur, WELCHER Schlüssel in welchem Schritt liegt. Jetzt wird die Beschriftung
+gegen ihren Wert gehalten, und die Budget-Beschriftungen gegen die Schwellen, die aus
+`score()` abgeleitet werden.
+
+**Und einer war wieder "halb abgeleitet, halb verdrahtet":** verify liest den Namen der
+umgeschalteten Klasse aus `classList.toggle(...)`, mein Harness hatte `is-active` fest. Eine
+saubere Umbenennung in JS, CSS und Markup wurde damit rot, mit erfundener Ursache.
+
+**Die Doku-Befunde sind alle dieselbe Klasse.** "119 Stellen" ließ sich nicht reproduzieren
+(sechs Lesarten, sechs Zahlen; die Lesart des Gates ergab 115 beim Prüfer und 117 bei mir).
+Die Zahl ist jetzt **entfernt**, zum zweiten Mal in diesem Paket. Dieselbe Datei trug
+"zwanzig" und "einundzwanzig Prüfläufe". Und zwei Fehlertexte in verify.py nannten noch
+"16 Stellen" und "11 Stellen", obwohl der Kommentar sechzig Zeilen darüber sagt, dass genau
+diese Zahlen entfernt wurden, weil sie nicht reproduzierbar waren.
+
+**Probenbatterie: 33 Fälle, 0 falsch.** 30 Defektformen aus den Prüfrunden 18 bis 22 rot,
+dazu drei Fälle, die grün bleiben MÜSSEN: der unveränderte Stand, das `#finder`-Refactoring
+und die konsistente Umbenennung von `is-active`. Die zwei Fehlalarme sind damit auch als
+Fehlalarme geprüft, nicht nur die Löcher als Löcher.
+
+### Gelernt (Fortsetzung)
+
+184. **Ein Gate, das in beide Richtungen scheitert, ist nicht halb richtig, sondern
+     falsch.** Meine CSS-Prüfung ließ `.finder-options{display:none}` durch und machte
+     korrektes `#finder .finder-step{display:none}` rot. Beides hing an derselben Zeile.
+     Wenn ein Gate ein Loch UND einen Fehlalarm hat, ist die Regel falsch gewählt, nicht
+     zu eng oder zu weit.
+
+185. **Zu jeder Defektprobe gehört eine Probe mit der LEGITIMEN Variante.** Dass ein
+     Refactoring grün bleiben muss, ist genauso eine Zusage wie dass ein Defekt rot wird.
+     Die Batterie führt beides, und zwei der drei Grün-Fälle hat erst der Prüfer gefunden.
+
+186. **"Maximum" ist nicht "immer".** Drei Messlücken in einem Harness, alle dieselbe:
+     `max_karten` statt auch `min`, "erster Weg" statt aller Wege, entdoppelte Slugs statt
+     gezählter Karten. Wer über viele Durchläufe messen will, berichtet die MENGE der
+     beobachteten Werte, nicht ihren besten.
+
+187. **Ein Kommentar, der eine Eigenschaft behauptet, ist keine Prüfung.** Mein Harness
+     sagte "schlechtester Zustand gewinnt" und übernahm einen späteren Wert nur, wenn er
+     ungleich 1 war -- an der Stelle, wo der Defektwert 1 ist, also nie. Die Behauptung im
+     Kommentar war zwei Monate Arbeit wert und null Zeilen Wirkung.
+
+188. **Beschriftung und Wert sind zwei Dinge, und der Leser sieht nur das erste.** Ein
+     vertauschtes `data-value` ist von außen unsichtbar und von innen folgenschwer. Wo
+     eine Beschriftung einen Wert verspricht, gehört der Zusammenhang geprüft -- bei
+     Plattformen über das Wort, bei Preisen über die Zahl aus der Logik.
+
+189. **Wo eine Grenze gezogen wird, gehört die Frage dazu, was sie kostet.** Die GRENZE
+     trennte nach Selektor-Form statt nach Schwierigkeit, und der Umweg um sie kostete ein
+     vorangestelltes Token. Eine Grenze ist nur ehrlich, wenn das, was dahinter liegt,
+     wirklich schwer ist -- nicht bloß anders geschrieben.
+
+### Dreiundzwanzigste Prüfung zu B5: zwei als erledigt gemeldete Punkte waren es nicht
+
+Sieben Befunde. Die Nachbesserungen aus Runde 22 halten in beiden Richtungen, das hat der
+Prüfer eigenständig gemessen. Die Befunde liegen woanders, und drei davon sind unangenehm,
+weil sie meine eigene Meldung widerlegen.
+
+**Zwei Zahlen, die ich als entfernt gemeldet hatte, standen neu im Code.** Ich hatte "119
+Stellen" und "26" aus STATUS und dem Protokoll genommen und in derselben Arbeit in
+`verify.py`-Kommentare geschrieben. Entfernt war sie in der Doku, nicht im Repo. Dazu "die
+9" bei zehn Formen. Ein Kommentar ist kein Freiraum: Eine Zahl dort altert genauso und wird
+genauso gelesen.
+
+**Ein Zahlwort, das es nicht gibt.** Meine Vereinheitlichung von "zwanzig" und
+"einundzwanzig Prüfläufe" hat daraus "einundzweiundzwanzig" gemacht und die dritte Stelle
+stehen gelassen. Eine Textersetzung über zwei Zahlwörter, ohne hinzusehen.
+
+**Der inhaltliche Befund und was die Messung wirklich zeigt.** Der Prüfer hat gemeldet, der
+Finder dürfe ohne den Plattform-Filter in `score()` ein inkompatibles Modell empfehlen, und
+das als einzigen Punkt mit falscher Produktempfehlung eingeordnet. Ich habe das Gate gebaut
+(je Kombination die Antwort `platform` gegen `worksOn` der empfohlenen Slugs) und dabei
+zweierlei gelernt:
+
+**Mein erster Entwurf hat die Prüfung selbst abgeschaltet.** Ich habe `universal` in
+`worksOn` als "passt an alles" gelesen und als Freifahrtschein behandelt. Gemessen: Vier
+Controller führen `('android', 'universal')` UND `platformLabel: "Android"`, darunter genau
+das Modell aus dem Bericht. `universal` ist eine Bauform-Kategorie, keine Plattform-Zusage;
+kein einziger Controller führt es allein. Die wohlwollende Annahme eines Gates über seine
+eigenen Daten ist ein Loch.
+
+**Und die gemeldete Messung zeigt nicht, was sie behauptet.** Der Bericht zählt über ALLE 36
+Kombinationen, wie viele der 16 empfohlenen Slugs kein `ios` führen, und findet einen. Das
+ist richtig und kein Defekt: Für eine Android-Antwort ist ein Android-Modell die richtige
+Empfehlung. Je Kombination gemessen -- also auf der Ebene, auf der die Zusage gilt -- erzeugt
+das Entfernen von `else return -1` mit heutigen Daten **keine** falsche Empfehlung: 24 der 28
+Controller sind iOS-fähig, und der Treffer-Bonus hält sie in den Top 3. Das Gate misst den
+Schaden, nicht die Implementierung, und bleibt deshalb zu Recht still. Belegt ist es an zwei
+Mutationen, die wirklich Schaden anrichten: Filter invertiert (60 Meldungen) und `worksOn`
+ignoriert.
+
+**Und ich habe beim Messen selbst einen Fehler gemacht, den dieses Projekt dreimal
+aufgeschrieben hat.** Ich habe ein Probe-Verzeichnis wiederverwendet, in dem eine frühere
+Mutation als "unveränderter Stand" stehen geblieben war, und daraus gelesen, der Finder
+empfehle iPhone-Nutzern schon heute Android-Modelle. Zwei Minuten Alarm über einen Defekt,
+den es nicht gibt. Das echte Repo hat null unpassende Empfehlungen, nachgemessen.
+
+**Ein Fehlalarm aus einem fremden Gate.** Mein Parametername `_tag=None` hat das
+§A3-Gate ausgelöst: Es suchte `tag=([A-Za-z0-9_-]+)` in allen Textdateien und meldete
+"enthält den fremden PartnerNet-Tag \"None\"". Verengt auf die Formen, die wirklich Geld
+bewegen (`?tag=` / `&tag=` und `AFFILIATE_TAG = '...'`); gemessen: alle 19 echten Vorkommen
+stehen hinter einem `?`, keines verliert seine Prüfung, und ein fremder Tag in
+products.json, style.css, sitemap.xml und in der Konstante wird weiter gefunden.
+
+**Zwei Grenzen waren zu weit gezogen, und der Prüfer hat das Kriterium geliefert:** Ist das
+Dahinterliegende wirklich schwer, oder nur anders geschrieben? `div{display:none}` und
+`#finder div{display:none}` töten jeden Frage-Abschnitt, und die Ketten aus `dom_baum.py`
+tragen den Tag-Namen längst mit -- also geprüft. `!important` schlägt eine Regel ohne, und
+das ist eine Zeile, kein Interpreter -- also geprüft. Spezifität, `@media` und `visibility`
+bleiben draußen, weil das der Kaskaden-Nachbau wäre.
+
+**Und die Batterie liegt jetzt als Skript im Repo** (`scripts/finder_batterie.py`), wie die
+Robustheitsprobe nach Runde 20: Der Prüfer konnte "33 Fälle, 0 falsch" nicht nachfahren,
+weil es nur Prosa war. Jeder Fall bekommt eine frische Kopie -- das ist dieselbe Datei, die
+meinen kontaminierten Basiszustand verhindert hätte.
+
+### Gelernt (Fortsetzung)
+
+190. **Die wohlwollende Annahme eines Gates über seine eigenen Daten ist ein Loch.** Ich
+     habe `universal` in `worksOn` als "passt an alles" gelesen und damit die
+     Plattform-Prüfung stumm abgeschaltet -- während vier Controller `universal` tragen und
+     ausdrücklich "Kein iOS-Support" bedeuten. Was ein Feld bedeutet, wird an den Daten
+     gemessen, nicht aus dem Wort geraten.
+
+191. **Ein wiederverwendetes Probe-Verzeichnis ist ein kontaminierter Basiszustand.** Eine
+     frühere Mutation stand als "unverändert" darin, und ich habe daraus einen Defekt
+     abgeleitet, den es nicht gibt. Jede Probe bekommt eine frische Kopie; wenn das zu
+     teuer ist, wird der Basiszustand vor jedem Fall gegen das Repo verglichen.
+
+192. **Eine Messung muss dieselbe Körnung haben wie die Zusage.** "Einer von 16 empfohlenen
+     Slugs führt kein ios" klingt wie ein Defekt und ist keiner, weil die Zusage je
+     Antwortkombination gilt, nicht über alle. Aggregieren erzeugt Scheinbefunde in beide
+     Richtungen.
+
+193. **Eine Zahl in einem Code-Kommentar ist eine Zahl.** Ich habe zwei nicht
+     reproduzierbare Zahlen aus der Doku entfernt und in derselben Arbeit in
+     verify.py-Kommentare geschrieben. Die Regel gilt für jeden Text, den jemand liest,
+     nicht nur für STATUS.
+
+194. **Ein breites Muster über alle Textdateien trifft Code, nicht nur Inhalt.** Das
+     §A3-Gate suchte `tag=` überall und meldete ein Python-Schlüsselwortargument als
+     fremden Affiliate-Tag. Wer repoweit sucht, muss die Form treffen, die den Schaden
+     macht -- hier den URL-Parameter.
+
+195. **Ein Gate, das den Schaden misst, darf schweigen, wenn kein Schaden entsteht.** Das
+     Entfernen des Plattform-Filters richtet mit heutigen Daten keinen an, weil fast alle
+     Modelle beide Plattformen bedienen. Das ist kein Loch im Gate, sondern die richtige
+     Antwort -- und es gehört aufgeschrieben, damit niemand das Gate "reparariert", bis es
+     die Implementierung statt der Wirkung prüft.
+
+### Vierundzwanzigste Prüfung zu B5: ein Blocker, und er nimmt zwei meiner Korrekturen an
+
+Der Bericht hat einen Blocker und sechs nicht reproduzierbare Zahlen gebracht, und er
+bestätigt beide Korrekturen, die ich an seiner Vorrunde angebracht hatte: `universal` ist
+kein Freifahrtschein (vier Controller tragen es zusammen mit `platformLabel: "Android"`),
+und seine Messung hatte die falsche Körnung (je Kombination erzeugt das Entfernen des
+Plattform-Filters mit heutigen Daten keine falsche Empfehlung).
+
+**Der Blocker ist Lehre 184, eine Ebene tiefer: dieselbe Funktion, beide Richtungen.** Mein
+CSS-Gate entschied nach Quellreihenfolge statt nach Spezifität und übersprang
+Verbundgruppen mit Attribut-Selektor. Im echten Browser gemessen:
+
+- **Loch:** `.finder-step[data-step]{display:none}` angehängt. Gleiche Spezifität (0,2,0)
+  wie `.finder-step.is-active`, später in der Quelle, also gewinnt sie. Der aktive Schritt
+  war `display:none`, Höhe 0, keine Frage sichtbar -- Lauf grün. Und diese Schreibweise ist
+  in `style.css` Hausbrauch: `.pf-group[open]`, `.faq-item[open]`, insgesamt neun
+  Attribut-Selektoren.
+- **Fehlalarm:** Die zwei vorhandenen Finder-Regeln bloß **vertauscht** -- im Browser
+  wirkungslos, weil (0,2,0) über (0,1,0) gewinnt, unabhängig von der Reihenfolge. Das Gate
+  meldete 14 Fehler auf funktionierendem CSS.
+
+Geschlossen mit einer Spezifitätszählung (IDs, dann Klassen plus Attribute plus
+Pseudoklassen, dann Tags; `!important` davor) und einer Auswertung der Attribut-Selektoren,
+für die der Harness jetzt die Attribute mitliefert. `visibility` und `opacity` kamen in
+derselben Schleife dazu -- der Harness prüfte sie inline schon, aus dem Stylesheet fehlten
+sie. Draußen bleiben `@media`, Vererbung und der Inhalt von `:not()`.
+
+**Zwei meiner eigenen Proben waren falsch, nicht das Gate.** `.finder-result[id]` trifft
+nichts, weil dieses Element kein `id` trägt; `[class~="finder-step"]` hat nur (0,1,0) und
+verliert gegen `.finder-step.is-active`. Beide Regeln sind harmlos, grün ist richtig. Sie
+stehen jetzt als Grün-Fälle in der Batterie: Eine Probe-Erwartung gehört so geprüft wie das
+Gate.
+
+**Die sechs Zahlen sind alle dieselbe Klasse, und zwei davon in meinen eigenen
+Code-Kommentaren.** "19 echte Vorkommen" (gemessen 30, 32 oder 39, je nach Zählregel) ist
+entfernt und durch die EIGENSCHAFT ersetzt, auf die es ankommt: kein Vorkommen steht
+außerhalb von `?`/`&`. "101 Attribute" waren 104, davon 101 `class`. Im Pattern stand "vier
+Controller tragen `universal` und Android-Label" ohne die entscheidende Bedingung
+("`worksOn` GENAU `('android','universal')`") -- mit der schwächeren Lesart sind es elf.
+
+**Und zwei Zahlen haben jetzt ein Skript statt einer Prosa-Behauptung:** die
+Finder-Batterie lag schon als `scripts/finder_batterie.py` vor, die Idempotenz nicht. "Elf
+Generatoren" gegen die zwölf des Prüfers waren zwei Definitionen derselben Menge, also
+steht die Vorschrift jetzt in `scripts/idempotenzprobe.py` und ermittelt sie: `gen_*`,
+`sync_*` und `bump_asset_version.py`, ohne Bibliotheken ohne `__main__`. Geprüft werden
+zwei Eigenschaften, und die zweite ist die wichtigere: **baumstabil** heißt, der committete
+Stand IST die Ausgabe der Generatoren. Ohne das wäre "idempotent" wertlos -- ein Skript,
+das die Seiten bei jedem Lauf gleich kaputt macht, ist auch idempotent.
+
+**Beim Bauen dieses Skripts hätte ich beinahe nach außen gewirkt.** Meine erste Regel war
+"jedes `scripts/*.py` mit `__main__` außer den Prüfskripten", und die hat
+`indexnow_ping.py` eingesammelt -- das meldet ohne Argumente ALLE Sitemap-URLs an Bing,
+dreimal hintereinander. Ich habe nach etwa 20 Sekunden abgebrochen; sechs langsamere
+Skripte stehen alphabetisch davor, jedes mit einer vollständigen Kopie von 343 Dateien,
+also ist es sehr unwahrscheinlich, dass es soweit kam -- **beweisen lässt sich das von hier
+nicht.** Der Schaden wäre eine erneute Meldung bereits veröffentlichter URLs gewesen, wie
+sie der Deploy-Loop nach jedem Deploy ohnehin macht. Jetzt steht die Sperre im Skript und
+nicht in meinem Kopf: Die Namenskonvention entscheidet, UND ein Skript, das eine
+Netzbibliothek importiert, wird nie probehalber ausgeführt.
+
+**Zwei Hinweise waren unbewachte harte Regeln und sind jetzt Gates.** §A8 (Custom Events
+nur als `dataLayer.push`) hatte repoweit keine Prüfung; `gtag('event', ...)` in finder.js
+blieb grün. Und eine hart geschriebene Amazon-URL in einer JS-Datei außer `main.js` umgeht
+die eine Stelle, an der Kauflinks entstehen -- mit richtigem Tag war sie grün. Das neue
+§A8-Gate war im ersten Lauf zweimal ein Fehlalarm: Es meldete `verify.py` selbst (das
+Muster steht in dieser Datei) und `main.js` Zeile 352, wo ein **Kommentar** vor genau
+dieser Form warnt. Jetzt nur die ausgelieferte Fläche, und Kommentare fallen heraus.
+
+### Gelernt (Fortsetzung)
+
+196. **Eine Kaskaden-Prüfung ohne Spezifität scheitert in beide Richtungen.** Nach
+     Quellreihenfolge allein ist `.finder-step[data-step]` am Ende ein unsichtbares Loch
+     und eine bloße Umsortierung ein Fehlalarm mit 14 Meldungen. Die Zählung (IDs,
+     Klassen/Attribute/Pseudoklassen, Tags) sind acht Zeilen; sie waren der Unterschied
+     zwischen "falsch" und "trägt".
+
+197. **Ein Teil der Selektor-Sprache, den das Gate überspringt, ist ein Loch mit dem
+     Kostenvoraus von einem Token.** Attribut-Selektoren waren als GRENZE benannt, und die
+     Schreibweise ist in derselben Datei Hausbrauch. Wer eine Sprache prüft, prüft ihre
+     Teile oder sagt, warum dieser Teil wirklich schwer ist.
+
+198. **Eine Probe-Erwartung gehört so geprüft wie das Gate.** Zwei meiner "Löcher" waren
+     CSS-Regeln, die nichts treffen. Grün war richtig, meine Erwartung war falsch. Beide
+     stehen jetzt als Grün-Fälle in der Batterie, damit niemand sie später "repariert".
+
+199. **Eine Probe darf nicht nach außen wirken können, und das gehört in die Regel, nicht
+     in die Aufmerksamkeit.** Meine Mengenregel für die Idempotenzprobe hat ein Skript
+     eingesammelt, das Sitemap-URLs an Bing meldet. Jede automatisch ermittelte Menge
+     ausführbarer Skripte braucht eine Sperre gegen alles, was Netz anfasst.
+
+200. **Ein Gate, das Kommentare liest, meldet die Dokumentation seiner eigenen Regel als
+     Verstoß.** `main.js` warnt in einem Kommentar vor `gtag('event', ...)` -- das neue
+     §A8-Gate hat genau diese Warnung als Verstoß gemeldet. Und es meldete sich selbst,
+     weil das Muster in verify.py steht. Ein Gate prüft die ausgelieferte Fläche, ohne
+     Kommentare, und nie seinen eigenen Quelltext.
+
+201. **"Idempotent" ohne "baumstabil" ist wertlos.** Ein Generator, der die Seiten bei
+     jedem Lauf gleich kaputt macht, ist idempotent. Geprüft wird deshalb auch, dass der
+     erste Lauf nichts ändert -- dass der committete Stand schon die Ausgabe ist.
+
+### Fünfundzwanzigste Prüfung zu B5: dieselbe Funktion, vierte Runde, beide Richtungen
+
+Vier Blocker, drei davon in der CSS-Auswertung. Das ist die vierte Runde in Folge, in der
+genau diese Stelle ein Loch UND einen Fehlalarm aus derselben Zeile erzeugt -- nach dem
+eigenen Mechanismus 16 heißt das: die Regel ist falsch gewählt, nicht zu eng.
+
+- **Spezifität nur aus der letzten Verbundgruppe.** Echtes CSS summiert über alle.
+  `.finder .finder-step{display:none}` ist real (0,2,0), das Gate rechnete (0,1,0) und
+  ließ die Regel verlieren. Im Browser gemessen: aktiver Schritt `display:none`, Höhe 0,
+  keine Antwort-Schaltfläche sichtbar, Lauf grün. Und reine Klassen-Nachfahren sind in
+  `style.css` Hausbrauch, 32 Vorkommen.
+- **`~` ist Kombinator UND Attribut-Operator.** `re.split(r'[\s>+~]+', ...)` zerschnitt
+  `[class~="finder-step"][data-step]`, die Regel fiel stumm weg -- und wenn die zerstückelte
+  Gruppe gar keine Token mehr enthielt, galt sie als **auf jedem Element treffend**, was 49
+  Fehler auf einer Regel ergab, die den Finder nicht berührt.
+- **`:not()` galt als immer treffend.** Damit wurde die völlig korrekte Umschreibung
+  `.finder-step:not(.is-active){display:none}` mit 14 Fehlern gemeldet, während der Finder
+  im Browser vollständig funktionierte.
+
+**Konsequenz: eigenes Modul mit Falltabelle.** `scripts/css_kaskade.py` rechnet die
+Spezifität über alle Verbundgruppen, zerlegt klammerbewusst, wertet `:not()` aus (Treffer
+invertiert, Spezifität der stärksten Alternative) und stellt `!important` davor. Daneben
+stehen **41 Fälle**: 25 Selektor-Fälle und 16 Kaskaden-Fälle, jede Form aus den Runden 21
+bis 25, und zwar beide Richtungen -- was treffen MUSS und was nicht treffen darf. Der Grund
+für das Modul ist nicht die Größe, sondern dass die Tabelle neben der Logik stehen muss:
+Vier Runden lang hat jede Nachbesserung die Nachbarform geöffnet.
+
+**Der vierte Blocker war die Sperre, die ich eine Runde vorher als Schluss aus dem
+Beinah-Unfall dokumentiert hatte.** Sie verlangte den Bibliotheksnamen direkt hinter
+`import` -- und `indexnow_ping.py` schreibt `import json, re, sys, os, urllib.request`, in
+einer Kommaliste. Die Sperre traf genau das Skript nicht, um das es ging; draußen hielt es
+allein die Namensregel, die im Docstring ausdrücklich als die freizügige Seite beschrieben
+ist. Der Prüfer hat es umbenannt (`sync_indexnow.py`, semantisch zutreffend: es ist ein
+Post-Deploy-Sync) und damit in die Prüfmenge geholt. Jetzt werden Importzeilen zerlegt,
+`subprocess` zählt mit, und `__import__` macht eine Datei unentscheidbar.
+
+**Zwei Fehlalarme in den Gates, die ich in der Vorrunde neu gebaut hatte**, beide dieselbe
+Klasse: Das §A8-Gate entfernte `//`-Kommentare nur am Zeilenanfang, also wurde ein
+anhängender Kommentar, der vor genau dieser Form warnt, als Verstoß gemeldet. Und das
+§A3-JS-Gate las das Rohfile, obwohl die Funktion zum Entfernen drei Zeilen darüber steht.
+
+**Eine Meldung nannte die falsche Ursache:** `_sichtbar` prüft `display`, `visibility` und
+`opacity` und liefert die Ursache mit -- der Text schrieb trotzdem fest "setzt
+`display: none`". Dieselbe Form, die Runde 22 schon als Befund hatte.
+
+**Und eine Doku-Begründung erklärte ein Loch als Feature.** Der Grün-Fall
+`[class~="finder-step"]` stand mit "verliert an Spezifität (0,1,0)" -- das Gate hat diese
+Regel damals gar nicht gewichtet, sondern an `~` zerschnitten und verworfen. Seit der
+Spezifitätszählung trifft die Begründung wirklich zu.
+
+**Probenbatterie: 73 Fälle.** 58 Defektformen und 15 legitime Änderungen; fünf der
+Grün-Fälle waren Fehlalarme des Gates, nicht Defekte.
+
+### Gelernt (Fortsetzung)
+
+202. **Spezifität ist eine Summe über den ganzen Selektor.** Jedes Scoping-Präfix erhöht
+     im Browser das Gewicht und senkte es im Gate. Wer eine Kaskade nachrechnet, rechnet
+     sie über alle Verbundgruppen oder gar nicht.
+
+203. **Ein Zeichen kann zwei Bedeutungen haben, und ein Trennzeichen-Regex kennt nur
+     eine.** `~` ist Kombinator und Attribut-Operator. Beim Zerlegen einer Sprache wird
+     die Klammerung mitgezählt, sonst entstehen Stücke, die etwas anderes bedeuten als das
+     Ganze.
+
+204. **Eine Prüfung, die bei Unklarheit "trifft" sagt, ist bei Verbots-Regeln ein
+     Fehlalarm, und bei Erlaubnis-Regeln ein Loch.** `:not()` als immer treffend hat eine
+     korrekte Fassung rot gemacht. Wo "unklar" vorkommt, muss die Richtung begründet sein
+     -- und bei `:not()` ist sie auswertbar, also wird sie ausgewertet.
+
+205. **Viermal dieselbe Stelle heißt: eigenes Modul, Falltabelle daneben.** Nicht wegen
+     der Größe, sondern weil jede Nachbesserung die Nachbarform geöffnet hat. Eine Tabelle,
+     die alle alten Formen in beide Richtungen mitführt, ist das einzige Mittel dagegen.
+
+206. **Eine Sperre, die ich als Schluss aus einem Unfall dokumentiere, muss ich an genau
+     dem Fall prüfen, der den Unfall ausgelöst hat.** Meine Netzsperre traf jede Form
+     außer `import a, b, urllib.request` -- also die des Skripts, um das es ging. Ich habe
+     sie geschrieben und nicht gegen ihren Anlass gemessen.
+
+207. **Ein Kommentar-Entferner entfernt auch anhängende Kommentare.** Sonst meldet das
+     Gate die Dokumentation seiner eigenen Regel als Verstoß, und zwar genau dort, wo
+     jemand sie hinschreibt, nachdem er die Regel gelernt hat.
+
+### Sechsundzwanzigste Prüfung zu B5: das eigene Modul, erste Runde, sieben Löcher
+
+Sechs Blocker. Das Modul aus Runde 25 hat die drei gemeldeten Formen geschlossen und sieben
+neue offengelassen -- in derselben Datei, aber diesmal mit Falltabelle daneben, und das ist
+der Unterschied: Jede neue Form ist jetzt ein Eintrag in der Tabelle, nicht eine
+Nachbesserung, die die nächste öffnet.
+
+**Der Auswertungszweig für `:not(a, b)` war über die Kaskade nie erreichbar.** `gruppe()`
+wertet Komma-Listen in `:not()` ausdrücklich aus -- aber `wert()` zerlegte die Selektorliste
+mit `split(',')`, also auch INNERHALB der Klammer. Beides zugleich: `:not(.gibtsnicht,
+.auchnicht){display:none}` tötete den Finder bei grünem Lauf, und das korrekte Refactoring
+mit zwei Argumenten ergab 14 Fehler. Die klammerbewusste Zerlegung lag zwei Funktionen
+weiter oben und ist jetzt geteilt.
+
+**`@media` war nicht "wie unbedingt gelesen", sondern stumm verworfen.** Mein Docstring
+behauptete die strenge Richtung, der Block-Regex kann aber nicht verschachteln: Der Rumpf
+landete als Deklarationstext und fiel durch. Eine Regel in einem `@media (max-width:768px)`
+tötet den Finder auf jedem Handy, Lauf grün -- und `style.css` führt 12 At-Regel-Blöcke.
+Statt die Grenze umzubenennen ist sie geschlossen: At-Regeln werden aufgeschnitten und ihr
+Inhalt mitgelesen, mit der Bedingung im Quellennamen. Gemessen, bevor das scharf gestellt
+wurde: 4 Finder-Regeln in At-Regeln, keine mit Sichtbarkeits-Eigenschaft, also kein
+Fehlalarm im Bestand.
+
+**Vier weitere Formen, die alle den Finder töten und alle grün blieben:** `!IMPORTANT` groß,
+`Display:` groß (der Deklarations-Regex war case-sensitiv), `opacity: 0.00` (die
+Werte-Prüfung war eine Literal-Liste aus vier Schreibweisen) und der Attribut-Selektor mit
+`i`-Flag (lieferte "unentscheidbar" und wurde übersprungen, das Gate fiel offen aus).
+`opacity` wird jetzt als Zahl gelesen, die Deklaration case-insensitiv, das `i`-Flag
+ausgewertet.
+
+**Das §A3-Gate kannte die häufigste Amazon-URL nicht.** Das Muster verlangte `dp` direkt
+hinter der Domain -- die Form aus Adresszeile und SiteStripe ist
+`amazon.de/<Produktname>/dp/<ASIN>`, und die ging durch, mit richtigem Tag und ohne
+`data-asin`. Das Gate fing die exotischen Formen, deren Kommentar selbst sagte "kommen heute
+nicht vor", und ließ die übliche durch. Jetzt eine Konstante `_AMAZON_LINK` für beide
+Stellen (statisches HTML und JS), mit allen Formen, die wirklich vorkommen.
+
+**Und mein erster Entwurf dieser Konstante war ein Fehlalarm:** ein bloßes `gp/` trifft auch
+`gp/help/customer/display.html`, also den legitimen Link auf Amazons Datenschutzerklärung in
+`datenschutz/index.html`. Nur Produktpfade. Fünf Proben: vier legitime Link-Formen grün, der
+Produktlink ohne `data-asin` rot.
+
+**Eine veraltete GRENZE-Liste widersprach dem eigenen Code.** In `verify.py` stand noch die
+Fassung von vor dem Modul und führte vier inzwischen geschlossene Punkte als offen --
+siebzig Zeilen über der richtigen Aussage. Zwei widersprechende GRENZEN-Blöcke in einer
+Funktion sind schlimmer als keiner: Wer den ersten liest, hört auf zu lesen.
+
+**Und der Pflicht-Protokolleintrag war halb überschrieben.** Beim fünften Nachziehen der
+Reinraum-Zahl blieb die alte Fassung stehen: zwei unvereinbare Zahlen in einem
+Aufzählungspunkt ("345 … 11 neu" und "… 10 neu"), "fünfmal falsch" neben "viermal falsch",
+eine unpaarige Klammer. In genau der Datei, die Lehre 4 führt.
+
+**Zwei Befunde ohne Blocker-Rang betrafen die Proben selbst.** Die Netzsperre, die ich zwei
+Runden zuvor als Schluss aus dem Beinah-Unfall gebaut und eine Runde zuvor nachgebessert
+hatte, ließ fünf Wege durch: `os.system`, einen transitiven Import über ein Hilfsmodul,
+`importlib.import_module`, `import a; import urllib` und eine Fortsetzungszeile. Sie liest
+jetzt per `ast` statt per Regex, kennt die Prozess-Wege und verfolgt lokale Hilfsmodule bis
+Tiefe 3 -- die Kette `gen_pages → kompat → produktdaten` existiert schon. Sieben von sieben
+Umgehungsformen werden gefangen, das harmlose Skript läuft weiter.
+
+Und `sync_new_products.py` war mit falscher Begründung ausgeschlossen ("Bibliothek ohne
+`__main__`"): Es schreibt auf Top-Level, ist also der zwölfte Schreiber ohne Guard -- genau
+die Klasse, die das Repo am 30.09. schon einmal getroffen hat. Die Unterscheidung läuft
+jetzt über den AST (ein Aufruf auf Modulebene heißt "läuft beim Import mit"), das Skript wird
+geprüft, und der fehlende Guard ist selbst ein Befund.
+
+**Das §A8-Gate hatte seinen Fehlalarm eine Ebene höher:** Auf HTML-Seiten wurden nur
+`<!-- -->` entfernt, und `gtag(` kann dort nur in einem `<script>` stehen, also genau dort,
+wo die Kommentar-Entfernung nicht griff. Es liest jetzt ausschließlich die
+`<script>`-Blöcke, und darin ohne Kommentare -- Prosa ist kein Code.
+
+**Probenbatterie: 87 Fälle**, 67 Defektformen und 20 legitime Änderungen. Die Falltabelle der
+CSS-Auswertung führt 53 Fälle.
+
+### Gelernt (Fortsetzung)
+
+208. **Ein Auswertungszweig, den der Aufrufer nie erreicht, ist kein Code, sondern eine
+     Behauptung.** `gruppe()` konnte `:not(a, b)` auswerten, und `wert()` hat die Liste
+     vorher zerschnitten. Wer eine Fähigkeit einbaut, braucht einen Fall in der
+     Falltabelle, der sie durch den echten Aufrufweg führt.
+
+209. **Ein Docstring, der die Richtung einer Grenze falsch angibt, ist schlimmer als
+     keiner.** "Regeln in `@media` werden wie unbedingte gelesen" klingt nach streng, und
+     in Wahrheit fiel das Gate dort offen aus. Wer eine Grenze benennt, prüft ihre
+     Richtung mit einer Probe.
+
+210. **Eine Grenze, die man schließen kann, wird geschlossen -- und vorher wird der Bestand
+     gemessen.** 12 At-Regel-Blöcke, 4 Finder-Regeln darin, keine mit
+     Sichtbarkeits-Eigenschaft: Damit war klar, dass das Scharfstellen keinen Fehlalarm
+     erzeugt. Diese Messung ist der Unterschied zwischen "schließen" und "hoffen".
+
+211. **Ein Muster über Fremdformate kennt die Form, die der Mensch benutzt, oft als
+     letzte.** Mein §A3-Muster fing `amzn.to` und `/exec/obidos/` -- Formen, deren eigener
+     Kommentar sagte, sie kämen nicht vor -- und ließ `amazon.de/Produktname/dp/ASIN`
+     durch, also die aus der Adresszeile. Beim Schreiben eines URL-Musters zuerst die
+     häufigste Form aufschreiben, dann die exotischen.
+
+212. **Ein breites Muster trifft auch die legitime Nachbarform.** `gp/` fing den Link auf
+     Amazons Datenschutzerklärung. Ein Gate auf Kauflinks prüft Produktpfade, nicht jeden
+     Link zur selben Domain.
+
+213. **Zwei GRENZEN-Blöcke in einer Funktion sind einer zu viel.** Der veraltete stand
+     oben, der richtige siebzig Zeilen darunter. Wer den ersten liest, hört auf zu lesen --
+     die Grenzen gehören an EINE Stelle, und das ist der Ort der Logik.
+
+### Siebenundzwanzigste Prüfung zu B5: zwei Blocker an Stellen, die ich als geschlossen gemeldet hatte
+
+Zwei Blocker, acht weitere Befunde. Beide Blocker sind Meldungen von mir, die nicht
+stimmten.
+
+**Die veraltete GRENZEN-Liste in verify.py stand noch da -- und ich hatte sie in derselben
+Arbeit selbst geschrieben.** Ich hatte gemeldet: "ersetzt durch einen Verweis auf den
+Docstring von css_kaskade.py, es gibt jetzt genau einen GRENZEN-Ort". Gemessen gab es zwei,
+und der zweite war genau die Liste, die vier geschlossene Punkte (Spezifität, `@media`,
+`!important`, `visibility`/`opacity`) als offen führte -- 45 Zeilen unter dem Satz, der das
+verbietet. Der Prüfer hat per `git diff` belegt, dass beide Blöcke `+`-Zeilen sind, also aus
+diesem Stand. Und die Positionsangaben in Protokoll und Pattern waren auch falsch: der
+richtige Verweis stand oben, die veraltete Liste darunter.
+
+**§A3 im statischen HTML: der Auslöser benutzte die neue Konstante, die Prüfung dahinter die
+alte Form.** Ich hatte geschrieben "`_AMAZON_LINK` deckt beide Stellen, damit sie nicht
+wieder auseinanderlaufen" -- auf der HTML-Seite war sie nur der Türöffner, und die Schleife
+dahinter trug ein handgeschriebenes Hostmuster. Vier Formen liefen durch: `amzn.to` und
+`amzn.eu` (genau die, deren Tag unsichtbar ist und die mein eigener Fehlertext als die
+gefährlichsten benennt), ein Zeilenumbruch nach `<a`, und `AMAZON.DE` in Großschreibung.
+Dazu war eine Amazon-URL in einem inline `<script>` von keinem der beiden Gates erfasst,
+obwohl die Maschinerie 20 Zeilen weiter steht.
+
+**Und mein erster Fix dieses Inline-Gates war ein Fehlalarm über 30 Produktseiten:** Es
+meldete die Amazon-URL im JSON-LD, wo sie ausdrücklich erlaubt ist (`offers.url`). Daten
+sind kein Code.
+
+**Das §A8-Gate las keine Inline-Handler, und die Begründung dafür war im Repo widerlegt.**
+Mein Docstring sagte "`gtag(` kann auf einer Seite NUR in einem `<script>` stehen" --
+`controller/index.html` trägt fünf `onclick=`/`onchange=`-Handler. Ein `gtag('event', ...)`
+darin läuft.
+
+**Die CSS-Auswertung hatte wieder Loch und Fehlalarm aus einer Stelle.** `:is()`,
+`:where()` und `:has()` galten als "nicht treffend", begründet mit `:hover` ("stellt der
+Leser erst her") -- für die drei gilt das nicht, sie sind im Ruhezustand unbedingt, und
+`.finder-step:is(.is-active){display:none}` tötete den Finder. Umgekehrt las der
+`:not()`-Zweig sein Argument mit `gruppe()` statt `selektor()`, also als Verbund:
+`:not(.finder .is-active)` verlangte beide Klassen am Element selbst, traf nicht, also traf
+`:not()` -- im Browser greift die Regel nicht. Jetzt eine Tabelle `_LISTEN_PS` für die
+Listen-Pseudoklassen, mit der Spezifitätsregel je Form (`:where()` zählt null), und `:has()`
+wird ausdrücklich als unentscheidbar gemeldet statt stillschweigend als "trifft nicht".
+
+**Und die Deklarations-Reihenfolge im Block war in beide Richtungen falsch.** Ich nahm die
+ERSTE Deklaration, der Browser nimmt die letzte: `{display:block;display:none}` war ein
+Loch, `{display:none;display:block}` ein Fehlalarm. Mein erster Fix nahm `finditer` über
+dasselbe Muster -- Treffer können sich nicht überlappen, und das `;` gehörte schon zum
+ersten, also fand er wieder nur einen. Jetzt wird am Semikolon zerlegt.
+
+**Die Netzsperre, dritte Runde in Folge.** Acht weitere Wege: `urllib3` (nicht gleich
+`urllib`, weil die Prüfung auf exakte Wurzelgleichheit lief), `aiohttp`, `multiprocessing`,
+`xmlrpc.client`, `pty.spawn`, `asyncio`-Subprozesse, `os.posix_spawn` (die Präfixprüfung
+lief auf `os.spawn`) und -- dieselbe Klasse wie zwei Runden vorher -- `import os as x;
+x.system(...)`. Jetzt Präfixprüfung, Alias-Verfolgung, eine eigene Liste für Prozess-Aufrufe.
+18 von 18 Formen gefangen, 3 harmlose Skripte laufen weiter.
+
+**Die Guard-Erkennung lief per Substring**, 110 Zeilen über einer AST-Prüfung: `'__main__'
+not in quelle` zählt Kommentare und Docstrings mit. Ein `gen_*.py`, dessen Docstring
+"braucht noch einen `__main__`-Guard" sagt, galt als geguardet -- und das Melden des
+fehlenden Guards ist der Zweck dieser Prüfung. Dieselbe Klasse, die eine Runde vorher für
+§A8 und §A3 geschlossen wurde.
+
+**Eine ungegatete Fläche:** `gen_preisfrage.py --check` existiert, und verify rief es nicht
+auf. Drei von Hand geänderte Zahlen auf der Preisfrage-Seite blieben grün. Das in einem
+Paket, dessen Vorgänger-Commit "Restliche ungegatete Flaechen geschlossen" heißt.
+
+**Und der Prüfer hat gemeldet, dass mein Scratchpad 79 GB belegt hat**, bei 5,8 GB freiem
+Systemdatenträger -- aus Probenkopien früherer Runden. Er hat sie korrekt nicht angefasst,
+weil es nicht seine Daten sind. 100 Verzeichnisse entfernt, 86 GB frei.
+
+### Gelernt (Fortsetzung)
+
+214. **Eine Konstante, die zwei Stellen decken soll, muss an beiden Stellen BENUTZT
+     werden.** Mein §A3-Muster war auf der HTML-Seite nur der Türöffner, und die Prüfung
+     dahinter trug die alte handgeschriebene Form -- während der Kommentar behauptete,
+     beide Stellen seien jetzt dieselbe. Nach dem Zusammenlegen zweier Prüfungen auf eine
+     Konstante gehört gegriffen, wo das alte Muster noch steht.
+
+215. **Daten sind kein Code.** Mein Inline-Gate meldete die Amazon-URL im JSON-LD von 30
+     Produktseiten, wo sie ausdrücklich erlaubt ist. Ein `<script>` mit `type="…json"` ist
+     ein Datenblock; wer Skripte prüft, prüft ausführbare Skripte.
+
+216. **Ein Grund, der nur für einen Teil der Fälle stimmt, deckt die anderen nicht.**
+     "Pseudoklassen beschreiben einen Zustand, den der Leser erst herstellt" gilt für
+     `:hover` und nicht für `:is()`, `:where()`, `:has()`. Eine Begründung, die eine ganze
+     Kategorie abtut, gehört an der Kategorie geprüft, nicht am Beispiel.
+
+217. **Bei zwei Deklarationen im selben Block gewinnt die letzte -- und `finditer` findet
+     sie nicht.** Treffer können sich nicht überlappen, das Trennzeichen gehört zum
+     ersten. Wer in einem Block mehrfach nach derselben Eigenschaft sucht, zerlegt ihn
+     erst am Semikolon.
+
+218. **Eine Liste von verbotenen Namen prüft man per Präfix, nicht per Gleichheit.**
+     `urllib3` ist nicht `urllib`, `os.posix_spawn` nicht `os.spawn`. Und ein Alias
+     (`import os as x`) macht jede Namensprüfung wertlos, solange sie den Alias nicht
+     auflöst.
+
+219. **Dieselbe Klasse zweimal am selben Tag schließen und 110 Zeilen weiter offen lassen
+     ist die Regel, nicht die Ausnahme.** Die Guard-Erkennung lief per Substring über
+     Kommentare -- in derselben Datei, in der eine AST-Prüfung steht, und einen Tag nachdem
+     genau diese Klasse für zwei andere Gates geschlossen wurde. Nach einem Fix gehört im
+     ganzen Repo nach derselben Form gegriffen, nicht nur in der gemeldeten Datei.
+
+220. **Probenkopien räumt man auf, und zwar im Skript.** 79 GB aus 100 Verzeichnissen, bei
+     5,8 GB freiem Datenträger. Die Repo-Skripte (`robustheitsprobe`, `finder_batterie`,
+     `idempotenzprobe`) tun es über `tempfile` plus `finally`; meine Einzelproben von Hand
+     taten es nicht.
+
+### Achtundzwanzigste Prüfung zu B5: eine Markierung ohne Abnehmer, und drei falsche Sätze in der einen GRENZEN-Liste
+
+Vier Blocker, vier weitere Befunde.
+
+**Der erste Blocker ist die nicht geschlossene Hälfte meiner letzten Nachbesserung.** Ich
+hatte `:has()` als "unentscheidbar" markiert und dazu geschrieben: "wird gemeldet statt
+stillschweigend als 'trifft nicht' gelesen". Gemeldet wurde nichts -- `gruppe()` gab `None`
+zurück, und `wert()` warf die Regel zwei Funktionen später mit `if not t: continue` weg,
+also genau so wie "trifft nicht". Eine Regel, die den Finder tötet, verschwand lautlos.
+**Eine Markierung ohne Abnehmer ist eine Behauptung.** `wert()` gibt jetzt ein Paar zurück,
+`sichtbar()` meldet die unentscheidbaren Regeln, und verify macht daraus einen Fehler mit
+dem Satz, was das Gate hier nicht zusichern kann.
+
+**Und mein erster Fix davon war selbst ein Fehlalarm:** Jede `:has()`-Regel im Stylesheet
+wurde unentscheidbar gemeldet, auch die an fremden Elementen. Die Regel dazu ist einfach
+und stand nicht da: **ein bewiesener Nicht-Treffer schlägt Unklarheit.** `.irgendwas:has(.x)`
+trifft dieses Element nachweislich nicht, weil die Klasse fehlt.
+
+**Drei Sätze in der einen GRENZEN-Liste waren falsch, und zwei davon widerlegte Code aus
+derselben Runde, in der sie stehen blieben.** "Mehrere Deklarationen derselben Eigenschaft
+in EINEM Block: es gilt die erste" -- seit dem Semikolon-Fix gilt die letzte, und zwei
+eigene Falltabellen-Fälle beweisen es. "Pseudoklassen ausser `:not()` gelten als NICHT
+treffend" -- gemessen stimmt der Satz für genau eine von sechs Formen, und `_LISTEN_PS`
+direkt darunter implementiert das Gegenteil. Die Begründung dazu (`:hover` stellt der Leser
+erst her) ist wortwörtlich der "Grund, der nur für einen Teil der Fälle stimmt" aus meinem
+eigenen Mechanismus 21.
+
+Nach dem Entfernen der zweiten Liste in Runde 27 gibt es genau einen GRENZEN-Ort -- und der
+führte drei veraltete Aussagen. Ein Ort ist notwendig und nicht hinreichend.
+
+**Drei Zahlen im Pflicht-Protokoll waren vom Repo widerlegt:** "87 Fälle" (es sind 107),
+"25 Selektor- und 28 Kaskaden-Fälle" (es sind 32 und 37) und "sechs prüfbare Gates" (es sind
+neun, zwei davon in diesem Paket entstanden). Der Fix der Falltabellen-Zahl aus Runde 27 war
+in `SPC-PATTERNS.md` gemacht und im Protokoll nicht -- also genau die Regel verletzt, die
+Mechanismus 21 drei Zeilen weiter aufschreibt. Alle drei Zahlen sind jetzt durch den Befehl
+ersetzt, der sie ausgibt.
+
+**Der JSON-LD-Ausschluss im neuen §A3-Inline-Gate war zu breit:** Er schloss jedes `<script>`
+aus, dessen Attributtext irgendwo "json" enthielt. Vier ausführbare Formen liefen durch
+(`data-json="1"`, `id="jsonld-helper"`, `class="json"`, `type="text/JSONP"`). Jetzt wird der
+`type` geparst und gegen die JSON-Medientypen gehalten.
+
+**Und eine §A5-Aussage stand in einem meiner Kommentare, die das eigene Repo dreifach
+widerlegt.** Ich hatte das `Verb.`-Vokabular damit begründet, "der 8BitDo Ultimate 2C ist
+real 2,4 GHz plus USB-C". products.json führt ihn als "Ultimate 2C Wired" mit
+`Verb.: USB (kabelgebunden)`, die VERBOTEN-Liste in **derselben Datei** nennt "Ultimate 2C
+als Bluetooth-Gamepad" ausdrücklich als widerlegt, und STATUS hält fest, dass die Frage am
+30.09. per Amazon-Abgleich geklärt wurde. Wäre der Satz wahr, wären es 7 Doppelmodelle statt
+6 und 10 kabelgebundene statt 11 -- also wäre der Mengensatz im Artikel falsch. Ersetzt
+durch die gemessene Verteilung der sechs echten Doppelmodelle.
+
+**Zwei Nachbarformen in den Gates aus Runde 27:** `href='...'` mit einfachen
+Anführungszeichen fiel offen, und die neu gelesenen `on*`-Attribute gingen roh durch die
+Prüfung -- also ohne Kommentar-Entfernung, obwohl der Docstring "beides ohne Kommentare"
+sagte. Damit war der Fehlalarm aus Runde 26 für Inline-Handler wieder offen.
+
+**Ein Hinweis war inhaltlich und ist umgesetzt:** "Der mittlere Preis liegt bei 50 €" las
+sich als Median, berechnet wurde `sorted(preise)[n // 2]`, also die obere Ordnungsstatistik.
+Der echte Median der 28 Controller-Preise ist 48 €. Der Generator rechnet jetzt
+`statistics.median`; die abgeleiteten Nachbarsätze stimmen weiter (17 von 28 unter 53 €),
+Title und Description bleiben im §B1-Band.
+
+**Probenbatterie: 107 Fälle**, 81 Defektformen und 26 legitime Änderungen.
+
+### Gelernt (Fortsetzung)
+
+221. **Eine Markierung ohne Abnehmer ist eine Behauptung.** `:has()` war intern als
+     unentscheidbar markiert, und der Aufrufer zwei Funktionen weiter warf die Regel weg
+     wie einen Nicht-Treffer. Wer einen dritten Zustand einführt, muss ihn bis zur
+     Meldung durchreichen -- sonst ist es derselbe Zustand wie vorher, nur mit Kommentar.
+
+222. **Ein bewiesener Nicht-Treffer schlägt Unklarheit.** Mein erster Fix meldete jede
+     `:has()`-Regel als unentscheidbar, auch die an fremden Elementen. Wo ein Teil des
+     Selektors nachweislich nicht passt, ist der Rest gleichgültig.
+
+223. **Ein GRENZEN-Ort ist notwendig und nicht hinreichend.** Nach dem Entfernen der
+     zweiten Liste führte die eine drei veraltete Aussagen, zwei davon widerlegt von Code
+     aus derselben Runde. Eine Grenzbeschreibung gehört bei jeder Änderung an der Logik
+     mitgelesen, nicht nur bei ihrer Entstehung.
+
+224. **Ein Fix an einer Zahl gilt repoweit oder nicht.** Die Falltabellen-Zahl wurde im
+     Pattern korrigiert und im Protokoll nicht -- und das in der Runde, in der ich genau
+     diese Regel aufgeschrieben habe. Nach jeder Zahlkorrektur: greppen.
+
+225. **Ein Substring über Attribute ist keine Typprüfung.** `'json' in attrtext` schloss
+     `data-json="1"`, `id="jsonld-helper"` und `class="json"` aus, also ausführbare
+     Skripte. Wer einen Medientyp meint, parst `type` und vergleicht gegen die Liste.
+
+226. **Eine Produktaussage in einem Code-Kommentar ist eine Produktaussage.** §A5 gilt
+     auch dort, wo kein Leser hinkommt -- weil der nächste Durchgang sie als belegt liest
+     und eine Zahl darauf stützt. Meine stand in derselben Datei wie ihre eigene
+     Widerlegung.
+
+### Neunundzwanzigste Prüfung zu B5: ein Regex, der nicht verschachteln kann, und ein grep ohne -i
+
+Drei Blocker, fünf weitere Befunde.
+
+**Fünfte Auflage derselben Klasse in derselben Datei: ein Regex, der Klammern nicht
+verschachteln kann.** `_TOKEN` las das Argument einer Funktions-Pseudoklasse mit
+`\((.*?)\)` und schnitt damit am ERSTEN `)` ab. `:not(:is(.is-active))` wurde als
+`:not(":is(.is-active")` gelesen, das innere `:is` fiel in den Zweig für unbekannte
+Pseudoklassen und galt als "trifft nicht". Beide Richtungen kippten: Ein
+browseridentisches Refactoring der zwei Finder-Regeln ergab 14 Fehler, und
+`.finder-step:is(:not(.gibtsnicht))` tötete den Finder bei grünem Lauf. Die Spezifität war
+zusätzlich zu hoch, weil der abgeschnittene Rest mitzählte. Jetzt wird das Argument mit
+Klammerzählung gescannt (`_argument()`), und `gruppe()` läuft als Schleife mit Position
+statt über `finditer`.
+
+**Und die eine GRENZEN-Liste behauptete genau dort "werden AUSGEWERTET"**, ohne die
+Verschachtelung als Grenze zu nennen -- während sie CSS-Nesting, `calc(0)` und Vererbung
+nennt. Das war Befund B28-3 ein zweites Mal, an derselben Liste.
+
+**Der Generator der Preisfrage-Seite konnte seine Seite für die Hälfte aller plausiblen
+Preisstände nicht mehr bauen.** Mein Median-Fix aus Runde 28 hat `median` von "immer `int`"
+auf "`int` oder `str` mit Komma" geändert -- und zwei Absätze weiter steht `median + 5`. Bei
+28 Preisen ist der Median genau dann nicht ganzzahlig, wenn die Summe der zwei mittleren
+Preise ungerade ist, also etwa in der Hälfte der Fälle. Dann `TypeError`, und der Fix, den
+die Fehlermeldung vorschreibt, bricht identisch ab. Jetzt zwei getrennte Werte: eine Zahl
+zum Rechnen, ein Text zum Schreiben. Nachgemessen mit Median 48,5 und 47,5: baut.
+
+**Die Bandgrenze war außerdem angenommen statt gerechnet.** "Mehr als die Hälfte liegt unter
+Median+5" ist bei gerader Anzahl nicht konstruktiv garantiert. Sie wächst jetzt, bis die
+Aussage stimmt, und der Satz nennt seinen Bezugsrahmen ("der 28 Controller" statt "des
+Sortiments", weil über die Controller gerechnet wird).
+
+**Mein "repoweit gegriffen" aus Runde 28 war ein case-sensitives grep.** STATUS schreibt
+"Sechs pruefbare Gates" mit großem S, mein Muster suchte klein. Die Liste stand unverändert
+in der operativen Stand-Zusammenfassung, also in der Datei, die die nächste Session zuerst
+liest -- und sie war schon zu ihrem eigenen Stichtag unvollständig, weil
+`gen_brand_sections.py --check` am 01.10. bereits lief. Es sind neun.
+
+**Der dritte Zustand war eine Ebene höher nur halb umgesetzt.** `gruppe()` setzt seit Runde
+28 richtig um, dass ein bewiesener Nicht-Treffer Unklarheit schlägt; `sichtbar()` prüfte
+`if offen:` bevor es den Sieger ansah und meldete "nicht entscheidbar" auch dann, wenn die
+unentscheidbare Regel gegen ein `display:block !important` ohnehin verliert. Jetzt tragen
+die unentscheidbaren Regeln ihren Sortierschlüssel, und gemeldet wird nur, was gewinnen
+könnte.
+
+**Dritte Auflage der Falltabellen-Zahl.** Sie stand als 41, als 53 und als 66, jedes Mal
+schon beim Schreiben veraltet. Jetzt steht sie nicht mehr da; der Befehl daneben gibt sie
+aus.
+
+**Dazu drei kleinere:** `_display_fuer` in verify.py war toter Code, der die alte
+Verwerfungslogik für den dritten Zustand konservierte -- mit einem Kommentar, der eine
+Zusage über eine Funktion macht, die nicht läuft. Der Docstring der Idempotenzprobe
+beschrieb eine weitere Mengenregel als implementiert. Und `gen_preisfrage.py` fehlte in der
+"noch nicht umgestellt"-Liste von `produktdaten.py`, obwohl es eigene `preis()`, `spec()`
+und `bewertung()` führt -- dieselbe Liste, in der die Klasse schon einmal zu dritt
+übersehen wurde.
+
+**Beim Nachmessen hat die eigene Batterie noch eine Verfeinerung erzwungen.** Der neue
+Grün-Fall ":has() verliert gegen !important" wurde rot, und zwar für den INAKTIVEN Schritt:
+Dort sagt die unentscheidbare `:has()`-Regel `display:none` -- genau das, was die geltende
+Regel auch sagt. Sie kann das Ergebnis nicht ändern und ist bedeutungslos. Gemeldet wird
+jetzt nur, was den Ausgang kippen WÜRDE.
+
+**Probenbatterie und Falltabelle: die Zahlen gibt der jeweilige Lauf aus.**
+
+### Gelernt (Fortsetzung)
+
+227. **Ein Regex kann keine Klammern verschachteln, und das ist bei jeder Sprache mit
+     Funktionsaufrufen tödlich.** Fünfte Auflage derselben Klasse in derselben Datei:
+     `\((.*?)\)` schneidet am ersten `)` ab. Wo eine Sprache verschachtelt, wird gescannt
+     und gezählt, nicht gematcht.
+
+228. **Wenn eine Variable zwei Typen tragen kann, bricht die erste Rechnung damit ab.** Mein
+     Median war `int` oder `str`, und `median + 5` zwei Absätze weiter warf TypeError --
+     bei etwa der Hälfte aller plausiblen Preisstände. Zahl und Darstellung sind zwei
+     Werte.
+
+229. **Eine abgeleitete Aussage wird gerechnet, nicht angenommen.** "Mehr als die Hälfte
+     liegt unter Median+5" ist bei gerader Anzahl nicht garantiert. Die Grenze wächst
+     jetzt, bis die Aussage stimmt -- und der Satz nennt die Menge, über die gerechnet
+     wird.
+
+230. **`grep` ohne `-i` ist kein repoweiter Fix.** Mein "repoweit gegriffen" aus der
+     Vorrunde hat die Stelle übersehen, die groß anfängt -- in STATUS, der Einstiegsdatei.
+     Nach einer Zahlkorrektur: `grep -rni`, und das Ergebnis lesen, nicht nur zählen.
+
+231. **Eine Regel, die eine Ebene gilt, gilt noch nicht in der Ebene darüber.** "Bewiesener
+     Nicht-Treffer schlägt Unklarheit" war in `gruppe()` umgesetzt und in `sichtbar()`
+     nicht. Beim Einbau eines dritten Zustands gehört jede Stelle durchgesehen, die ihn
+     weitergibt -- nicht nur die, die ihn erzeugt.
+
+232. **Unklarheit ist nur dann ein Befund, wenn sie das Ergebnis ändern könnte.** Eine
+     unentscheidbare Regel mit demselben Wert wie die geltende kippt nichts. Meine erste
+     Fassung meldete sie trotzdem und machte einen legitimen Fall rot -- gefunden hat das
+     die eigene Batterie, beim ersten Lauf nach dem Einbau.
+
+### Dreißigste Prüfung zu B5: sechs Befunde, und keiner mehr am Inhalt
+
+Sechs Blocker, sieben Hinweise. Zum ersten Mal in dieser Serie sitzt kein einziger im
+ausgelieferten Inhalt und keiner in der Gate-Logik. Der Bericht bestätigt sechs von acht
+Nachbesserungen der Vorrunde vollständig, alle neun Gates mit Exit 0, alle Inhaltszahlen
+exakt, Reinraum grün, alle drei Proben bei 0 Befunden. Was er bringt, sind sechs falsche
+Aussagen ÜBER diesen Stand -- in Kommentaren, Überschriften und der Doku.
+
+**Eine handgezählte Namensliste ist derselbe Fehler wie eine handgezählte Zahl, nur
+schwerer zu bemerken.** Der Docstring von `idempotenzprobe.py` erklärt seit Runde 29, warum
+die Menge der geprüften Schreiber ERMITTELT und nicht aufgezählt wird -- und listete im
+Satz darunter von Hand fünf Skripte auf, die außerhalb der Vorschrift liegen. Die Liste war
+in beide Richtungen falsch: `verify.py` stand drin, hat aber gar keinen `__main__`-Guard und
+gehört nicht in die Menge; fünf andere fehlten (`css_kaskade.py`, `dom_baum.py`,
+`idempotenzprobe.py` selbst, `indexnow_ping.py`, `md_to_pdf.py`). Gemessen sind es neun, nicht
+fünf. Und der beruhigende Nachsatz -- "alle sind Prüfer oder Proben und schreiben nur in
+Kopien" -- deckte ausgerechnet die zwei, für die er nicht gilt: `indexnow_ping.py` meldet
+Sitemap-URLs an Bing, `md_to_pdf.py` schreibt eine Datei ins Repo. Genau dieses Skript ist
+das, dessentwegen die Sperre in dieser Datei überhaupt existiert. Die Liste ist raus, der
+Lauf gibt die Menge jetzt aus, mit dem Weg nach außen je Name.
+
+**Zwei Kopien ohne Gate laufen auseinander, und ich habe die Divergenz selbst erzeugt.**
+`CLAUDE.md` liegt zweimal im Repo (Wurzel als Einstieg, `brain/` als Vault-Seite) und war im
+HEAD bit-identisch. In diesem Paket habe ich die Pattern-Spanne auf P-1…P-13 gezogen -- nur
+in der Wurzel. Die Vault-Kopie und `brain/INDEX.md` behaupteten weiter P-1…P-8, also einen
+Katalog, der seit fünf Patterns überholt ist. Dasselbe Muster hat vier Commits vorher den
+Pflicht-Footer getroffen ("bevor die fünfte Kopie entsteht"), und dort steht die Antwort
+schon im Repo: ein Sync mit `--check`. Beide Kopien sind wieder gleich, und verify.py hält
+sie jetzt gleich -- rot auf Divergenz, mit dem Diff in der Meldung.
+
+**Eine Spanne, die sich nachrechnen lässt, wird nachgerechnet.** Die Überschrift der
+Pflicht-Mechanismen in P-13 sagte "1 bis 9 aus den Prüfrunden 1 bis 16, danach je einer aus
+den Runden 17 bis 29, Nummern 10 bis 23". Runde 17 bis 29 sind dreizehn Runden, Nummer 10
+bis 23 sind vierzehn Nummern -- die Aussage ist arithmetisch unmöglich, und das sieht man
+ohne jede Kenntnis des Projekts. Richtig ist 1 bis 15 und danach 16 bis 29: vierzehn
+Runden, vierzehn Nummern. Die Zahl in dieser Überschrift stand drei Runden lang falsch auf
+"Drei"; sie wird seitdem mitgezählt. Die Spanne daneben wurde dabei nicht mitgeprüft.
+
+**Zwei Runden-Spannen in der Doku waren stehen geblieben.** Der Protokolleintrag zu B5 nannte
+"alle Formen aus den Prüfrunden 18 bis 28" und "jede Form aus den Prüfrunden 21 bis 28",
+während beide Falltabellen inzwischen R29-Fälle tragen (gemessen: vier Marker in
+`css_kaskade.py`, zwei in `finder_batterie.py`). Dieselbe Datei erklärt zwei Zeilen höher,
+warum die ANZAHL nicht mehr dort steht -- die Spanne stand weiter da.
+
+**Und §A1 nannte 40 Produkte, während §A6 in derselben Datei 42 nannte.** Gemessen sind es
+42. Der Satz in §A1 ist die Definition der Produkt-Wahrheit; die Zahl darin war die
+älteste der drei.
+
+**Ein Satz, der eine vollständige Aufzählung behauptet, muss eine sein.** Der GRENZE-Block in
+`produktdaten.preis_zahl()` begründete die Tausenderpunkt-Regel mit "gemessen: die einzigen
+Punkte stehen in 'ca. 40 €'". Gemessen tragen 7 der 42 Preise einen Punkt, in 6
+Schreibweisen von "ca. 30 €" bis "ca. 50 €". Gemeint war etwas Richtiges -- kein Preis trägt
+einen TAUSENDERpunkt -- aber das stand da nicht. Der Satz zählt jetzt nicht mehr auf.
+Stattdessen prüft verify.py die Eigenschaft: Der erste vierstellige Preis macht den Lauf
+rot, statt latent zwei Leser desselben Feldes verschieden rechnen zu lassen
+(`preis_zahl()` liest 1299, `gen_preisfrage.preis()` liest 1 -- und das still).
+
+**Was als benannte Grenze stehen bleibt, statt weggebaut zu werden:** `_argument()` in
+`css_kaskade.py` zählt Klammern, überspringt aber keine Anführungszeichen und keine `[…]`.
+In `:not([data-x=")"])` schließt das `)` im String das Argument zu früh. Das zu schließen
+heißt, einen Parser für String- und Klammerzustände zu schreiben. Gemessen in den
+ausgelieferten CSS-Quellen: 72 Quellen, 2989 Selektoren, davon 9 mit einer
+Funktions-Pseudoklasse -- alle `:nth-child(even)`, keiner mit Anführungszeichen oder `[`
+im Argument. Die Grenze steht in der GRENZEN-Liste, mit der gemessenen Null daneben.
+
+**Offen für Yasin, drei Punkte am Workflow** (`.github/workflows/` ist Stopp-Punkt, deshalb
+nur gemessen und berichtet):
+1. Der Workflow fährt **drei** Gates, das Repo hat **neun**, die mechanisch mit Exit 0/1
+   enden. Sechs laufen nicht in CI: `sync_footer.py --check`, `sync_lesezeit.py --check`,
+   `sync_kompat.py --check`, `css_kaskade.py`, `gen_preisfrage.py --check`,
+   `gen_brand_sections.py --check`. Ein Push, der eines davon bricht, deployt grün.
+2. `node` kommt im Workflow nicht vor. Die `ubuntu-latest`-Images bringen Node mit, das
+   §A6-Gate läuft dort also voraussichtlich -- aber nichts fixiert und nichts prüft das.
+   Fällt Node aus dem Image, wird aus dem stärksten §A6-Gate eine Warnung und der Deploy
+   bleibt grün. Nachgemessen: ohne `node` im PATH endet verify.py mit Exit 0 und einer
+   sichtbaren Warnung, genau wie gebaut -- was in CI eben niemandem auffällt.
+3. Der Kommentar über der Versions-Festlegung sagt "Geprueft: die Skripte nutzen keine
+   Konstrukte oberhalb von 3.9, die Festlegung dient nur der Reproduzierbarkeit". Das ist
+   falsch: `gen_brand_sections.py:200` hat einen Backslash im Ausdrucksteil eines
+   f-Strings und ist unter Python 3.9 nicht einmal parsebar (gemessen mit 3.9.6; alle
+   anderen 26 Skripte parsen). Die Festlegung auf 3.12 ist also tragend, nicht kosmetisch
+   -- CI läuft heute nur deshalb. Dieselbe Zeile sagt außerdem "Alle drei Gates brauchen
+   nur die Standardbibliothek": für Python stimmt das, aber das stärkste §A6-Gate braucht
+   die `node`-Binärdatei, und die ist keine Standardbibliothek.
+
+**Selbst gefunden beim Nachmessen der eigenen Doku, dieselbe Klasse wie Lehre 238:** Das
+Em-Dash-Delta des B5-Pakets stand als **-3** im Protokolleintrag. Nachgemessen über die
+geänderten HTML-Dateien ergab es **-2** -- und beide Zahlen sind richtig, je nach Menge:
+-2 in der HTML-Copy (`controller-verbindet-nicht` und `blog/index.html` je eine), plus -1
+in `llms.txt`, das genauso ausgeliefert wird. Die Zahl war nie falsch, nur ihre Menge stand
+nicht dabei, und fast hätte ich die eigene Doku gegen eine engere Messung korrigiert. Die
+Messvorschrift steht jetzt neben der Zahl: alle gegen HEAD geänderten Dateien, die der
+Workflow wirklich veröffentlicht, also `*.html` plus `llms.txt` -- nicht `brain/`, nicht
+`scripts/` (dort stehen in diesem Paket allein 85 neue Em-Dashes in Kommentaren, und die
+sind keine Copy).
+
+**Lehren 233 bis 238**
+
+233. **Eine Namensliste ohne Messvorschrift ist derselbe Fehler wie eine Zahl ohne
+     Messvorschrift.** Der Satz, der erklärt, warum die Menge ermittelt wird, stand direkt
+     über fünf von Hand getippten Namen -- vier davon richtig, einer falsch, fünf fehlend.
+     Eine Zahl merkt man an; eine Liste liest sich wie ein Beweis. Wenn die Menge ableitbar
+     ist, wird sie abgeleitet und ausgegeben, auch wenn sie "nur" im Kommentar steht.
+
+234. **Ein beruhigender Nachsatz ist eine Behauptung und wird mitgeprüft.** "Alle sind Prüfer
+     oder Proben und schreiben nur in Kopien" galt für sieben von neun. Die zwei Ausnahmen
+     waren genau die, die nach außen wirken -- eine davon der Grund, aus dem die Sperre in
+     dieser Datei überhaupt existiert. Je beruhigender ein Satz klingt, desto eher ersetzt
+     er die Prüfung, die er zusammenfasst.
+
+235. **Zwei Kopien derselben Datei brauchen ein Gate, nicht Disziplin.** `CLAUDE.md` lag
+     zweimal bit-identisch im Repo und ist auseinandergelaufen, weil ich eine Zeile in der
+     einen Kopie gezogen habe. Vier Commits vorher dieselbe Klasse beim Footer, mit
+     derselben Antwort. Wer eine zweite Kopie duldet, baut im selben Schritt den Vergleich
+     -- sonst erzeugt die nächste Korrektur die Divergenz.
+
+236. **Was sich ohne Projektkenntnis nachrechnen lässt, rechnet der Prüfer nach.** "Runden 17
+     bis 29, Nummern 10 bis 23" ist dreizehn gegen vierzehn. Für diesen Befund braucht
+     niemand das Repo gelesen zu haben. Spannen, Summen und Anteile in Überschriften sind
+     die billigsten Befunde überhaupt -- und deshalb die peinlichsten, wenn sie stehen
+     bleiben.
+
+237. **Eine Aufzählung behauptet Vollständigkeit, eine Eigenschaft nicht.** "Die einzigen
+     Punkte stehen in 'ca. 40 €'" war als Begründung gemeint und als Inventar formuliert;
+     7 Preise in 6 Schreibweisen widerlegen das Inventar, obwohl die Begründung trägt. Wenn
+     die Eigenschaft gemeint ist ("kein Tausenderpunkt"), gehört die Eigenschaft ins Gate
+     und nicht ihre heutige Stichprobe in den Kommentar.
+
+238. **Ein Test, der die Umgebung beschneidet, beschneidet mehr als gedacht.** Mein erster
+     node-loser Lauf setzte `PATH=/usr/bin:/bin` und tauschte damit auch Python 3.14 gegen
+     3.9 -- der Lauf wurde rot, aber an einem SyntaxError, nicht am fehlenden `node`. Fast
+     hätte ich das als Befund gemeldet. Wer eine Abhängigkeit wegnimmt, nimmt genau diese
+     weg (eigenes `bin` mit Symlink) und prüft am Ende, dass das Gemeinte fehlt und das
+     Übrige steht. Der Fehlschlag war trotzdem nützlich: er hat Punkt 3 oben belegt.

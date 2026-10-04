@@ -24,10 +24,13 @@ import html
 import json
 import os
 import re
+import statistics
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
+sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+from lesezeit import minuten as lesezeit_minuten  # noqa: E402
 
 ZIEL = 'blog/was-kostet-ein-handy-controller/index.html'
 URL = 'https://smartphone-controller.com/blog/was-kostet-ein-handy-controller/'
@@ -93,7 +96,27 @@ def bestes(gruppe):
 def baue(lesezeit=4):
     items, ctrl, zub = daten()
     preise = [preis(p) for p in ctrl]
-    median = sorted(preise)[len(preise) // 2]
+    # Der ECHTE Median, nicht die obere Ordnungsstatistik. `sorted(preise)[n // 2]` ergab
+    # bei 28 Preisen 50 €, der Median ist 48 € -- und "der mittlere Preis" liest sich als
+    # Median (Hinweis aus dem 28. Pruefbericht). Bei gerader Anzahl ist er das Mittel der
+    # zwei mittleren Werte; ganzzahlig wird er ohne Dezimalstelle geschrieben, sonst mit
+    # Komma, wie alle Preise auf der Seite.
+    # ZWEI Werte, getrennt: eine Zahl zum Rechnen und ein Text zum Schreiben. Die erste
+    # Fassung hat beides in `median` gesteckt -- bei nicht ganzzahligem Median wurde daraus
+    # ein String, und `median + 5` zwei Absaetze weiter warf TypeError. Der Generator
+    # konnte seine Seite dann nicht mehr bauen, und der Fix, den die Fehlermeldung
+    # vorschreibt, brach identisch ab (R29). Bei 28 Preisen ist der Median genau dann
+    # ungerade halb, wenn die Summe der zwei mittleren Preise ungerade ist -- also etwa in
+    # der Haelfte aller plausiblen naechsten Preisstaende, kein Sonderfall.
+    median_zahl = statistics.median(preise)
+    median = (int(median_zahl) if float(median_zahl).is_integer()
+              else str(median_zahl).replace('.', ','))
+    # Die Bandgrenze wird GERECHNET und die Aussage darueber GEPRUEFT, nicht angenommen:
+    # "Mehr als die Haelfte liegt unter Median+5" ist bei gerader Anzahl nicht
+    # konstruktiv garantiert (Hinweis R29). Die Grenze waechst, bis die Aussage stimmt.
+    _bandgrenze = int(median_zahl) + 5
+    while sum(1 for _p in preise if _p < _bandgrenze) * 2 <= len(preise):
+        _bandgrenze += 1
     billigster, teuerster = ctrl[0], ctrl[-1]
     best = bestes(ctrl)
     best_stern, best_anz = bewertung(best)
@@ -156,7 +179,7 @@ def baue(lesezeit=4):
         (f'Was kostet ein guter Handy-Controller?',
          f'Unsere {len(ctrl)} Controller kosten zwischen {preis(billigster)} und '
          f'{preis(teuerster)} €, der mittlere Preis liegt bei {median} €. Mehr als die '
-         f'Hälfte des Sortiments liegt unter {median + 5} €.'),
+         f'Hälfte der {len(ctrl)} Controller liegt unter {_bandgrenze} €.'),
         (f'Muss ich mehr als {median} € ausgeben?',
          f'Nein. Der bestbewertete Controller in unserem Sortiment ist der '
          f'{voller_name(best)} für {preis(best)} € mit {de(best_stern)} Sternen aus '
@@ -180,7 +203,9 @@ def baue(lesezeit=4):
                         'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in faqs]
     }, ensure_ascii=False)
 
-    titel = 'Was kostet ein guter Handy-Controller? Preise 2026 im Überblick'
+    # 62 Zeichen ist die §B1-Grenze ohne Marken-Suffix; die erste Fassung lag mit 63
+    # einen darueber, gefunden erst im achten Pruefdurchgang.
+    titel = 'Was kostet ein guter Handy-Controller? Preise 2026'
     # Lesezeit aus dem fertigen Text, nicht geschaetzt. Der Rumpf wird einmal ohne
     # die Zahl gebaut, gezaehlt und dann mit ihr ausgegeben.
     beschreibung = (
@@ -339,20 +364,24 @@ def baue(lesezeit=4):
 '''
 
 
-def wortzahl(html_text):
-    nur_text = re.sub(r'<(script|style)\b[^>]*>.*?</\1>', ' ', html_text, flags=re.S)
-    nur_text = re.sub(r'<[^>]+>', ' ', nur_text)
-    return len(re.findall(r'\w+', nur_text))
-
-
 def baue_fertig():
     """Zweistufig: einmal bauen, um den Text zu zaehlen, dann mit der echten Lesezeit.
 
     Eine getippte Lesezeit auf einer Seite, die sonst jede Zahl ableitet, waere genau die
-    Stelle, die als erste nicht mehr stimmt."""
+    Stelle, die als erste nicht mehr stimmt.
+
+    Gezaehlt wird mit lesezeit.minuten, also mit genau der Regel, die sync_lesezeit.py
+    nachzieht und verify.py prueft. Mit einer eigenen Formulierung derselben Regel wuerden
+    Generator und Sync sich bei jedem Lauf gegenseitig ueberschreiben."""
     roh = baue()
-    minuten = max(1, round(wortzahl(roh) / 200))
-    return baue(minuten)
+    m = lesezeit_minuten(roh)
+    if m is None:
+        # Ohne <main> im Rumpf gaebe lesezeit_minuten None zurueck, und die Seite trueg
+        # "None Min. Lesezeit", waehrend dieses Script Erfolg meldet. verify faengt das
+        # danach, aber ein Generator soll nicht erst eine kaputte Seite schreiben.
+        raise SystemExit('FEHLER: der gebaute Rumpf hat kein <main>-Element, '
+                         'die Lesezeit laesst sich nicht bestimmen')
+    return baue(m)
 
 
 def main():

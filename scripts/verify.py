@@ -2,7 +2,11 @@
 # -*- coding: utf-8 -*-
 """SPC Verify-Suite (P-7). Pflicht-Gate vor jedem "fertig". Exit 0 = grün, 1 = Befunde.
 Prüft: Invarianten, products.json-Integrität, JSON-LD, interne Links, Sitemap, No-JS-Statik."""
+import html
 import json, os, re, sys, glob
+# subprocess stand bisher nur als lokaler Import INNERHALB des audit_prosa-Guards. Fehlt
+# diese Datei, war der Name danach undefiniert und jede weitere Nutzung ein NameError.
+import subprocess
 import xml.dom.minidom
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -15,14 +19,193 @@ ERRORS, WARN = [], []
 def err(msg): ERRORS.append(msg)
 def warn(msg): WARN.append(msg)
 
+
+def _klartext(_roh):
+    """Sichtbarer Text einer Datei: ohne Kommentare, ohne Tags, Entities aufgeloest.
+
+    EINE Funktion fuer alle Gates, die Aussagen im Text pruefen. Die Lehre dahinter hat
+    sechzehn Pruefrunden gekostet: Jedes Gate, das rohes Markup liest, scheitert in beide
+    Richtungen. `<strong>27</strong> der 28` macht richtigen Text rot, und derselbe Satz
+    mit falscher Zahl plus Markup bleibt gruen. Ich habe das fuer die Mengensaetze geloest
+    und danach fuenf weitere Gates gebaut, die es nicht uebernommen haben -- Pool-Satz,
+    Fragenzahl, Abschnittszahlen, und zweimal in derselben Datei zwei Bildschirmseiten
+    entfernt.
+
+    Block-Grenzen werden zu einem Pilcrow, damit Satzanfaenge erkennbar bleiben: Nach einer
+    Ueberschrift steht im Text kein Satzzeichen, und ein Muster, das einen Satzanfang
+    verlangt, findet den Satz sonst nicht.
+
+    `<script>`- und `<style>`-Inhalt faellt heraus. Die erste Fassung liess ihn stehen,
+    und das ist in BEIDE Richtungen falsch: Ein Fehlalarm, weil eine JS-Zeichenkette in
+    suche/index.html (`„' + q + '"`) wie schiefe Typografie aussah -- und, schwerer, ein
+    Loch, weil jeder Anwesenheits-Anker dieses Pakets sich von einer Zeichenkette in einem
+    Skript erfuellen laesst, waehrend die Seite den Satz nicht zeigt. Genau die Klasse,
+    die in Runde 16 eine Kopie in llms.txt gedeckt hat.
+    """
+    _t = re.sub(r'<(script|style)\b[^>]*>.*?</\1>', ' \u00b6 ', _roh, flags=re.S | re.I)
+    _t = re.sub(r'<!--.*?-->', ' ', _t, flags=re.S)
+    _t = re.sub(r'</?(?:p|li|td|th|h[1-6]|div|section|main|article|blockquote|dd|dt)\b'
+                r'[^>]*>|<br\s*/?>', ' \u00b6 ', _t, flags=re.I)
+    _t = html.unescape(re.sub(r'<[^>]*>', ' ', _t))
+    # U+00A0 mitnormalisieren: `&nbsp;` wird von html.unescape zu einem geschuetzten
+    # Leerzeichen, und `[ \t]+` hat es stehen gelassen. Zwei richtige Saetze wurden
+    # dadurch rot (`3,8&nbsp;Sternen`, `Frage 1&nbsp;von&nbsp;3`), waehrend Muster mit
+    # `\s+` an derselben Stelle gruen blieben -- dasselbe Gate, zwei Verhalten.
+    return re.sub(r'[ \t\u00a0\u202f\u2009]+', ' ', _t.replace('\n', ' \u00b6 '))
+
+
+def _jsonld_texte(_roh):
+    """Die Zeichenketten-Werte aller JSON-LD-Bloecke, als Text.
+
+    Warum eigens: `_klartext` entfernt `<script>`-Inhalt, und das ist richtig -- eine
+    Zeichenkette in einem JS-Programm ist kein Seitentext, und solange sie mitgelesen
+    wurde, liess sich jeder Anwesenheits-Anker von ihr erfuellen. Dieselbe Entfernung hat
+    aber ein Gate stillgelegt: Die Abschnittszahlen stehen auch in `headline` und
+    `description` des Article-Schemas, also in einem script-Block, und waren danach
+    ungeprueft -- Runde 19 hat 9 Ursachen und 7 Stoerungsbilder ins Schema geschrieben,
+    sichtbar blieben 5 und 4, und der Lauf blieb gruen.
+
+    Der Unterschied, auf den es ankommt: JSON-LD ist AUSGELIEFERTER INHALT (Google liest
+    es, und §A4 verlangt fuer jeden Schema-Wert eine sichtbare Entsprechung), ein
+    beliebiger JS-String ist Programmtext. Deshalb kommen hier nur die Werte aus
+    `application/ld+json` dazu, nicht der uebrige Skriptinhalt.
+    """
+    _aus = []
+    # Beide Anfuehrungszeichen-Formen, wie `_ist_datenskript` (Hinweis R29).
+    for _sm in re.finditer(r'<script[^>]+type\s*=\s*[\'"]application/ld\+json[\'"]'
+                           r'[^>]*>(.*?)</script>', _roh, re.S | re.I):
+        try:
+            _obj = json.loads(_sm.group(1))
+        except Exception:
+            # Kaputtes JSON-LD meldet das Schema-Gate; hier faellt es nur aus.
+            continue
+
+        def _sammle(_o):
+            if isinstance(_o, str):
+                _aus.append(_o)
+            elif isinstance(_o, dict):
+                for _v in _o.values():
+                    _sammle(_v)
+            elif isinstance(_o, list):
+                for _v in _o:
+                    _sammle(_v)
+        _sammle(_obj)
+    return ' \u00b6 '.join(_aus)
+
+
+def _ohne_kommentare(_quelle, _ist_js):
+    """Quelltext ohne Kommentare. Auch ANHAENGENDE `//`-Kommentare.
+
+    Die erste Fassung entfernte nur `//` am Zeilenanfang. Ein anhaengender Kommentar, der
+    die Regel dokumentiert ("... // NICHT gtag('event', ...) benutzen"), wurde damit als
+    Verstoss gemeldet -- genau die Klasse, fuer die diese Funktion gebaut wurde, einen
+    Schritt daneben (R25). Das `(?<!:)` haelt `https://` heraus; eine vollstaendige
+    JS-Tokenisierung waere hier der Regress, und ein `//` in einem String-Literal ist
+    der benannte Rest.
+    """
+    if _ist_js:
+        _q = re.sub(r'/\*.*?\*/', ' ', _quelle, flags=re.S)
+        return re.sub(r'(?m)(?<!:)//.*$', ' ', _q)
+    return re.sub(r'<!--.*?-->', ' ', _quelle, flags=re.S)
+
+
+_JSON_TYPEN = ('application/ld+json', 'application/json', 'importmap',
+               'speculationrules', 'application/schema+json')
+
+
+def _ist_datenskript(_attrtext):
+    """Traegt dieses <script> einen Daten-Typ? Dann ist sein Inhalt kein Code.
+
+    Entscheidend ist der geparste `type`, nicht ein Substring: `data-json="1"`,
+    `id="jsonld-helper"` und `class="json"` sind ausfuehrbare Skripte und liefen durch
+    (R28). `type="text/JSONP"` ist ebenfalls Code.
+    """
+    _tm = re.search(r'\btype\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))', _attrtext,
+                    re.I)
+    if not _tm:
+        return False      # ohne type ist es JavaScript
+    _typ = (_tm.group(1) or _tm.group(2) or _tm.group(3) or '').strip().lower()
+    return _typ in _JSON_TYPEN
+
+
+def _metatexte(_roh):
+    """Nur die DESCRIPTION-Metas: das ist der Ort, der Leser ueber Suchergebnisse erreicht.
+
+    Gebraucht fuer Zusagen, die dort LEBEN (die Meta-Description der Finder-Seite). Fuer
+    die gilt "sichtbar auf der Seite" nicht, aber auch nicht "irgendwo in der Datei": Sonst
+    deckt ein JSON-LD-Wert sie, und genau das war Befund 6 aus Runde 20.
+
+    Die erste Fassung nahm JEDEN content/alt/title/aria-label-Wert. R21 hat die Zusage aus
+    description, og:description und twitter:description entfernt und in ein `title=` am
+    Finder-Element gelegt: Der Anker blieb erfuellt, und die Zusage erreichte ueber
+    Suchergebnisse niemanden mehr. Dasselbe Loch eine Ebene tiefer. Geprueft wird deshalb
+    genau das Feld, um das es geht.
+    """
+    _aus = []
+    for _m in re.finditer(r'<meta\b[^>]*>', _roh, re.I):
+        _tag = _m.group(0)
+        if not re.search(r'(?:name|property)\s*=\s*[\'"](?:description|og:description|'
+                         r'twitter:description)[\'"]', _tag, re.I):
+            continue
+        # Einfache Anfuehrungszeichen mitlesen: im Repo sind 104 Attribute einfach gequotet, davon 101 class-Attribute,
+        # und ein `content='...'` waere hier unsichtbar gewesen (R22, latent).
+        _cm = re.search(r'content\s*=\s*(?:"([^"]*)"|\'([^\']*)\')', _tag)
+        if _cm:
+            _aus.append(html.unescape(_cm.group(1) or _cm.group(2) or ''))
+    return ' \u00b6 '.join(_aus)
+
+
+def _text_und_metas(_roh):
+    """Sichtbarer Text PLUS Attributwerte PLUS JSON-LD-Werte.
+
+    Eine Zusage kann in der Meta-Description stehen (die Finder-Seite macht genau das).
+    `_klartext` entfernt Tags samt Attributen, also waere sie dort unsichtbar: Beim
+    Umstellen des Fragenzahl-Gates auf Klartext ist genau diese Stelle rot geworden.
+    Die JSON-LD-Werte kommen dazu, weil `_klartext` script-Bloecke entfernt und damit das
+    Abschnittszahlen-Gate stillgelegt hatte (Begruendung in `_jsonld_texte`).
+    """
+    _attr = ' \u00b6 '.join(
+        html.unescape(m.group(1))
+        for m in re.finditer(r'(?:content|alt|title|aria-label)="([^"]*)"', _roh))
+    return (_klartext(_roh) + ' \u00b6 ' + _attr + ' \u00b6 ' + _jsonld_texte(_roh))
+
+
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 from schema_util import typen_von as _typen_von   # eine Definition fuer beide Skripte
+from lesezeit import minuten as _lesezeit_minuten  # dito: Generator, Sync und Gate
+from lesezeit import BYLINE as _lz_BYLINE, KARTE as _lz_KARTE
+from lesezeit import karten as _lz_karten
+from produktdaten import spec as _spec            # eine Leseregel fuer products.json
+from produktdaten import spec_wie as _spec_wie    # (Docstring dort: warum nicht hier)
+from produktdaten import spec_paare as _spec_paare
+from produktdaten import preis_zahl as _preis_zahl
+from produktdaten import formfehler as _formfehler
+# Namen bewusst eindeutig: `_txt`/`_liste` kollidieren mit lokalen Variablen
+# in diesem Lauf (Zeile 344, 471, 1906) und wurden dadurch ueberschrieben --
+# derselbe Fehler, den `_klartext` eine Runde vorher gemacht hat.
+from produktdaten import text as _pfeld, liste as _pliste
+from css_kaskade import wert as _css_wert, sichtbar as _css_sichtbar
 
 # ---------- 1 · Invarianten ----------
 for f in ['CNAME', '.nojekyll', 'llms.txt', 'robots.txt', 'sitemap.xml', 'assets/data/products.json']:
     if not os.path.exists(f): err(f"Invariante fehlt: {f}")
 if os.path.exists('CNAME') and open('CNAME').read().strip() != 'smartphone-controller.com':
     err("CNAME-Inhalt falsch")
+# `CLAUDE.md` liegt zweimal im Repo (Wurzel als Einstieg, `brain/` als Vault-Seite) und war
+# bis zum 02.10.2026 bit-identisch. Dann habe ich die Pattern-Spanne nur in der Wurzel auf
+# P-1…P-13 gezogen, und die Vault-Kopie behauptete weiter P-1…P-8 -- derselbe Fall, den
+# `sync_footer.py` fuer den Pflicht-Footer loest ("bevor die fuenfte Kopie entsteht").
+# Zwei Kopien ohne Gate divergieren; wer die eine pflegt, pflegt die andere mit.
+if os.path.exists('brain/CLAUDE.md') and os.path.exists('CLAUDE.md'):
+    _a = open('CLAUDE.md', encoding='utf-8').read()
+    _b = open('brain/CLAUDE.md', encoding='utf-8').read()
+    if _a != _b:
+        import difflib as _dl
+        _d = [x for x in _dl.unified_diff(_b.splitlines(), _a.splitlines(),
+                                          'brain/CLAUDE.md', 'CLAUDE.md', lineterm='', n=0)
+              if x[:1] in '+-' and x[:3] not in ('+++', '---')]
+        err("CLAUDE.md und brain/CLAUDE.md sind auseinandergelaufen: "
+            + ' | '.join(x[:110] for x in _d[:4]))
 # §B2 präzisiert (07.08.): /ratgeber/ darf NUR noindex-Redirect-Stubs enthalten
 # (meta refresh + noindex, kein Content). Voll-Content dort = Zombie-Rückkehr = ROT.
 if os.path.isdir('ratgeber'):
@@ -79,6 +262,31 @@ try:
 except Exception as e:
     err(f"products.json unlesbar: {e}"); items = []
 
+# ---------- 2b · Formfehler in products.json ----------
+# Die Leseregeln selbst stehen in produktdaten.py, geteilt mit kompat.py. Warum dort und
+# nicht hier, steht im Docstring des Moduls: Beim Schliessen dieses Befundes habe ich hier
+# erst eine eigene Fassung gebaut, obwohl kompat.py schon eine hatte -- die elfte Kopie,
+# beim Aufraeumen der zehn. Der Pruefer hat genau diese Kopie gefunden.
+for _m in _formfehler(items):
+    err(_m)
+
+# Eine Amazon-Produkt-URL, in allen Formen, die wirklich vorkommen. Gebraucht an zwei
+# Stellen (statisches HTML und JS-Dateien), deshalb hier und nicht zweimal.
+#   amazon.de/dp/B0...            die kurze Form
+#   amazon.de/Produktname/dp/B0   die Form aus Adresszeile und SiteStripe "Full link"
+#   amazon.de/-/en/dp/B0          die Sprachvariante
+#   amazon.de/gp/product/B0       die alte Produktseite
+#   amazon.de/gp/aw/d/B0          die mobile Form
+#   amazon.de/exec/obidos/ASIN/   die sehr alte Form
+#   amzn.to / amzn.eu             Kurzlinks, tragen ihr Tag unsichtbar
+# NUR Produktpfade: Ein blosses `gp/` traf auch `gp/help/customer/display.html`, also den
+# legitimen Link auf Amazons Datenschutzerklaerung in datenschutz/index.html -- der erste
+# Lauf dieses Musters war genau dort rot. Das Gate soll Kauflinks finden, nicht jeden
+# Amazon-Link.
+_AMAZON_LINK = (r'amazon\.[a-z.]{2,6}/(?:[^"\'\s?]*/)*?'
+                r'(?:dp|gp/product|gp/aw/d|exec/obidos)/'
+                r'|amzn\.(?:to|eu)/')
+
 # ---------- 3 · Seiten-Checks ----------
 existing = {'/'} | {'/' + os.path.dirname(p) + '/' for p in pages}
 existing |= {'/sitemap.xml', '/robots.txt', '/llms.txt'}
@@ -114,11 +322,47 @@ for p in pages:
             if not os.path.exists(h.lstrip('/')): err(f"Asset fehlt: {href} (in {p})")
         elif h not in existing:
             err(f"Interner Link kaputt: {href} (in {p}) (§B5)")
-    # Amazon nie hart verlinkt (außer JS baut sie) — im statischen HTML nur data-asin
-    if re.search(r'href="https?://(www\.)?amazon\.de/dp/', s):
+    # Amazon nie hart verlinkt (außer JS baut sie) — im statischen HTML nur data-asin.
+    # Das Muster hiess `amazon\.de/dp/` und verlangte `dp` DIREKT hinter der Domain. Die
+    # Form, die Adresszeile und SiteStripe liefern, ist aber
+    # `amazon.de/<Produktname>/dp/<ASIN>` -- die ging durch, mit richtigem Tag und ohne
+    # data-asin (R26 gemessen, an dieser Stelle und am JS-Gate). _AMAZON_LINK deckt beide
+    # Stellen, damit sie nicht wieder auseinanderlaufen.
+    # DIESELBE Konstante auch in der Schleife. Vorher stand hier ein eigenes,
+    # handgeschriebenes Hostmuster -- der Auslöser benutzte _AMAZON_LINK, die Pruefung
+    # dahinter die alte Form. Vier Dinge liefen damit durch (R27, je gemessen):
+    # `amzn.to` und `amzn.eu` (genau die Formen, deren Tag unsichtbar ist und die der
+    # eigene Fehlertext als die gefaehrlichsten benennt), ein Zeilenumbruch nach `<a`,
+    # und `AMAZON.DE` in Grossschreibung. re.S und re.I decken die letzten zwei.
+    if re.search(_AMAZON_LINK, s, re.I):
         # erlaubt in Schema (offers.url) — prüfe nur echte <a href>
-        for a in re.findall(r'<a [^>]*href="https?://(?:www\.)?amazon\.de[^"]*"[^>]*>', s):
-            if 'data-asin' not in a: err(f"Harter Amazon-Link ohne data-asin-Automation in {p} (§A3)")
+        # Beide Anfuehrungszeichen-Formen: `href='...'` fiel offen, weil der Ausloeser
+        # ueber die ganze Seite feuerte und die Schleife danach kein Tag fand (R28).
+        for _am2 in re.finditer(r'<a\s[^>]*href\s*=\s*(?:"[^"]*"|\'[^\']*\')[^>]*>',
+                                s, re.S | re.I):
+            _tag = _am2.group(0)
+            if re.search(_AMAZON_LINK, _tag, re.I) and 'data-asin' not in _tag:
+                err(f"Harter Amazon-Link ohne data-asin-Automation in {p} (§A3): "
+                    f"{_tag[:100]}")
+    # §A3 gilt auch fuer inline <script> einer Seite: Das JS-Gate liest nur
+    # assets/js/*.js, das Statik-Gate nur <a href>. Eine Amazon-URL in einem
+    # Seiten-Skript war von keinem der beiden erfasst (R27).
+    # NUR ausfuehrbare Skripte. Ein `application/ld+json`-Block ist Daten, und dort ist
+    # die Amazon-URL ausdruecklich erlaubt (`offers.url`) -- die erste Fassung dieses
+    # Gates hat deshalb 30 Produktseiten gemeldet, alle zu Recht gruen.
+    # Der TYPE wird geparst, nicht als Substring ueber alle Attribute gesucht. Die erste
+    # Fassung schloss jedes <script> aus, dessen Attributtext irgendwo "json" enthielt --
+    # vier ausfuehrbare Formen liefen damit durch (`data-json="1"`, `id="jsonld-helper"`,
+    # `class="json"`, `type="text/JSONP"`), gemessen in R28.
+    _inline = ' '.join(_m3.group(2) for _m3 in
+                       re.finditer(r'<script\b(?![^>]*\bsrc=)([^>]*)>(.*?)</script>',
+                                   s, re.S | re.I)
+                       if not _ist_datenskript(_m3.group(1) or ''))
+    _im = re.search(_AMAZON_LINK, _ohne_kommentare(_inline, True), re.I)
+    if _im:
+        err(f"§A3: {p} schreibt in einem inline <script> eine Amazon-URL "
+            f"(\"{_im.group(0)}\") — Kauflinks entstehen ausschliesslich in "
+            f"assets/js/main.js aus data-asin")
 
 # ---------- 4 · Sitemap ----------
 try:
@@ -204,8 +448,26 @@ if os.path.exists('scripts/gen_brand_sections.py'):
         _last = _r.stdout.strip().splitlines()[-1]
         err(f"Marken-Hubs sind nicht mehr deckungsgleich mit products.json (§A1). "
             f"Fix: python3 scripts/gen_brand_sections.py — {_last}")
+
 else:
     err("scripts/gen_brand_sections.py fehlt — Marken-Hub-Invariante kann nicht prüfen")
+
+# Die Preisfrage-Seite ist VOLLSTAENDIG gerechnet (Spanne, Median, Baender, Lesezeit) --
+# und ihr `--check`-Modus existierte, wurde aber von keinem Gate aufgerufen. Drei
+# Mutationen ("mittlere Preis 50 -> 70 €", "30 bis 190 -> 240 €", "28 -> 31 Controller")
+# blieben damit gruen (R27). Die Absicherung lag nur in der Idempotenzprobe, und die ist
+# ausdruecklich nicht in CI.
+if os.path.exists('scripts/gen_preisfrage.py'):
+    _rp = subprocess.run([sys.executable, 'scripts/gen_preisfrage.py', '--check'],
+                         capture_output=True, text=True, timeout=180)
+    if _rp.returncode != 0:
+        _zeilen = (_rp.stdout + _rp.stderr).strip().splitlines()
+        err(f"§A1: scripts/gen_preisfrage.py --check schlaegt fehl — die Preisfrage-Seite "
+            f"weicht von dem ab, was aus products.json folgt. Fix: "
+            f"'python3 scripts/gen_preisfrage.py'. {_zeilen[-1][:160] if _zeilen else ''}")
+else:
+    err('scripts/gen_preisfrage.py fehlt — die Preisfrage-Seite ist dann ungegatet')
+
 
 # ---------- 6b · §A1-Vollaudit: HTML gegen products.json (30.09.2026) ----------
 # Abschnitt 6 prüft nur die vier Marken-Hubs. Dieses Audit deckt das ab, was zwischen
@@ -254,8 +516,19 @@ for _f in pages:
 # 50 veraltete Werte, teils als gekipptes Urteil ("gleich teuer" bei 70 gegen 32 Euro).
 if os.path.exists('scripts/audit_prosa.py'):
     import subprocess
-    _pr = subprocess.run([sys.executable, 'scripts/audit_prosa.py'], capture_output=True, text=True)
-    if _pr.returncode != 0:
+    # timeout: Ohne ihn konnte dieser Aufruf den ganzen Lauf anhalten, statt ihn rot zu
+    # machen -- ein leeres `name`-Feld genuegte (Ursache jetzt in audit_prosa.py selbst
+    # behoben). Ein Gate, das nicht endet, meldet auch nichts, was es schon gefunden hat.
+    try:
+        _pr = subprocess.run([sys.executable, 'scripts/audit_prosa.py'],
+                             capture_output=True, text=True, timeout=180)
+    except subprocess.TimeoutExpired:
+        err('§A1-Fließtext: scripts/audit_prosa.py ist nach 180 s nicht fertig geworden '
+            'und wurde abgebrochen — das Fließtext-Audit ist in diesem Lauf NICHT '
+            'gelaufen. Haeufigste Ursache: ein leeres oder sehr kurzes Produktfeld, das '
+            'als Suchname an jeder Position trifft')
+        _pr = None
+    if _pr is not None and _pr.returncode != 0:
         for _z in _pr.stdout.strip().splitlines():
             if _z.strip() and 'Abweichung(en)' not in _z:
                 err(f"§A1-Fließtext: {_z.strip()}")
@@ -278,7 +551,7 @@ for _f in pages:
         _p = next((x for x in items if x.get('slug') == _dm.group(1)), None)
         if not _p:
             continue
-        _soll = re.search(r'(\d+)', (_p.get('price') or '').replace('.', ''))
+        _soll = re.search(r'(\d+)', str(_p.get('price') or '').replace('.', ''))
         for _cm in re.finditer(r'<div class="(?:pro|con)">(.*?)</div>', _blk, re.S):
             _txt = re.sub(r'<[^>]*>', '', _cm.group(1))
             for _em in re.finditer(r'(\d+(?:[.,]\d+)?)\s*(?:€|Euro)', _txt):
@@ -296,7 +569,9 @@ for _marke, _n_soll in _MARKEN_TABELLE.items():
     for _p in items:
         if _p.get('brand') != _marke or _p.get('type') != 'controller':
             continue
-        _bw = next((v for k, v in _p.get('specs', []) if k.startswith('Bew')), '')
+        # str(): Ein Nicht-String-Wert in Bew. liess re.match mit TypeError statt einer
+        # Meldung abbrechen -- dieselbe Klasse wie bei Verb., eine Stelle uebersehen.
+        _bw = _spec_wie(_p, 'Bew')
         _m2 = re.match(r'([\d,]+)\s*\(([\d.]+)\)', _bw)
         if _m2:
             _ps.append((float(_m2.group(1).replace(',', '.')), int(_m2.group(2).replace('.', ''))))
@@ -336,7 +611,7 @@ for _f in pages:
         _p = next((x for x in items if x.get('slug') == _dm.group(1)), None)
         if not _p:
             continue
-        _soll = re.search(r'(\d+)', (_p.get('price') or '').replace('.', ''))
+        _soll = re.search(r'(\d+)', str(_p.get('price') or '').replace('.', ''))
         if _soll and _m.group(1) != _soll.group(1):
             err(f"§A1: {_f} data-price=\"{_m.group(1)}\" für {_p['slug']}, "
                 f"products.json sagt {_p['price']} — die Preissortierung rechnet falsch")
@@ -355,7 +630,7 @@ for _f in pages:
         _p = next((x for x in items if x.get('slug') == _dm.group(1)), None)
         if not _p:
             continue
-        _ist, _soll = set(_m.group(1).split()), set(_p.get('worksOn') or [])
+        _ist, _soll = set(_m.group(1).split()), set(_pliste(_p, 'worksOn'))
         if _ist != _soll:
             err(f"§A1: {_f} data-platform=\"{_m.group(1)}\" für {_p['slug']}, worksOn sagt "
                 f"{' '.join(sorted(_soll))} — der Hub-Filter zeigt das Produkt falsch an")
@@ -378,9 +653,10 @@ for _f in pages:
 # "Kein iOS, kein Bluetooth" sagt und specs "USB-C" fuehrt. Das Produkt stand als Karte
 # im iPhone-Hub, mit genau diesem Satz sichtbar darauf.
 for _p in items:
-    _claim = (_p.get('claim') or '')
-    _verb = dict(_p.get('specs') or {}).get('Verb.', '')
-    _w = set(_p.get('worksOn') or [])
+    # str(): claim als Zahl liess re.search hier mit TypeError abbrechen (Runde 18).
+    _claim = str(_p.get('claim') or '')
+    _verb = _spec(_p, 'Verb.')
+    _w = set(_pliste(_p, 'worksOn'))
     if re.search(r'\bKein iOS\b|\bohne iOS\b|\bnicht .{0,12}iPhone\b', _claim, re.I) and 'ios' in _w:
         err(f"§A1: {_p['slug']} hat 'ios' in worksOn, der eigene claim sagt aber "
             f"\"{_claim[:70]}\"")
@@ -432,13 +708,102 @@ _TAG_DATEIEN = [x for x in glob.glob('**/*', recursive=True)
 for _f in _TAG_DATEIEN:
     if not os.path.exists(_f):
         continue
-    for _tm in re.finditer(r'tag=([A-Za-z0-9_-]+)', open(_f, encoding='utf-8').read()):
+    # Nur die Formen, die WIRKLICH Geld bewegen: der URL-Parameter (`?tag=` / `&tag=`)
+    # und die Konstante, aus der main.js den Link baut. Das Muster hiess vorher bloss
+    # `tag=([A-Za-z0-9_-]+)` ueber alle Textdateien -- und traf damit ein ganz normales
+    # Python-Schluesselwortargument (`_tag=None`) in verify.py selbst, mit der Meldung
+    # "enthält den fremden PartnerNet-Tag \"None\"". Gemessen, und zwar als Eigenschaft statt als Anzahl:
+    # KEIN Vorkommen von `tag=` mit einem echten Affiliate-Wert steht ausserhalb von
+    # `?`/`&`. Eine Anzahl stand hier als "19" und war nicht reproduzierbar (drei
+    # Zaehlregeln: 30, 32, 39) -- sie ist entfernt, die Eigenschaft bleibt.
+    _inhalt = open(_f, encoding='utf-8').read()
+    for _tm in re.finditer(r'[?&]tag=([A-Za-z0-9_-]+)', _inhalt):
         if _tm.group(1) != 'ygmedia-21':
-            err(f"§A3: {_f} enthält den fremden PartnerNet-Tag \"{_tm.group(1)}\" — "
-                f"die Provision liefe auf ein anderes Konto")
+            err(f"§A3: {_f} enthält den fremden PartnerNet-Tag \"{_tm.group(1)}\" in "
+                f"einem Kauflink — die Provision liefe auf ein anderes Konto")
+    for _tm in re.finditer(r'AFFILIATE_TAG\s*[=:]\s*[\'"]([A-Za-z0-9_-]+)[\'"]', _inhalt):
+        if _tm.group(1) != 'ygmedia-21':
+            err(f"§A3: {_f} setzt AFFILIATE_TAG auf \"{_tm.group(1)}\" — jeder daraus "
+                f"gebaute Kauflink liefe auf ein fremdes Konto")
 
 
-# Der Footer nennt die Empfehlungsschwelle und wird in 109 Seiten injiziert. Er stand
+# §A8: Custom Events NUR als dataLayer.push, NIE als gtag('event', ...). Das ist eine
+# harte Regel in CLAUDE.md und war repoweit UNBEWACHT (Hinweis aus dem 24. Pruefbericht;
+# gemessen: `gtag('event', ...)` in finder.js blieb gruen). Der heutige Stand ist korrekt,
+# die Regel hatte nur kein Gate -- genau die Klasse, die dieses Paket schliesst.
+#
+# Zwei Praezisierungen, beide aus dem ersten Lauf dieses Gates:
+#   · Nur die AUSGELIEFERTE Flaeche (Seiten und assets/js). Die erste Fassung lief ueber
+#     alle Textdateien und meldete verify.py SELBST, weil das Muster in dieser Zeile
+#     steht.
+#   · KOMMENTARE heraus. `main.js` traegt in Zeile 352 den Hinweis "NICHT gtag('event',
+#     ...)" -- eine Dokumentation der Regel, die das Gate als Verstoss gemeldet hat.
+#     `gtag('consent', ...)` ist ausserdem Consent Mode und kein Custom Event; das Muster
+#     verlangt deshalb ausdruecklich 'event'.
+
+def _js_flaeche(_f):
+    """Der JS-Code einer Datei: bei .js die Datei, bei HTML nur die <script>-Bloecke.
+
+    Beides ohne Kommentare. Die erste Fassung entTagte HTML nur von `<!-- -->` -- und
+    `gtag(` kann auf einer Seite NUR in einem <script> stehen, also genau dort, wo die
+    Kommentar-Entfernung nicht griff. Zwei Fehlalarme (R26): eine Doku-Zeile in einem
+    <script>-Kommentar und ein Satz in der Prosa, der die verbotene Form nennt. Prosa ist
+    kein Code; sie wird jetzt gar nicht mehr gelesen.
+    """
+    _roh = open(_f, encoding='utf-8').read()
+    if _f.endswith('.js'):
+        return _ohne_kommentare(_roh, True)
+    # Inline-Handler sind auch JS. Der Docstring behauptete "`gtag(` kann auf einer Seite
+    # NUR in einem <script> stehen" -- das Repo widerlegt es selbst: controller/index.html
+    # traegt fuenf `onclick=`/`onchange=`-Handler (R27). Ein gtag('event', ...) darin
+    # laeuft und war vom Gate nicht gelesen.
+    _aus = [_ohne_kommentare(_m.group(1), True) for _m in
+             re.finditer(r'<script\b[^>]*>(.*?)</script>', _roh, re.S | re.I)]
+    # Auch unquotierte Werte, und OHNE Kommentare: Der Docstring sagte "beides ohne
+    # Kommentare", die on*-Attribute gingen aber roh durch -- ein Kommentar darin, der die
+    # Regel dokumentiert, wurde als Verstoss gemeldet (R28, Fehlalarm). Und nur quotierte
+    # Werte zu lesen war ein Loch.
+    # HTML-Kommentare zuerst heraus: Ein auskommentierter Inline-Handler, der die Regel
+    # dokumentiert, waere sonst ein Fehlalarm (Hinweis R29).
+    _ohne_html_komm = re.sub(r'<!--.*?-->', ' ', _roh, flags=re.S)
+    for _m in re.finditer(r'\son[a-z]+\s*=\s*(?:"([^"]*)"|\'([^\']*)\'|([^\s>]+))',
+                          _ohne_html_komm, re.I):
+        _wert = html.unescape(_m.group(1) or _m.group(2) or _m.group(3) or '')
+        _aus.append(_ohne_kommentare(_wert, True))
+    return ' '.join(_x for _x in _aus if _x)
+
+
+for _f in list(pages) + sorted(glob.glob('assets/js/*.js')):
+    if not os.path.exists(_f):
+        continue
+    _ih = _js_flaeche(_f)
+    # Backticks sind gueltiges JS und waren nicht erfasst (Hinweis R25).
+    for _gm in re.finditer(r"gtag\s*\(\s*['\"`]event['\"`]", _ih):
+        err(f"§A8: {_f} feuert ein Custom Event per gtag('event', ...) — erlaubt ist nur "
+            f"dataLayer.push({{event: '...'}}), sonst greifen die GTM-Trigger und die "
+            f"DLV-Namen (product_name, destination, platform, budget, prio) nicht")
+
+# §A3 fuer die JS-Seite: Die Kauflinks entstehen aus data-asin in main.js. Eine hart
+# geschriebene Amazon-URL in einer ANDEREN JS-Datei umgeht diese eine Stelle -- mit
+# richtigem Tag blieb sie gruen (Hinweis aus dem 24. Pruefbericht). Das statische HTML
+# prueft das Gate weiter oben; hier fehlte die JS-Seite.
+for _f in sorted(glob.glob('assets/js/*.js')):
+    if os.path.basename(_f) == 'main.js':
+        continue   # DIE eine Stelle, die Kauflinks baut
+    # Kommentare heraus: Das Gate las das Rohfile und haette einen Kommentar, der §A3
+    # dokumentiert, als Verstoss gemeldet (R25). Dazu zwei weitere Formen aus demselben
+    # Bericht: der SiteStripe-Kurzlink `amzn.to/...` traegt sein Tag unsichtbar, und
+    # Die Formen stehen in _AMAZON_LINK, geteilt mit der Statik-Pruefung.
+    _jh = _ohne_kommentare(open(_f, encoding='utf-8').read(), True)
+    _mm = re.search(_AMAZON_LINK, _jh)
+    if _mm:
+        err(f"§A3: {_f} schreibt eine Amazon-URL direkt (\"{_mm.group(0)}\") — Kauflinks "
+            f"entstehen ausschliesslich in assets/js/main.js aus data-asin, sonst gibt es "
+            f"zwei Stellen, an denen der Affiliate-Tag richtig sein muss. Ein Kurzlink "
+            f"(amzn.to) traegt sein Tag ausserdem unsichtbar, also greift auch die "
+            f"Tag-Pruefung nicht")
+
+# Der Footer nennt die Empfehlungsschwelle und wird in 111 Seiten injiziert. Er stand
 # auf "4★+", während §A6 bei 3,8 liegt und 11 Produkte darunter empfohlen werden.
 # Eine Schwelle, die an zwei Stellen steht, muss an beiden dieselbe sein.
 # (Stand ausgerueckt: Der Block lag versehentlich IN der Tag-Schleife und meldete
@@ -466,18 +831,914 @@ _n_produkte = len(items)
 _n_reviews = len([p for p in items if (p.get('detail') or '').startswith('/controller/')])
 # REPOWEIT und ueber ALLE Vorkommen. Vorher: zwei fest benannte Dateien und `re.search`,
 # also genau EIN Treffer je Datei. index.html traegt "Modelle im Sortiment" viermal, und
-# seit die Navigation statisch ausgeliefert wird, steht die Zahl auf 112 Stellen statt auf
+# seit die Navigation statisch ausgeliefert wird, steht die Zahl auf fast jeder Seite statt auf
 # einer Laufzeitstelle. Ein gefaelschtes zweites Vorkommen blieb damit unsichtbar.
+# "Modelle verglichen" stand im SELBEN fb-stat-Block wie die geprueften Zahlen und nannte
+# 40, waehrend der Finder damals 28 verglich. Die 40 stammte aus der Zeit von "40
+# Produkte"; der Kommentar oben zitiert genau dieses Markup als Vorbild und hat die
+# Nachbarzahl nicht mitgenommen.
+# ZWEITER FEHLER, diesmal von mir selbst erzeugt: Am 02.10. habe ich den §A6-Filter in
+# finder.js eingebaut, womit der Finder nur noch Modelle ab 3,8 vergleicht. Die Zahl sank
+# damit von 28 auf 27, waehrend dieses Gate weiter aus dem Typ allein ableitete -- es
+# verteidigte also die falsche Zahl gegen Korrektur, wortlich Mechanismus 6 des Patterns,
+# das in diesem Paket neu geschrieben wurde. Abgeleitet wird jetzt so, wie der Finder
+# filtert: Typ UND Bewertung ueber der Schwelle.
+def _bew_wert(_p):
+    _v = _spec_wie(_p, 'Bew')
+    _m = re.match(r'([\d,.]+)', str(_v or ''))
+    return float(_m.group(1).replace(',', '.')) if _m else None
+_n_alle_ctrl = len([p for p in items if p.get('type') == 'controller'])
+_n_controller = len([p for p in items if p.get('type') == 'controller'
+                     and (_bew_wert(p) or 0) >= A6_SCHWELLE])
+# Die Zahl der Finder-Fragen wird an mehreren Stellen als Versprechen genannt. Am 01.10.
+# hat der B3-Lauf eine falsche Stelle korrigiert ("vier Fragen" in 404.html) und dabei
+# behauptet, eine bestimmte Zahl von Stellen sage korrekt "3 Fragen" (die Zahl ist nicht reproduzierbar, siehe unten) -- eine sagte "5 Fragen", und keine
+# Pruefung las sie.
+#
+# DREI VORFASSUNGEN, DREI FEHLER, und der dritte ist der Grund fuer die jetzige Form:
+#  1. `.finder-step`-Elemente in index.html gezaehlt -- davon gibt es dort null, weil der
+#     Finder per JS rendert. Stiller Leerlauf.
+#  2. Jedes "N Fragen" im Repo als Finder-Aussage behandelt. Ein Satz ueber einen FREMDEN
+#     Fragebogen wurde rot, und vier ausgelieferte Stellen blieben ungeprueft, weil sie
+#     anders formuliert sind.
+#  3. Nur noch gezaehlt, wo in +-400 Zeichen ein Finder-Bezug steht. Das ist zu grob: Auf
+#     controller-finder/ liegen 75 % des Textes in dieser Reichweite, auf 404.html 56 %.
+#     Der Pruefer hat die seiteneigene Leser-Checkliste in blog/huellen-kompatibilitaet von
+#     drei auf vier Punkte erweitert -- eine gewoehnliche, danach WAHRE Redaktion -- und
+#     das Gate wurde rot. Sieben von zwanzig wahren Saetzen waren betroffen. Gleichzeitig
+#     blieben neun falsche Varianten gruen, darunter "in 4 kurzen Fragen" (die flektierte
+#     Form, waehrend das Repo selbst "3 kurze Fragen" schreibt) und der ausgelieferte Satz
+#     "Finder in drei Schritten", also dieselbe Zusage mit anderem Substantiv.
+#
+# Konsequenz, dieselbe wie bei den Mengensaetzen: Nicht jede moegliche Formulierung
+# erkennen, sondern genau die Formen, die das Repo tatsaechlich benutzt. Gemessen gibt es genau
+# diese; die beiden Checklisten-Saetze in huellen-kompatibilitaet unterscheiden sich im
+# Wortlaut klar davon und werden deshalb nicht mehr beruehrt.
+# GRENZE: Eine neu formulierte Zusage wird nicht geprueft. Der Anker darunter meldet, wenn
+# eine der 9 Formen nirgends mehr steht; dann gehoert die neue Fassung hierher.
+FINDER_JS = 'assets/js/finder.js'
+# sieben/acht/neun fehlten, waehrend acht der zehn Muster sie zulassen: Der Wert kam
+# als None zurueck, und die Richtigkeitspruefung sprang still ab.
+_ZAHLWORT = {'zwei': 2, 'drei': 3, 'vier': 4, 'fünf': 5, 'fuenf': 5, 'sechs': 6,
+             'sieben': 7, 'acht': 8, 'neun': 9, 'zehn': 10}
+_FRAGEN_FORMEN = [
+    (re.compile(r'in (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen die passenden Modelle'),
+     'in N Fragen die passenden Modelle'),
+    (re.compile(r'60 Sekunden: (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen zu Handy'),
+     'Meta-Description der Finder-Seite'),
+    (re.compile(r'(\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) kurze Fragen zu deinem Handy'),
+     'Startseiten-Hero'),
+    (re.compile(r'Beantworte (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) kurze Fragen'),
+     'Finder-Seite, Aufforderung'),
+    # Die faule Luecke dieser Form war die letzte Heuristik im Block und hat drei
+    # wahre Saetze rot gemacht ("Unser Finder und diese Liste in vier Schritten
+    # ergaenzen sich"). Ersetzt durch die eine konkrete Zusage, die sie gedeckt hat.
+    (re.compile(r'Finder in (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs) '
+                r'Schritten ab'),
+     'Finder in N Schritten (was-ist-ein-smartphone-controller)'),
+    # Hier steht Markup zwischen Name und Zahl: `Controller-Finder →</a> — 3 Fragen`.
+    (re.compile(r'Controller-Finder\s*(?:→|&rarr;)?\s*(?:</a>)?\s*[—–-]?\s*'
+                r'(\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen'),
+     'Finder-Link mit Zahl'),
+    (re.compile(r'[Mm]atch in (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen'), 'Match-in-N-Fragen'),
+    (re.compile(r'[Ii]n (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen zur Empfehlung'), '404-Kachel'),
+    (re.compile(r'Controller-Finder: (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen'),
+     'Kopfkommentar in finder.js'),
+    # "Genau diese drei Punkte fragt unser Finder ab" -- steht sichtbar UND im
+    # FAQPage-Schema. Der Nachbarsatz "Unsere Reviews bewerten alle drei Punkte" ist
+    # KEINE Finder-Zusage, deshalb verlangt das Muster "fragt unser Finder ab".
+    (re.compile(r'(\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Punkte '
+                r'fragt unser Finder ab'),
+     'FAQ der Finder-Seite, sichtbar und im Schema'),
+]
+# WO jede Form lebt. Runde 20 hat gezeigt, dass "irgendwo in der Datei" als Abdeckung
+# nicht reicht: Die Zusage von der Startseite genommen und als JSON-LD-"slogan" hinterlegt
+# liess den Anker erfuellt und die Seite stumm. Seitdem deckt eine Zusage nur dort, wo sie
+# den Leser erreicht -- 'sichtbar' im Seitentext, 'meta' in der Description, 'quelle' fuer
+# die Kopie im Quelltext, die ausdruecklich keine Leser-Zusage ist.
+# Reihenfolge wie _FRAGEN_FORMEN. Die erste Fassung hatte acht Eintraege fuer zehn Formen
+# -- das Gate direkt darunter hat das im ersten Lauf gemeldet.
+_FORM_ORT = [
+    'sichtbar',   # 0 "in N Fragen die passenden Modelle"
+    'meta',       # 1 Meta-Description der Finder-Seite
+    'sichtbar',   # 2 Startseiten-Hero
+    'sichtbar',   # 3 Finder-Seite, Aufforderung
+    'sichtbar',   # 4 "Finder in N Schritten" (was-ist-ein-smartphone-controller)
+    'sichtbar',   # 5 Finder-Link mit Zahl
+    'sichtbar',   # 6 "Match in N Fragen"
+    'sichtbar',   # 7 404-Kachel
+    'quelle',     # 8 Kopfkommentar in finder.js -- keine Leser-Zusage
+    'sichtbar',   # 9 FAQ der Finder-Seite (steht sichtbar UND im Schema)
+]
+if len(_FORM_ORT) != len(_FRAGEN_FORMEN):
+    err(f'§A5: _FORM_ORT hat {len(_FORM_ORT)} Eintraege, _FRAGEN_FORMEN hat '
+        f'{len(_FRAGEN_FORMEN)} — jede Form muss sagen, wo sie lebt')
+_fm = (re.search(r'const answers\s*=\s*\{([^}]*)\}', open(FINDER_JS, encoding='utf-8').read())
+       if os.path.exists(FINDER_JS) else None)
+if not _fm:
+    err(f'§A5: das answers-Objekt in {FINDER_JS} ist nicht gefunden worden — die Zahl der '
+        f'Finder-Fragen laesst sich nicht ableiten')
+else:
+    # In REIHENFOLGE, nicht nur die Anzahl: Die Schritte auf der Seite muessen den
+    # Schluesseln in dieser Reihenfolge entsprechen, sonst steht eine Frage ueber fremden
+    # Antworten (R21).
+    _answers_keys = re.findall(r'(\w+)\s*:', _fm.group(1))
+    _n_fragen = len(_answers_keys)
+    if _n_fragen < 2:
+        err(f'§A5: {FINDER_JS} ergibt {_n_fragen} Finder-Frage(n) — keine plausible '
+            f'Ableitung, Struktur von answers geaendert?')
+    _ft = [0] * len(_FRAGEN_FORMEN)
+    for _f in _zu_pruefen:
+        # Klartext plus Metas: `in <strong>9 Fragen</strong>` blieb vorher
+        # ungeprueft, und die Zusage der Finder-Seite steht in der
+        # Meta-Description, also in einem Attribut.
+        _roh_f = open(_f, encoding='utf-8').read()
+        _fh = _text_und_metas(_roh_f)
+        _sicht = _klartext(_roh_f)
+        _meta_f = _metatexte(_roh_f)
+        for _i, (_mu, _was) in enumerate(_FRAGEN_FORMEN):
+            _ort = _FORM_ORT[_i] if _i < len(_FORM_ORT) else 'quelle'
+            _deckt = (_mu.search(_sicht) if _ort == 'sichtbar'
+                      else _mu.search(_meta_f) if _ort == 'meta'
+                      else _mu.search(_roh_f))
+            for _m in _mu.finditer(_fh):
+                # Gezaehlt wird nur, wo die Zusage den Leser erreicht (siehe _FORM_ORT).
+                # Der WERT wird weiter ueberall geprueft, denn eine falsche Zahl ist auch
+                # in einer Description und in einem Kommentar falsch.
+                if _deckt and (_ort != 'sichtbar' or _f in pages):
+                    _ft[_i] += 1
+                _roh = _m.group(1)
+                _ist = int(_roh) if _roh.isdigit() else _ZAHLWORT.get(_roh.lower())
+                if _ist is not None and _ist != _n_fragen:
+                    err(f'§A5: {_f} verspricht "{_m.group(0)[:60]}" ({_was}), der Finder '
+                        f'stellt {_n_fragen} (answers-Objekt in {FINDER_JS})')
+    for _i, (_mu, _was) in enumerate(_FRAGEN_FORMEN):
+        if not _ft[_i]:
+            err(f'§A5: die Finder-Zusage "{_was}" steht nirgends mehr im Repo — sie wurde '
+                f'entfernt oder umformuliert. Dann gehoert die neue Fassung in '
+                f'_FRAGEN_FORMEN in scripts/verify.py, sonst altert die Zahl ungeprueft')
+    # Die Finder-SEITE zaehlt ihre Fragen selbst mit ("Frage 1 von 3") und baut sie als
+    # statische Schritte. Beides war ungegatet: Ein kompletter vierter Schritt samt
+    # "Frage 4 von 4" blieb gruen, und umgekehrt blieb die Seite bei "von 3" stehen,
+    # nachdem eine vierte Frage in answers ergaenzt und alle 48 Textstellen nachgezogen
+    # waren -- also genau am Ende des regulaeren, vom Gate abgesegneten Aenderungswegs.
+    _FINDER_SEITE = 'controller-finder/index.html'
+    if os.path.exists(_FINDER_SEITE):
+        # Markup normalisieren, bevor gesucht wird: einfache Anfuehrungszeichen zu
+        # doppelten, Leerraum um das Gleichheitszeichen weg, Inline-Tags aus dem
+        # Zaehlertext entfernt. Ohne das meldete das Gate Fehler, die es nicht gibt --
+        # Im Repo stehen 101 einfach gequotete `class`-Attribute (alles generierte
+        # Seiten), und `Frage <b>1</b> von 3` ist gueltiges Markup. Die erste Fassung
+        # dieses Kommentars bezog die 101 auf `class='finder-step'` -- diese Schreibweise
+        # steht nirgends, die Zahl gehoert zu den Attributen insgesamt. Das Lesezeit-Gate
+        # in derselben Datei hat dieses Problem laengst geloest; dieses hatte es nicht
+        # uebernommen.
+        _fs_roh = open(_FINDER_SEITE, encoding='utf-8').read()
+        _fs = re.sub(r"(\w)\s*=\s*'([^']*)'", r'\1="\2"', _fs_roh)
+        _fs = re.sub(r'(\w)\s*=\s*"', r'\1="', _fs)
+        _fs = re.sub(r'Frage\s*(?:<[^>]*>\s*)*(\d+)\s*(?:<[^>]*>\s*)*\s*von\s*'
+                     r'(?:<[^>]*>\s*)*(\d+)', r'Frage \1 von \2', _fs)
+        # a) "Frage N von M": M muss die Fragenzahl sein, N darf sie nicht ueberschreiten
+        _vonm = re.findall(r'Frage\s+(\d+)\s+von\s+(\d+)', _fs)
+        if not _vonm:
+            err(f'§A5: {_FINDER_SEITE} nennt keine "Frage N von M" mehr — die Zaehlung der '
+                f'Seite war bisher gegen das answers-Objekt gebunden')
+        for _nr, _ges in _vonm:
+            if int(_ges) != _n_fragen:
+                err(f'§A5: {_FINDER_SEITE} sagt "Frage {_nr} von {_ges}", der Finder stellt '
+                    f'{_n_fragen} (answers-Objekt in {FINDER_JS})')
+            elif int(_nr) > _n_fragen or int(_nr) < 1:
+                err(f'§A5: {_FINDER_SEITE} sagt "Frage {_nr} von {_ges}" — die Nummer liegt '
+                    f'ausserhalb von 1 bis {_n_fragen}')
+        if len(_vonm) != _n_fragen:
+            err(f'§A5: {_FINDER_SEITE} traegt {len(_vonm)} Fragen-Zaehler, der Finder '
+                f'stellt {_n_fragen} Fragen')
+        # b) die statischen Schritte und die Fortschrittspunkte
+        for _kl, _was2 in (('finder-step', 'Frage-Abschnitte'),
+                           ('fp-step', 'Fortschrittspunkte')):
+            # Als TOKEN zaehlen, nicht per \b: `class="finder-step-alt"` wurde
+            # mitgezaehlt, weil der Bindestrich eine Wortgrenze ist. Die Nachbesserung
+            # aus Runde 19 war nur in der Anwesenheitspruefung 130 Zeilen weiter unten
+            # gelandet, nicht hier -- eine von drei umbenannten Klassen hielt damit
+            # beide Pruefungen gruen, waehrend zwei Fragen gleichzeitig sichtbar waren.
+            _n_kl = sum(1 for _cm in re.finditer(r'class\s*=\s*(?:"([^"]*)"|\'([^\']*)\')', _fs)
+                        if _kl in (_cm.group(1) or _cm.group(2) or '').split())
+            if _n_kl != _n_fragen:
+                err(f'§A5: {_FINDER_SEITE} hat {_n_kl} {_was2} ({_kl}), der Finder stellt '
+                    f'{_n_fragen} Fragen')
+        # c) jede Frage braucht ihre Antwortgruppe in answers
+        _gruppen = set(re.findall(r'data-key="(\w+)"', _fs))
+        _keys = set(re.findall(r'(\w+)\s*:', _fm.group(1)))
+        if _gruppen != _keys:
+            err(f'§A5: die Antwortgruppen auf {_FINDER_SEITE} ({sorted(_gruppen)}) '
+                f'stimmen nicht mit answers in {FINDER_JS} ({sorted(_keys)}) ueberein')
+
+# ---------------------------------------------------------------------------------------
+# §A6 IM CONTROLLER-FINDER. Eigener Abschnitt mit Trennmarken, weil dieses Gate schon
+# ZWEIMAL durch eine Block-Ersetzung im Nachbarbereich geloescht wurde, ohne dass etwas
+# rot wurde (02.10., beide Male beim Umbau des Fragenzahl-Gates darueber). Beim zweiten
+# Mal hatte ich die Lehre dazu eine Runde vorher selbst aufgeschrieben.
+# Inhalt: Der Finder gibt Kaufempfehlungen aus, also darf kein Produkt unter der Schwelle
+# in die Ergebnisse. Bis zum 02.10.2026 stand die 3.8 dort nur als Ranking-Gewicht, und
+# STATUS behauptete trotzdem "Schwelle als benannte Konstante mit Filter vor der Ausgabe".
+# Dass kein Modell unter 3,8 in die Top 3 kam, war ein Ergebnis der Gewichtung, keine
+# Garantie (ueber alle 36 Antwortkombinationen, platform 3 x budget 4 x prio 3: 0 Faelle).
+if os.path.exists(FINDER_JS):
+    _fj_roh = open(FINDER_JS, encoding='utf-8').read()
+    # Kommentare entfernen, BEVOR gesucht wird: Sonst genuegt es, die Filterzeile
+    # auszukommentieren und eine kaputte daneben zu stellen.
+    _fj = re.sub(r'/\*.*?\*/', ' ', _fj_roh, flags=re.S)
+    _fj = re.sub(r'(?m)^\s*//.*$', ' ', _fj)
+    _fk = re.findall(r'const A6_SCHWELLE\s*=\s*([\d.]+)', _fj)
+    if not _fk:
+        err(f'§A6: {FINDER_JS} hat keine aktive Konstante A6_SCHWELLE — die '
+            f'Empfehlungsschwelle liegt dann wieder nur als Ranking-Gewicht im Code')
+    elif len(_fk) > 1:
+        err(f'§A6: {FINDER_JS} setzt A6_SCHWELLE {len(_fk)}x ({", ".join(_fk)}) — welche '
+            f'gilt, ist nicht entscheidbar')
+    elif float(_fk[0]) != A6_SCHWELLE:
+        err(f'§A6: {FINDER_JS} nennt {_fk[0]} als Schwelle, verify.py prueft gegen '
+            f'{A6_SCHWELLE}')
+    # Der Filter muss IN renderResults stehen und ALLEIN in seinem Ausdruck: in eine nicht
+    # aufgerufene Funktion verschoben wirkt er nicht, und `true || ...` entwertet ihn.
+    _rr = re.search(r'function renderResults\s*\([^)]*\)\s*\{(.*?)\n  \}', _fj, re.S)
+    if not _rr:
+        err(f'§A6: renderResults() in {FINDER_JS} ist nicht gefunden worden — der Filter '
+            f'gegen A6_SCHWELLE laesst sich nicht verorten')
+    else:
+        _rr_t = re.sub(r'\s+', ' ', _rr.group(1))
+        # Der Parametername ist frei: `.filter(prod => ratingOf(prod) >= A6_SCHWELLE)`
+        # wurde vorher als "filtert nicht" gemeldet, also mit falscher Ursache.
+        if not re.search(r'\.filter\(\s*\(?\s*(\w+)\s*\)?\s*=>\s*ratingOf\(\s*\1\s*\)'
+                         r'\s*>=\s*A6_SCHWELLE\s*\)', _rr_t):
+            err(f'§A6: renderResults() in {FINDER_JS} filtert nicht allein gegen '
+                f'A6_SCHWELLE — ein Produkt unter der Schwelle kann als Empfehlung '
+                f'ausgespielt werden. Eine andere Schreibweise ist erlaubt, muss aber in '
+                f'scripts/verify.py mitgezogen werden, sonst laeuft die Pruefung ins Leere')
+    # Die Schrittgrenze in finder.js ist hart verdrahtet (`if (step < 2) show(step + 1)`).
+    # Am Ende des vom Gate abgesegneten Aenderungswegs -- vierter Key in answers, vierter
+    # Zaehler, vierter Abschnitt, alle Textstellen nachgezogen -- rendert der Finder nach
+    # Frage 3 trotzdem das Ergebnis. Die Grenze muss zur Fragenzahl passen.
+    _sg = re.search(r'if\s*\(\s*step\s*<\s*(\d+)\s*\)', _fj)
+    if not _sg:
+        err(f'§A5: die Schrittgrenze (`if (step < N)`) in {FINDER_JS} ist nicht gefunden '
+            f'worden — ob der Finder alle Fragen zeigt, laesst sich nicht pruefen')
+    elif int(_sg.group(1)) != _n_fragen - 1:
+        err(f'§A5: {FINDER_JS} schaltet nur bis `step < {_sg.group(1)}` weiter, bei '
+            f'{_n_fragen} Fragen muss die Grenze {_n_fragen - 1} sein — sonst wird die '
+            f'letzte Frage nie gezeigt')
+
+    # ratingOf muss die Bewertung noch lesen, sonst laeuft der Filter ins Leere. Die
+    # erste Fassung sprang still ab, wenn das Funktionsmuster nicht traf: Als
+    # `const ratingOf = (p) => 5;` geschrieben fiel die Pruefung wortlos aus.
+    # Verlangt wird die Hausform `function ratingOf(...)`. Die Pfeilfunktion zuzulassen
+    # war ein Loch: `const ratingOf = (p) => 5;` liess das Muster in den Rumpf der
+    # NAECHSTEN Funktion laufen, dort stand "bew", und die Pruefung blieb gruen, waehrend
+    # jeder Controller die Bewertung 5 bekam. Eine Umstellung auf Pfeilfunktion ist
+    # erlaubt, muss aber hier mit angepasst werden -- derselbe Vertrag wie bei _SAETZE.
+    if not re.search(r'function\s+ratingOf\s*\(', _fj):
+        err(f'§A6: ratingOf() in {FINDER_JS} ist nicht mehr als `function ratingOf(...)` '
+            f'deklariert. Erlaubt, aber dann muss die Pruefung in scripts/verify.py mit '
+            f'angepasst werden, sonst laeuft sie ins Leere')
+        _ro = None
+    else:
+        _ro = re.search(r'function\s+ratingOf\s*\([^)]*\)\s*\{(.*?)\n  \}', _fj, re.S)
+    if _ro and not (re.search(r'bew', _ro.group(1), re.I)
+                    and re.search(r'\bspecs\b', _ro.group(1))):
+        # Die erste Fassung verlangte nur das Token "bew" im Rumpf. `function ratingOf(p)
+        # { const bew = 5; return bew; }` blieb damit gruen, waehrend jeder Controller 5
+        # bekam, der Filter nichts mehr ausschloss und die 27 auf der Seite falsch wurde.
+        err(f'§A6: ratingOf() in {FINDER_JS} liest das Bew.-Feld nicht mehr aus den specs '
+            f'— der Filter gegen A6_SCHWELLE laeuft dann ins Leere')
+
+    _fp = 'scripts/finder_probe.js'
+    _fseite = 'controller-finder/index.html'
+
+    # DER VERTRAG ZWISCHEN SEITE UND SKRIPT WIRD AUSGEFUEHRT, NICHT GESUCHT.
+    #
+    # Drei Pruefrunden lang war das hier eine Sammlung von Mustern ueber Markup, und jede
+    # Runde hat eine Nachbarform gefunden, die durchlief, waehrend der Finder auf der Seite
+    # tot war:
+    #   R18  Script-Tag entfernt · fuenf Element-Namen umbenannt
+    #   R19  Script-Tag auskommentiert · in <noscript> · `data-step` umbenannt · Klasse mit
+    #        Suffix umbenannt (\b trifft `finder-step-alt`) · `data-back` nur im CSS-Kommentar
+    #   R20  `data-step` am FALSCHEN Element · `data-step` gedoppelt · Script-Tag im <head>
+    #        ohne `defer` · Startzustand `is-active` entfernt
+    # Jede dieser Formen war "Anwesenheit irgendwo" statt "wirkt". Deshalb wird die Seite
+    # jetzt GEPARST (scripts/dom_baum.py), finder.js laeuft dagegen (scripts/finder_probe.js),
+    # und geprueft werden die ZUSTAENDE: wie viele Schritte, welcher ist aktiv, welche
+    # Schrittnummern tragen die Abschnitte, wie viele Karten erscheinen, was empfiehlt er.
+    # Drei Dinge bleiben Quelltext-Pruefung, weil sie keinen Zustand erzeugen: die
+    # Ladeordnung des Script-Tags, die CSS-Bindung der umgeschalteten Klasse und das
+    # fetch-Ziel.
+    #
+    # WAS DIESE PRUEFUNG NICHT KANN -- benannt, nicht geschlossen, weil ein vollstaendiger
+    # Browser-Nachbau der Regress waere, vor dem Lehre 174 warnt (alle vom Pruefer in
+    # Runde 21 gemessen und als gruen belegt):
+    #   · CSS: Die Auswertung steht in scripts/css_kaskade.py und rechnet Spezifitaet,
+    #     `!important`, Attribut-Selektoren, `:not()` und At-Regeln mit. WAS SIE NICHT
+    #     KANN, steht im Docstring DIESES Moduls und nur dort -- hier stand lange eine
+    #     zweite, veraltete Liste, die vier inzwischen geschlossene Punkte als offen
+    #     fuehrte (R26). Zwei widersprechende GRENZEN-Bloecke in einer Funktion sind
+    #     schlimmer als keiner: Wer den ersten liest, hoert auf zu lesen.
+    # Geprueft wird dagegen alles, was im geparsten Baum steht: `disabled` (auch am
+    # <fieldset>), `hidden`, inline `display`/`visibility`, `aria-hidden`, die Zuordnung
+    # Frage zu Antwortgruppe, der Karteninhalt und das fetch-Ziel.
+    _fp = 'scripts/finder_probe.js'
+    _fseite = 'controller-finder/index.html'
+    _CSS = 'assets/css/style.css'
+
+    if not os.path.exists(_fp) or not os.path.exists('scripts/dom_baum.py'):
+        err(f'§A6: {_fp} oder scripts/dom_baum.py fehlt — der Finder wird dann nur noch '
+            f'im Quelltext gelesen, nicht ausgefuehrt')
+    elif os.path.exists(_fseite):
+        _fsh_roh = open(_fseite, encoding='utf-8').read()
+
+        # 1 · LADEORDNUNG. Erzeugt keinen Zustand, den der Harness sehen koennte: Im
+        # <head> ohne `defer` ist #finder beim Lauf noch nicht geparst, finder.js kehrt in
+        # Zeile 6 wortlos zurueck, kein Klick wirkt, keine Fehlermeldung. (R20 gemessen.)
+        from dom_baum import baum as _dom_baum, ladeordnung as _ladeordnung
+        _lo, _ = _ladeordnung(_fsh_roh, FINDER_JS)
+        if _lo == 'fehlt':
+            err(f'§A5: {_fseite} laedt {FINDER_JS} nicht per <script src> (ausserhalb von '
+                f'Kommentar, <template> und <noscript>) — der Finder laeuft dann gar '
+                f'nicht, waehrend die Seite seine Leistung zusagt')
+        elif _lo == 'vor':
+            err(f'§A5: {_fseite} laedt {FINDER_JS} VOR dem Element id="finder" und ohne '
+                f'`defer` — das Skript findet den Finder dann nicht und kehrt wortlos '
+                f'zurueck. Script-Tag ans Ende des <body> oder `defer` setzen')
+        elif _lo == 'async':
+            err(f'§A5: {_fseite} laedt {FINDER_JS} mit `async` — ob #finder dann schon '
+                f'geparst ist, ist ein Wettlauf. `defer` setzen oder das Tag ans Ende '
+                f'des <body>')
+
+        # 2 · CSS-BINDUNG, als KASKADE und fuer JEDES Element auf dem Weg.
+        # Zwei Fassungen vorher, zwei Befunde: Die erste suchte IRGENDEINE Regel (R21: eine
+        # spaetere Regel gewinnt, Finder leer, Lauf gruen). Die zweite nahm die letzte
+        # passende Regel, fragte aber nur `.finder-step` und `.finder-result` ab und
+        # verlangte, dass der ganze Selektor eine einfache Klassenkette ist. R22 hat damit
+        # BEIDE Richtungen gezeigt: `.finder-options{display:none}` am Ende von style.css
+        # blieb gruen (Nachbarelement, gleiche Schadensform), und ein voellig korrektes
+        # `#finder .finder-step{display:none}` wurde rot mit falscher Begruendung.
+        # Jetzt steht die Auswertung in scripts/css_kaskade.py: Spezifitaet ueber alle
+        # Verbundgruppen, Attribut-Selektoren, `:not()`, At-Regeln, `!important`. Abgefragt
+        # wird jede Klasse, ID und jeder Tag-Name auf dem Weg von #finder bis zu den
+        # Schritten, dem Ergebnis und den Antwort-Knoepfen; diese Ketten kommen aus dem
+        # geparsten Baum, nicht aus einer Liste hier.
+        #
+        # WAS DIE AUSWERTUNG NICHT KANN, steht im Docstring von scripts/css_kaskade.py und
+        # NUR DORT. Hier stand bis Runde 27 eine zweite Liste, die vier inzwischen
+        # geschlossene Punkte als offen fuehrte -- und zwar 45 Zeilen unter dem Satz, der
+        # genau das verbietet. Ich habe beide Bloecke in derselben Arbeit geschrieben: den
+        # richtigen Verweis und die veraltete Liste darunter. Wer die Liste liest, haelt
+        # @media, Spezifitaet, !important und visibility/opacity fuer unbewacht und baut
+        # sie zum vierten Mal.
+        # Die Budget-Schwellen AUS score() lesen, nicht tippen: Die Beschriftungen
+        # ("Bis 50 €", "50-100 €", "Über 100 €") nennen genau diese Zahlen, und wenn die
+        # Logik sich verschiebt, muessen sie mit. Abgeleitet aus den Bedingungen
+        # `answers.budget === 'x' && price <= N`.
+        _BUDGET_GRENZEN = {}
+        for _bm in re.finditer(r"answers\.budget\s*===\s*'(\w+)'([^;]*);", _fj):
+            _BUDGET_GRENZEN[_bm.group(1)] = set(re.findall(r'price\s*[<>]=?\s*(\d+)',
+                                                           _bm.group(2)))
+
+        # Die CSS-Quellen: das Stylesheet UND der <style>-Block der Seite. Die
+        # Auswertung selbst (Spezifitaet, Attribut-Selektoren, :not(), At-Regeln,
+        # !important) steht in scripts/css_kaskade.py, mit Falltabelle. Was sie nicht
+        # kann, steht im Docstring DIESES Moduls -- und nur dort.
+        # Dieser Aufbau stand hier einmal doppelt (toter Code, Hinweis R26).
+        _css_quellen = []
+        if os.path.exists(_CSS):
+            _css_quellen.append((_CSS, open(_CSS, encoding='utf-8').read()))
+        for _sm in re.finditer(r'<style\b[^>]*>(.*?)</style>', _fsh_roh, re.S | re.I):
+            _css_quellen.append((f'{_fseite} (<style>)', _sm.group(1)))
+        _umschaltet = sorted(set(re.findall(r"classList\.toggle\(\s*'([\w-]+)'", _fj)
+                                 + re.findall(r'classList\.toggle\(\s*"([\w-]+)"', _fj)))
+
+        def _sichtbar(_eintrag, _zusatz=()):
+            return _css_sichtbar(_css_quellen, _eintrag, _zusatz)
+
+        # 3 · FETCH-ZIEL. Nicht nur "die Datei existiert": R21 hat den Pfad auf
+        # longtail.json gezeigt -- Datei vorhanden, Lauf gruen, und der Finder zeigte fuer
+        # JEDE Kombination "Keine perfekte Uebereinstimmung", also genau das Schadensbild,
+        # das die Meldung dieser Pruefung wortwoertlich ankuendigt. Der Harness laedt
+        # inzwischen GENAU diesen Pfad, die Ausfuehrungsprobe unten faellt also mit auf;
+        # hier wird zusaetzlich geprueft, dass die Datei die Felder fuehrt, die der Finder
+        # liest. Beides zusammen, weil die Meldung sonst nur "keine Empfehlung" sagt und
+        # nicht, woran es liegt.
+        _ff = [_x for _x in re.findall(r'fetch\(\s*[\'"](/[^\'"]+)[\'"]', _fj)]
+        for _fu in _ff:
+            _lokal = _fu.lstrip('/')
+            if not os.path.exists(_lokal):
+                err(f'§A5: {FINDER_JS} laedt {_fu}, diese Datei gibt es nicht — der '
+                    f'Finder bleibt dann ohne Produkte und zeigt dauerhaft '
+                    f'"Keine perfekte Übereinstimmung"')
+                continue
+            try:
+                _dd = json.load(open(_lokal, encoding='utf-8'))
+            except Exception as _e:
+                err(f'§A5: {FINDER_JS} laedt {_fu}, das kein lesbares JSON ist ({_e})')
+                continue
+            _FELDER_FINDER = ('slug', 'type', 'specs', 'price')
+            _ok = (isinstance(_dd, list) and _dd
+                   and all(isinstance(_x, dict) for _x in _dd)
+                   and any(all(_k in _x for _k in _FELDER_FINDER) for _x in _dd)
+                   and any(_x.get('type') == 'controller' for _x in _dd))
+            if not _ok:
+                err(f'§A5: {FINDER_JS} laedt {_fu}, aber dort steht nicht der '
+                    f'Produktbestand: der Finder braucht Einträge mit '
+                    f'{", ".join(_FELDER_FINDER)} und mindestens einen vom Typ '
+                    f'"controller". Mit dieser Datei zeigt er fuer jede Antwort '
+                    f'"Keine perfekte Übereinstimmung"')
+
+        import shutil as _shutil
+        if not _shutil.which('node'):
+            # Sichtbar statt stumm: ohne node laeuft diese Pruefung nicht, und das muss
+            # im Lauf stehen. err() waere falsch, weil node keine Zusage dieses Repos ist.
+            warn(f'§A6: node fehlt — der Finder wurde NICHT ausgefuehrt. Der Vertrag '
+                 f'zwischen {_fseite} und {FINDER_JS} und die Wirkung des '
+                 f'§A6-Filters sind in diesem Lauf ungeprueft')
+        else:
+            def _finder_lauf(_nutzlast):
+                _pr = subprocess.run([_shutil.which('node'), _fp], input=json.dumps(
+                    _nutzlast), capture_output=True, text=True, timeout=180)
+                try:
+                    return json.loads(_pr.stdout or '{}')
+                except Exception as _e:
+                    return {'fehler': f'Ausgabe unlesbar ({_e}): {_pr.stdout[:200]} '
+                                      f'{_pr.stderr[:300]}'}
+
+            _dom = _dom_baum(_fsh_roh)
+            _b = _finder_lauf({'dom': _dom})
+            if _b.get('fehler'):
+                err(f'§A6: die Ausfuehrungsprobe des Finders ist fehlgeschlagen: '
+                    f'{str(_b["fehler"])[:300]}')
+            elif _b.get('startfehler'):
+                err(f'§A6: {FINDER_JS} stuerzt beim Start gegen {_fseite} ab '
+                    f'({_b["startfehler"][:120]}) — der Finder reagiert dann auf keinen '
+                    f'Klick')
+            elif _b.get('kein_finder'):
+                err(f'§A5: {_fseite} fuehrt kein Element id="finder" — {FINDER_JS} kehrt '
+                    f'wortlos zurueck, der Finder ist tot, die Seite sagt seine Leistung '
+                    f'aber weiter zu')
+            else:
+                # a) Die Elemente, die finder.js braucht, in der WIRKUNG geprueft.
+                for _feld, _was in (('hat_ergebnis', '.finder-result in #finder'),
+                                    ('hat_grid', 'id="finderMatches"'),
+                                    ('hat_titel', 'id="finderResultTitle"'),
+                                    ('hat_neustart', 'id="finderRestart"')):
+                    if not _b.get(_feld):
+                        err(f'§A5: {_fseite} fuehrt {_was} nicht — {FINDER_JS} greift '
+                            f'darauf zu und bricht dort ab')
+                if _b.get('schritte') != _n_fragen:
+                    err(f'§A5: im geparsten {_fseite} findet {FINDER_JS} '
+                        f'{_b.get("schritte")} .finder-step-Abschnitte, es stellt aber '
+                        f'{_n_fragen} Fragen')
+                if _b.get('fragen') != _n_fragen:
+                    err(f'§A5: die Antwort-Schaltflaechen auf {_fseite} ergeben '
+                        f'{_b.get("fragen")} Fragengruppen, {FINDER_JS} kennt '
+                        f'{_n_fragen}')
+                # JEDER Schritt traegt genau eine Antwortgruppe, und zwar die, die an
+                # dieser Stelle in `answers` steht. R21 hat die Antwortgruppen von
+                # Schritt 2 und 3 vertauscht: Die Budget-Ueberschrift stand ueber den
+                # Prioritaets-Antworten, und alle Zustaende blieben korrekt, weil die
+                # Gruppen nur nach Schluessel gebildet wurden.
+                _kjs = _b.get('keys_je_schritt') or []
+                _soll_keys = [[_k] for _k in _answers_keys]
+                if _kjs != _soll_keys:
+                    err(f'§A5: die Antwortgruppen liegen je Schritt bei {_kjs}, erwartet '
+                        f'ist {_soll_keys} — die Reihenfolge der Schritte auf {_fseite} '
+                        f'muss der Reihenfolge in `answers` ({", ".join(_answers_keys)}) '
+                        f'folgen, sonst steht eine Frage ueber fremden Antworten')
+                if _b.get('knoepfe_in_schritten') != _b.get('knoepfe'):
+                    err(f'§A5: {_b.get("knoepfe")} .finder-opt-Schaltflaechen auf '
+                        f'{_fseite}, aber nur {_b.get("knoepfe_in_schritten")} liegen in '
+                        f'einem .finder-step — die uebrigen gehoeren zu keiner Frage')
+                # Deaktiviert = fuer den Leser nicht benutzbar. Der Harness ruft den
+                # Handler deshalb nicht auf; ohne diese Meldung waere das Ergebnis nur
+                # "keine Empfehlung" und nicht die Ursache. (R21, im Browser belegt.)
+                if _b.get('knoepfe_deaktiviert'):
+                    err(f'§A5: {_b["knoepfe_deaktiviert"]} Antwort-Schaltflaeche(n) auf '
+                        f'{_fseite} sind `disabled` (am Knopf oder an einem <fieldset>) — '
+                        f'der Leser kann den Finder dann nicht bedienen, waehrend die '
+                        f'Seite seine Leistung zusagt')
+                # Unsichtbar ohne Stylesheet: hidden, inline display/visibility,
+                # aria-hidden. Diese drei stehen im Baum und brauchen keinen
+                # CSS-Interpreter, deshalb werden sie geprueft (R21).
+                if _b.get('finder_versteckt'):
+                    err(f'§A2/§A5: der Finder-Bereich auf {_fseite} ist versteckt '
+                        f'({_b["finder_versteckt"]}) — weder mit noch ohne JavaScript '
+                        f'sichtbar')
+                if _b.get('schritte_versteckt'):
+                    err(f'§A2/§A5: Frage-Abschnitte auf {_fseite} sind versteckt '
+                        f'({", ".join(_b["schritte_versteckt"])}) — der Leser sieht die '
+                        f'Frage nicht')
+                # Zurueck-Knoepfe: einer je Schritt ausser dem ersten, abgeleitet aus
+                # der Fragenzahl. Und sie muessen WIRKEN -- R19 hat `data-back` von den
+                # Knoepfen entfernt und das Wort in einem CSS-Kommentar gelassen, womit
+                # die Mustersuche erfuellt und die Knoepfe tot waren.
+                if _b.get('zurueck') != _n_fragen - 1:
+                    err(f'§A5: {_fseite} fuehrt {_b.get("zurueck")} Zurueck-Schaltflaechen '
+                        f'([data-back]), erwartet ist eine je Schritt ausser dem ersten, '
+                        f'also {_n_fragen - 1}')
+                elif _b.get('zurueck_mit_handler') != _b.get('zurueck'):
+                    err(f'§A5: nur {_b.get("zurueck_mit_handler")} von '
+                        f'{_b.get("zurueck")} Zurueck-Schaltflaechen bekommen von '
+                        f'{FINDER_JS} einen Klick-Handler')
+                elif _b.get('zurueck_wirkt') is not True:
+                    err(f'§A5: die Zurueck-Schaltflaeche fuehrt nicht zum vorhergehenden '
+                        f'Schritt (gemessen durch Ausfuehrung gegen {_fseite}) — der '
+                        f'Leser kommt dann nicht zurueck')
+                if _b.get('knoepfe_ohne_key'):
+                    err(f'§A5: {_b["knoepfe_ohne_key"]} .finder-opt-Schaltflaeche(n) auf '
+                        f'{_fseite} haben kein data-key oder kein data-value — ihr Klick '
+                        f'beantwortet keine Frage')
+                # a2) CSS-KASKADE ueber die Ketten aus dem geparsten Baum.
+                _kt = _b.get('ketten') or {}
+                _AK = _b.get('aktiv_klasse') or 'is-active'
+                # Der Finder selbst und alle Vorfahren auf dem Weg muessen sichtbar sein.
+                for _rolle, _ketten in (('der Finder-Bereich', [_kt.get('finder')]),
+                                        ('ein Frage-Abschnitt', _kt.get('schritte') or []),
+                                        ('das Ergebnis', [_kt.get('ergebnis')]),
+                                        ('eine Antwort-Schaltflaeche', _kt.get('knoepfe') or [])):
+                    for _kette in _ketten:
+                        if not _kette:
+                            continue
+                        for _i2, _e in enumerate(_kette):
+                            _eigen = (_i2 == 0)
+                            # Ob ein Element umgeschaltet wird, sagt der Harness (er hat
+                            # die echten Knoten), nicht eine Klassenliste hier. Und es
+                            # gilt auch fuer VORFAHREN: Die Antwort-Knoepfe von Schritt 2
+                            # und 3 liegen unter einem `.finder-step` ohne die aktive
+                            # Klasse, also korrekt versteckt -- die erste Fassung hat sie
+                            # als Defekt gemeldet.
+                            if _e.get('u'):
+                                # Ohne die aktive Klasse MUSS er versteckt sein, mit ihr
+                                # MUSS er sichtbar sein. Das Element wird dafuer mit
+                                # SEINEN Attributen uebergeben, nicht nur mit Klassen:
+                                # `.finder-step[data-step]{display:none}` war sonst
+                                # unsichtbar fuer diese Pruefung (R24).
+                                _ohne = set(_e['c']) - {_AK}
+                                _e_ohne = dict(_e); _e_ohne['c'] = sorted(_ohne)
+                                _d, _offen = _css_wert(_css_quellen, _e_ohne, 'display')
+                                # Nur melden, was das Ergebnis aendern koennte: Eine
+                                # unentscheidbare Regel mit demselben Wert wie die
+                                # geltende kippt nichts (R29).
+                                _ist_none = bool(_d) and _d[0].strip().lower() == 'none'
+                                _offen = [x for x in _offen
+                                          if (x[0].strip().lower() == 'none') != _ist_none]
+                                if _offen:
+                                    err(f'§A2/§A5: eine CSS-Regel fuer '
+                                        f'`.{".".join(sorted(_ohne))}` ist nicht '
+                                        f'entscheidbar (`{_offen[0][2]}` in '
+                                        f'{_offen[0][1]}) — das Gate kann fuer dieses '
+                                        f'Element nichts zusichern. `:has()` haengt am '
+                                        f'Teilbaum darunter, den die Probe nicht liefert')
+                                if not _d or _d[0].lower() != 'none':
+                                    err(f'§A2/§A5: `.{".".join(sorted(_ohne))}` wird nicht '
+                                        f'per `display: none` versteckt (letzte passende '
+                                        f'Regel: {_d[0] if _d else "keine"}'
+                                        f'{" in " + _d[1] + " via " + _d[2] if _d else ""})'
+                                        f' — dann stehen alle Schritte gleichzeitig auf '
+                                        f'der Seite, egal was {FINDER_JS} umschaltet')
+                                _ok, _d2 = _sichtbar(_e, {_AK})
+                                if not _ok:
+                                    err(f'§A2/§A5: `.{".".join(sorted(set(_e["c"]) | {_AK}))}` '
+                                        f'wird von der geltenden Regel versteckt (Spezifitaet, dann Reihenfolge) '
+                                        f'({_d2[0]} in {_d2[1]} via {_d2[2]}), '
+                                        f'{FINDER_JS} schaltet aber `{_AK}` um — der '
+                                        f'umgeschaltete Zustand hat dann keine Wirkung, '
+                                        f'auch ohne JavaScript')
+                                continue
+                            _ok, _d2 = _sichtbar(_e)
+                            if not _ok:
+                                _wer = ('das Element selbst' if _eigen
+                                        else 'ein Vorfahr davon')
+                                # Die URSACHE aus _sichtbar nennen, nicht `display: none`
+                                # behaupten: Bei `visibility:hidden` und `opacity:0` stand
+                                # vorher die falsche Eigenschaft in der Meldung (R25).
+                                err(f'§A2/§A5: {_rolle} ist per CSS versteckt — {_wer} '
+                                    f'(`{_d2[2]}` in {_d2[1]}) setzt `{_d2[0]}`, und das '
+                                    f'ist nach Spezifitaet und Reihenfolge die geltende '
+                                    f'Regel. Der Finder ist dann unbenutzbar, mit und '
+                                    f'ohne JavaScript')
+
+                # a3) Beschriftung gegen data-value. R22: ios/android vertauscht, die
+                # Beschriftungen unveraendert -- ein Leser mit iPhone drueckte "iPhone"
+                # und bekam die Android-Auswahl, Lauf gruen.
+                # Beschriftung gegen Wert, fuer ALLE drei Fragen. Die erste Fassung
+                # deckte nur die Plattform; R23 hat die Werte der dritten Frage rotiert --
+                # der Leser drueckte "Beste Qualitaet" und bekam die Rangfolge fuer
+                # "Kompakt fuer unterwegs", Lauf gruen. Dieselbe Defektform wie der
+                # Blocker, der diese Pruefung erzwungen hat, drei Zeilen daneben.
+                # VERTRAG wie bei _SAETZE: Diese Zuordnung ist redaktionell, nicht
+                # ableitbar. Wer eine Beschriftung umformuliert, zieht das Muster hier mit
+                # -- sonst laeuft die Pruefung ins Leere, und DAS meldet der Anker darunter.
+                _WORT = {'ios': r'iPhone|iOS', 'android': r'Android',
+                         'quality': r'Qualit|Präzision|Praezision',
+                         'value': r'Preis-Leistung|Preis/Leistung|Preis-Leistungs',
+                         'portable': r'[Kk]ompakt|unterwegs|[Pp]ortabel'}
+                _wort_treffer = 0
+                for _o in _b.get('optionen') or []:
+                    _mu2 = _WORT.get((_o.get('value') or '').lower())
+                    if _mu2:
+                        _wort_treffer += 1
+                    if _mu2 and not re.search(_mu2, _o.get('text') or '', re.I):
+                        err(f'§A5: die Antwort-Schaltflaeche "{(_o.get("text") or "")[:30]}" '
+                            f'auf {_fseite} traegt data-value="{_o.get("value")}" — '
+                            f'Beschriftung und Wert gehoeren nicht zusammen, der Leser '
+                            f'waehlt etwas anderes als er liest')
+                    # Die Budget-Beschriftungen nennen Zahlen; sie muessen zu den
+                    # Schwellen in score() passen.
+                    # (Anker fuer die Wort-Zuordnung steht nach der Schleife.)
+                    if (_o.get('key') == 'budget' and _o.get('value') in _BUDGET_GRENZEN):
+                        _soll_z = _BUDGET_GRENZEN[_o['value']]
+                        _zahlen = set(re.findall(r'(\d+)', _o.get('text') or ''))
+                        if _soll_z and not (_soll_z & _zahlen):
+                            err(f'§A5: die Budget-Schaltflaeche '
+                                f'"{(_o.get("text") or "")[:30]}" nennt {sorted(_zahlen)}, '
+                                f'die Schwelle fuer "{_o["value"]}" in {FINDER_JS} ist '
+                                f'{sorted(_soll_z)} — Beschriftung und Logik gehen '
+                                f'auseinander')
+
+                # Anker: Jeder Wert, zu dem ein Wortmuster existiert, muss auch
+                # vorkommen. Sonst deckt eine Umbenennung der Werte die Pruefung still ab.
+                _werte = {(_o.get('value') or '').lower() for _o in _b.get('optionen') or []}
+                _fehlt_wort = sorted(set(_WORT) - _werte)
+                if _fehlt_wort:
+                    err(f'§A5: zu den Antwortwerten {_fehlt_wort} fuehrt verify.py ein '
+                        f'Beschriftungsmuster, aber {_fseite} kennt diese Werte nicht '
+                        f'mehr — entweder wurden sie umbenannt (dann _WORT in '
+                        f'scripts/verify.py mitziehen) oder die Antwort ist weg')
+
+                # b) Die Schrittnummern muessen 0..n-1 GENAU EINMAL vorkommen. R20:
+                # `data-step` an den Frage-Abschnitten entfernt (das Attribut stand
+                # weiter an den Fortschrittspunkten, also war "irgendwo vorhanden"
+                # erfuellt) und `data-step="2"` auf "1" gedoppelt -- beide Male blieb der
+                # Lauf gruen, und nach der ersten Antwort war der Finder-Bereich LEER.
+                _sw = _b.get('step_werte') or []
+                if sorted(_sw, key=lambda x: (x is None, x)) != [str(_i) for _i in range(_n_fragen)]:
+                    err(f'§A5: die data-step-Werte der Frage-Abschnitte in {_fseite} sind '
+                        f'{_sw}, erwartet ist jede Zahl von 0 bis {_n_fragen - 1} genau '
+                        f'einmal — sonst ist `+s.dataset.step` undefined oder doppelt, '
+                        f'und es wird kein oder mehr als ein Schritt angezeigt')
+                # c) Startzustand: genau ein Schritt aktiv, auch ohne JavaScript (§A2).
+                # finder.js ruft beim Laden kein show(0); fehlt `is-active` im Markup,
+                # ist keine Frage sichtbar, mit und ohne JS.
+                if _b.get('aktiv_start') != [0]:
+                    err(f'§A2/§A5: beim Ausliefern von {_fseite} sind die Schritte '
+                        f'{_b.get("aktiv_start")} aktiv, erwartet ist genau der erste '
+                        f'([0]). {FINDER_JS} schaltet beim Laden nichts ein, also zeigt '
+                        f'die Seite sonst keine Frage — auch ohne JavaScript nicht')
+                # d) Nach jedem Klick genau ein Schritt aktiv, nach dem letzten das
+                # Ergebnis. Ueber alle Kombinationen, schlechtester Zustand gewinnt.
+                # ALLE beobachteten Werte je Position, nicht nur den ersten Weg: Die
+                # erste Fassung uebernahm einen spaeteren Wert nur, wenn er != 1 war --
+                # an der LETZTEN Position ist der Defektwert aber 1 (die Frage bleibt
+                # neben dem Ergebnis stehen), also war dort jede Kombination ausser der
+                # ersten blind (R22, 12 der 36 Faelle).
+                _ajp = _b.get('aktiv_je_position') or []
+                _soll_ank = [1] * (_n_fragen - 1) + [0]
+                if len(_ajp) != len(_soll_ank) or any(
+                        set(_ajp[_i]) != {_soll_ank[_i]} for _i in range(len(_ajp))):
+                    err(f'§A5: nach den Klicks sind je Position {_ajp} Schritte aktiv '
+                        f'(alle beobachteten Werte ueber {_b.get("kombis")} '
+                        f'Kombinationen), erwartet ist genau {_soll_ank} — nach jeder '
+                        f'Antwort eine Frage, nach der letzten keine und dafuer das '
+                        f'Ergebnis')
+                if _b.get('ergebnis_aktiv_am_ende') != [True]:
+                    err(f'§A5: das Ergebnis von {FINDER_JS} wird nicht in jeder '
+                        f'Antwortkombination angezeigt (is-active am Ende: '
+                        f'{_b.get("ergebnis_aktiv_am_ende")})')
+                # e) Die Trefferzahl wird GEMESSEN, nicht aus dem Quelltext gelesen. Das
+                # Muster `.slice(0, N)` war zweimal ein Stellvertreter: erst traf es die
+                # Spec-Chip-Zeile, dann ein dekoratives slice innerhalb der ranked-Kette.
+                # Beide Male las das Gate 3, waehrend der Finder 27 Karten ausgab.
+                # Eine Karte ohne Kauflink ist keine Empfehlung, sondern ein leeres
+                # <article>. R21 hat die Kartenvorlage ausgehoehlt und nur
+                # `data-product` stehen gelassen: Die Probe meldete weiter 3 Karten, im
+                # Browser standen drei leere Kaesten ohne ein einziges data-asin -- die
+                # Geldleitung aus dem Finder war weg (§A3).
+                if _b.get('karten_ohne_asin'):
+                    err(f'§A3: {_b["karten_ohne_asin"]} der vom Finder erzeugten Karten '
+                        f'tragen kein data-asin — aus ihnen entsteht kein Affiliate-Link')
+                if _b.get('karten_ohne_text'):
+                    err(f'§A5: {_b["karten_ohne_text"]} der vom Finder erzeugten Karten '
+                        f'haben praktisch keinen sichtbaren Inhalt — der Leser sieht eine '
+                        f'leere Empfehlung')
+                # Leeres Ergebnis nur mit dem Ausweichtitel. R22: ein Antwortzweig
+                # lieferte 0 Karten, waehrend der Titel "Deine Top 3 Empfehlungen"
+                # versprach -- 9 der 36 Kombinationen, und jedes berichtete Feld stand auf
+                # seinem guten Wert, weil nur das MAXIMUM der Kartenzahl gemessen wurde.
+                _fbm = re.search(r"title\.textContent\s*=\s*'([^']+)'", _fj)
+                _ausweich = _fbm.group(1) if _fbm else None
+                if not _ausweich:
+                    err(f'§A5: der Ausweichtitel fuer "keine Treffer" ist in {FINDER_JS} '
+                        f'nicht gefunden worden — ob ein leeres Ergebnis als solches '
+                        f'benannt wird, laesst sich nicht pruefen')
+                for _paar in _b.get('paare') or []:
+                    _nz, _titel = _paar.split('|', 1)
+                    if int(_nz) == 0 and _ausweich and _titel.strip() != _ausweich:
+                        err(f'§A5: eine Antwortkombination zeigt KEINE Karte, der Titel '
+                            f'sagt aber "{_titel[:50]}" statt "{_ausweich}" — der Leser '
+                            f'liest eine Empfehlung und sieht nichts')
+                    elif int(_nz) and _ausweich and _titel.strip() == _ausweich:
+                        err(f'§A5: eine Antwortkombination zeigt {_nz} Karte(n), der Titel '
+                            f'sagt aber "{_ausweich}"')
+                # Die PLATTFORM-Zusage je Kombination gegen worksOn. R23: Faellt der
+                # Filter `else return -1` aus score(), empfiehlt der Finder einem
+                # iPhone-Nutzer den 8BitDo Ultimate 2C (worksOn android/universal, und das
+                # Repo sagt an mehreren Stellen "Kein iOS-Support") -- Lauf gruen. Lauf 22
+                # hatte das als Grenze eingeordnet, aber die Maschinerie liegt bereits
+                # vollstaendig vor: Antworten und Empfehlungen je Kombination plus worksOn.
+                # Eine Grenze, die nichts Schweres verdeckt, ist keine (Lehre 189).
+                for _kk in _b.get('je_kombi') or []:
+                    _plat = (_kk.get('antworten') or {}).get('platform')
+                    if not _plat or _plat == 'any':
+                        continue
+                    for _slug in _kk.get('slugs') or []:
+                        _sp = next((x for x in items if x.get('slug') == _slug), None)
+                        if _sp is None:
+                            continue   # eigene Meldung weiter unten
+                        _wo = set(_pliste(_sp, 'worksOn'))
+                        # KEIN Freifahrtschein fuer 'universal'. Die erste Fassung hat
+                        # 'universal' als "passt an alles" gelesen und die Pruefung damit
+                        # stumm abgeschaltet -- gemessen: vier Controller fuehren
+                        # ('android', 'universal') UND `platformLabel: "Android"`, darunter
+                        # genau das Modell, das der Pruefer gefunden hat
+                        # (8bitdo-ultimate-2c, "Kein iOS-Support" im Repo). 'universal' ist
+                        # eine Bauform-Kategorie, keine Plattform-Zusage; kein einziger
+                        # Controller fuehrt es allein. Die Plattform muss ausdruecklich
+                        # dastehen.
+                        if _plat not in _wo:
+                            err(f'§A1/§A5: der Finder empfiehlt auf die Antwort '
+                                f'"{_plat}" das Modell {_slug}, dessen worksOn '
+                                f'{sorted(_wo)} diese Plattform nicht nennt — der Leser '
+                                f'bekommt ein Modell empfohlen, das an seinem Geraet '
+                                f'nicht laeuft (nachgewiesen durch Ausfuehrung)')
+                if _b.get('doppelte_karten'):
+                    err(f'§A5: in {_b["doppelte_karten"]} Antwortkombination(en) erscheint '
+                        f'dasselbe Modell mehrfach unter den Empfehlungen — dreimal '
+                        f'dasselbe Modell als "Top 3" ist eine sichtbar falsche Seite')
+                _max = _b.get('max_karten') or 0
+                _top_treffer = 0
+                for _f2 in _zu_pruefen:
+                    _roh2 = open(_f2, encoding='utf-8').read()
+                    _t2 = _text_und_metas(_roh2)
+                    _TOPM = r'Top[- ]?(\d+)[- ]?(?:Match|Empfehlung|Treffer)'
+                    for _tm in re.finditer(_TOPM, _t2):
+                        # Sichtbar, nicht bloss ausgeliefert: R20 hat die Zusage von der
+                        # Startseite genommen und als "slogan" ins Organization-Schema
+                        # gelegt -- Anker erfuellt, Seite stumm.
+                        if _f2 in pages and re.search(_TOPM, _klartext(_roh2)):
+                            _top_treffer += 1
+                        if int(_tm.group(1)) != _max:
+                            err(f'§A5: {_f2} verspricht "Top-{_tm.group(1)}", der Finder '
+                                f'zeigt hoechstens {_max} Karten (gemessen ueber alle '
+                                f'{_b.get("kombis")} Antwortkombinationen). Entweder die '
+                                f'Begrenzung in {FINDER_JS} oder die Zusage stimmt nicht')
+                if not _top_treffer:
+                    err(f'§A5: keine SEITE nennt mehr eine Top-N-Zusage zum Finder — die '
+                        f'gemessene Trefferzahl ({_max}) prueft damit nichts mehr. Die '
+                        f'Zusage stand auf der Startseite ("Top-3-Matches"); wurde sie '
+                        f'umformuliert, gehoert das Muster hier mitgezogen')
+
+                # f) §A6: GEGENPROBE. Die Probe mit den echten Daten allein beweist den
+                # Filter nicht -- ein `if (p) return 5;` in ratingOf macht ihn wirkungslos,
+                # und die Ausgabe bleibt identisch, weil die Rangfolge das schwache Modell
+                # ohnehin aus den Top 3 haelt. Deshalb ein Satz, der NUR aus Produkten
+                # unter der Schwelle besteht: empfiehlt er dann etwas, filtert er nicht.
+                _schwach = [p for p in items if p.get('type') == 'controller'
+                            and (_bew_wert(p) or 0) < A6_SCHWELLE]
+                if not _schwach:
+                    # Heute genau einer (turtle-beach-atom, 3,5). Faellt er aus dem
+                    # Sortiment, hat die Gegenprobe keinen Eingabewert und wuerde stumm
+                    # bestehen. Dann wird einer gebaut: abgeleitet von einem echten
+                    # Eintrag. Pruefmittel in verify.py, products.json bleibt unberuehrt.
+                    _vorlage = next((p for p in items if p.get('type') == 'controller'), None)
+                    if _vorlage:
+                        _probe_p = json.loads(json.dumps(_vorlage))
+                        _probe_p['slug'] = 'pruefmittel-unter-schwelle'
+                        _probe_p['specs'] = [[_k, '1,0 (99)' if _k.startswith('Bew') else _v]
+                                             for _k, _v in _spec_paare(_vorlage)]
+                        if not any(_k.startswith('Bew') for _k, _v in _spec_paare(_vorlage)):
+                            _probe_p['specs'].append(['Bew.', '1,0 (99)'])
+                        _schwach = [_probe_p]
+                if _schwach:
+                    _gp = _finder_lauf({'dom': _dom, 'produkte': _schwach})
+                    if _gp.get('fehler'):
+                        err(f'§A6: die Gegenprobe des Finders ist fehlgeschlagen: '
+                            f'{str(_gp["fehler"])[:300]}')
+                    elif _gp.get('slugs'):
+                        err(f'§A6 VERLETZT: mit einem Produktsatz, der NUR aus Modellen '
+                            f'unter {A6_SCHWELLE} Sternen besteht, empfiehlt der Finder '
+                            f'trotzdem {", ".join(_gp["slugs"])} — der Filter in '
+                            f'renderResults() wirkt nicht. Steht er im Quelltext, wird er '
+                            f'von ratingOf unterlaufen (nachgewiesen durch Ausfuehrung)')
+
+                # g) Was er mit den echten Daten empfiehlt, muss ueber der Schwelle liegen.
+                if not _b.get('slugs'):
+                    err(f'§A6: die Ausfuehrungsprobe hat ueber alle {_b.get("kombis")} '
+                        f'Kombinationen KEINE einzige Empfehlung erhalten — damit beweist '
+                        f'sie nichts. Laedt der Finder products.json noch?')
+                for _slug in _b.get('slugs') or []:
+                    _sp = next((x for x in items if x.get('slug') == _slug), None)
+                    if _sp is None:
+                        err(f'§A6: der Finder empfiehlt "{_slug}", das products.json '
+                            f'nicht kennt')
+                    elif _bew_wert(_sp) is None:
+                        err(f'§A6: der Finder empfiehlt {_slug}, dessen Bewertung sich '
+                            f'aus products.json nicht lesen laesst')
+                    elif _bew_wert(_sp) < A6_SCHWELLE:
+                        err(f'§A6 VERLETZT: der Finder spielt {_slug} mit '
+                            f'{_bew_wert(_sp)} Sternen als Kaufempfehlung aus, die '
+                            f'Schwelle ist {A6_SCHWELLE} — nachgewiesen durch '
+                            f'Ausfuehrung, nicht durch Quelltextlesen')
+
+# ENDE §A6 IM CONTROLLER-FINDER
+# ---------------------------------------------------------------------------------------
+
 _ZAHL_PAARE = [(str(_n_produkte), 'Modelle im Sortiment'),
-               (str(_n_reviews), 'ausführliche Tests')]
+               (str(_n_reviews), 'ausführliche Tests'),
+               (str(_n_controller), 'Modelle verglichen'),
+               ]
+# Die Finder-Seite nennt den Vergleichs-Pool im Verhaeltnis zum Sortiment. Zwei Fassungen
+# davor waren falsch, und die zweite hat mein eigenes Gate erzwungen:
+#   "allen 28 Controllern aus dem Sortiment" -- stimmte vor dem §A6-Filter, danach nicht.
+#   "allen 27 Controllern aus dem Sortiment" -- meine Korrektur. Sie hat die Zahl
+#   verschoben und den Rahmen stehen gelassen: "im Sortiment" sind 28, und "allen"
+#   behauptet Vollstaendigkeit ueber genau die Eigenschaft, die der Filter aufgegeben hat.
+#   Das Gate war an das Label gebunden und machte die ehrliche Fassung rot -- Mechanismus 6
+#   des eigenen Patterns, zum zweiten Mal an derselben Zahl.
+# Geprueft wird deshalb die Verhaeltnis-Aussage: N der M Controller, N = Pool ab Schwelle,
+# M = alle Controller. Damit ist die ehrliche Fassung die gruene.
+_POOL_SATZ = re.compile(r'(\d+)\s+der\s+(\d+)\s+Controller im Sortiment')
+# Der Begruendungssatz nennt, wie viele Modelle die Schwelle verfehlen. Die erste Fassung
+# sagte "Der eine, der fehlt" und war damit ungegatet: Sinkt ein zweites Modell unter 3,8,
+# zieht der regulaere Aenderungsweg die Verhaeltniszahl nach (das Gate verlangt es), und
+# der Begruendungssatz bleibt bei "der eine". Der Pruefer hat das Ende zu Ende gezeigt.
+# Beide Wortstellungen: "1 Modell liegt unter ..." und "Davon liegt 1 Modell unter ...".
+# Die zweite entstand, weil die erste mit einer Ziffer am Satzanfang begann (Hinweis aus
+# dem 24. Pruefbericht) -- und das Gate hat die Umformulierung korrekt gemeldet, genau wie
+# der Vertrag es ankuendigt. Hier steht sie jetzt mit drin.
+_UNTER_SATZ = re.compile(r'(?:(\d+)\s+Modelle?\s+(?:liegt|liegen)'
+                         r'|(?:liegt|liegen)\s+(\d+)\s+Modelle?)'
+                         r'\s+unter unserer Empfehlungsschwelle von ([\d,]+) Sternen')
+# Beide Wortstellungen deckt das Muster; die Satzeinleitung ("Von den 28", "Davon") ist
+# ihm gleichgueltig, und das ist richtig: Sie traegt keine Zahl, die altern kann. Der
+# sechsundzwanzigste Bericht hat angemerkt, dass "Davon" zuerst auf die 27 liest -- jetzt
+# steht "Von den 28", und beides erfuellt dasselbe Muster.
+_n_unter = _n_alle_ctrl - _n_controller
+_unter_treffer = 0
+for _f in _zu_pruefen:
+    for _m in _UNTER_SATZ.finditer(_klartext(open(_f, encoding='utf-8').read())):
+        if _f in pages:
+            _unter_treffer += 1
+        # Gruppe 1 ODER 2, je nach Wortstellung; Gruppe 3 ist die Schwelle.
+        _zahl = _m.group(1) or _m.group(2)
+        if int(_zahl) != _n_unter:
+            err(f'§A5: {_f} sagt "{_zahl} Modell(e) liegt unter der '
+                f'Empfehlungsschwelle", products.json ergibt {_n_unter}')
+        if _m.group(3).replace(',', '.') != str(A6_SCHWELLE):
+            err(f'§A5: {_f} nennt {_m.group(3)} Sterne als Empfehlungsschwelle, '
+                f'verify.py prueft gegen {A6_SCHWELLE}')
+if not _unter_treffer:
+    err('§A5: der Satz zur Zahl der Modelle unter der Empfehlungsschwelle steht auf keiner '
+        'Seite mehr — er begruendet die Luecke zwischen Pool und Sortiment und war in '
+        'seiner ersten Fassung ("der eine, der fehlt") ungegatet')
+_pool_treffer = 0
+for _f in _zu_pruefen:
+    # Klartext, nicht rohes Markup: `<strong>27</strong> der 28` hat den richtigen Satz rot
+    # gemacht, und eine Kopie mit falscher Zahl plus Markup blieb gruen.
+    for _m in _POOL_SATZ.finditer(_klartext(open(_f, encoding='utf-8').read())):
+        # Fuer den Anker zaehlen nur SEITEN. Repoweit gezaehlt deckte eine Kopie in
+        # llms.txt den Rueckfall auf die als falsch belegte Fassung auf der Seite.
+        if _f in pages:
+            _pool_treffer += 1
+        if (int(_m.group(1)), int(_m.group(2))) != (_n_controller, _n_alle_ctrl):
+            err(f'§A5: {_f} sagt "{_m.group(1)} der {_m.group(2)} Controller im '
+                f'Sortiment", der Finder vergleicht {_n_controller} von {_n_alle_ctrl} '
+                f'(Typ controller, Bewertung ab {A6_SCHWELLE})')
+if not _pool_treffer:
+    err('§A5: die Verhaeltnis-Aussage zum Finder-Pool ("N der M Controller im Sortiment") '
+        'steht nirgends mehr im Repo — sie war zweimal falsch und gehoert deshalb gegatet')
 _gefunden = {lbl: 0 for _, lbl in _ZAHL_PAARE}
 for _f in _zu_pruefen:
-    _h = open(_f, encoding='utf-8').read()
+    # Klartext, nicht rohes Markup. Dieses Gate war das letzte des Pakets, das die Datei
+    # direkt gelesen hat, und es scheiterte in beide Richtungen: `<strong>99 Modelle</strong>
+    # im Sortiment` und `Modelle&nbsp;im Sortiment` blieben gruen, Ziffern als Entity
+    # ebenfalls; umgekehrt machte eine auskommentierte Altfassung ("Stand 08/2026: 40
+    # Modelle im Sortiment") die richtige Kachel rot. Die frueher noetige Tag-Toleranz
+    # zwischen Zahl und Label (`<div class="num">13</div><div class="cap">...`) erledigt
+    # _klartext mit, weil Block-Grenzen zu einem Pilcrow werden -- der Zwischenraum darf
+    # deshalb Pilcrows enthalten.
+    _h = _klartext(open(_f, encoding='utf-8').read())
     for _zahl, _label in _ZAHL_PAARE:
-        # Zwischen Zahl und Label duerfen beliebig viele Tags stehen, aber kein Text:
-        # im Markup ist das <div class="num">13</div><div class="cap">ausfuehrliche Tests</div>.
-        for _m in re.finditer(r'([\d.]+\+?)\s*(?:<[^>]*>\s*)*' + re.escape(_label), _h):
-            _gefunden[_label] += 1
+        for _m in re.finditer(r'([\d.]+\+?)[\s\u00b6]*' + re.escape(_label), _h):
+            # Fuer den Anker zaehlen nur SEITEN: Repoweit gezaehlt deckte eine Kopie in
+            # llms.txt oder einem Generator das Umbenennen des Labels auf der Seite.
+            if _f in pages:
+                _gefunden[_label] += 1
             if _m.group(1) != _zahl:
                 err(f"§A5: {_f} nennt {_m.group(1)} {_label}, products.json ergibt {_zahl}")
 for _zahl, _label in _ZAHL_PAARE:
@@ -487,7 +1748,7 @@ for _zahl, _label in _ZAHL_PAARE:
 # Kategorie-Kacheln der Startseite gegen den Hub-Bestand
 for _flag, _label in [('ios', 'iPhone Controller'), ('android', 'Android Controller'),
                       ('universal', 'Universal / Multi')]:
-    _soll = len([p for p in items if _flag in (p.get('worksOn') or []) and p.get('type') == 'controller'])
+    _soll = len([p for p in items if _flag in _pliste(p, 'worksOn') and p.get('type') == 'controller'])
     _hi = open('index.html', encoding='utf-8').read()
     _m = re.search(re.escape(_label) + r'</div>\s*<div class="cat-count">(\d+)', _hi)
     if _m and int(_m.group(1)) != _soll:
@@ -501,7 +1762,7 @@ for _flag, _label in [('ios', 'iPhone Controller'), ('android', 'Android Control
 # festgenagelt - dieselbe Bindung an eine Datei, die schon zweimal Befunde durchgelassen hat.
 _PLATTFORM_WORT = {'ios': r'(?:iPhone|iOS)', 'android': r'Android', 'universal': r'Universal'}
 for _flag, _wort in _PLATTFORM_WORT.items():
-    _soll = len([p for p in items if _flag in (p.get('worksOn') or []) and p.get('type') == 'controller'])
+    _soll = len([p for p in items if _flag in _pliste(p, 'worksOn') and p.get('type') == 'controller'])
     for _f in _zu_pruefen:
         for _m in re.finditer(r'(\d{1,3})\s+Controller\s+(?:für|fuer)\s+' + _wort, 
                               open(_f, encoding='utf-8').read()):
@@ -602,8 +1863,11 @@ for _f in pages:
 # Abgeschnitten wird an MARKEN, nicht an Produktnamen: im Fliesstext steht "EasySMX M15",
 # in products.json heisst das Produkt "M15 Controller (Mecha)" -- der Name trifft den Text
 # also nie, die Marke schon.
-_MARKEN = sorted({(p['brand'], p['slug']) for p in items if p.get('brand')})
-_NAMEN = sorted({(p.get('name') or '', p['slug']) for p in items if p.get('name')})
+# str(): brand oder name als Zahl liess sorted() mit TypeError abbrechen, als Liste mit
+# "cannot use 'tuple' as a set element" -- vier Abbruchstellen aus Runde 18, alle in
+# derselben Klasse wie die Spec-Werte aus Runde 17. Die FORM selbst meldet formfehler().
+_MARKEN = sorted({(str(p['brand']), str(p['slug'])) for p in items if p.get('brand')})
+_NAMEN = sorted({(str(p.get('name') or ''), str(p['slug'])) for p in items if p.get('name')})
 # Der Link darf Attribute VOR href tragen: zwei Links im Bestand schreiben class= zuerst
 # und waren fuer die erste Fassung dieses Gates unsichtbar.
 # WAS DIESES GATE NICHT KANN: Es sieht nur HINTER den Link. Ein Preis DAVOR, dessen
@@ -646,8 +1910,8 @@ for _f in pages:
         if not _eigen:
             err(f"§A1: {_f} verlinkt /produkte/{_slug}/, das products.json nicht kennt")
             continue
-        _soll = re.search(r'(\d+)', _eigen.get('price', '') or '')
-        if _soll and _soll.group(1) != _pm.group(1):
+        _soll = _preis_zahl(_eigen)
+        if _soll is not None and _soll != int(_pm.group(1)):
             err(f"§A1: {_f} nennt {_pm.group(1)} € direkt hinter dem Link auf "
                 f"/produkte/{_slug}/, products.json sagt {_eigen['price']}")
 
@@ -660,8 +1924,21 @@ for _f in pages:
 # das Sortiment, eine Kategorie oder eine Marke beziehen) und prueft deshalb NICHT, ob N
 # wirklich das Minimum dieser Menge ist. Es prueft nur, dass N ueberhaupt ein Preis ist,
 # den wir fuehren. Ob die Untergrenze stimmt, bleibt Handarbeit.
-_PREISE_ROH = {re.search(r'(\d+)', p['price']).group(1)
-               for p in items if p.get('price') and re.search(r'(\d+)', p['price'])}
+_PREISE_ROH = {str(_preis_zahl(p)) for p in items if _preis_zahl(p) is not None}
+# Tausenderpunkt: zwei Leser desselben Feldes rechnen verschieden. `preis_zahl()` in
+# produktdaten.py wirft den Punkt weg ("1.299 €" -> 1299), das eigene `preis()` in
+# gen_preisfrage.py nimmt die erste Ziffernfolge ("1.299 €" -> 1). Heute traegt kein Preis
+# einen Tausenderpunkt, also ist der Unterschied latent -- und ein latenter Unterschied,
+# der in einem Kommentar als "heute kein Problem" steht, ist genau die Form, die hier
+# schon mehrfach still live gegangen ist. Statt der Beschreibung steht jetzt die
+# Eigenschaft im Gate: Der erste vierstellige Preis macht den Lauf rot, nicht die Seite
+# falsch. Fix ist dann beide Stellen auf `preis_zahl()` zu ziehen (§A1, eine Wahrheit).
+for _p in items:
+    if re.search(r'\d\.\d{3}', str((_p or {}).get('price') or '')):
+        err(f"§A1: {_p.get('slug')} hat den Preis \"{_p.get('price')}\" mit "
+            f"Tausenderpunkt. produktdaten.preis_zahl() liest daraus "
+            f"{_preis_zahl(_p)}, gen_preisfrage.preis() dagegen die erste Ziffernfolge "
+            f"— beide Stellen auf preis_zahl() ziehen, bevor dieser Preis live geht.")
 # Preisband-Ueberschriften sind keine Untergrenzen-Behauptung: "Ab 100 Euro: Premium" auf
 # /geschenke/ benennt ein Budget-Segment. Ausgenommen wird nur, was eine Ueberschrift
 # EROEFFNET — "Hall-Effect ab 20 €" als h2 bleibt damit geprueft, und genau diese Form ist
@@ -686,10 +1963,10 @@ for _f in pages:
 # in keinem der drei Pruefskripte vor.
 _LABEL_VERLANGT = {'Universal': ('android', 'ios'), 'iPhone': ('ios',), 'Android': ('android',)}
 for _p in items:
-    _lbl = _p.get('platformLabel')
+    _lbl = _pfeld(_p, 'platformLabel')   # als Liste/Objekt war es ein dict-Schluessel
     if _lbl not in _LABEL_VERLANGT:
         continue
-    _fehlt = [f for f in _LABEL_VERLANGT[_lbl] if f not in (_p.get('worksOn') or [])]
+    _fehlt = [f for f in _LABEL_VERLANGT[_lbl] if f not in _pliste(_p, 'worksOn')]
     if _fehlt:
         err(f"§A1: {_p['slug']} traegt platformLabel \"{_lbl}\", worksOn fuehrt aber "
             f"{', '.join(_fehlt)} nicht — das Label steuert den Alt-Text jedes "
@@ -909,7 +2186,9 @@ for _f in pages:
     # standen sie bisher ungeprueft. duration kam in keinem der vier Gates vor, wird aber
     # sichtbar als "Laenge N Min." ausgespielt.
     _pv = _externes_produkt(_f)
-    _vd = (_pv or {}).get('video') or {}
+    # video als Zahl/bool/Liste liess .get() hier mit AttributeError abbrechen.
+    _vd = (_pv or {}).get('video')
+    _vd = _vd if isinstance(_vd, dict) else {}
     if _vd:
         for _feld, _muster in (('url', r'<video[^>]*src="([^"]*)"'),
                                ('poster', r'<video[^>]*poster="([^"]*)"')):
@@ -1047,14 +2326,16 @@ if os.path.exists(_PJS):
             f"PLAT_ORDER) — ohne es laesst sich products.json nicht dagegen pruefen")
     else:
         for _p in items:
-            _pl, _ty = _p.get('platform'), _p.get('type')
+            # str(): platform/type als Liste oder Objekt liessen den dict-Zugriff mit
+            # "unhashable type" abbrechen (Runde 18, breite Typprobe).
+            _pl, _ty = _pfeld(_p, 'platform'), _pfeld(_p, 'type')
             if _pl not in _PLAT_ORDER:
                 err(f"§A1: {_p['slug']} hat platform \"{_pl}\", das PLAT_ORDER in {_PJS} "
                     f"nicht kennt — fuer diesen Wert entsteht kein Filter-Chip")
             if _pl not in _PLAT_LABELS:
                 err(f"§A1: {_p['slug']} hat platform \"{_pl}\" ohne Label in {_PJS}")
-            elif _p.get('platformLabel') != _PLAT_LABELS[_pl]:
-                err(f"§A1: {_p['slug']} traegt platformLabel \"{_p.get('platformLabel')}\", "
+            elif _pfeld(_p, 'platformLabel') != _PLAT_LABELS[_pl]:
+                err(f"§A1: {_p['slug']} traegt platformLabel \"{_pfeld(_p, 'platformLabel')}\", "
                     f"zu platform \"{_pl}\" gehoert aber \"{_PLAT_LABELS[_pl]}\"")
             if _ty not in _TYPE_LABELS:
                 err(f"§A1: {_p['slug']} hat type \"{_ty}\", das TYPE_LABELS in {_PJS} nicht "
@@ -1157,6 +2438,707 @@ for _f in pages:
         err(f"§B3: {_f} bietet {len(_ziele)} verschiedene primaere Handlungsaufrufe an "
             f"({', '.join(sorted(_ziele))}) — eine Seite fuehrt an genau ein Ziel, "
             f"Wiederholung desselben Aufrufs ist erlaubt")
+
+# Abgeleitete Mengenaussagen im Problem-Artikel (§A1). Der Artikel nennt zwei Zahlen, die
+# nicht in products.json stehen, sondern aus ihr folgen, und die mit jedem Sortimentswechsel
+# falsch werden. Beide werden hier nachgerechnet.
+#
+# ACHT PRUEFRUNDEN HABEN GEZEIGT, WARUM DIESES GATE SO SCHMAL IST. Die Vorfassungen haben
+# versucht, JEDE Formulierung eines solchen Anspruchs zu erkennen: ein Muster mit sieben
+# Anspruchswoertern und einer fausen Luecke dazwischen, dazu eine Satzgrenzen-Heuristik mit
+# Abkuerzungsliste. Dieser Ansatz hat in jeder Runde entweder ein Loch gelassen oder, viel
+# schlimmer, auf WAHREM Text die falsche Zahl erzwungen:
+#   - Die faule Luecke band die Zahl an das positionsmaessig erste Anspruchswort, nicht an
+#     den Anspruch des Satzes. "6 der 28 Controller funktionieren kabellos und am Kabel"
+#     ist wahr, enthaelt "kabellos", und das Gate verlangte 17. Die Meldung schickte den
+#     Autor also zu einer Zahl, die products.json widerspricht. 13 von 78 wahren Saetzen
+#     waren rot.
+#   - Die Satzgrenze scheiterte an "USB-C." (das Wort vor dem Punkt war "C", also ein
+#     Abkuerzungspunkt), an "usw." und "etc." (als Ausnahme gefuehrt, stehen aber am
+#     Satzende), an fehlenden Tags im Fenster, an Punkt+Gross+Klein und an Punkt+Gross.
+# Keine Verfeinerung hat gehalten, weil die Aufgabe "welchen Anspruch erhebt dieser deutsche
+# Satz" mit Schluesselwoertern nicht loesbar ist.
+#
+# Deshalb prueft dieses Gate jetzt GENAU DIE ZWEI SAETZE, die im Artikel stehen, auf dem
+# tagfreien Text. Das ist sound: keine Heuristik, kein Fehlalarm, und der Alterungsfall
+# (products.json aendert sich, der Satz nicht) wird sicher erkannt. Dazu ein Anker je Satz,
+# damit keiner still verschwindet oder umformuliert wird.
+# GRENZE, ehrlich und vollstaendig:
+#   NICHT geprueft wird ein NEU geschriebener, frei formulierter Mengensatz an einer
+#   anderen Stelle ("Zur Einordnung: 19 der 28 Controller sind kabelgebunden" in einem
+#   neuen Absatz bleibt gruen). Das ist der bewusste Tausch gegen die Fehlalarme, an denen
+#   acht Vorfassungen gescheitert sind.
+#   GEPRUEFT wird: die Zahl in den zwei bestehenden Saetzen, gegen products.json, auf
+#   tagfreiem Text (Markup zwischen den Woertern hilft nicht), und ihre Anwesenheit. Jede
+#   Aenderung am Satz -- Kuerzung, Erweiterung, Umformulierung, Entfernung -- meldet der
+#   Anker, weil das Muster den vollen Satz traegt.
+#   Wer die Aussage umformulieren will, aendert das Muster hier mit. Genauso fuehren die
+#   VERBOTEN-Liste und die Hall-Invariante in diesem Repo ihre Schreibweisen namentlich.
+def _verb(_p):
+    # .strip(): Ein Feld mit nur Leerzeichen war wahr und rutschte am Pflichtfeld-Gate
+    # vorbei, waehrend die Quote es als kabelgebunden zaehlte.
+    return _spec(_p, 'Verb.').strip()
+_ctrl = [p for p in items if p.get('type') == 'controller']
+# Ein Controller ohne Verb.-Feld wuerde als kabellos durchgehen und die Quote still
+# verschieben, waehrend das Gate gruen bleibt. Heute fuehren alle 28 das Feld; damit das
+# so bleibt, ist das Fehlen selbst ein Fehler.
+for _p in _ctrl:
+    if not _verb(_p):
+        err(f"§A1: Controller {_p.get('slug')} hat kein Spec-Feld \"Verb.\" — die "
+            f"Mengenaussagen im Problem-Artikel werden damit still falsch")
+# POSITIV abgeleitet, nicht negativ. Die erste Fassung zaehlte "alles ohne BT/Bluetooth"
+# als kabelgebunden und fiel damit bei jeder unbekannten Schreibweise OFFEN aus: Der
+# Pruefer hat `Verb.` von einem Controller auf "BLE 5.3" gesetzt, alle Gates blieben gruen,
+# und die Seite behauptete weiter 11 statt 10. Dasselbe fuer "kabellos", "2,4 GHz Funk",
+# "Wireless", "Funk-Dongle", "n/a" und "-" -- neun von neun Proben stumm. products.json
+# fuehrt heute neun verschiedene Schreibweisen von `Verb.`; eine zehnte ist keine
+# Konstruktion. Kabelgebunden heisst deshalb jetzt: nennt eine Steckverbindung UND keine
+# Funkverbindung. Unbekanntes zaehlt zu keiner Gruppe, die Summe sinkt, und der Satz wird
+# rot -- die Pruefung faellt geschlossen aus. `scripts/kompat.py` benutzt im selben Repo
+# seit B1 schon die positive Form; das Gate hatte die lose.
+# VOKABULAR statt zwei Suchbegriffe. Die positive Ableitung war nur halb geschlossen:
+# `_funk()` kannte nur BT und Bluetooth, also landete "BLE 5.3 / USB-C" in der Gruppe
+# "kabelgebunden" -- Steckbegriff vorhanden, Funkbegriff nicht erkannt, Summe unveraendert,
+# Satz gruen, Zahl falsch. Das ist realistisch, weil alle sechs heutigen Doppelmodelle
+# genau in dieser Kombinationsschreibweise notiert sind ("BT 5.0 / USB-C" 3x, "BT/USB-C"
+# 2x, "BT+USB-C" 1x) -- eine unbekannte Funk-Schreibweise trifft also sofort sechs
+# Produkte.
+# Hier stand bis R28 zusaetzlich "und der 8BitDo Ultimate 2C real 2,4 GHz plus USB-C ist".
+# Das war eine unbelegte Produktaussage (§A5) und vom eigenen Repo widerlegt:
+# products.json fuehrt ihn als "Ultimate 2C Wired" mit `Verb.: USB (kabelgebunden)`, die
+# VERBOTEN-Liste weiter unten in DIESER Datei nennt "Ultimate 2C als Bluetooth-Gamepad"
+# ausdruecklich als widerlegt, und STATUS haelt fest, dass die Frage am 30.09. per
+# Amazon-Abgleich geklaert wurde (es ist die Wired-Variante). Waere der Satz wahr, waeren
+# es 7 Doppelmodelle statt 6 und 10 kabelgebundene statt 11.
+# Jetzt muss JEDES Token des Feldes bekannt sein. Was nicht im Vokabular steht, ist selbst
+# ein Befund, und zwar bevor irgendeine Zahl gerechnet wird. Dasselbe Verfahren benutzt
+# das Repo schon fuer `platform` und `type` gegen das JS-Vokabular.
+_VERB_STECK = {'usb', 'usb-a', 'usb-c', 'lightning'}
+_VERB_FUNK = {'bt', 'bluetooth', 'ble'}
+_VERB_FUELL = {'kabelgebunden', 'kabellos', 'und', 'oder', 'bzw', 'per', 'via'}
+
+
+def _verb_tokens(_p):
+    return [t for t in re.split(r'[\s/+,()&]+', _verb(_p)) if t]
+
+
+def _steck(_p):
+    return any(t.lower() in _VERB_STECK for t in _verb_tokens(_p))
+
+
+def _funk(_p):
+    return any(t.lower() in _VERB_FUNK for t in _verb_tokens(_p))
+
+
+for _p in [x for x in items if x.get('type') == 'controller']:
+    for _t in _verb_tokens(_p):
+        _tl = _t.lower()
+        if (_tl in _VERB_STECK or _tl in _VERB_FUNK or _tl in _VERB_FUELL
+                or re.fullmatch(r'\d+([.,]\d+)*', _t)):
+            continue
+        err(f"§A1: Controller {_p.get('slug')} hat Verb.=\"{_verb(_p)}\", und \"{_t}\" "
+            f"steht in keinem Vokabular (Steckverbindung, Funkverbindung, Version). "
+            f"Solange unklar ist, zu welcher Gruppe das gehoert, sind die Mengenaussagen "
+            f"im Problem-Artikel nicht ableitbar — Token in scripts/verify.py ergaenzen")
+_kabel_soll = len([p for p in _ctrl if _steck(p) and not _funk(p)])
+# Ein Feld, dessen Tokens alle bekannt sind, das aber keiner Gruppe zugeordnet werden
+# kann (etwa nur "kabelgebunden" ohne Anschluss), ist ebenfalls ein Befund.
+for _p in _ctrl:
+    if _verb(_p) and not _steck(_p) and not _funk(_p):
+        err(f"§A1: Controller {_p.get('slug')} hat Verb.=\"{_verb(_p)}\" — das nennt weder "
+            f"eine Steckverbindung noch eine Funkverbindung, damit laesst sich die "
+            f"Mengenaussage im Problem-Artikel nicht ableiten")
+# Modelle, die per Funk UND am Kabel laufen. Sie sind der Grund, warum der Artikel dem
+# Leser keinen Selbsttest mehr anbietet: Bei ihnen sieht ein leerer Akku genauso aus wie
+# gar keiner, und drei Anleitungsversuche sind daran gescheitert.
+_beides_soll = len([p for p in _ctrl if _funk(p) and _steck(p)])
+# Annahme hinter "kabelgebunden = kein Akku", hier offengelegt: products.json fuehrt nur
+# bei einem einzigen Produkt ein Akkufeld (trust-gxt-rgb, also 1 der 42 Produkte und 1 der
+# 28 Controller), die Gleichsetzung ist also abgeleitet und nicht gemessen. Heute traegt
+# sie, weil jedes kabelgebundene Modell im Sortiment seinen Strom aus dem Handy zieht.
+# Kommt ein kabelgebundenes Modell MIT Akku dazu, wuerde der Artikel still falsch; deshalb
+# faellt dieser Fall auf (Gegenprobe weiter unten).
+# Die Muster treffen den VOLLEN Satz, nicht nur seinen Anfang. Mit dem kuerzeren Praefix
+# war beides falsch: Eine Erweiterung blieb unsichtbar (der Praefix traf weiter, also
+# schwieg der Anker bei "... sind kabelgebunden oder kabellos" und bei "Keineswegs 11 der
+# 28 ... sind kabelgebunden"), und eine Uebernahme der Phrase mit anderer, WAHRER Zahl
+# wurde rot ("9 der 28 Controller in unserem Sortiment sind kabelgebunden und tragen
+# USB-C" -- neun tun das wirklich). Mit dem vollen Satz ist jede Abweichung eine
+# Abweichung, und der Anker meldet sie.
+_SAETZE = [
+    (re.compile(r'(?:^|(?<=[.!?:;\u00b6]\s))\s*(\d+)\s+der\s+(\d+)\s+Controller in unserem '
+                r'Sortiment sind kabelgebunden und ziehen ihren Strom aus dem Handy'),
+     lambda: (_kabel_soll, len(_ctrl)), 'kabelgebunden'),
+    (re.compile(r'(?:^|(?<=[.!?:;\u00b6]\s))\s*(\d+)\s+der\s+(\d+)\s+Controller in unserem '
+                r'Sortiment laufen sowohl per Funk als auch am Kabel, und ein leerer Akku '
+                r'sieht genau so aus wie keiner'),
+     lambda: (_beides_soll, len(_ctrl)), 'mit Funk UND Kabel'),
+]
+_satz_treffer = [0] * len(_SAETZE)
+# REPOWEIT, nicht nur ueber die Seiten: Eine falsche Kopie des Satzes in llms.txt oder als
+# Literal in einem Generator blieb gruen, weil die Schleife nur `pages` las. Das ist Lehre
+# 11 aus dem eigenen Protokoll ("repoweit statt an einer Datei festgenagelt"), hier zum
+# wiederholten Mal nicht angewandt.
+for _f in _zu_pruefen:
+    _kh = open(_f, encoding='utf-8').read()
+    # Block-Grenzen werden zu einem Satzzeichen, Kommentare verschwinden. Ohne das
+    # erste war der Satzanfang-Lookbehind ein Fehlalarm: Nach einer Ueberschrift, in
+    # einer Tabellenzelle oder als erster Satz eines Absatzes steht im tagfreien Text
+    # kein Satzzeichen davor, und der Anker meldete den wortgleich vorhandenen Satz als
+    # verschwunden (6 von 12 Platzierungen). Ohne das zweite erfuellte eine Kopie des
+    # Satzes in einem HTML-Kommentar den Anker, waehrend der sichtbare Satz fehlen durfte.
+    _kt = re.sub(r'<!--.*?-->', ' ', _kh, flags=re.S)
+    _kt = re.sub(r'</?(?:p|li|td|th|h[1-6]|div|section|main|article|blockquote|dd|dt)\b'
+                 r'[^>]*>|<br\s*/?>', ' \u00b6 ', _kt, flags=re.I)
+    # Auch der Zeilenumbruch ist eine Grenze. Ohne ihn blieb eine falsche Kopie des Satzes
+    # in llms.txt gruen: Dort gibt es keine Block-Tags, und das Zusammenziehen des
+    # Leerraums machte aus dem Umbruch ein Leerzeichen. Der Preis ist klein und benannt:
+    # Steht ein Praefix wie "Keineswegs" vor dem Umbruch, erkennt das Muster den Satz
+    # trotzdem -- eine uebersehene Erweiterung, kein Fehlalarm.
+    _kt = _kt.replace('\n', ' \u00b6 ')
+    # script/style heraus, wie _klartext es tut: Dieser Block baute seinen Text selbst und
+    # liess Programmtext stehen. Heute nicht ausnutzbar (der Satzanfang-Lookbehind traf in
+    # der Probe des Pruefers nicht), aber es ist dieselbe Abweichung von der
+    # "eine Funktion"-Lehre, die sechs Gates einzeln kaputt gemacht hat.
+    _kt = re.sub(r'<(script|style)\b[^>]*>.*?</\1>', ' \u00b6 ', _kt, flags=re.S | re.I)
+    _kt = html.unescape(re.sub(r'<[^>]*>', ' ', _kt))
+    _kt = re.sub(r'\s+', ' ', _kt)
+    for _i, (_muster, _sollfn, _was) in enumerate(_SAETZE):
+        for _m in _muster.finditer(_kt):
+            # Fuer den Anker zaehlen nur SEITEN. Vorher zaehlte er repoweit, womit eine
+            # Kopie in llms.txt oder in einem Generator-Literal ihn erfuellte, waehrend
+            # der Satz von der Seite verschwinden durfte. Geprueft wird der WERT weiter
+            # repoweit, denn eine falsche Kopie ist auch dort falsch.
+            if _f in pages:
+                _satz_treffer[_i] += 1
+            _soll = _sollfn()
+            if (int(_m.group(1)), int(_m.group(2))) != _soll:
+                err(f'§A1: {_f} sagt "{_m.group(1)} der {_m.group(2)} Controller '
+                    f'{_was}", products.json ergibt {_soll[0]} von {_soll[1]}')
+for _i, (_muster, _sollfn, _was) in enumerate(_SAETZE):
+    if not _satz_treffer[_i]:
+        err(f'§A1: der Satz zu "{_was}" steht auf keiner Seite mehr — er wurde entfernt '
+            f'oder umformuliert (eine Kopie in llms.txt oder einem Generator zaehlt hier '
+            f'nicht). Beides ist erlaubt, aber dann gehoert die neue Fassung in _SAETZE '
+            f'in scripts/verify.py, sonst altert die Zahl ungeprueft')
+# ---------------------------------------------------------------------------------------
+# BLOG-LISTE GEGEN DEN BESTAND. Zwei Befunde am 02.10., beide aus dem B4-Paket vom Vortag:
+# Das ItemList-Schema auf /blog/ fuehrte 18 von 19 Artikeln (die Preisfrage-Seite fehlte,
+# seit sie als Generator dazukam), und die Karte zu dieser Seite nannte einen anderen Titel
+# als die Seite selbst ("... Preise 2026 im Ueberblick" gegen "... Preise 2026", nachdem
+# der Generator-Titel wegen §B1 gekuerzt wurde). Beides blieb gruen, weil kein Gate die
+# Liste gegen den Bestand und die Kartentitel gegen die Zielseiten hielt.
+if os.path.exists('blog/index.html'):
+    _bl = open('blog/index.html', encoding='utf-8').read()
+    _artikel_dirs = sorted(os.path.dirname(f).replace(os.sep, '/')
+                           for f in glob.glob('blog/*/index.html')
+                           if 'http-equiv="refresh"' not in open(f, encoding='utf-8').read())
+    _il = re.search(r'<script type="application/ld\+json">(\{"@context[^<]*"ItemList".*?)'
+                    r'</script>', _bl, re.S)
+    if not _il:
+        err('§A4: blog/index.html hat kein ItemList-Schema mehr — die Liste der Artikel '
+            'war bisher dort maschinenlesbar')
+    else:
+        try:
+            _ild = json.loads(_il.group(1))
+        except Exception as _e:
+            err(f'§A4: das ItemList-Schema in blog/index.html ist kein gueltiges JSON ({_e})')
+            _ild = None
+        if _ild:
+            _liste = [e.get('url', '').rstrip('/').split('/')[-1]
+                      for e in _ild.get('itemListElement', [])]
+            _gelistet = set(_liste)
+            # Als Menge gelesen blieb ein doppelter Eintrag unsichtbar, und die position
+            # wurde nie geprueft (alle auf 1 waere gruen gewesen).
+            for _u in sorted(_gelistet):
+                if _liste.count(_u) > 1:
+                    err(f'§A4: das ItemList-Schema von blog/index.html fuehrt /blog/{_u}/ '
+                        f'{_liste.count(_u)}x')
+            _pos = [e.get('position') for e in _ild.get('itemListElement', [])]
+            if _pos != list(range(1, len(_pos) + 1)):
+                err(f'§A4: die position-Werte im ItemList-Schema von blog/index.html '
+                    f'lauten {_pos[:6]}..., erwartet ist 1 bis {len(_pos)}')
+            for _d in _artikel_dirs:
+                _slug = _d.split('/')[-1]
+                if _slug not in _gelistet:
+                    err(f'§A4: /blog/{_slug}/ fehlt im ItemList-Schema von blog/index.html '
+                        f'({len(_gelistet)} Eintraege, {len(_artikel_dirs)} Artikel)')
+            for _u in _gelistet:
+                if f'blog/{_u}' not in _artikel_dirs:
+                    err(f'§A4: das ItemList-Schema von blog/index.html fuehrt /blog/{_u}/, '
+                        f'diese Seite gibt es nicht')
+            # §A4: der Schema-Name muss dem H1 der Zielseite entsprechen, sonst behauptet
+            # die maschinenlesbare Fassung einen anderen Titel als die Seite.
+            for _e in _ild.get('itemListElement', []):
+                _eu = (_e.get('url') or '').rstrip('/').split('/')[-1]
+                _ez = f'blog/{_eu}/index.html'
+                if not os.path.exists(_ez):
+                    continue
+                _eh1 = re.search(r'<h1[^>]*>(.*?)</h1>', open(_ez, encoding='utf-8').read(), re.S)
+                if not _eh1:
+                    continue
+                _eh1t = html.unescape(re.sub(r'<[^>]*>', '', _eh1.group(1))).strip()
+                if _eh1t and _eh1t != (_e.get('name') or '').strip():
+                    err(f'§A4: das ItemList-Schema von blog/index.html nennt fuer '
+                        f'/blog/{_eu}/ "{(_e.get("name") or "")[:50]}", die Seite hat den '
+                        f'H1 "{_eh1t[:50]}"')
+    # Kartentitel gegen den H1 der Zielseite
+    for _href, _ktext in _lz_karten(_bl):
+        if not _href or not _href.startswith('/blog/'):
+            continue
+        _ziel = _href.strip('/') + '/index.html'
+        if not os.path.exists(_ziel):
+            continue
+        _h1 = re.search(r'<h1[^>]*>(.*?)</h1>', open(_ziel, encoding='utf-8').read(), re.S)
+        if not _h1:
+            # Still uebersprungen hiess: H1 durch <p> ersetzt, und weder dieses noch ein
+            # anderes Gate hat es gemerkt.
+            err(f'§A4: {_ziel} hat kein <h1> — Kartentitel und Schema-Name lassen sich '
+                f'dann gegen nichts pruefen')
+            continue
+        _h1t = html.unescape(re.sub(r'<[^>]*>', '', _h1.group(1))).strip()
+        if _h1t and _h1t not in re.sub(r'\s+', ' ', _ktext):
+            err(f'§A1: die Karte zu {_href} auf blog/index.html nennt nicht den Titel der '
+                f'Zielseite ("{_h1t[:60]}") — Karte und Seite sind auseinandergelaufen')
+# ENDE BLOG-LISTE
+# ---------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------
+# ABSCHNITTSZAHLEN DES PROBLEM-ARTIKELS. P-13 nennt "Anzahl Abschnitte" ausdruecklich im
+# Geltungsbereich, und genau diese Zahl stand nach B5 getippt da: drei Descriptions,
+# Article-headline und -description, Breadcrumb-Schema, sichtbarer Breadcrumb, H1,
+# Lead und "Kurz gesagt" im Artikel, dazu ItemList-Schema und Karte auf /blog/, der
+# Querverweis in huellen-kompatibilitaet und llms.txt. Hier stand "Gemessen: 16 Stellen
+# mit der Ursachen-Zahl und 11 mit der Stoerungsbild-Zahl" -- die Zahlen sind entfernt,
+# nicht korrigiert: Sie haengen an der Dateimenge UND an der Textbildung, und nach dem
+# Umbau von `_text_und_metas` (JSON-LD-Werte dazu) ergaben drei Messungen drei Ergebnisse.
+# Wie viele Stellen es sind, zaehlt das Gate selbst; eine getippte Zahl daneben ist genau
+# das, was dieses Gate verhindern soll. Der Title traegt KEINE
+# Abschnittszahl (er sagt "Meist in 2 Min. geloest"), die erste Fassung dieses
+# Kommentars hat ihn falsch mitgezaehlt. Fuenf Proben des Pruefers blieben gruen,
+# darunter der Regelfall redaktioneller Arbeit: ein h2 zu h3 heruntergestuft, der Abschnitt
+# also weg, die Zahlen unveraendert.
+# Abgeleitet wird aus der Struktur: Die Ursachen sind als "<h2>1." bis "<h2>N." numeriert,
+# die weiteren Stoerungsbilder sind die uebrigen Problem-h2 ohne die drei Abschluss-
+# Abschnitte. Beides zusammen deckt jede Formulierung, in der das Repo die Zahlen nennt.
+_ART = 'blog/controller-verbindet-nicht/index.html'
+_ZW_ART = {'fünf': 5, 'vier': 4, 'drei': 3, 'sechs': 6, 'sieben': 7, 'acht': 8, 'neun': 9,
+           'zwei': 2}
+if os.path.exists(_ART):
+    # Kommentare entfernen und die Attributnotation normalisieren, BEVOR gezaehlt wird.
+    # Ohne das erste blieb ein auskommentierter Stoerungsbild-Abschnitt gruen, waehrend elf
+    # Stellen weiter vier nannten; ohne das zweite war `data-rolle='stoerung'` ein
+    # Fehlalarm, und einfach gequotete Attribute sind die Notation von 101 Stellen im Repo.
+    # Dieser Fix stand schon in Runde 15 im Skript und ist nie gelandet, weil das
+    # Batch-Skript vorher an einer Assertion abgebrochen ist -- gemeldet hatte ich ihn
+    # trotzdem.
+    _ah_roh = open(_ART, encoding='utf-8').read()
+    _ah = re.sub(r'<!--.*?-->', ' ', _ah_roh, flags=re.S)
+    _ah = re.sub(r"(\w)\s*=\s*'([^']*)'", r'\1="\2"', _ah)
+    _ah = re.sub(r'(\w)\s*=\s*"', r'\1="', _ah)
+    _h2 = [re.sub(r'<[^>]*>', '', m).strip()
+           for m in re.findall(r'<h2[^>]*>.*?</h2>', _ah, re.S)]
+    # Die Stoerungsbild-Abschnitte tragen `data-rolle="stoerung"` im Markup. Die erste
+    # Fassung zaehlte per AUSSCHLUSS (alle nicht numerierten h2 minus drei Literale) und
+    # war damit ein Fehlalarm auf richtigem Inhalt: "Fazit" in "Fazit: Was wirklich hilft"
+    # umbenannt oder ein neuer Einleitungsabschnitt erhoehte die Zahl, und das Gate
+    # verlangte eine 5, die der Artikel nicht hergibt -- Mechanismus 6 des eigenen
+    # Patterns, im eigenen neuen Gate.
+    _n_ursachen = len([x for x in _h2 if re.match(r'^\d+\.', x)])
+    _n_weitere = len(re.findall(r'<h2[^>]*\bdata-rolle="stoerung"', _ah))
+    if _n_ursachen < 2 or _n_weitere < 1:
+        err(f'§A1: aus {_ART} lassen sich keine plausiblen Abschnittszahlen ableiten '
+            f'({_n_ursachen} numerierte Ursachen, {_n_weitere} weitere) — Struktur der '
+            f'h2-Ueberschriften geaendert?')
+    else:
+        # Die numerierten Ueberschriften muessen 1..N lauten, sonst zaehlt die Ableitung
+        # eine Luecke mit.
+        _nrn = [int(re.match(r'^(\d+)\.', x).group(1)) for x in _h2 if re.match(r'^\d+\.', x)]
+        if _nrn != list(range(1, _n_ursachen + 1)):
+            err(f'§A1: die numerierten Abschnitte in {_ART} lauten {_nrn}, erwartet ist '
+                f'1 bis {_n_ursachen}')
+        _URS = re.compile(r'(\d+|fünf|vier|sechs|sieben|acht|neun|drei|zwei)\s+'
+                          r'(?:häufigsten\s+)?Ursachen')
+        _WEI = re.compile(r'(\d+|fünf|vier|sechs|sieben|acht|neun|drei|zwei)\s+'
+                          r'weitere[nr]?\s+Störungsbilder')
+        _u_treffer = _w_treffer = 0
+        for _f in _zu_pruefen:
+            # Klartext plus Metas: Die Abschnittszahlen stehen auch in den
+            # Descriptions und im Article-Schema, also in Attributen.
+            _roh_f = open(_f, encoding='utf-8').read()
+            _fh = _text_und_metas(_roh_f)
+            _sicht = _klartext(_roh_f)
+            for _mu, _soll, _was, _zz in ((_URS, _n_ursachen, 'Ursachen', 'u'),
+                                          (_WEI, _n_weitere, 'weitere Störungsbilder', 'w')):
+                for _m in _mu.finditer(_fh):
+                    # Fuer den Anker zaehlen nur SEITEN: Repoweit gezaehlt deckte eine
+                    # Kopie in llms.txt oder einem Generator das Verschwinden von der
+                    # Seite. Dieselbe Lehre wie beim Mengensatz- und Pool-Anker.
+                    # SICHTBAR muss es sein, nicht bloss ausgeliefert. Runde 20 hat die
+                    # Zusage von der Seite genommen und als JSON-LD-Wert hinterlegt: Der
+                    # Anker war erfuellt, die Seite zeigte nichts, und §A4 faengt das
+                    # nicht (es gibt keine maschinelle Pruefung "Schema-Zeichenkette steht
+                    # sichtbar"). Der WERT wird weiter in Metas und JSON-LD geprueft, denn
+                    # eine falsche Zahl ist auch dort falsch.
+                    if _f in pages and _mu.search(_sicht):
+                        if _zz == 'u':
+                            _u_treffer += 1
+                        else:
+                            _w_treffer += 1
+                    _r = _m.group(1)
+                    _ist = int(_r) if _r.isdigit() else _ZW_ART.get(_r.lower())
+                    if _ist is not None and _ist != _soll:
+                        err(f'§A1: {_f} nennt "{_m.group(0)}", {_ART} hat {_soll} '
+                            f'{_was} (aus den h2-Ueberschriften abgeleitet)')
+        if not _u_treffer:
+            err(f'§A1: die Zahl der Ursachen steht nirgends mehr sichtbar auf einer '
+                f'Seite — sie ist aus {_ART} ableitbar und gehoert dorthin zurueck')
+        if not _w_treffer:
+            err(f'§A1: die Zahl der weiteren Stoerungsbilder steht nirgends mehr '
+                f'sichtbar auf einer Seite — sie ist aus {_ART} ableitbar')
+        # Namensverweise auf Abschnitte muessen auf vorhandene h2 zeigen. Vorher standen
+        # hier vier NUMMERN-Verweise ("Punkt 4 oben", "derselbe Punkt wie in Ursache 5"):
+        # Der Pruefer hat Ursache 4 und 5 getauscht und korrekt neu numeriert -- das Gate
+        # erlaubt Umsortierung ausdruecklich -- und alle vier Verweise zeigten auf den
+        # falschen Abschnitt, bei gruenem verify. Ein falscher NAME faellt dem Leser auf,
+        # eine falsche Nummer nicht; deshalb stehen jetzt Namen da, und sie werden geprueft.
+        # Alle Ueberschriften, nicht nur h2: Der Artikel fuehrt auch h3, und ein Verweis
+        # darauf darf nicht rot werden.
+        _ueber = {re.sub(r'\s+', ' ', re.sub(r'<[^>]*>', '', m)).strip()
+                  for m in re.findall(r'<h[23][^>]*>.*?</h[23]>', _ah, re.S)}
+        _ueber = {re.sub(r'^\d+\.\s*', '', t) for t in _ueber} | _ueber
+        # "Abschnitten" (Dativ Plural) traf das Muster nicht: Von fuenf Namensverweisen im
+        # Artikel waren nur zwei erfasst, und die drei im Fazit blieben ungeprueft -- eine
+        # umbenannte Ueberschrift liess sie still auf nichts zeigen.
+        # Anfuehrungszeichen: deutsche, englische, gerade und die franzoesischen Guillemets.
+        _AUF = r'„|&bdquo;|"|“|»|&raquo;'
+        _ZU = r'"|&ldquo;|“|”|«|&laquo;'
+        # Aufzaehlungen mitlesen: Das Fazit nennt "Abschnitten" einmal und dann DREI
+        # Namen in Folge. Die erste Fassung verlangte das Wort direkt vor jedem
+        # Anfuehrungszeichen und erfasste deshalb nur den ersten -- drei von fuenf
+        # Verweisen blieben ungeprueft. Gelesen wird deshalb der Satz nach dem Wort und
+        # jeder zitierte Name darin.
+        _KLAMMER = re.compile(r'(?:' + _AUF + r')([^"„“”»«]{6,70})(?:' + _ZU + r')')
+        _refs = []
+        _kt_art = _klartext(_ah)
+        for _am in re.finditer(r'Abschnitt(?:e|en|es|s)?\s', _kt_art):
+            _satz = _kt_art[_am.end():]
+            _ende = min((x for x in (_satz.find('. '), _satz.find('\u00b6')) if x >= 0),
+                        default=len(_satz))
+            _refs += [m.group(1) for m in _KLAMMER.finditer(_satz[:_ende + 1])]
+        for _ref in _refs:
+            _ref = re.sub(r'\s+', ' ', _ref).strip().rstrip('.,;:')
+            # Der Verweis muss eine Ueberschrift GANZ nennen. Die erste Fassung hat
+            # beidseitig auf Teilstrings geprueft, womit `Abschnitt "Controller"` und
+            # `Abschnitt "Fazit zur Spieleunterstuetzung unter Android"` gruen blieben.
+            if _ref not in _ueber:
+                err(f'§A1: {_ART} verweist auf einen Abschnitt "{_ref[:50]}", den es so '
+                    f'nicht gibt — Ueberschrift umbenannt oder Verweis veraltet (der '
+                    f'Verweis muss die Ueberschrift wortgleich nennen)')
+# ENDE ABSCHNITTSZAHLEN
+# ---------------------------------------------------------------------------------------
+
+# Gegenprobe zur Annahme "kabelgebunden = kein Akku": Eine als kabelgebunden gefuehrte
+# Seite, die eine Akkulaufzeit nennt, wird gemeldet. Gesucht wird auf dem Text, in beiden
+# Reihenfolgen -- im Bestand stehen sechs Schreibweisen ("40 h Akku", "40h-Akku",
+# "12 Stunden Akkulaufzeit"), und drei Vorfassungen sind an der Markup-Form gescheitert.
+_EINH = r'(?:h|Std|Stdn|Stunde|Stunden|Min|Minute|Minuten)\.?\b'
+_AKKU = (r'(?:Akku|Batterie|Laufzeit)\w*[^<]{0,30}?\d+\s*[-–]?\s*' + _EINH
+         + r'|\d+\s*[-–]?\s*' + _EINH + r'[^<]{0,30}?(?:Akku|Batterie|Laufzeit)')
+for _p in _ctrl:
+    if not (_steck(_p) and not _funk(_p)):
+        continue
+    _d = (_p.get('detail') or '').strip('/')
+    # Beide Kandidatenpfade pruefen, nicht nur den ersten: Eine spaeter ergaenzte
+    # produkte/<slug>/-Seite waere sonst von der Gegenprobe ausgenommen.
+    _gefunden_eine = False
+    for _kand in (f'{_d}/index.html', f"produkte/{_p.get('slug')}/index.html"):
+        if not (_kand and os.path.exists(_kand)):
+            continue
+        _gefunden_eine = True
+        _ph = open(_kand, encoding='utf-8').read()
+        _pt = re.sub(r'</(?:p|li|td|th|h[1-6]|div)>|<br\s*/?>', ' ¶ ', _ph, flags=re.I)
+        _pt = html.unescape(re.sub(r'<[^>]*>', ' ', _pt))
+        # Nennt der SATZ ein fremdes Produkt, gehoert die Laufzeit dorthin. Ein Name, der
+        # im eigenen Namen steckt ("Kishi V3" in "Kishi V3 Pro"), ist kein Fremdname --
+        # sonst sind zwei der elf Seiten komplett blind.
+        _eigen = _pfeld(_p, 'name')
+        _fremd = [_pfeld(x, 'name') for x in items
+                  if x.get('slug') != _p.get('slug') and len(_pfeld(x, 'name')) > 3
+                  and _pfeld(x, 'name') not in _eigen]
+        for _m in re.finditer(_AKKU, _pt):
+            _l = max(_pt.rfind(c, 0, _m.start()) for c in '.!?¶') + 1
+            _r = min((x for x in (_pt.find(c, _m.end()) for c in '.!?¶') if x >= 0),
+                     default=len(_pt))
+            if any(fn in _pt[_l:_r] for fn in _fremd):
+                continue
+            err(f"§A1: {_p.get('slug')} gilt als kabelgebunden (kein BT/Bluetooth in "
+                f"Verb.), aber {_kand} nennt eine Akkulaufzeit. Entweder stimmt die "
+                f"Gleichsetzung \"kabelgebunden = ohne Akku\" nicht mehr (dann Zahl und "
+                f"Satz im Problem-Artikel pruefen), oder die Laufzeit gehoert zu einem "
+                f"Fremdprodukt (dann den Satz umformulieren)")
+            break
+        # kein break: der zweite Kandidatenpfad wird mitgeprueft
+    if not _gefunden_eine:
+        err(f"§A1: zu {_p.get('slug')} (kabelgebunden) ist keine Produktseite gefunden "
+            f"worden — die Akku-Gegenprobe laeuft fuer dieses Produkt nicht")
+
+# Genannte Lesezeit gegen den tatsaechlichen Textumfang. Die Zahl stand an drei Orten
+# getippt (Byline des Artikels, Karte auf /blog/, Karte auf der Startseite) und war am
+# 01.10.2026 auf 17 von 19 Seiten zu hoch -- einmal 8 Minuten fuer einen 5-Minuten-Text.
+# Ein Artikel hatte drei verschiedene Werte: 3 auf der Startseite, 5 in der eigenen
+# Byline, 4 in Wahrheit. Jede Textaenderung macht eine getippte Lesezeit falscher, und
+# B5 hat diesen Artikel gerade von 803 auf 1232 Woerter verlaengert (Regel aus
+# lesezeit.py). Die erste Fassung dieses Kommentars nannte "272 Woerter" aus einer
+# ad-hoc-Zaehlung mit anderem Wortmuster -- dieselbe Sorte unbelegte Zahl, gegen die
+# das Gate darunter gebaut ist.
+# Die Rechenregel kommt aus lesezeit.py, geteilt mit gen_preisfrage.py und
+# sync_lesezeit.py: zwei eigene Formulierungen derselben Regel waeren der Fehler, der
+# hier schon dreimal aufgetreten ist.
+#
+# Abdeckungs-Anker (Pruefer-Befund 01.10.): Die erste Fassung band beide Pruefungen an
+# genau ein Markup. Der Pruefer hat sechs Umschreibungen gezeigt, die gruen blieben,
+# obwohl die Zahl nachweisbar falsch war: `class="article-byline compact"`,
+# `&middot;` statt `·`, "Lesezeit: 9 Min.", "ca. 9 Min. Lesezeit", gedrehte
+# Attributreihenfolge in der Karte und eine umbenannte Byline-Klasse. Die letzte ist die
+# schwerste, weil sie Byline-Pruefung, Karten-Pruefung UND das Nachziehen in
+# sync_lesezeit.py gleichzeitig abschaltet; beide Dateien benutzen dieselben Muster, die
+# deshalb seit dem 01.10. in lesezeit.py stehen. In der Nachpruefung kamen zwei weitere
+# Loecher dazu: eine Lesezeit in einem title/alt/aria-Attribut, und 20 Zeichen Markup
+# zwischen Zahl und Wort. Beide hatten dieselbe Ursache -- das Fenster wurde aus dem
+# rohen HTML geschnitten und erst DANACH entTagt.
+# Geprueft wird auf dem Text ohne Tags, mit Rueckabbildung auf die Originalposition, und
+# verglichen wird die STELLE, nicht die Anzahl: Jedes "Lesezeit" neben einer Zahl oder
+# Zeiteinheit muss genau dort stehen, wo eines der beiden Muster seine Zahl liest. Heute
+# 41 von 41 (19 Bylines, 19 Karten auf /blog/, 3 auf der Startseite). Attribute,
+# Kommentare, CDATA und Skript-Bloecke werden getrennt geprueft, weil sie im Text ohne
+# Tags nicht vorkommen.
+# Bewusste Einschraenkung: Eine Lesezeit im Fliesstext wird rot, auch wenn sie stimmt.
+# Sie gehoert in Byline oder Karte, weil nur dort jemand nachrechnet.
+# Beide Muster kommen aus lesezeit.py, geteilt mit sync_lesezeit.py.
+_BYLINE, _KARTE_LZ = _lz_BYLINE, _lz_KARTE
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    if 'Lesezeit' not in _h:
+        continue
+    # Eine Lesezeit gehoert in den sichtbaren Text. Steht sie woanders, sieht sie kein
+    # Leser, behauptet aber trotzdem etwas.
+    # Erste Fassung: vier Attributnamen aufgezaehlt (title/alt/aria-label/content) --
+    # data-hinweis, placeholder und summary blieben gruen. Zweite Fassung: alle Namen,
+    # aber nur doppelte Anfuehrungszeichen -- `title='9 Min. Lesezeit'` blieb gruen. Das
+    # war zweimal dieselbe Form: eine Liste. Jetzt gilt es fuer jede Notation, und die
+    # Nicht-Text-Orte sind nach Art getrennt, weil die Meldung sonst die falsche Ursache
+    # nennt (ein JS-String wurde als Attribut gemeldet).
+    for _bl in re.finditer(r'<(script|style)\b[^>]*>((?:(?!</\1>).)*?Lesezeit(?:(?!</\1>).)*?)</\1>',
+                           _h, re.S):
+        err(f'§A1: {_f} nennt eine Lesezeit in einem <{_bl.group(1)}>-Block — dort '
+            f'rechnet sie kein Gate nach')
+    _ohne_bl = re.sub(r'<(script|style)\b[^>]*>.*?</\1>', ' ', _h, flags=re.S)
+    for _am in re.finditer(r'[\w-]+\s*=\s*(?:"([^"]*Lesezeit[^"]*)"'
+                           r"|'([^']*Lesezeit[^']*)'"
+                           r'|([^\s"\'>]*Lesezeit[^\s>]*))', _ohne_bl):
+        _wert = next(g for g in _am.groups() if g is not None)
+        err(f'§A1: {_f} nennt eine Lesezeit in einem Attribut ("{_wert[:60]}") — '
+            f'dort sieht sie kein Leser und kein Gate rechnet sie nach')
+    for _cm in re.finditer(r'<!(?:--((?:(?!-->).)*?Lesezeit(?:(?!-->).)*?)--'
+                           r'|\[CDATA\[((?:(?!\]\]>).)*?Lesezeit(?:(?!\]\]>).)*?)\]\])>',
+                           _h, re.S):
+        _wert = next(g for g in _cm.groups() if g is not None)
+        err(f'§A1: {_f} nennt eine Lesezeit in einem Kommentar- oder CDATA-Abschnitt '
+            f'("{_wert.strip()[:60]}") — sie altert dort ungeprueft')
+    # Abdeckung POSITIONSGENAU. Die zweite Fassung verglich nur die ANZAHL der Anspruechte
+    # mit der Anzahl der Treffer, und der Pruefer hat gezeigt, dass sich ein Fehlen und
+    # ein Zuviel aufheben: Eine Karte auf "neunundneunzig Min. Lesezeit" geaendert senkt
+    # beide Zahlen um eins, die Differenz bleibt null, und eine frei erfundene Lesezeit
+    # stand gruen auf der Seite. Jetzt wird jeder einzelne Anspruch danach gefragt, ob er
+    # in einem Treffer LIEGT.
+    # Der Text wird dafuer einmal ohne Tags gebildet, mit Rueckabbildung auf die
+    # Originalposition: Damit ist der Abstand zwischen Zahl und Wort der Abstand im Text
+    # (200 Zeichen Markup dazwischen schieben die Zahl nicht mehr weg), und die Position
+    # bleibt trotzdem pruefbar.
+    # Nebenbei wird mitgezaehlt, ob ein Zeichen INNERHALB eines Kastens liegt, in den die
+    # Lesezeit gehoert (article-meta in der Karte, article-byline im Artikel). Das steuert
+    # nur die URSACHE in der Meldung, nicht ihr Auftreten: Der Fehler wird so oder so
+    # gemeldet. Noetig, weil die Meldung bei Inline-Markup in einer Karte vorher
+    # "gehoert in eine Artikel-Karte" sagte, waehrend die Zahl genau dort stand -- eine
+    # richtige Meldung mit falscher Ursache schickt den Leser in die falsche Richtung,
+    # und das ist an diesem Projekt schon mehrfach passiert (sync_footer als Ursache der
+    # abgeschnittenen STATUS, "filtert nicht" bei nur anderem Parameternamen).
+    _VOID_LZ = {'img', 'br', 'hr', 'input', 'meta', 'link', 'source', 'area', 'col',
+                'embed', 'param', 'track', 'wbr', 'base'}
+    _klar, _pos, _inbox = [], [], []
+    _tiefe, _box_tiefe = 0, None
+    for _tm in re.finditer(r'<[^>]*>|[^<]+', _h):
+        _roh_t = _tm.group(0)
+        if _roh_t.startswith('<'):
+            _tn = re.match(r'</?\s*([a-zA-Z][\w-]*)', _roh_t)
+            if not _tn or _roh_t.startswith('<!'):
+                continue
+            _name = _tn.group(1).lower()
+            if _roh_t.startswith('</'):
+                if _box_tiefe is not None and _tiefe <= _box_tiefe:
+                    _box_tiefe = None
+                _tiefe = max(0, _tiefe - 1)
+            elif _name not in _VOID_LZ and not _roh_t.rstrip().endswith('/>'):
+                _tiefe += 1
+                if _box_tiefe is None and re.search(
+                        r'class="[^"]*\b(?:article-meta|article-byline)\b', _roh_t):
+                    _box_tiefe = _tiefe
+            continue
+        for _k, _ch in enumerate(_roh_t):
+            _klar.append(_ch)
+            _pos.append(_tm.start() + _k)
+            _inbox.append(_box_tiefe is not None)
+    _lz_text = ''.join(_klar)
+    # S-3 (vierte Pruefung): Die erste positionsgenaue Fassung nahm den ganzen
+    # Match-SPAN als abgedeckt. Weil `.*?` in BYLINE bis zum ersten "· Zahl Min.
+    # Lesezeit" laeuft, lag eine davor eingefuegte zweite, falsche Lesezeit INNERHALB
+    # des Spans und galt damit als geprueft -- "99 Min. Lesezeit, gerundet · 6 Min.
+    # Lesezeit" stand gruen und sichtbar auf der Seite. Dasselbe im Karten-Excerpt.
+    # Abgedeckt ist deshalb genau die Stelle, die das Muster als Zahl liest: Gruppe 3
+    # ist bei beiden Mustern "\s*Min. Lesezeit".
+    _erlaubt = {m.start(3) + m.group(3).index('Lesezeit')
+                for m in list(_BYLINE.finditer(_h)) + list(_KARTE_LZ.finditer(_h))}
+    for _m in re.finditer(r'Lesezeit', _lz_text):
+        # Anspruch liegt vor, wenn eine Zahl ODER eine Zeiteinheit in Reichweite steht.
+        # Nur auf Ziffern zu pruefen war ein Loch: "neunundneunzig Min. Lesezeit" in einer
+        # Karte blieb gruen, weil weder das Karten-Muster (\d+) noch der Anspruch-Test
+        # zugriffen. Eine ausgeschriebene Zahl behauptet dasselbe.
+        _fenster = _lz_text[max(0, _m.start() - 35):_m.end() + 35]
+        if not re.search(r'\d|\bMin\b|\bMinute', _fenster):
+            continue  # ohne Zahl und ohne Zeiteinheit ist es das Wort, keine Angabe
+        if _pos[_m.start()] not in _erlaubt:
+            _umfeld = re.sub(r'\s+', ' ', _lz_text[max(0, _m.start() - 40):_m.end() + 14])
+            if _inbox[_m.start()]:
+                # Die Zahl steht am richtigen Ort, nur liest das Muster sie nicht mehr.
+                _grund = ('Sie steht in einem article-meta- oder article-byline-Kasten, '
+                          'also am richtigen Ort — aber das Muster in scripts/lesezeit.py '
+                          'liest sie dort nicht mehr. Typische Ursache ist Markup zwischen '
+                          'Kasten und Zahl (<strong>6</strong>, ein Kommentar, ein span). '
+                          'Entweder das Markup entfernen oder BYLINE/KARTE in '
+                          'scripts/lesezeit.py mitziehen')
+            else:
+                _grund = ('Sie gehoert in die Byline oder in eine Artikel-Karte, denn nur '
+                          'dort rechnet sie jemand nach. Hier steht sie ausserhalb beider '
+                          'Kaesten, also im Fliesstext: dann verschieben')
+            err(f'§A1: {_f} nennt eine Lesezeit, die kein Gate-Muster erfasst '
+                f'("...{_umfeld.strip()}..."). {_grund} — eine getippte Lesezeit altert '
+                f'ungeprueft, genau das war der Zustand vor dem 01.10.')
+# Typografie der Anfuehrungszeichen im sichtbaren Text. Der achtzehnte Pruefbericht hat
+# zwei Stellen gefunden, die mit „ oeffnen und mit geradem " schliessen -- beide in Text,
+# den dieses Paket neu geschrieben hat, beide sichtbar auf der Seite. Grün blieben sie,
+# weil das Namensverweis-Gate das gerade Zeichen absichtlich zulaesst (es soll den Verweis
+# FINDEN, auch bei schiefer Typografie). Die Typografie braucht also ihre eigene Pruefung.
+# Repoweit gemessen: 2 Treffer, beide aus diesem Paket. Der Bestand ist sauber, das Gate
+# kann deshalb scharf stehen.
+# Metas und JSON-LD gehoeren dazu: Runde 19 hat gezeigt, dass `„Klick&quot;` in einer
+# Meta-Description gruen blieb, waehrend dieselbe Form im sichtbaren Text rot wird. Die
+# Description ist ausgelieferter Text wie jeder andere. Bestand vorher gemessen: 0 Treffer,
+# das Gate kann also sofort beidseitig scharf stehen.
+for _f in pages:
+    for _qm in re.finditer(r'„[^„“"»«]{1,90}"',
+                           _text_und_metas(open(_f, encoding='utf-8').read())):
+        err(f'§: {_f} schliesst ein mit „ geoeffnetes Zitat mit geradem " statt mit “ '
+            f'("{_qm.group(0)[:60]}")')
+
+_lz_soll = {}
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _soll = _lesezeit_minuten(_h)
+    _pfad = '/' + os.path.dirname(_f.replace(os.sep, '/')) + '/'
+    # finditer, nicht search: Die zweite Fassung prueefte nur die ERSTE Byline je Seite,
+    # eine zweite mit "99 Min. Lesezeit" blieb gruen.
+    for _bm in _BYLINE.finditer(_h):
+        _lz_soll[_pfad] = _soll
+        if _soll is None:
+            # Ohne <main> liefert lesezeit.minuten() None. Die erste Fassung uebersprang
+            # das still (`if _soll is not None`), womit eine Seite ohne <main> in Byline
+            # UND Karte frei erfundene Zahlen tragen durfte, beide gruen.
+            err(f'§A1: {_f} nennt eine Lesezeit, hat aber kein <main>-Element — damit '
+                f'laesst sich kein Artikeltext bestimmen und die Zahl ist ungeprueft')
+            continue
+        if int(_bm.group(2)) != _soll:
+            err(f'§A1: {_f} nennt {_bm.group(2)} Min. Lesezeit, der Artikeltext ergibt '
+                f'{_soll} (scripts/sync_lesezeit.py zieht nach)')
+# Jede Karte muss dasselbe sagen wie die Seite, auf die sie zeigt. Ein unbekanntes Ziel
+# ist dabei selbst ein Fehler: Die zweite Fassung uebersprang es stumm (`_soll is None`),
+# womit eine Karte auf einen Artikel ohne Byline frei erfinden durfte, was sie wollte --
+# und `sync_lesezeit.py` meldete dazu "0 unerfasst", weil mit der Zahl auch das Wort
+# verschwand.
+for _f in pages:
+    for _m in _KARTE_LZ.finditer(open(_f, encoding='utf-8').read()):
+        if _m.group(1) not in _lz_soll:
+            err(f'§A1: {_f} nennt fuer {_m.group(1)} eine Lesezeit, aber dort findet '
+                f'das Byline-Muster keine — entweder fehlt sie, oder ihr Markup bzw. '
+                f'ihre Formulierung wurde geaendert (dann steht sie da, ist aber '
+                f'ungeprueft). Wiederherstellen oder die Angabe aus der Karte nehmen')
+            continue
+        _soll = _lz_soll[_m.group(1)]
+        if _soll is None:
+            continue  # bereits bei der Byline gemeldet
+        if int(_m.group(2)) != _soll:
+            err(f'§A1: {_f} nennt fuer {_m.group(1)} {_m.group(2)} Min. Lesezeit, '
+                f'die Seite selbst ergibt {_soll}')
+
+# Anwesenheits-Anker (M-2/G-2 der vierten Pruefung). Der ganze Block haengt am Wort
+# "Lesezeit": Wurde es in Byline UND Karte konsistent zu "Lesedauer" umbenannt oder die
+# Angabe ganz entfernt, blieb alles gruen, und sync_lesezeit.py meldete "18 Artikel,
+# 0 unerfasst", also wieder seinen Blindfleck als Erfolg. Ein Gate, das nur prueft was da
+# ist, merkt nicht, dass etwas fehlt. Jeder Blog-Artikel traegt deshalb genau eine
+# gegatete Lesezeit in seiner Byline.
+# Redirect-Stubs sind keine Artikel: Sie tragen noindex plus meta-refresh, haben kein
+# <main> und keine Byline. Die erste Fassung hielt jede Seite unter blog/ fuer einen
+# Artikel, womit ein Stub dort zwei Fehlalarme ausgeloest haette (keine Byline, keine
+# Karte). Im Repo liegen 16 solche Stubs, bisher keiner unter blog/.
+def _ist_stub(_pfad):
+    _t = open(_pfad, encoding='utf-8').read()
+    return 'http-equiv="refresh"' in _t
+_blog_artikel = sorted(f for f in pages
+                       if re.match(r'blog/[^/]+/index\.html$', f.replace(os.sep, '/'))
+                       and not _ist_stub(f))
+for _f in _blog_artikel:
+    _n = len(_BYLINE.findall(open(_f, encoding='utf-8').read()))
+    if _n != 1:
+        err(f'§A1: {_f} hat {_n} gegatete Lesezeit-Angaben in der Byline, erwartet ist '
+            f'genau eine — entfernt, umformuliert oder doppelt gesetzt')
+# Dasselbe fuer die 22 Artikel-Karten. Zwei Fassungen vorher: Die erste deckte nur die
+# 19 Bylines, also die Haelfte der Stellen. Die zweite haengte an einem Regex ueber
+# `<a href=... class="...article-card...">` und war damit an eine Schreibweise gebunden --
+# `class` vor `href`, einfache Anfuehrungszeichen, ein Zeilenumbruch nach `<a` oder die
+# Karte als `<div>` mit innerem `<a>` schalteten sie ab, waehrend eine falsche Lesezeit
+# sichtbar auf der Seite stand. Genau die Lehre, die dieser Anker durchsetzen soll, an ihm
+# selbst vorbeigegangen.
+# Jetzt wird GEPARST (lesezeit.karten, html.parser): Attribute als Attribute, Tiefe
+# gezaehlt. Geprueft wird zweierlei -- jede geparste Karte traegt eine Lesezeit, UND das
+# Muster, mit dem sync_lesezeit.py sie pflegt, findet sie auch. Letzteres ist der Punkt,
+# an dem eine Umformatierung auffaellt, bevor sie die Pflege still beendet.
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _geparst = _lz_karten(_h)
+    for _href, _text in _geparst:
+        if not _href or not _href.startswith('/blog/'):
+            continue
+        if not re.search(r'\d+\s*Min\. Lesezeit', _text):
+            err(f'§A1: die Artikel-Karte fuer {_href} in {_f} traegt keine Lesezeit — '
+                f'Label entfernt oder umformuliert, damit zeigt die Liste eine Zahl, '
+                f'die niemand nachrechnet, oder gar keine')
+    _blog_karten = [k for k in _geparst if (k[0] or '').startswith('/blog/')]
+    _gepflegt = len(_KARTE_LZ.findall(_h))
+    if len(_blog_karten) != _gepflegt:
+        err(f'§A1: {_f} hat {len(_blog_karten)} Artikel-Karten, aber '
+            f'scripts/sync_lesezeit.py findet nur {_gepflegt} davon — das Markup wurde '
+            f'so umformatiert, dass der Sync die Lesezeit dort nicht mehr nachzieht')
+
+# Soll-Anzahl der Karten (G-4): Eine ganze Karte konnte aus /blog/ verschwinden, ohne dass
+# etwas rot wurde. Jeder Blog-Artikel gehoert genau einmal in die Blog-Liste.
+if 'blog/index.html' in pages:
+    _bh = open('blog/index.html', encoding='utf-8').read()
+    _gelistet = [k[0] for k in _lz_karten(_bh) if (k[0] or '').startswith('/blog/')]
+    for _f in _blog_artikel:
+        _pf = '/' + os.path.dirname(_f.replace(os.sep, '/')) + '/'
+        if _gelistet.count(_pf) != 1:
+            err(f'§A1: {_pf} steht {_gelistet.count(_pf)}x als Karte auf /blog/, '
+                f'erwartet ist genau einmal')
 
 # Doppelte Schema-Bloecke (§A4). Ein nicht-idempotenter Generator haengt bei jedem Lauf
 # an: am 30.09. standen nach einem zweiten `gen_hubs.py`-Lauf ItemList, BreadcrumbList UND
@@ -1300,7 +3282,8 @@ for _f in pages:
 # falsche Produkt.
 for _p in items:
     for _feld, _wert in [('img', _p.get('img'))] + \
-                        [('gallery', g) for g in (_p.get('gallery') or [])]:
+                        [('gallery', g) for g in _pliste(_p, 'gallery')]:
+        _wert = str(_wert or '')   # img als Zahl: .startswith mit AttributeError
         if _wert and not _wert.startswith('https://m.media-amazon.com/'):
             err(f"§A5: {_p['slug']} fuehrt {_feld} \"{_wert}\" — Produktbilder muessen "
                 f"aus dem Amazon-Katalog der eigenen ASIN stammen, lokale Dateien sind "
@@ -1314,7 +3297,7 @@ for _f in pages:
         _slug = _m.group(1) or _m.group(4)
         _bild = _m.group(2) or _m.group(3)
         _p = next((x for x in items if x.get('slug') == _slug), None)
-        if _p and _bild and _bild not in [_p.get('img')] + (_p.get('gallery') or []):
+        if _p and _bild and _bild not in [_pfeld(_p, 'img')] + _pliste(_p, 'gallery'):
             err(f"§A1: {_f} data-img fuer {_slug} zeigt auf ein Bild, das nicht zu diesem "
                 f"Produkt gehoert")
 
@@ -1456,8 +3439,9 @@ _WARNUNG = re.compile(r'unter unserer Empfehlungsschwelle|keine (?:uneingeschrä
 _ABRATEN = re.compile(r'keine (?:uneingeschränkte )?Kaufempfehlung|sprechen keine Kaufempfehlung aus'
                       r'|raten wir ab|zur Notlösung|unter unserer Empfehlungsschwelle')
 for _p in items:
-    _bw = next((v for k, v in _p.get('specs', []) if k.startswith('Bew')), None)
-    _m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', _bw or '')
+    _bw = _spec_wie(_p, 'Bew', None)
+    # str(): ein Nicht-String-Wert liess re.match hier mit TypeError abbrechen
+    _m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', str(_bw or ''))
     _d = _p.get('detail') or ''
     if not _m or not _d:
         continue
@@ -1569,51 +3553,82 @@ for _s, _hinweis, _grund in VERBOTEN:
 # stumm gekippt, obwohl jede einzelne Zahl im Text belegt war. Diese Invariante
 # rechnet sie bei jedem Lauf neu.
 def _bew(p):
-    for k, v in p.get('specs', []):
-        if k.startswith('Bew'):
-            m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', v)
-            if m:
-                return float(m.group(1).replace(',', '.')), int(m.group(2).replace('.', ''))
-    return None, None
+    # Haertung: Ein Nicht-String-Wert oder ein fehlendes Bew.-Feld liess die Aufrufer mit
+    # TypeError bzw. TypeError beim Vergleich abbrechen, statt zu melden. Rueckgabe ist
+    # jetzt immer ein Paar; (0.0, 0) heisst "keine lesbare Bewertung", und die
+    # Behauptungen darueber werden dann vom Gate als gekippt gemeldet.
+    if p is None:
+        return (0.0, 0)
+    m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', _spec_wie(p, 'Bew'))
+    if m:
+        return float(m.group(1).replace(',', '.')), int(m.group(2).replace('.', ''))
+    return 0.0, 0
 
 def _preis(p):
-    m = re.search(r'(\d+)', p.get('price', ''))
-    return int(m.group(1)) if m else None
+    # Delegiert, damit es nicht zwei Preisregeln gibt. Der Unterschied bleibt bewusst:
+    # hier ist 0 der Ersatzwert, weil die Aufrufer sortieren und vergleichen.
+    return _preis_zahl(p) or 0
 
 _ctrl = [p for p in items if p.get('type') == 'controller' and _bew(p)[0]]
 _zub = [p for p in items if p.get('type') != 'controller' and _bew(p)[1]]
-_kuehler = [p for p in items if 'ühler' in p.get('name', '') or 'Cooler' in p.get('name', '')]
+_kuehler = [p for p in items if 'ühler' in _pfeld(p, 'name') or 'Cooler' in _pfeld(p, 'name')]
 _gs = [p for p in items if p.get('brand') == 'GameSir']
 _razer = [p for p in items if p.get('brand') == 'Razer' and _bew(p)[0]]
+
+def _produkt(_slug):
+    """products.json-Eintrag zu einem Slug, oder None mit Meldung.
+
+    `next(p for p in items if p['slug'] == ...)` ohne Default warf StopIteration, sobald
+    ein Produkt umbenannt oder entfernt wurde: alles danach lief nicht mehr, und keine
+    Meldung nannte die Ursache.
+    """
+    _t = next((p for p in items if p.get('slug') == _slug), None)
+    if _t is None:
+        err(f'§A1: products.json kennt den Slug "{_slug}" nicht mehr — eine Aussage '
+            f'darueber laesst sich nicht pruefen (umbenannt oder entfernt?)')
+    return _t
+
+
+def _nicht_leer(_menge, _was):
+    """Meldet statt mit ValueError abzubrechen, wenn eine Menge leer ist.
+
+    Ein neuer Controller ohne `detail`-Feld liess `max()` mit "iterable argument is empty"
+    sterben, womit alles danach nicht mehr lief und keine Meldung die Ursache nannte --
+    dieselbe Klasse wie die Nicht-String-Werte, nur eine Zeile weiter.
+    """
+    if not _menge:
+        err(f'§A1: die Menge "{_was}" ist leer, eine Aussage darueber laesst sich nicht '
+            f'pruefen — products.json geaendert (fehlendes Feld, anderer type)?')
+        return False
+    return True
+
 
 def _behauptung(bedingung, text):
     if not bedingung:
         err(f"SUPERLATIV gekippt (§A6): {text}")
 
 # Die Aussagen stehen so in den Claims und auf den Marken-Seiten.
-_behauptung(max(_razer, key=lambda p: _bew(p)[0])['slug'] == 'razer-kishi-v3',
+_behauptung(_nicht_leer(_razer, "_razer") and max(_razer, key=lambda p: _bew(p)[0])['slug'] == 'razer-kishi-v3',
             '"der bestbewertete Razer" gilt nicht mehr fuer den Kishi V3')
-_behauptung(max(_zub, key=lambda p: _bew(p)[1])['slug'] == 'risoka-finger-sleeves',
+_behauptung(_nicht_leer(_zub, "_zub") and max(_zub, key=lambda p: _bew(p)[1])['slug'] == 'risoka-finger-sleeves',
             '"unser meistbewertetes Zubehoer" gilt nicht mehr fuer die RISOKA Sleeves')
-_behauptung(min(_ctrl, key=lambda p: _bew(p)[0])['slug'] == 'turtle-beach-atom',
+_behauptung(_nicht_leer(_ctrl, "_ctrl") and min(_ctrl, key=lambda p: _bew(p)[0])['slug'] == 'turtle-beach-atom',
             '"am schwaechsten bewerteter Controller" gilt nicht mehr fuer den Turtle Beach Atom')
-_behauptung(min(_kuehler, key=lambda p: _bew(p)[0])['slug'] == 'razer-phone-cooler',
+_behauptung(_nicht_leer(_kuehler, "_kuehler") and min(_kuehler, key=lambda p: _bew(p)[0])['slug'] == 'razer-phone-cooler',
             '"schwaechste Bewertung im Kuehler-Segment" gilt nicht mehr fuer den Razer Phone Cooler')
-_dual = [p for p in _gs if 'BT' in dict(p['specs']).get('Verb.', '') and 'USB' in dict(p['specs']).get('Verb.', '')]
+_dual = [p for p in _gs if 'BT' in _spec(p, 'Verb.') and 'USB' in _spec(p, 'Verb.')]
 _behauptung(len(_dual) == 1 and _dual[0]['slug'] == 'gamesir-g8-plus',
             '"der einzige GameSir mit BT und USB-C" gilt nicht mehr fuer den G8 Plus')
-_tab = {p['slug'] for p in items if 'tablet' in (p.get('worksOn') or [])}
+_tab = {p['slug'] for p in items if 'tablet' in _pliste(p, 'worksOn')}
 _behauptung('gamesir-g8-plus' in _tab and 'razer-kishi-v3' not in _tab,
             'die Tablet-Zuordnung im Razer- oder GameSir-Text passt nicht mehr zu worksOn')
 # Titel und Description von blog/guenstige-handy-controller nennen den Einstiegspreis
 # fuer Hall-Effect-Sticks. Er stand dort bei 20 EUR, als der Ultimate 2C noch so viel
 # kostete, und wurde beim Abgleich stumm falsch.
-_hall = [p for p in items
-         if 'Hall' in dict(p.get('specs') or {}).get('Sticks', '')
-         and re.search(r'(\d+)', (p.get('price') or ''))]
+_hall = [p for p in items if 'Hall' in _spec(p, 'Sticks') and _preis_zahl(p) is not None]
 if _hall:
-    _guenstigster = min(_hall, key=lambda p: int(re.search(r'(\d+)', p['price'].replace('.', '')).group(1)))
-    _preis_hall = re.search(r'(\d+)', _guenstigster['price'].replace('.', '')).group(1)
+    _guenstigster = min(_hall, key=_preis_zahl)
+    _preis_hall = str(_preis_zahl(_guenstigster))
     # REPOWEIT auf ABWESENHEIT des falschen Werts pruefen, nicht auf Anwesenheit des
     # richtigen an EINER Stelle. Am 30.09. stand "Hall-Effect ab 20 Euro" auf vier
     # weiteren Seiten, eine davon im FAQPage-Schema, waehrend die gebundene Seite
@@ -1650,9 +3665,14 @@ if _hall:
 _p_v3 = next((p for p in items if p['slug'] == 'razer-kishi-v3'), None)
 _p_v3p = next((p for p in items if p['slug'] == 'razer-kishi-v3-pro'), None)
 if _p_v3 and _p_v3p:
-    _a = int(re.search(r'(\d+)', _p_v3['price'].replace('.', '')).group(1))
-    _b = int(re.search(r'(\d+)', _p_v3p['price'].replace('.', '')).group(1))
-    _prozent = round((_b - _a) / _a * 100)
+    _ma, _mb = _preis_zahl(_p_v3), _preis_zahl(_p_v3p)
+    if _ma is None or _mb is None:
+        # Ohne lesbaren Preis liess .group(1) hier mit AttributeError abbrechen statt
+        # zu melden -- die letzte der Stellen aus dem Robustheits-Befund.
+        err('§A1: Preis von razer-kishi-v3 oder -v3-pro ist nicht lesbar, die '
+            'Aufpreis-Aussage laesst sich nicht pruefen')
+    _a, _b = _ma or 0, _mb or 0
+    _prozent = round((_b - _a) / _a * 100) if _a else 0
     _rf = 'marken/razer/index.html'
     if os.path.exists(_rf):
         _rh = open(_rf, encoding='utf-8').read()
@@ -1661,8 +3681,8 @@ if _p_v3 and _p_v3p:
                 err(f"SUPERLATIV gekippt (§A6): {_rf} nennt {_pm.group(1)} Prozent Aufpreis "
                     f"V3 -> V3 Pro, aus products.json sind es {_prozent} Prozent")
 
-_v3, _v3p = next(p for p in items if p['slug'] == 'razer-kishi-v3'), next(p for p in items if p['slug'] == 'razer-kishi-v3-pro')
-_behauptung(_bew(_v3)[0] >= _bew(_v3p)[0],
+_v3, _v3p = _produkt('razer-kishi-v3'), _produkt('razer-kishi-v3-pro')
+_behauptung(_v3 is not None and _v3p is not None and _bew(_v3)[0] >= _bew(_v3p)[0],
             '"der Mehrpreis kostet Zufriedenheit" gilt nicht mehr: der V3 Pro liegt jetzt vorn')
 
 # ---------- Ergebnis ----------

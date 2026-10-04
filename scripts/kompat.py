@@ -24,10 +24,14 @@ USB-C-Controller passt daher nicht an iPhone 14 und aelter, ein Lightning-Contro
 nicht an iPhone 15 und neuer. Dieselbe Herleitung steht seit Juli in den FAQ mehrerer
 Review-Seiten.
 """
+import os
+import sys
 
-
-def _spec(p, k):
-    return next((v for kk, v in p.get('specs', []) or [] if kk == k), None)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Derselbe Leser wie in verify.py. Die eigene Fassung hier hat verify.py am 02.10. mit
+# ValueError abbrechen lassen, sobald `specs` ein Objekt statt einer Liste war: Dieses
+# Modul ist Teil des Gates, weil verify.py es importiert.
+from produktdaten import spec as _spec, liste as _liste   # noqa: E402
 
 
 def kompat(p):
@@ -38,6 +42,9 @@ def kompat(p):
     belegen koennen. Lieber kein Block als ein beliebiger.
     """
     verb = _spec(p, 'Verb.') or ''
+    # str(): Ein Nicht-String-Wert (Zahl, None, Liste) liess `in` hier mit TypeError
+    # statt einer Meldung abbrechen.
+    verb = str(verb or '')
     hat_bt = 'BT' in verb or 'Bluetooth' in verb
     lightning = 'Lightning' in verb
     usb_nur = ('USB' in verb) and not hat_bt
@@ -49,7 +56,10 @@ def kompat(p):
         return ([mass], [],
                 'Die Angabe ist die Gehäusedicke, gemessen mit aufgesetzter Hülle.')
 
-    w = p.get('worksOn') or []
+    # _liste(): worksOn als Zahl oder bool liess den `in`-Test hier mit TypeError
+    # abbrechen, und weil verify.py dieses Modul AUFRUFT, starb der ganze Lauf.
+    # Die letzte der 13 Abbruchstellen aus den Runden 17 und 18.
+    w = _liste(p, 'worksOn')
     ja, nein, hinweis = [], [], None
 
     if 'android' in w:

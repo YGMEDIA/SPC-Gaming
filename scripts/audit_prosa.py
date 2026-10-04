@@ -71,8 +71,15 @@ KURZ = {
 }
 ALIAS = dict(KURZ)
 for p in items:
-    ALIAS.setdefault(p['name'], p['slug'])
-    ALIAS.setdefault(f"{p['brand']} {p['name']}", p['slug'])
+    # Leere oder zu kurze Namen bleiben draussen. Ein einziges Produkt mit `"name": ""`
+    # hat diesen Lauf nicht abbrechen, sondern HAENGEN lassen: re.escape('') trifft an
+    # jeder Zeichenposition jeder Seite, und der Belegt-Scan darunter wird dadurch
+    # quadratisch. verify.py rief dieses Script ohne timeout auf, erkannte das leere Feld
+    # korrekt als Fehler -- und gab die Meldung nie aus, weil der Lauf nicht endete.
+    # Das ist eine Stufe schlimmer als ein Abbruch: kein Exit-Code, kein Befund, nichts.
+    for _n in (str(p.get('name') or ''), f"{p.get('brand') or ''} {p.get('name') or ''}"):
+        if len(_n.strip()) > 2:
+            ALIAS.setdefault(_n.strip(), p['slug'])
 # "Backbone One" ist mehrdeutig (2. Gen und PlayStation Edition) und bleibt deshalb draußen:
 # beide Varianten tragen unterschiedliche Preise, eine Zuordnung über den Kurznamen wäre geraten.
 for mehrdeutig in ('Backbone One', 'Bluetooth Controller (weiß)'):
