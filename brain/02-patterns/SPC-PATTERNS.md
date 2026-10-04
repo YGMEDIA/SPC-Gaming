@@ -277,7 +277,7 @@
 7. **Eine Zahl ohne genannte Population ist keine.** "29 von 42 Produktseiten ohne Plattform-Hub-Link" mischte alle Produkte (inklusive Zubehör, das per Konstruktion keinen haben kann) mit nur drei der fünf Hubs. Richtig und nachrechenbar: **13 der 28 Controller**. Dieselbe Prüfung gilt für jede Vorher-Nachher-Zahl: Wer sie nachrechnen will, muss die Menge aus dem Satz kennen.
 
 **Grenze, ausdrücklich:** Die Regel schließt die TAXONOMISCHE Richtung. Die thematische — welcher Blog-Artikel welchen anderen sinnvoll verlinkt — ist redaktionell und nicht ableitbar. Blog-Artikel bleiben mit Median 3 eingehenden Inhaltslinks der schwächste Seitentyp (Reviews: 18), und das sind die Seiten, über die der Traffic kommt.
-**Vorlage:** `scripts/hublinks.py` (Regel) · `scripts/sync_hublinks.py` (Nachzug) · `gen_pages.py` (Generator-Seite) · `scripts/links_batterie.py` (20 Fälle, 13 rot, 7 grün) · Gates in `verify.py` · Gesetze: §A1, §B
+**Vorlage:** `scripts/hublinks.py` (Regel) · `scripts/sync_hublinks.py` (Nachzug) · `gen_pages.py` (Generator-Seite) · `scripts/links_batterie.py` (35 Fälle, 22 rot, 13 grün; enthält auch die B8-Fälle) · Gates in `verify.py` · Gesetze: §A1, §B
 
 ---
 

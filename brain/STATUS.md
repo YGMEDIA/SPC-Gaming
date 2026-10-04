@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-10-04 (B1 · B3 · B4 · B5 deployed; **B6 Bestenlisten** und **B7 interne Verlinkung** gebaut — vier Bestenlisten aus einem Generator, und der Rückweg von jeder Produktseite zu den Übersichten, die sie führen. Elf pruefbare Gates, alle exit 0. Pattern P-14 und P-15, Katalog v5.1)
+**Letzte Aktualisierung:** 2026-10-04 (B1 · B3 · B4 · B5 deployed; **B6 Bestenlisten**, **B7 interne Verlinkung** und **B8 Bewertungszahl** gebaut. Elf pruefbare Gates, alle exit 0. Pattern P-14 und P-15, Katalog v5.1)
 
 ---
 
@@ -279,6 +279,14 @@ Jetzt: `scripts/hublinks.py` traegt die Regel *"jede Produktseite verlinkt zurue
 **Neue Gates:** `sync_hublinks.py --check` (das elfte) · §B7 am ausgelieferten Stand (jede Produktseite verlinkt zurueck auf jede Uebersicht, die sie fuehrt — geprueft wird die EIGENSCHAFT, weil zwei verschiedene Wege den Block setzen) · **Waisen-Gate korrigiert: Links von noindex-Seiten und Weiterleitungen zaehlen nicht mehr.** Messvorschrift `scripts/links_batterie.py`: **20 Faelle**, 11 muessen rot werden, 9 muessen gruen bleiben.
 
 **Offen, redaktionell:** Blog-Artikel bleiben der am schwaechsten verlinkte Seitentyp (Median 3 eingehende Inhaltslinks gegen 18 bei Reviews) — und das sind die Seiten, ueber die laut GSC der Traffic kommt. B7 hat die TAXONOMISCHE Richtung geschlossen; welcher Artikel welchen anderen sinnvoll verlinkt, ist nicht ableitbar und gehoert in einen eigenen Durchgang.
+
+**Stand 04.10. (viertes Paket): B8 Bewertungszahl ist gebaut.** Der Kern war nicht "die Zahl fehlt", sondern **"die Zahl ist zur Fussnote gesetzt"**: Im Bewertungs-Badge von **29 generierten** Produktseiten stand der Wert in **26px/800**, die Anzahl in **11px im schwaechsten Farbton des Systems** (`--ink-dim`); die vier handgepflegten Review-Seiten hatten ein anderes Badge (28px in `--blue`) und nannten **gar keine Anzahl** — Faktor 2,4 in der Groesse, blassester Ton, formuliert als "Amazon (566 Bew.)". Cialdinis Punkt ist genau das: "4,8 aus 12 Bewertungen" und "4,4 aus 3.147" sind zwei verschiedene Aussagen, und wer die Anzahl klein setzt, zeigt die halbe. Jetzt: eigene Klasse `.rb-count`, 13px, `--ink-soft`, ausgeschrieben als "566 Bewertungen bei Amazon" (im Browser nachgemessen).
+
+**Zweiter Befund, gefunden beim Messen:** Auf den vier handgepflegten Review-Seiten zeigte das Badge einen **Redaktions-Score auf ZEHNER-Skala** (8,5 bis 9,3 von 10) — und daneben **fuenf volle Sterne**, auf allen vier. Fuer den Leser heisst ★★★★★ "perfekt". Die Glyphen werden jetzt aus dem Verhaeltnis gerechnet (`_sterne(wert, skala)`), und das Badge nennt dort zusaetzlich die Amazon-Bewertung mit ihrer Anzahl. Der Redaktions-Score selbst bleibt — er ist redaktioneller Inhalt.
+
+**Gate §B8** prueft am ausgelieferten Stand und ueber ALLE Badges einer Seite: (1) wo ein Badge steht, steht die Anzahl in `.rb-count`, (2) sie ist nicht als Inline-Fussnote gesetzt, (3) die Sterne-Glyphen passen zur genannten Skala. Batterie von 20 auf **35 Faelle** (22 rot, 13 gruen).
+
+**Fuer Yasin:** Der **Redaktions-Score** steht auf 4 der 13 Review-Seiten, auf einer Zehner-Skala, und nirgends ist erklaert, wie er zustande kommt — entweder auf alle Reviews ausweiten und die Methode nennen, oder streichen. Dazu: `Bew.` als Spec-Schluessel wird auf jeder Hub-Karte sichtbar ("Bew. 4,1 (996)"); ausgeschrieben waere es lesbarer, der Schluessel ist aber Datenkern.
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
 0. **Erledigt 01.10.:** Die Liste der ungegateten Flächen ist abgearbeitet (robots.txt, Sitemap-Rückrichtung, longtail.json als Struktur, platform/type gegen das JS-Vokabular, verwaiste Seiten über die Verlinkung, video gegen products.json, eigene 404-Seite). Offen bleiben nur noch Kleinigkeiten ohne Befundcharakter: `.nojekyll` und `CNAME` fallen aus der Tag-Dateiliste, `style.css` wird nur gehasht, kein Feed/RSS.

@@ -532,6 +532,123 @@ for _f in pages:
                     f"{_sl.group(1) if _sl else '?'} verlinkt \"Mehr erfahren\" auf die "
                     f"Seite selbst statt auf die Produktseite")
 
+# B8 (Cialdini): Sternzahl und Bewertungszahl sind ZWEI Signale. "4,8 aus 12 Bewertungen"
+# und "4,4 aus 3.147" sind sehr verschiedene Aussagen, und wer nur den Wert zeigt, zeigt
+# die halbe. Gemessen am 04.10. stand der Wert in 26px/800 und die Anzahl in 11px im
+# schwaechsten Farbton des Systems -- Faktor 2,4 in der Groesse, blassester Ton.
+#
+# ZWEITE FASSUNG. Die erste hatte in beide Richtungen Loecher, und beide Male an der
+# Stelle, an der sie die eigentliche Arbeit tun sollte:
+#   · `<div class="rb-count">([^<]*)</div>` verlangte reinen Text. Die Anzahl mit
+#     <strong> hervorzuheben -- also genau das, was B8 will -- machte den Lauf ROT.
+#     Umgekehrt genuegte IRGENDEINE Ziffer: "Platz 3" kam durch.
+#   · `if _st and _lab:` ohne `else` hat sich still abgeschaltet. Sechs Formen mit FUENF
+#     vollen Sternen neben "8,7 von 10" blieben gruen -- `.stars` als <span>, mit zweiter
+#     Klasse, mit einfachen Anfuehrungszeichen, ohne rb-label, "von 10 Punkten", "von
+#     zehn". Und die Glyphen-GESAMTzahl wurde nie geprueft: ★★★★☆☆☆ ging durch.
+# Das wiegt besonders, weil die vier Seiten mit Zehner-Skala die HANDGEPFLEGTEN sind --
+# dort gibt es keinen Generator-Abgleich, der einspringt.
+_B8_ZAHL = re.compile(r'\d')
+_B8_WORT = re.compile(r'Bewertung', re.I)
+
+
+def _b8_text(_s):
+    """Tag-freier Text eines Fragments, Entities aufgeloest."""
+    return html.unescape(re.sub(r'<[^>]+>', ' ', _s))
+
+
+def _b8_element(_bd, _klasse):
+    """Inhalt des ERSTEN Elements mit dieser Klasse, per Tag-Zaehlung statt Regex.
+
+    Tag-unabhaengig (div, span, p) und klassen-token-genau, damit "stars rb-stars"
+    genauso trifft wie "stars".
+    """
+    _m = re.search(r'<([a-z]+)[^>]*class\s*=\s*["\'][^"\']*\b'
+                   + _klasse + r'\b[^"\']*["\'][^>]*>', _bd, re.I)
+    if not _m:
+        return None
+    _tag = _m.group(1).lower()
+    _tiefe, _i = 1, _m.end()
+    for _t in re.finditer(rf'<{_tag}\b|</{_tag}\s*>', _bd[_i:], re.I):
+        _tiefe += 1 if not _t.group(0).startswith('</') else -1
+        if _tiefe == 0:
+            return _bd[_i:_i + _t.start()]
+    return _bd[_i:]
+
+
+for _f in pages:
+    _roh = open(_f, encoding='utf-8').read()
+    # Kommentare und nicht ausgelieferte Container raus: ein Badge in <template> oder in
+    # einem Kommentar steht nicht auf der Seite und darf nicht geprueft werden.
+    _h = re.sub(r'<!--.*?-->', ' ', _roh, flags=re.S)
+    _h = re.sub(r'<(template|noscript|script|style)\b.*?</\1>', ' ', _h, flags=re.S)
+    if 'rating-badge' not in _h:
+        continue
+    _badges = []
+    for _bm in re.finditer(r'<div[^>]*class\s*=\s*["\'][^"\']*\brating-badge\b', _h):
+        _tiefe, _ende = 0, None
+        for _m in re.finditer(r'<div\b|</div\s*>', _h[_bm.start():]):
+            _tiefe += 1 if not _m.group(0).startswith('</') else -1
+            if _tiefe == 0:
+                _ende = _bm.start() + _m.end()
+                break
+        if _ende is None:
+            err(f"§B8: {_f} hat ein rating-badge, dessen <div> nicht geschlossen wird")
+            continue
+        _badges.append(_h[_bm.start():_ende])
+    for _bd in _badges:
+        _num_r = _b8_element(_bd, 'rb-num')
+        if _num_r is None:
+            err(f"§B8: {_f} hat ein rating-badge ohne Wert (rb-num)")
+            continue
+        _num = _b8_text(_num_r).strip()
+        # 1 · Die Anzahl steht da, als ANZAHL -- Ziffer UND das Wort "Bewertung".
+        _cnt_r = _b8_element(_bd, 'rb-count')
+        if _cnt_r is None:
+            err(f"§B8: {_f} zeigt die Bewertung {_num}, aber kein `.rb-count` — Wert und "
+                f"Anzahl sind zwei Signale, und eines davon fehlt")
+            continue
+        _cnt = _b8_text(_cnt_r)
+        if not (_B8_ZAHL.search(_cnt) and _B8_WORT.search(_cnt)):
+            err(f"§B8: {_f} — `.rb-count` nennt keine Bewertungszahl "
+                f"(\"{' '.join(_cnt.split())[:60]}\"). Eine Ziffer allein genuegt nicht")
+        # 2 · Nicht als Fussnote gesetzt.
+        if re.search(r'<[a-z]+[^>]*\brb-count\b[^>]*style="[^"]*font-size', _bd) or \
+                re.search(r'<[a-z]+[^>]*style="[^"]*font-size:\s*(?:[0-9]|1[01])px[^"]*"'
+                          r'[^>]*>[^<]*\d[^<]*Bewertung', _bd, re.I):
+            err(f"§B8: {_f} setzt die Bewertungszahl als Inline-Fussnote statt in "
+                f"`.rb-count` mit eigener Regel")
+        # 3 · Glyphen gegen die GENANNTE Skala. Fehlt eine der beiden Angaben, ist das
+        #     ein Befund und kein Grund, die Pruefung zu ueberspringen.
+        _st_r = _b8_element(_bd, 'stars')
+        _lab_r = _b8_element(_bd, 'rb-label')
+        if _st_r is None:
+            err(f"§B8: {_f} zeigt {_num} ohne Sterne-Darstellung (`.stars`) — dann ist "
+                f"die Skalentreue nicht pruefbar")
+            continue
+        if _lab_r is None:
+            err(f"§B8: {_f} zeigt Sterne ohne Skalen-Angabe (`.rb-label`) — dann ist "
+                f"nicht pruefbar, worauf sich {_num} bezieht")
+            continue
+        _lz = re.search(r'(\d+)', _b8_text(_lab_r))
+        _nz = re.search(r'(\d+(?:[.,]\d+)?)', _num)
+        if not _lz or not _nz:
+            err(f"§B8: {_f} — Skala oder Wert nicht als Zahl lesbar "
+                f"(Wert \"{_num[:20]}\", Skala \"{_b8_text(_lab_r).strip()[:20]}\")")
+            continue
+        _glyph = _b8_text(_st_r)
+        _voll, _leer = _glyph.count('★'), _glyph.count('☆')
+        if _voll + _leer != 5:
+            err(f"§B8: {_f} zeigt {_voll + _leer} Sterne-Glyphen statt 5 "
+                f"({_voll}x voll, {_leer}x leer) — eine Fuenfer-Darstellung hat fuenf")
+            continue
+        _skala = int(_lz.group(1))
+        _wert = float(_nz.group(1).replace(',', '.'))
+        _soll = max(0, min(5, round(_wert / _skala * 5))) if _skala else 0
+        if _voll != _soll:
+            err(f"§B8: {_f} zeigt {_voll} volle Sterne fuer \"{_num} von {_skala}\" — "
+                f"auf einer Fuenfer-Darstellung sind das {_soll}")
+
 # B7: Der Rueckweg. Jede Produktseite verlinkt zurueck auf jede Uebersicht, die sie
 # fuehrt. Gemessen am 04.10., VOR dieser Massnahme: Alle vier Marken-Hubs verlinkten
 # lueckenlos ihre Produkte, und alle 14 Produkte dieser Marken verlinkten NICHT zurueck;

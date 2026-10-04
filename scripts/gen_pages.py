@@ -34,6 +34,19 @@ def voller_name(p):
     """
     return p['name'] if p['brand'].lower() in p['name'].lower() else f"{p['brand']} {p['name']}"
 
+def _sterne(wert, skala=5):
+    """Sterne-Glyphen, die zur genannten Skala passen.
+
+    Die alte Zeile war `'★' * round(wert) + '☆' * (5 - round(wert))` und galt still als
+    Fuenfer-Skala. Auf den vier handgepflegten Review-Seiten steht daneben ein
+    Redaktions-Score auf ZEHNER-Skala, und dort stand fuenfmal ★ -- fuer 8,5 von 10. Fuer
+    den Leser heisst fuenf von fuenf "perfekt". Die Glyphen werden deshalb aus dem
+    Verhaeltnis gerechnet, nie aus dem Rohwert.
+    """
+    voll = max(0, min(5, round(wert / skala * 5)))
+    return '★' * voll + '☆' * (5 - voll)
+
+
 def parse_rating(specs):
     for k, v in specs or []:
         if k == 'Bew.':
@@ -238,12 +251,27 @@ def build(prod, c):
         _u, _l = c['cta_link']
         cta_extra = f'<a class="btn btn-secondary" href="{esc(_u)}">{esc(_l)}</a>'
 
+    # Massnahme B8 (Cialdini): Sternzahl UND Bewertungszahl sind zwei Signale, nicht eins.
+    # Gemessen am 04.10.2026 stand der Wert in 26px/800 und die Anzahl in 11px im
+    # SCHWAECHSTEN Farbton des Systems (--ink-dim) -- Faktor 2,4 in der Groesse und der
+    # blasseste Ton, den es gibt. "4,8 Sterne" aus 12 Bewertungen und "4,4 Sterne" aus
+    # 3.147 sind sehr verschiedene Aussagen; wer die Anzahl zur Fussnote macht, zeigt nur
+    # Anzahl bekommt deshalb eine eigene Klasse `.rb-count` mit 13px statt 11px und
+    # --ink-soft statt --ink-dim, und sie wird ausgeschrieben ("566 Bewertungen",
+    # nicht "(566 Bew.)").
     rating_badge = ''
     if rating_val:
-        stars = '★' * round(float(rating_val)) + '☆' * (5 - round(float(rating_val)))
-        rating_badge = (f'<div class="rating-badge"><div><div class="rb-num">{rating_val.replace(".", ",")}</div>'
-                        f'<div class="rb-label">/ 5</div></div><div><div class="stars" aria-label="{rating_val} von 5 Sternen">{stars}</div>'
-                        f'<div style="font-size:11px;color:var(--ink-dim)">Amazon ({rating_cnt} Bew.)</div></div></div>')
+        stars = _sterne(float(rating_val))
+        _cnt_de = f'{int(rating_cnt):,}'.replace(',', '.') if rating_cnt else ''
+        # Singular: "1 Bewertungen" waere ein neuer Grammatikfehler. Heute ist die
+        # kleinste Anzahl 16, aber eine Regel, die bei 1 falsch wird, ist falsch.
+        _bew_wort = 'Bewertung' if str(rating_cnt) == '1' else 'Bewertungen'
+        rating_badge = (
+            f'<div class="rating-badge">'
+            f'<div><div class="rb-num">{rating_val.replace(".", ",")}</div>'
+            f'<div class="rb-label">von 5</div></div>'
+            f'<div><div class="stars" aria-label="{rating_val.replace(chr(46), chr(44))} von 5 Sternen">{stars}</div>'
+            f'<div class="rb-count">{_cnt_de} {_bew_wort} bei Amazon</div></div></div>')
 
     return f'''<!DOCTYPE html>
 <html lang="de">
@@ -296,6 +324,7 @@ def build(prod, c):
 .rating-badge{{display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);margin-top:14px;padding-top:14px}}
 .rb-num{{font-size:26px;font-weight:800;line-height:1}}
 .rb-label{{font-size:11px;color:var(--ink-dim)}}
+.rb-count{{font-size:13px;color:var(--ink-soft);line-height:1.4;margin-top:2px}}
 .stars{{color:#f5a623;font-size:15px;letter-spacing:2px}}
 .faq-list{{margin:8px 0}}
 .faq-item{{border-bottom:1px solid var(--line);padding:16px 0}}

@@ -45,6 +45,7 @@ HUB = 'marken/gamesir/index.html'
 PRODUKTE = 'produkte/index.html'
 HUBLINKS = 'scripts/hublinks.py'
 TABLETSEITE = 'controller/universal/gamesir-g8-plus-review/index.html'
+REDAKTION = 'controller/universal/gamesir-x5-lite-review/index.html'
 WAISE = 'produkte/ipega-pg-9023/index.html'
 
 
@@ -110,6 +111,64 @@ FAELLE = [
      lambda h: h.replace('</main>',
                          '<p>Altmodelle stehen bei uns auf noindex.</p></main>', 1),
      'GRUEN'),
+
+    # --- B8: Sternzahl und Bewertungszahl sind zwei Signale -----------------------------
+    ('Bewertungszahl aus dem Badge entfernt', DATENBLATT,
+     lambda h: re.sub(r'<div class="rb-count">.*?</div>', '', h, count=1, flags=re.S),
+     'ROT'),
+    # `.rb-count` BLEIBT, bekommt aber einen Inline-Fussnoten-Stil. Die erste Fassung
+    # ersetzte die Klasse und wurde deshalb ueber den Zweig "Anzahl fehlt" rot -- aus dem
+    # richtigen Grund, aber nicht an dem, was das Etikett behauptet.
+    ('Bewertungszahl als Inline-Fussnote gesetzt', DATENBLATT,
+     lambda h: h.replace('<div class="rb-count">',
+                         '<div class="rb-count" style="font-size:11px">', 1), 'ROT'),
+    ('fuenf volle Sterne neben "von 10"', REDAKTION,
+     lambda h: re.sub(r'(<div class="stars"[^>]*>)[^<]*(</div>)', r'\1★★★★★\2', h,
+                      count=1, flags=re.S), 'ROT'),
+    ('Sterne passen nicht zum Wert (Fuenfer-Skala)', DATENBLATT,
+     lambda h: re.sub(r'(<div class="stars"[^>]*>)[^<]*(</div>)', r'\1★★☆☆☆\2', h,
+                      count=1, flags=re.S), 'ROT'),
+    ('rb-label "von 10 Punkten" plus fuenf volle Sterne', REDAKTION,
+     lambda h: re.sub(r'(<div class="stars"[^>]*>)[^<]*(</div>)', r'\1★★★★★\2',
+                      h.replace('<div class="rb-label">von 10</div>',
+                                '<div class="rb-label">von 10 Punkten</div>', 1),
+                      count=1, flags=re.S), 'ROT'),
+    ('sieben Glyphen statt fuenf', REDAKTION,
+     lambda h: re.sub(r'(<div class="stars"[^>]*>)[^<]*(</div>)', r'\1★★★★☆☆☆\2', h,
+                      count=1, flags=re.S), 'ROT'),
+    ('.stars als <span> mit zweiter Klasse, fuenf voll', REDAKTION,
+     lambda h: re.sub(r'<div class="stars"([^>]*)>[^<]*</div>',
+                      r'<span class="stars rb-stars"\1>★★★★★</span>', h, count=1), 'ROT'),
+    ('rb-label geloescht', REDAKTION,
+     lambda h: re.sub(r'<div class="rb-label">[^<]*</div>', '', h, count=1), 'ROT'),
+    ('Sterne-Darstellung ganz entfernt', REDAKTION,
+     lambda h: re.sub(r'<div class="stars"[^>]*>[^<]*</div>', '', h, count=1), 'ROT'),
+    ('rb-count: Ziffer ohne Bezug zu Bewertungen', REDAKTION,
+     lambda h: re.sub(r'<div class="rb-count">.*?</div>',
+                      '<div class="rb-count">Platz 3</div>', h, count=1, flags=re.S),
+     'ROT'),
+    ('LEGITIM Anzahl mit <strong> hervorgehoben', REDAKTION,
+     lambda h: re.sub(r'(<div class="rb-count">)(.*?)(</div>)',
+                      lambda m: m.group(1) + m.group(2).replace(
+                          '1.953', '<strong>1.953</strong>') + m.group(3),
+                      h, count=1, flags=re.S), 'GRUEN'),
+    ('LEGITIM Badge in einem HTML-Kommentar', REDAKTION,
+     lambda h: h.replace('</main>', '<!-- <div class="rating-badge">'
+                         '<div class="rb-num">9,9</div></div> --></main>', 1), 'GRUEN'),
+    ('LEGITIM rb-label "von 10 Punkten", Sterne stimmen', REDAKTION,
+     lambda h: h.replace('<div class="rb-label">von 10</div>',
+                         '<div class="rb-label">von 10 Punkten</div>', 1), 'GRUEN'),
+    ('rb-count ohne Zahl', DATENBLATT,
+     lambda h: re.sub(r'<div class="rb-count">[^<]*</div>',
+                      '<div class="rb-count">Bewertungen bei Amazon</div>', h, count=1),
+     'ROT'),
+    # Am GENERATOR, nicht an der Seite: Eine generierte Seite von Hand zu aendern ist
+    # korrekterweise eine Divergenz (§A1). Die erste Fassung dieses Falls editierte die
+    # Seite und wurde deshalb am Generator-Abgleich rot -- aus dem richtigen Grund, aber
+    # nicht an dem, was das Etikett behauptet.
+    ('LEGITIM Formulierung der Anzahl im Generator geaendert', 'scripts/gen_pages.py',
+     lambda q: q.replace('{_bew_wort} bei Amazon', '{_bew_wort} auf Amazon.de', 1),
+     'GRUEN_NACH_SYNC'),
 
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
