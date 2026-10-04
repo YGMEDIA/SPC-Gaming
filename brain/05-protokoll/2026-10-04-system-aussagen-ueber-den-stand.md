@@ -106,9 +106,14 @@ Gemessen und berichtet, nicht geändert:
    `sync_footer.py --check`, `sync_lesezeit.py --check`, `sync_kompat.py --check`,
    `css_kaskade.py`, `gen_preisfrage.py --check`, `gen_brand_sections.py --check`. Ein
    Push, der eines davon bricht, deployt grün.
-2. `node` kommt im Workflow nicht vor. Die `ubuntu-latest`-Images bringen Node mit, das
-   §A6-Gate läuft dort also voraussichtlich -- aber nichts fixiert und nichts prüft das.
-   Fällt Node aus dem Image, wird aus dem stärksten §A6-Gate eine Warnung bei Exit 0.
+2. `node` kommt im Workflow nicht vor, und das §A6-Gate braucht es. **Nachgemessen am
+   CI-Lauf von f6fbad8: es läuft heute** -- verify.py meldet dort "0 Fehler, 0 Warnungen",
+   und die "node fehlt"-Warnung wäre eine. Node steckt also im `ubuntu-latest`-Image, nicht
+   im Workflow. Derselbe Lauf warnt: **"The ubuntu-latest label will migrate to Ubuntu 26
+   beginning October 19, 2026"** -- in gut zwei Wochen wechselt genau das Image, aus dem die
+   Abhängigkeit stillschweigend kommt. Fällt Node dabei weg, wird aus dem stärksten
+   §A6-Gate eine Warnung bei Exit 0 und der Deploy bleibt grün. Ein `actions/setup-node`
+   oder ein `command -v node ||` im Gate-Job würde das festnageln.
 3. Der Kommentar über `python-version: '3.12'` sagt "Geprueft: die Skripte nutzen keine
    Konstrukte oberhalb von 3.9, die Festlegung dient nur der Reproduzierbarkeit". Falsch:
    `gen_brand_sections.py:200` hat einen Backslash im Ausdrucksteil eines f-Strings und ist
@@ -125,3 +130,20 @@ Produkt-Gates laufen dann gegen eine leere Liste. Der Lauf wird trotzdem rot (ge
 Fehler), aber über Kollateralschaden statt über die Ursache -- dieselbe Form wie der
 `detail`-Doppler vom 30.09. Kein Risiko für Live, weil rot rot bleibt; die Meldung nennt
 nur die Ursache nicht.
+
+## Nachtrag: der CI-Lauf von f6fbad8
+
+Deploy erfolgreich, beide Jobs grün. Zwei Dinge, die nur der echte Lauf zeigen konnte:
+
+- **Das §A6-Gate läuft in CI.** verify.py meldet dort "0 Fehler, **0 Warnungen**" -- die
+  "node fehlt"-Warnung wäre eine gewesen. Die Abhängigkeit kommt aus dem Image, nicht aus
+  dem Workflow. Vorher stand hier "läuft dort voraussichtlich"; jetzt ist es gemessen.
+- **Das Image wechselt am 19.10.2026.** Der Lauf warnt selbst: "The ubuntu-latest label will
+  migrate to Ubuntu 26 beginning October 19, 2026". Eine unfixierte Abhängigkeit mit einem
+  Image-Wechsel in gut zwei Wochen -- das ist kein hypothetisches Risiko mehr, sondern ein
+  Termin.
+
+Lehre daraus, ohne neue Nummer, weil sie Lehre 238 fortsetzt: Die lokale Probe konnte
+zeigen, was ohne `node` PASSIERT (Exit 0 mit Warnung), aber nicht, ob `node` DA ist. Für die
+zweite Frage gibt es nur den echten Lauf, und seine Ausgabe gehört gelesen -- die Zeile mit
+dem Image-Wechsel stand gratis daneben.
