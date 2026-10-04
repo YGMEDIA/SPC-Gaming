@@ -12,9 +12,11 @@ import xml.dom.minidom
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 # §A6-Schwelle: Produkte darunter bekommen eine Warnung statt einer Kaufempfehlung.
-# Steht hier einmal, weil sie an mehreren Stellen geprueft wird (Detailseiten,
-# Footer-Text in main.js).
-A6_SCHWELLE = 3.8
+# Stand hier als Literal und war damit die dritte Kopie (dazu assets/js/finder.js und,
+# beim Bau der Bestenlisten, fast eine vierte). Jetzt eine Quelle; die JS-Fassung wird
+# weiter unten GEGEN diese geprueft, weil sie im Browser laeuft und nicht importieren kann.
+sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+from produktdaten import A6_SCHWELLE
 ERRORS, WARN = [], []
 def err(msg): ERRORS.append(msg)
 def warn(msg): WARN.append(msg)
@@ -468,6 +470,120 @@ if os.path.exists('scripts/gen_preisfrage.py'):
 else:
     err('scripts/gen_preisfrage.py fehlt — die Preisfrage-Seite ist dann ungegatet')
 
+# B6: Die vier Bestenlisten waren die SIEBTE Renderstelle fuer Produktdaten und die
+# einzige ungegatete -- sechs andere sind am 30.09. geschlossen worden. Gemessen am
+# 04.10.: 14 Spec-Chips mit Werten, die products.json nicht fuehrt, null sichtbare
+# Bewertungen auf vier Seiten, deren Zweck eine Rangfolge ist, und eine Sortier-Regel,
+# die "Ergonomie" nennt -- ein Kriterium, das es im Datenkern nicht gibt.
+if os.path.exists('scripts/gen_bestenliste.py'):
+    _rb = subprocess.run([sys.executable, 'scripts/gen_bestenliste.py', '--check'],
+                         capture_output=True, text=True, timeout=180)
+    if _rb.returncode != 0:
+        _zb = (_rb.stdout + _rb.stderr).strip().splitlines()
+        err(f"§A1: scripts/gen_bestenliste.py --check schlaegt fehl — eine Bestenliste "
+            f"weicht von dem ab, was aus products.json folgt. Fix: "
+            f"'python3 scripts/gen_bestenliste.py'. {_zb[-1][:160] if _zb else ''}")
+else:
+    err('scripts/gen_bestenliste.py fehlt — die vier Bestenlisten sind dann ungegatet')
+
+# Zwei Eigenschaften, die der Generator herstellt und die deshalb am AUSGELIEFERTEN Stand
+# nachgewiesen werden, nicht an seinem Quelltext:
+#   1. Die Sortier-Begruendung steht INNERHALB des Blocks. Ein stehengebliebener
+#      Hand-Satz daneben hiesse: zwei Regeln auf einer Seite, die sich widersprechen.
+#      Genau so war es, bevor der Generator kam (die "Ergonomie"-Fassung).
+#   2. Die ItemList fuehrt dieselben Produkte in derselben Reihenfolge wie die Karten.
+#      Eine Rangfolge, deren Schema eine andere Ordnung behauptet als die Seite, ist
+#      §A4-Verstoss am Kern: Das Schema IST die sichtbare Wahrheit.
+try:
+    from gen_bestenliste import LISTEN as _B6_LISTEN, vollname as _b6_vollname
+except Exception as _e:                                       # pragma: no cover
+    _B6_LISTEN = []
+    err(f'§A1: gen_bestenliste nicht importierbar ({_e}) — die Bestenlisten-Gates '
+        f'fallen damit aus')
+for _ld in _B6_LISTEN:
+    _bf = _ld['datei']
+    if not os.path.exists(_bf):
+        err(f"§A1: {_bf} aus gen_bestenliste.LISTEN fehlt")
+        continue
+    _bt = open(_bf, encoding='utf-8').read()
+    _a, _e2 = _bt.find('<!-- BESTEN:START -->'), _bt.find('<!-- BESTEN:END -->')
+    if _a < 0 or _e2 < 0:
+        err(f"§A1: {_bf} hat keinen BESTEN-Block mehr — die Bestenliste ist dann wieder "
+            f"Handtext (Fix: 'python3 scripts/gen_bestenliste.py')")
+        continue
+    _innen, _ausserhalb = _bt[_a:_e2], _bt[:_a] + _bt[_e2:]
+    # Ankern am KRITERIEN-Vokabular. Zwei Fassungen, zwei Befunde, beide aus derselben
+    # Zeile -- das Muster aus P-13 Mechanismus 16:
+    #   1. Die nackte Zeichenkette "Sortiert nach" machte einen legitimen Satz rot
+    #      ("Sortiert nach Veroeffentlichung findest du unsere Tests im Blog").
+    #   2. Der Zusatz "mindestens ein 'und'" hatte Loch UND Fehlalarm: Der alte
+    #      Handsatz mit Komma-Aufzaehlung ("Preis, Sticks, Ergonomie, Kompatibilitaet.")
+    #      kam durch -- also genau der Befund, der B6 erzwungen hat -- und ein einziges
+    #      "und" im Blog-Satz holte den Fehlalarm zurueck.
+    # Eine Sortier-Regel nennt KRITERIEN. Danach wird gesucht, nicht nach Bindewoertern.
+    _regelform = re.compile(
+        r'(?i)(sortiert|geordnet|gerankt|gereiht|Reihenfolge)\s+nach\s+[^.!?]{0,160}'
+        r'(Preis|Stick|Ergonomie|Kompatibilit|Bewertung|Stern|Plattform|Verbindung|'
+        r'Akku|Gewicht|Urteil|Ausstattung)')
+    if _regelform.search(_klartext(_ausserhalb)):
+        err(f"§A6: {_bf} nennt eine Sortier-Regel AUSSERHALB des BESTEN-Blocks. Die "
+            f"Seite behauptet damit zwei Reihenfolgen-Begruendungen, und nur eine davon "
+            f"wird gegen products.json gerechnet")
+    # Reihenfolge: sichtbare Karten gegen ItemList
+    _karten = re.findall(r'data-product="([^"]+)"', _innen)
+    # "Top N" im Titel, in den Social-Metas und in den Ueberschriften ist eine Zusage
+    # ueber die Seite. Wer eine Position aus `LISTEN` nimmt, bricht sie -- und nichts hat
+    # das gemerkt: Nach dem Entfernen standen viermal "Top 10" ueber neun Karten, alle
+    # Gates gruen, und die eigene Batterie fuehrte den Vorgang als LEGITIM. Dieselbe
+    # Gate-Klasse gibt es fuer den Finder laengst.
+    # NUR die Stellen, an denen "Top N" eine Zusage ueber DIESE Seite ist: Titel, die
+    # beiden Social-Titel und der Ueberschriftentext. Die erste Fassung las jedes
+    # "Top N" der ganzen Datei -- und haette damit einen Querverweis auf die
+    # Schwesterseite rot gemacht ("Beste Android Controller Top 5" als Linktext auf der
+    # Top-10-Seite), also ausgerechnet den naechsten geplanten Schritt im content-loop
+    # (B7, interne Verlinkung). Ein Gate, das die naechste Korrektur blockiert, hat die
+    # falsche Regel (P-13 Mechanismus 6).
+    # Linktexte werden aus den Ueberschriften gestrichen, weil eine Ueberschrift sehr
+    # wohl auf eine andere Seite verlinken darf.
+    _zusagen = re.findall(r'<title>([^<]*)</title>', _bt)
+    _zusagen += re.findall(r'<meta[^>]+property="og:title"[^>]+content="([^"]*)"', _bt)
+    _zusagen += re.findall(r'<meta[^>]+name="twitter:title"[^>]+content="([^"]*)"', _bt)
+    for _hm in re.finditer(r'<h[12][^>]*>(.*?)</h[12]>', _bt, re.S):
+        _zusagen.append(re.sub(r'<a\b[^>]*>.*?</a>', ' ', _hm.group(1), flags=re.S))
+    # GRENZE, gemessen: /vergleich/beste-budget-controller/ nennt an keiner dieser
+    # Stellen eine Zahl. Dort traegt allein der `topn`-Befund im Generator.
+    for _tm in {m for _z in _zusagen
+                for m in re.findall(r'\bTop[\s-](\d+)\b', re.sub(r'<[^>]+>', ' ', _z))}:
+        if int(_tm) != len(_karten):
+            err(f"§A6: {_bf} verspricht \"Top {_tm}\", der BESTEN-Block fuehrt aber "
+                f"{len(_karten)} Positionen")
+    _il = None
+    for _sm in re.finditer(r'<script type="application/ld\+json">(.*?)</script>',
+                           _innen, re.S):
+        try:
+            _o = json.loads(_sm.group(1))
+        except Exception:
+            continue
+        if 'ItemList' in _typen_von(_o):
+            _il = _o
+    if _il is None:
+        err(f"§A4: {_bf} fuehrt {len(_karten)} Positionen, aber kein ItemList-Schema — "
+            f"eine Rangfolge ohne Listen-Auszeichnung")
+        continue
+    _ile = _il.get('itemListElement') or []
+    if [e.get('position') for e in _ile] != list(range(1, len(_ile) + 1)):
+        err(f"§A4: {_bf} ItemList-Positionen sind nicht 1..{len(_ile)} in Reihenfolge")
+    # `vollname` aus dem Generator, NICHT hier nachgebaut. Die erste Fassung dieses
+    # Gates hat die Regel "Marke plus Name, ohne die Marke zu doppeln" ein zweites Mal
+    # geschrieben -- auf einer Seite, die genau diese Klasse zehnmal geschlossen hat.
+    # Ein Gate, das seine eigene Fassung der Regel fuehrt, prueft sich selbst.
+    _slug_von_name = {_b6_vollname(_p): _pfeld(_p, 'slug') for _p in items}
+    _schema_slugs = [_slug_von_name.get(e.get('name')) for e in _ile]
+    if _schema_slugs != _karten:
+        err(f"§A4: {_bf} — die ItemList fuehrt eine andere Reihenfolge als die Karten.\n"
+            f"        Karten : {_karten}\n"
+            f"        Schema : {_schema_slugs}")
+
 
 # ---------- 6b · §A1-Vollaudit: HTML gegen products.json (30.09.2026) ----------
 # Abschnitt 6 prüft nur die vier Marken-Hubs. Dieses Audit deckt das ab, was zwischen
@@ -687,6 +803,57 @@ for _f in pages:
             # Bewusst NICHT gegen die Kartenzahl: Mehrere Seiten führen absichtlich eine
             # Top-Auswahl im Schema und zeigen mehr Karten. numberOfItems gegen die
             # Listenlänge gilt dagegen immer.
+
+# Die position-Werte JEDER Liste muessen 1..n in Reihenfolge sein. Gilt fuer ItemList und
+# BreadcrumbList gleichermassen: Eine Liste mit den Positionen 1, 7, 3 ist kaputte
+# strukturierte Daten, ob sie eine Rangfolge oder einen Pfad beschreibt.
+# Gefunden hat das die eigene B6-Batterie: Ein Fall, der eine ItemList-Position verbiegen
+# sollte, traf die BreadcrumbList derselben Seite -- und blieb gruen. Die Luecke war
+# nicht der Fall, sondern das fehlende Gate. Vorher war die Pruefung nur INNERHALB des
+# BESTEN-Blocks verankert, also auf vier von 127 Seiten.
+# Gemessen beim Einbau: 124 Listen-Schemas, 0 mit kaputter Folge.
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    for _sm in re.finditer(r'<script type="application/ld\+json">(.*?)</script>', _h, re.S):
+        try:
+            _obj = json.loads(_sm.group(1))
+        except Exception:
+            continue
+        for _node in (_obj.get('@graph') if isinstance(_obj.get('@graph'), list)
+                      else [_obj]):
+            if not isinstance(_node, dict):
+                continue
+            if not ({'ItemList', 'BreadcrumbList'} & set(_typen_von(_node))):
+                continue
+            _el = [e for e in (_node.get('itemListElement') or []) if isinstance(e, dict)]
+            _pos = [e.get('position') for e in _el]
+            # Eine ungeordnete Liste (ItemListUnordered) darf laut schema.org ganz ohne
+            # `position` auskommen. Die erste Fassung machte so eine Liste rot -- ein
+            # Fehlalarm auf voellig konformem Markup. Geprueft wird die FOLGE, und zwar
+            # nur, wenn ueberhaupt eine behauptet wird.
+            if all(e.get('position') is None for e in _el):
+                continue
+            if _pos != list(range(1, len(_el) + 1)):
+                err(f"§A4: {_f} {'/'.join(sorted(_typen_von(_node)))} hat die "
+                    f"position-Werte {_pos}, erwartet 1..{len(_el)} in Reihenfolge")
+
+# Ueberschriften-Hierarchie: keine Ebene darf uebersprungen werden (h1 -> h3). Das ist
+# eine Struktur-Zusage an Crawler und Screenreader, und sie war ungegatet -- aufgefallen,
+# weil der erste Bestenlisten-Generator `h3` fest verdrahtete und damit auf drei Seiten,
+# die vorher `h2` trugen, einen Sprung h1 -> h3 erzeugt hat. Gefunden hat das der
+# Pruefbericht, nicht ein Gate.
+# Gemessen beim Einbau: 127 Seiten, 0 Spruenge.
+for _f in pages:
+    # HTML-Kommentare raus, sonst zaehlt eine auskommentierte Ueberschrift mit.
+    _h = re.sub(r'<!--.*?-->', ' ', open(_f, encoding='utf-8').read(), flags=re.S)
+    _h = re.sub(r'<(script|style|template|noscript)[^>]*>.*?</\1>', ' ', _h, flags=re.S)
+    _vorher = None
+    for _m in re.finditer(r'<h([1-6])\b', _h):
+        _e = int(_m.group(1))
+        if _vorher is not None and _e > _vorher + 1:
+            err(f"§B: {_f} ueberspringt eine Ueberschriften-Ebene (h{_vorher} -> h{_e})")
+            break
+        _vorher = _e
 
 # Der Affiliate-Tag ist die Geldleitung und stand nur in main.js, von keinem Gate gelesen.
 if os.path.exists('assets/js/main.js'):

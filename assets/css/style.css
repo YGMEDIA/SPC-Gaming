@@ -396,6 +396,24 @@ ul, ol { list-style: none; }
 .pcard-brand { font-size: 11px; color: var(--ink-dim); text-transform: uppercase; letter-spacing: .05em; font-weight: 700; margin-bottom: 3px; }
 .pcard-name { font-weight: 800; font-size: 16px; line-height: 1.22; }
 .pcard-claim { color: var(--ink-soft); font-size: 13px; margin-top: 7px; line-height: 1.5; }
+/* Die nachrechenbare Zeile auf den Bestenlisten (B6): Bewertung mit Anzahl, Plattformen,
+   Stick-Technik. Steht bewusst dichter und dunkler als der Claim, weil der Leser an ihr
+   die Reihenfolge nachprueft. Vorher stand auf diesen Seiten keine einzige Bewertung. */
+.pcard-fakten { color: var(--ink); font-size: 12px; margin-top: 8px; line-height: 1.45; }
+.pcard-fakten strong { color: var(--navy); }
+/* Der Abschnitt, der die Zahl nennt, die gegen die eigene Reihenfolge spricht (B6/P-14).
+   Er lief auf Default-Styling, waehrend die Faktenzeile eine Regel bekommen hat. */
+.besten-ehrlich {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border-left: 3px solid var(--blue);
+  background: var(--blue-bg);
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.besten-ehrlich p { margin: 0; }
 .pcard-specs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 11px; }
 .spec-tag {
   font-size: 11px;

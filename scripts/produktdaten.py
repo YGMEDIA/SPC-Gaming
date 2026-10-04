@@ -20,7 +20,11 @@ schon eine hatte -- die elfte Kopie, beim Aufraeumen der zehn.
 
 Noch nicht umgestellt (eigener Befund, nicht hier mitgeloest): die Lesestellen in
 audit_prosa.py (Z. 37), gen_longtail.py (56), gen_hubs.py (81), gen_pages.py (38, 171),
-sync_product_values.py (78, 133, 421), gen_brand_sections.py -- und gen_preisfrage.py, das
+sync_product_values.py (78, 133, 421), gen_brand_sections.py -- dazu die zwei eigenen
+`Bew.`-Parser in gen_preisfrage.py (54) und verify.py (575), die beim Anlegen von
+`bewertung()` hier schon existierten und absichtlich nicht im selben Schritt umgebaut
+wurden: Beide sind in Gates verankert, deren Rot/Gruen-Proben an ihren heutigen Zahlen
+haengen. Der Umbau ist ein eigenes Arbeitspaket mit eigener Probe -- und gen_preisfrage.py, das
 eigene `preis()`, `spec()` und `bewertung()` fuehrt. Dessen `preis()` kennt die
 Tausenderpunkt-Regel aus `preis_zahl()` nicht: "1.299 €" waere dort 1 und hier 1299. Heute
 hat kein Preis einen Tausenderpunkt (gemessen: 0 von 42; die 7 Preise mit Punkt tragen alle
@@ -34,6 +38,13 @@ offener Befund in STATUS notiert; verify.py MELDET diesen Abbruch inzwischen als
 der Rest dieses Laufs trotzdem prueft.
 """
 import re
+
+
+# §A6-Schwelle: Produkte darunter bekommen eine Warnung statt einer Kaufempfehlung.
+# Stand bis zum 04.10.2026 dreimal als Literal im Repo (verify.py, assets/js/finder.js,
+# und beim Bau der Bestenlisten waere es das vierte Mal geworden). verify.py prueft die
+# Fassung in finder.js gegen diese hier; Python-Seite importiert.
+A6_SCHWELLE = 3.8
 
 
 def spec_paare(p):
@@ -81,6 +92,36 @@ def preis_zahl(p):
     """
     m = re.search(r'(\d+)', str((p or {}).get('price') or '').replace('.', ''))
     return int(m.group(1)) if m else None
+
+
+def bewertung(p):
+    """(Sterne als float, Anzahl als int) aus `Bew.`, oder (None, None).
+
+    Dasselbe Muster `([\\d,]+)\\s*\\(([\\d.]+)\\)` stand beim Anlegen dieser Funktion an
+    drei Stellen einzeln: gen_preisfrage.py, verify.py und die Marken-Tabelle. Die
+    Tausenderpunkt-Behandlung der Anzahl ("2.188" -> 2188) ist dabei dieselbe Klasse, die
+    `preis_zahl()` als GRENZE fuehrt -- nur dass sie hier NOETIG ist, weil
+    vierstellige Bewertungszahlen der Normalfall sind (gemessen: 7 der 28 Controller).
+
+    Die Typsicherheit liegt eine Ebene tiefer: `spec_paare()` gibt jeden Wert schon als
+    String zurueck, deshalb steht hier KEIN eigenes `str()`. Der Docstring hat bis R31
+    eines begruendet, das im Code nicht steht -- eine Begruendung fuer eine Zeile, die es
+    nicht gibt, ist genauso falsch wie eine fehlende Zeile.
+    """
+    m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', spec_wie(p, 'Bew'))
+    if not m:
+        return None, None
+    return float(m.group(1).replace(',', '.')), int(m.group(2).replace('.', ''))
+
+
+def sterne_text(wert):
+    """4.2 -> "4,2". Deutsche Schreibweise, damit die Zahl im Text der im JSON gleicht."""
+    return f'{wert:.1f}'.replace('.', ',')
+
+
+def anzahl_text(wert):
+    """2188 -> "2.188". Dieselbe Schreibweise, in der `Bew.` die Anzahl fuehrt."""
+    return f'{wert:,}'.replace(',', '.')
 
 
 # Felder, die ueberall als String gelesen werden. Der achtzehnte Pruefbericht hat fuenf

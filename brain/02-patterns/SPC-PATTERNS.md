@@ -238,8 +238,30 @@
 
 ---
 
+## P-14 · Begründete-Rangfolge-Pattern [bewiesen 04.10.2026]
+**Wann:** Immer wenn eine Seite Produkte in eine Reihenfolge bringt und diese Reihenfolge als Empfehlung verkauft: Bestenlisten, Top-N-Seiten, "Testsieger", Vergleichs-Rankings.
+**Befund, der das Pattern erzwungen hat:** Die vier Bestenlisten (23 Positionen auf vier Seiten) nannten eine einzige Sortier-Regel, und die lautete "Preis, Sticks, Ergonomie und Kompatibilität". **"Ergonomie" kommt in products.json unter keinem Spec-Schlüssel vor, bei keinem der 42 Produkte.** Die drei `/vergleich/`-Seiten nannten überhaupt keine Regel. Auf keiner der vier Seiten stand eine einzige Bewertung: null sichtbare Sterne auf Seiten, deren Zweck eine Rangfolge ist. Der Leser konnte keine einzige Position nachprüfen, und das Gegenbeispiel stand auf der Seite selbst: Platz 5 war mit 4,6 Sternen aus 2.188 Bewertungen zu 30 € in jeder messbaren Hinsicht besser als Platz 1 (4,2 aus 706, 80 €).
+**Warum das kein Produktwert-Problem ist:** Ein falscher Preis ist eine falsche Zahl. Eine unbegründete Reihenfolge enthält keine einzige falsche Zahl und ist trotzdem eine Behauptung, die niemand prüfen kann. Sie veraltet auch anders: Nicht wenn sich ein Wert ändert, sondern wenn sich ein Wert bei einem ANDEREN Produkt ändert.
+**Regel:** Eine Rangfolge nennt die Kriterien, nach denen sie sortiert, und jedes Kriterium existiert im Datenkern. Jede Position zeigt die Zahlen, an denen man sie messen kann. Und wo die Daten gegen die eigene Reihenfolge sprechen, sagt die Seite das, statt es zu überspielen.
+
+**Acht Pflicht-Mechanismen** (1 bis 6 beim Bau, 7 und 8 aus dem Prüflauf):
+1. **Redaktionell bleibt nur die Reihenfolge, abgeleitet wird alles andere.** Die Ordnung steht als Liste im Generator (`scripts/gen_bestenliste.py`, `LISTEN`), zusammen mit dem Badge je Platz. Name, Claim, Preis, Bewertung, Specs, Bild und Detail-Link kommen aus products.json. Was redaktionell ist, ist damit auf zwei Angaben je Position geschrumpft und sichtbar.
+2. **Kein Kriterium ohne Datengrundlage.** "Ergonomie" klingt wie ein Kriterium und ist keins, solange es im Datenkern nicht vorkommt. Eine Regel, deren Begriffe man nicht nachschlagen kann, ist Dekoration.
+3. **Jede Position zeigt ihre Zahlen.** Bewertung MIT Anzahl, Plattformen, Stick-Technik, Verbindung. Ohne sie ist die Reihenfolge nicht widerlegbar, und was nicht widerlegbar ist, ist auch nicht glaubwürdig.
+4. **Die Zahl, die gegen die eigene Reihenfolge spricht, steht auf der Seite.** Abgeleitet, nicht getextet: wer in der Grundmenge die beste Bewertung hat, wo er steht, was er kostet und was in seinen DATEN gegen Platz 1 spricht. Findet sich kein Nachteil, sagt der Abschnitt genau das ("ein redaktionelles Urteil, kein Rechenergebnis") statt einen zu erfinden.
+5. **Nicht umranken, wenn die Daten die Rangfolge nicht tragen.** 27 der 28 Controller liegen zwischen 3,8 und 4,6 Sternen, allein sieben teilen sich 4,2. Eine Rangfolge aus Zehntelsternen wäre Scheingenauigkeit, also wird nach Sternen NICHT sortiert, und der Satz, der das sagt, rechnet seine eigene Begründung aus. Ob umgerankt wird, ist eine redaktionelle und kommerzielle Entscheidung und gehört Yasin, nicht dem Generator.
+6. **Das Schema führt dieselbe Reihenfolge wie die Seite.** ItemList vollständig und in der sichtbaren Ordnung; die `position`-Werte sind 1..n. Vorher hatten drei der vier Seiten gar kein ItemList, obwohl ihre Titel "Top 5" versprechen. Geprüft wird am AUSGELIEFERTEN Stand, nicht am Generator-Quelltext.
+
+7. **Kein Superlativ ohne Gleichstands-Prüfung.** Die beste Bewertung kann zweimal vergeben sein: Auf der iPhone-Liste teilen sich Razer Kishi V3 (4,4 aus 153) und Backbone Pro (4,4 aus 459) die Spitze, und **beide stehen auf derselben Seite**. Ein `max(..., key=(sterne, anzahl))` bricht den Gleichstand still und behauptet dann Alleinstellung, die die eigene Seite zwei Karten höher widerlegt. Und wenn über mehrere Produkte geschrieben wird, steht jede Zahl BEI ihrem Produkt: "A (459 Bewertungen) und B (153 Bewertungen)", nie "A und B (459, 153)" — die zweite Form hat das §A1-Fließtext-Gate sofort als falsche Zahl beim falschen Produkt gemeldet, zu Recht.
+8. **Ein Generator, der gegen seine eigene Ausgabe prüft, prüft nichts.** `--check` vergleicht Datei und Neubau; jeder Fehler, der in beiden steckt, ist unsichtbar. Ein unlesbarer Preis wurde zu "None €" auf der Seite, und `--check` blieb grün. Jeder Generator braucht deshalb Befunde über die DATEN (fehlende Bewertung, unlesbarer Preis, Zusage gegen Kartenzahl), nicht nur den Selbstvergleich. Dazu: Bei Befunden für eine Datei wird sie NICHT geschrieben, sonst laufen Badge-Nummern und Schema-Positionen auseinander.
+
+**Grenze, ausdrücklich:** Der Generator rendert nur Spec-Chips, die products.json führt. 14 Chips der Handfassung nannten Werte, die der Datenkern nicht kennt (jeder davon steht auch auf der Review-Seite des Produkts, mehrere zusätzlich im `claim` desselben Produkts). Sie werden NICHT nach products.json geschrieben: Eine unbelegte Produktaussage in den Datenkern zu waschen, verbietet §A5. Sie stehen als Punkt für Yasin in STATUS, er braucht Screenshots.
+**Vorlage:** `scripts/gen_bestenliste.py` (Generator) · `scripts/besten_batterie.py` (36 Fälle, 24 müssen rot werden, 12 müssen grün bleiben; die Erwartungen `ROT_B6` und `ROT_NACH_GENERATOR` verlangen, dass der GEMEINTE Prüfer den Befund nennt, nicht irgendeiner) · Gates in `verify.py` · Gesetze: §A1, §A4, §A5, §A6
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v4.5 · 2026-10-04*
+*SPC Pattern-Katalog v5.0 · 2026-10-04*
