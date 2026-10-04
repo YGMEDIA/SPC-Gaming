@@ -187,6 +187,49 @@ HUBS = {
 # ACHTUNG: Dieses Skript ist NICHT idempotent (SEO-Text + Schemas
 # würden bei erneutem Lauf doppelt eingefügt) — nie zweimal laufen lassen.
 # ============================================================
+LT_MARKER = 'LONGTAIL'
+
+
+def _longtail():
+    """Die Altmodell-Datenblaetter aus longtail.json, sortiert nach Marke und Name.
+
+    Nur Eintraege, deren Seite es wirklich gibt: Ein Link auf eine nicht gebaute Seite
+    waere ein kaputter interner Link, und den meldet verify.py zu Recht.
+    """
+    pfad = f'{ROOT}/assets/data/longtail.json'
+    if not os.path.exists(pfad):
+        return []
+    aus = []
+    for e in json.load(open(pfad, encoding='utf-8')):
+        slug = str(e.get('slug') or '')
+        if slug and os.path.exists(f'{ROOT}/produkte/{slug}/index.html'):
+            aus.append((str(e.get('brand') or ''), str(e.get('name') or slug), slug))
+    return sorted(aus)
+
+
+def _longtail_block(s):
+    """Setzt den Altmodell-Abschnitt vor </main>. Marker-idempotent wie die Hub-Karten."""
+    s = re.sub(rf'<!-- {LT_MARKER}:START -->.*?<!-- {LT_MARKER}:END -->\n?', '', s,
+               flags=re.S)
+    eintraege = _longtail()
+    if not eintraege or s.count('</main>') != 1:
+        return s
+    zeilen = ''.join(
+        f'<li><a href="/produkte/{esc(slug)}/">{esc((marke + " " + name).strip())}</a></li>'
+        for marke, name, slug in eintraege)
+    inhalt = (
+        '  <section class="section"><div class="container">\n'
+        '    <h2>Ältere und Nischenmodelle</h2>\n'
+        f'    <p>Diese {len(eintraege)} Modelle führen wir nicht mehr im Sortiment, weil '
+        'sie bei Amazon.de nicht mehr durchgängig gelistet sind. Wir ordnen sie trotzdem '
+        'ein, weil danach gesucht wird, und nennen bei jedem das aktuelle Gegenstück.</p>\n'
+        f'    <ul class="altmodelle">{zeilen}</ul>\n'
+        '  </div></section>\n')
+    return s.replace('</main>',
+                     f'<!-- {LT_MARKER}:START -->\n{inhalt}<!-- {LT_MARKER}:END -->\n</main>',
+                     1)
+
+
 if __name__ == '__main__':
     for path, cfg in HUBS.items():
         f = f'{ROOT}/{path}'
@@ -236,5 +279,14 @@ if __name__ == '__main__':
     open(f, 'w', encoding='utf-8').write(s)
     # Karten zaehlen, nicht Zeilen mit dem Praefix: grep -c 'class="pcard' traf auch
     # pcard-img, pcard-body und pcard-title und meldete 378 Karten fuer 42 Produkte.
+    # B7: Die 10 Longtail-Datenblaetter standen auf KEINER Uebersicht. Gemessen am
+    # 04.10.: Sieben hingen an genau einem Link (ihrem Marken-Hub), drei an gar keinem --
+    # ihre einzige Quelle waren die zu noindex-Weiterleitungen zurueckgebauten Hubs
+    # /marken/ipega/ und /marken/mocute/. Ein Link von dort traegt kein Crawl-Signal; das
+    # Waisen-Gate hat ihn bis dahin trotzdem als Link gezaehlt. /produkte/ ist die
+    # vollstaendige Sortimentsuebersicht und damit der Ort fuer die Altmodelle.
+    s = _longtail_block(s)
+    open(f, 'w', encoding='utf-8').write(s)
     n = len(re.findall(r'<article class="pcard', s))
-    print(f'✓ produkte/index.html: {n} Karten statisch pre-rendert')
+    print(f'✓ produkte/index.html: {n} Karten statisch pre-rendert, '
+          f'{len(_longtail())} Altmodelle verlinkt')

@@ -7,7 +7,7 @@ Stack: Statisches HTML/CSS/JS · products.json als Datenkern · Python-Generator
 ## Wissensquellen (in dieser Reihenfolge, nie alles auf einmal lesen)
 1. `brain/SPC-FRAMEWORK.md` — kanonische Referenz: Geschäftsmodell, Keyword-Strategie, Architektur, Roadmap. Gewinnt bei Konflikten.
 2. `brain/01-constitution/SPC-CONSTITUTION.md` — Gesetze §A (Site) · §B (SEO/GEO) · §C (Recht) · §D (Betrieb). Was sie verletzt, wird nicht gemergt.
-3. `brain/02-patterns/SPC-PATTERNS.md` — Bau-Muster P-1…P-14. Jede Änderung folgt einem Pattern oder definiert ein neues.
+3. `brain/02-patterns/SPC-PATTERNS.md` — Bau-Muster P-1…P-15. Jede Änderung folgt einem Pattern oder definiert ein neues.
 4. `brain/STATUS.md` — lebendiges Session-Gedächtnis. Direkt nach dem INDEX lesen.
 5. `brain/06-specs/` — größere Vorhaben nur nach freigegebenem Spec.
 Lies gezielt (INDEX → relevante Seite → Links), nie den ganzen Vault (Framework 7.6).

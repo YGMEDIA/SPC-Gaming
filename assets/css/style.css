@@ -414,6 +414,17 @@ ul, ol { list-style: none; }
   color: var(--ink);
 }
 .besten-ehrlich p { margin: 0; }
+/* B7: Der Rueckweg von der Produktseite zu den Uebersichten, die sie fuehren.
+   Bewusst leise: Das ist Navigation am Ende des Inhalts, kein zweiter Kaufaufruf. */
+.hublinks {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.hublinks a { color: var(--blue); }
 .pcard-specs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 11px; }
 .spec-tag {
   font-size: 11px;

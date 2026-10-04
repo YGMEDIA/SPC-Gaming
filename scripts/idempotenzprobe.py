@@ -303,6 +303,7 @@ def main():
             arbeit = os.path.join(rumpf, name)
             shutil.copytree(ROOT, arbeit,
                             ignore=shutil.ignore_patterns('.git', 'node_modules', 'brain',
+                                                      'SPC-Gaming-Visuals',
                                                           '__pycache__'))
             vor = baumhash(arbeit)
             hs, exits = [], []

@@ -188,6 +188,25 @@ from produktdaten import formfehler as _formfehler
 from produktdaten import text as _pfeld, liste as _pliste
 from css_kaskade import wert as _css_wert, sichtbar as _css_sichtbar
 
+def _gate(_skript, *_args, _grenze=180):
+    """Ein Unter-Gate starten und NIE am Timeout sterben.
+
+    Die Aufrufe standen mit `timeout=180` ohne `try` da: Ein `TimeoutExpired` haette
+    verify.py mit Traceback beendet statt mit einem Befund -- und ein Gate, das abbricht,
+    prueft alles dahinter nicht mehr. Genau diese Klasse hat die Robustheitsprobe fuer
+    products.json schon zweimal gefunden.
+    """
+    try:
+        return subprocess.run([sys.executable, 'scripts/' + _skript, *_args],
+                              capture_output=True, text=True, timeout=_grenze)
+    except subprocess.TimeoutExpired:
+        err(f"{_skript} hat nach {_grenze} s nicht geantwortet — das Gate ist damit "
+            f"ungeprueft, nicht gruen")
+        class _R:
+            returncode, stdout, stderr = 0, '', ''
+        return _R()
+
+
 # ---------- 1 · Invarianten ----------
 for f in ['CNAME', '.nojekyll', 'llms.txt', 'robots.txt', 'sitemap.xml', 'assets/data/products.json']:
     if not os.path.exists(f): err(f"Invariante fehlt: {f}")
@@ -441,8 +460,9 @@ for f, minimum in [('controller/ios/index.html', 20), ('controller/android/index
 # von der Produktwahrheit. Diese Invariante fängt genau das.
 if os.path.exists('scripts/gen_brand_sections.py'):
     import subprocess
-    _r = subprocess.run([sys.executable, 'scripts/gen_brand_sections.py', '--check'],
-                        capture_output=True, text=True)
+    # Lief bis hierher ganz ohne `timeout`: ein Haenger haette verify.py unbegrenzt
+    # blockiert, und ein Gate, das nicht endet, meldet auch nichts.
+    _r = _gate('gen_brand_sections.py', '--check')
     if _r.returncode != 0:
         err(f"Marken-Hubs: gen_brand_sections.py --check schlägt fehl (§A1)\n"
             f"         {_r.stdout.strip().splitlines()[-1] if _r.stdout.strip() else _r.stderr.strip()[:200]}")
@@ -460,8 +480,7 @@ else:
 # blieben damit gruen (R27). Die Absicherung lag nur in der Idempotenzprobe, und die ist
 # ausdruecklich nicht in CI.
 if os.path.exists('scripts/gen_preisfrage.py'):
-    _rp = subprocess.run([sys.executable, 'scripts/gen_preisfrage.py', '--check'],
-                         capture_output=True, text=True, timeout=180)
+    _rp = _gate('gen_preisfrage.py', '--check')
     if _rp.returncode != 0:
         _zeilen = (_rp.stdout + _rp.stderr).strip().splitlines()
         err(f"§A1: scripts/gen_preisfrage.py --check schlaegt fehl — die Preisfrage-Seite "
@@ -476,8 +495,7 @@ else:
 # Bewertungen auf vier Seiten, deren Zweck eine Rangfolge ist, und eine Sortier-Regel,
 # die "Ergonomie" nennt -- ein Kriterium, das es im Datenkern nicht gibt.
 if os.path.exists('scripts/gen_bestenliste.py'):
-    _rb = subprocess.run([sys.executable, 'scripts/gen_bestenliste.py', '--check'],
-                         capture_output=True, text=True, timeout=180)
+    _rb = _gate('gen_bestenliste.py', '--check')
     if _rb.returncode != 0:
         _zb = (_rb.stdout + _rb.stderr).strip().splitlines()
         err(f"§A1: scripts/gen_bestenliste.py --check schlaegt fehl — eine Bestenliste "
@@ -485,6 +503,83 @@ if os.path.exists('scripts/gen_bestenliste.py'):
             f"'python3 scripts/gen_bestenliste.py'. {_zb[-1][:160] if _zb else ''}")
 else:
     err('scripts/gen_bestenliste.py fehlt — die vier Bestenlisten sind dann ungegatet')
+
+# Ein "Mehr erfahren" einer Produktkarte darf nicht auf die eigene Seite zeigen. Gefunden
+# beim Umbau auf die Karten-Regel: Auf /zubehoer/handy-kuehler/ zeigten ZWEI von drei
+# Karten dorthin statt auf die Produktseite. Die beiden Kuehler hingen damit an keinem
+# Kategorie-Hub, und die erste B7-Messung hat das verdeckt statt es zu finden -- sie zaehlte
+# jeden Link, auch den aus einem Vergleichssatz, und fand deshalb "jedes Produkt haengt an
+# mindestens einer Uebersicht".
+# Nur Karten MIT data-product: Eine Karte ohne (etwa das ROG Phone 9 Pro auf
+# /gaming-phones/) hat kein bekanntes Ziel; das ist ein eigener, redaktioneller Befund.
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _u = '/' if _f == 'index.html' else '/' + os.path.dirname(_f).replace(os.sep, '/') + '/'
+    _m = re.search(r'<main\b.*?</main>', _h, re.S)
+    if not _m:
+        continue
+    for _k in re.finditer(r'<article[^>]*class="[^"]*\bpcard\b[^"]*"[^>]*>.*?</article>',
+                          _m.group(0), re.S):
+        if 'data-product=' not in _k.group(0):
+            continue
+        for _a in re.finditer(r'<a[^>]*class="[^"]*btn-detail[^"]*"[^>]*href="([^"]*)"'
+                              r'|<a[^>]*href="([^"]*)"[^>]*class="[^"]*btn-detail[^"]*"',
+                              _k.group(0)):
+            _z = (_a.group(1) or _a.group(2) or '').split('?')[0].split('#')[0]
+            if _z.rstrip('/') == _u.rstrip('/'):
+                _sl = re.search(r'data-product="([^"]+)"', _k.group(0))
+                err(f"§B7: {_f} — die Karte fuer "
+                    f"{_sl.group(1) if _sl else '?'} verlinkt \"Mehr erfahren\" auf die "
+                    f"Seite selbst statt auf die Produktseite")
+
+# B7: Der Rueckweg. Jede Produktseite verlinkt zurueck auf jede Uebersicht, die sie
+# fuehrt. Gemessen am 04.10., VOR dieser Massnahme: Alle vier Marken-Hubs verlinkten
+# lueckenlos ihre Produkte, und alle 14 Produkte dieser Marken verlinkten NICHT zurueck;
+# 29 von 42 Produktseiten nannten keinen einzigen Plattform-Hub. Die Verlinkung war nicht
+# duenn, sie war EINSEITIG -- genau das meint B7 mit "systematisch statt punktuell".
+#
+# Geprueft wird die EIGENSCHAFT am ausgelieferten Stand, nicht der Lauf eines Generators:
+# Den Block setzen zwei verschiedene Wege (gen_pages.py fuer /produkte/, sync_hublinks.py
+# fuer die handgepflegten Reviews), und ein Gate, das nur einen davon kennt, deckt die
+# Haelfte nicht ab.
+if os.path.exists('scripts/sync_hublinks.py'):
+    _rh = _gate('sync_hublinks.py', '--check')
+    if _rh.returncode != 0:
+        _zh = (_rh.stdout + _rh.stderr).strip().splitlines()
+        err(f"§B7: scripts/sync_hublinks.py --check schlaegt fehl. Fix: "
+            f"'python3 scripts/sync_hublinks.py'. {_zh[-1][:160] if _zh else ''}")
+else:
+    err('scripts/sync_hublinks.py fehlt — der Rueckweg ist dann ungegatet')
+
+try:
+    from hublinks import (taxonomie_karte as _b7_karte, _rumpf as _b7_rumpf,
+                          _kartenziele as _b7_ziele)
+    _B7_KARTE, _B7_OHNE_H1 = _b7_karte()
+except Exception as _e:                                       # pragma: no cover
+    _B7_KARTE, _B7_OHNE_H1 = None, []
+    err(f'§B7: hublinks nicht importierbar ({_e}) — der Rueckweg-Gate faellt aus')
+for _u7 in _B7_OHNE_H1:
+    err(f"§B7: {_u7} ist eine Uebersicht ohne <h1>. Ohne sie gibt es keine Beschriftung, "
+        f"und der Rueckweg zeigt die nackte URL als Satzbaustein")
+if _B7_KARTE is not None:
+    for _p in items:
+        _det = (_pfeld(_p, 'detail') or '').rstrip('/')
+        _f7 = _det.lstrip('/') + '/index.html'
+        if not _det or not os.path.exists(_f7):
+            continue
+        _soll = {_u.rstrip('/') for _u, _ in _B7_KARTE.get(_det, [])}
+        if not _soll:
+            err(f"§B7: {_f7} steht in keiner Uebersicht — die Produktseite ist dann nur "
+                f"ueber die Suche erreichbar")
+            continue
+        _ist = {_m.group(1).rstrip('/') for _m in
+                re.finditer(r'href="(/[^"#?]*)"',
+                            _b7_rumpf(open(_f7, encoding='utf-8').read()))}
+        _fehlt = sorted(_soll - _ist)
+        if _fehlt:
+            err(f"§B7: {_f7} wird von {', '.join(sorted(_soll))} gefuehrt, verlinkt aber "
+                f"nicht zurueck auf {', '.join(_fehlt)} — "
+                f"'python3 scripts/sync_hublinks.py' bzw. 'gen_pages.py --regen'")
 
 # Zwei Eigenschaften, die der Generator herstellt und die deshalb am AUSGELIEFERTEN Stand
 # nachgewiesen werden, nicht an seinem Quelltext:
@@ -1427,8 +1522,11 @@ if os.path.exists(FINDER_JS):
                  f'§A6-Filters sind in diesem Lauf ungeprueft')
         else:
             def _finder_lauf(_nutzlast):
-                _pr = subprocess.run([_shutil.which('node'), _fp], input=json.dumps(
-                    _nutzlast), capture_output=True, text=True, timeout=180)
+                try:
+                    _pr = subprocess.run([_shutil.which('node'), _fp], input=json.dumps(
+                        _nutzlast), capture_output=True, text=True, timeout=180)
+                except subprocess.TimeoutExpired:
+                    return {'fehler': 'node hat nach 180 s nicht geantwortet'}
                 try:
                     return json.loads(_pr.stdout or '{}')
                 except Exception as _e:
@@ -2508,6 +2606,13 @@ if os.path.exists(_PJS):
                 err(f"§A1: {_p['slug']} hat type \"{_ty}\", das TYPE_LABELS in {_PJS} nicht "
                     f"kennt — die Seite zeigt dann den Rohwert statt eines Labels")
 
+# Die Stub-Regel kommt aus hublinks.py und steht NICHT ein zweites Mal hier. Die erste
+# Fassung hat sie nachgebaut (`'noindex' in _h`) -- genau die "zweite Wahrheit", die P-15
+# Mechanismus 1 verbietet, und mit demselben Fehler: Ein Blog-Artikel, der das Wort
+# "noindex" im Text nennt, fiel still als Linkquelle aus dem Waisen-Gate.
+from hublinks import ist_stub as _ist_stub_quelle
+
+
 # Verwaiste Seiten im SEO-Sinn (§B): indexierbar, in der Sitemap, aber von keiner
 # einzigen Seite verlinkt. Die Rueckrichtung war bis 01.10. nur fuer /produkte/ gegen die
 # Generatoren geprueft, nicht gegen die Verlinkung — und die ist es, die zaehlt: Eine Seite
@@ -2521,6 +2626,16 @@ _url_zu_datei = {('/' if _f == 'index.html' else '/' + os.path.dirname(_f).repla
 _verlinkt = set()
 for _f in pages:
     _h = open(_f, encoding='utf-8').read()
+    # B7: Ein Link von einer noindex-Weiterleitung ist KEIN Link. Die Seite sagt dem
+    # Crawler "indexiere mich nicht, geh woanders hin" -- was sie verlinkt, bekommt davon
+    # kein Signal. Bis zum 04.10. zaehlten solche Quellen mit, und genau daran haben
+    # DREI Seiten vorbeigelebt: produkte/ipega-pg-9023/, produkte/ipega-pg-9083s/ und
+    # produkte/mocute-050/ hatten je genau EINE eingehende Quelle, und die war in beiden
+    # Faellen eine Weiterleitung (/marken/ipega/, /marken/mocute/). Entstanden ist das
+    # beim Zurueckbauen der zwei Marken-Hubs zu Stubs: Die Seiten verloren ihren einzigen
+    # echten Link, und das Gate hat nichts gemerkt, weil es die Quelle nicht angesehen hat.
+    if _ist_stub_quelle(_h):
+        continue
     for _m in re.finditer(r'href="(/[^"#?]*)"', _h):
         _u = _m.group(1)
         if not _u.endswith('/'):

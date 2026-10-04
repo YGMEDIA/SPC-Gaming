@@ -242,6 +242,7 @@ def main():
             arbeit = os.path.join(rumpf, re.sub(r'\W+', '_', etikett)[:40])
             shutil.copytree(ROOT, arbeit,
                             ignore=shutil.ignore_patterns('.git', 'node_modules', 'brain',
+                                                      'SPC-Gaming-Visuals',
                                                           '__pycache__'))
             pfad = os.path.join(arbeit, datei)
             vorher = open(pfad, encoding='utf-8').read()

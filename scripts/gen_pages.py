@@ -68,6 +68,9 @@ def rating_of(p):
 A6_SCHWELLE = 3.8
 
 from kompat import kompat_html   # Massnahme B1, eine Quelle fuer Generator und Sync
+# Massnahme B7: derselbe Aufbau. Die Zuordnung Produkt -> Uebersicht wird aus dem
+# Linkgraph GELESEN, nicht gepflegt; `taxonomie_karte()` laeuft einmal pro Lauf.
+from hublinks import taxonomie_karte, hublinks_html, block as hub_block
 
 
 def a6_warnbox(prod):
@@ -112,6 +115,23 @@ def alt_text(prod, full_name):
     if pl and pl.lower() not in full_name.lower():
         return f"{full_name}, {pl} für Mobile Gaming"
     return f"{full_name}, Gaming-Zubehör für Smartphones"
+
+_TAXONOMIE_KARTE = None
+
+
+def _karte():
+    """Die Zuordnung Produkt -> Uebersichten, einmal je Lauf.
+
+    `taxonomie_karte()` liest alle Seiten; bei 29 Produktseiten waere das 29 Mal
+    derselbe Durchgang. Gecacht, weil sich der Linkgraph waehrend eines Laufs nicht
+    aendert: Dieser Generator schreibt nur Produktseiten, und die sind keine
+    Taxonomie-Seiten.
+    """
+    global _TAXONOMIE_KARTE
+    if _TAXONOMIE_KARTE is None:
+        _TAXONOMIE_KARTE = taxonomie_karte()[0]   # [1] sind die Hubs ohne h1, die meldet
+    return _TAXONOMIE_KARTE                       # sync_hublinks.py
+
 
 def build(prod, c):
     slug = prod['slug']
@@ -182,6 +202,7 @@ def build(prod, c):
     faq_html = '\n'.join(
         f'<div class="faq-item"><h3 class="faq-q">{esc(q)}</h3><p class="faq-a">{esc(a)}</p></div>'
         for q, a in c.get('faqs', []))
+    hub_links = hub_block(hublinks_html(prod.get('detail'), _karte(), esc))
     faq_section = f'<hr class="divider">\n<h2>Häufige Fragen</h2>\n<div class="faq-list">{faq_html}</div>' if faq_html else ''
 
     gallery_section = ''
@@ -244,7 +265,7 @@ def build(prod, c):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=8c2f49f1">
+  <link rel="stylesheet" href="/assets/css/style.css?v=f7ce8323">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -362,6 +383,8 @@ def build(prod, c):
           </div>
 
           {faq_section}
+
+          {hub_links}
 
           <hr class="divider">
           <h2>Das könnte dich auch interessieren</h2>

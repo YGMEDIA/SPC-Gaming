@@ -400,6 +400,7 @@ def main():
             arbeit = os.path.join(rumpf, f'f{n}')
             shutil.copytree(ROOT, arbeit,
                             ignore=shutil.ignore_patterns('.git', 'node_modules', 'brain',
+                                                      'SPC-Gaming-Visuals',
                                                           '__pycache__'))
             if name == 'LEGITIM is-active konsistent umbenannt':
                 _umbenennen(arbeit)

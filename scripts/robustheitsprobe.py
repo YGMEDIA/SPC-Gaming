@@ -84,6 +84,7 @@ def main():
     try:
         shutil.copytree(ROOT, os.path.join(arbeit, 'repo'),
                         ignore=shutil.ignore_patterns('.git', 'node_modules', 'brain',
+                                                      'SPC-Gaming-Visuals',
                                                       '__pycache__'))
         arbeit = os.path.join(arbeit, 'repo')
         pfad = os.path.join(arbeit, 'assets/data/products.json')

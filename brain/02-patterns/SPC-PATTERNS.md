@@ -260,8 +260,29 @@
 
 ---
 
+## P-15 · Rückweg-Pattern [bewiesen 04.10.2026]
+**Wann:** Immer wenn eine Übersichtsseite Einzelseiten listet: Kategorie-Hubs, Marken-Hubs, Zubehör-Hubs, jede Form von Sammelseite.
+**Befund, der das Pattern erzwungen hat:** Der Inhaltslink-Graph (Links innerhalb von `<main>`, ohne Navigation und Footer) zählte 777 Links über 109 Seiten. Die Verlinkung war also nicht dünn, sie war **einseitig**: Alle vier Marken-Hubs verlinkten lückenlos ihre Produkte, und **0 von 14** Produkten dieser Marken verlinkten zurück. Bei den fünf Plattform-Hubs dasselbe Bild: lückenlos hin, **13 der 28 Controller** ohne einen einzigen Link zurück.
+**Warum das keine Linkmenge ist:** Ein Hub, der nach unten verlinkt, verteilt Signal nach unten. Ohne Rückweg bekommt er selbst keines, und der Leser, der auf einer Produktseite landet, findet die Kategorie nicht, in der er weitersuchen würde. Das ist der billigste verfügbare Hebel, weil er kein Linkbudget braucht.
+**Regel:** Wer eine Seite listet, wird von ihr zurück verlinkt. Die Zuordnung wird aus dem bestehenden Linkgraph GELESEN, nicht gepflegt.
+
+**Sieben Pflicht-Mechanismen** (1 bis 5 beim Bau, 6 und 7 aus dem Prüflauf):
+1. **Die Zuordnung wird abgeleitet, nicht aufgeschrieben.** Welcher Hub welches Produkt führt, steht schon im HTML. Eine zweite Liste daneben ist die nächste, die veraltet. Auch die Beschriftung kommt aus der Zielseite (ihrer `<h1>`), nicht aus einer Tabelle.
+2. **Taxonomie ist nicht jede Seite, die verlinkt.** Zurück verlinkt wird nur auf die Übersichten, in denen die Seite *lebt* (Kategorie, Marke, Typ). Bestenlisten, Geschenke-Seiten und die Startseite sind redaktionelle Auswahl; nimmt man sie mit, hat jede Produktseite acht Rückverweise und keiner sagt mehr etwas.
+3. **Navigation und Footer gehören nicht in die Messung.** Sie stehen auf jeder Seite und tragen kein thematisches Signal. Wer sie mitzählt, bekommt einen Graph, in dem alles mit allem verbunden ist, und sieht die Einseitigkeit nicht.
+4. **Ein Link von einer noindex-Seite oder Weiterleitung ist kein Link.** Drei Datenblätter galten als verlinkt, weil ihre einzige Quelle ein zu einem Redirect-Stub zurückgebauter Marken-Hub war. Wer eingehende Links zählt, sieht die QUELLE an.
+5. **Geprüft wird die Eigenschaft am ausgelieferten Stand, nicht der Lauf eines Generators.** Den Block setzen hier zwei Wege (Generator für die generierten Seiten, Sync für die handgepflegten); ein Gate, das nur einen kennt, deckt die Hälfte nicht ab.
+
+6. **"Verlinkt" heißt: in den Karten, nicht irgendwo im Text.** Die erste Fassung las jeden Link in `<main>` — und zog damit redaktionelle Vergleichssätze als Zuordnung heran. Vier falsche Sätze gingen so live, der schlimmste auf einer Kühler-Produktseite: *"Dieses Modell steht auch in dieser Übersicht: Razer Controller 2026"*, als einziger Hub-Link, weil der Razer-Hub den Black-Shark-Kühler in einem Satz als Alternative empfiehlt. Das ist das Gegenteil des Ziels: ein falsches thematisches Signal mit falschem Ankertext. Und die zu weite Regel hat einen echten Defekt VERDECKT — zwei von drei Karten auf dem Kühler-Hub verlinkten "Mehr erfahren" auf den Hub selbst, und die Messung meldete trotzdem "jedes Produkt hängt an mindestens einer Übersicht". **Eine zu großzügige Zuordnung findet keine Lücken, sie füllt sie mit Falschem.**
+7. **Eine Zahl ohne genannte Population ist keine.** "29 von 42 Produktseiten ohne Plattform-Hub-Link" mischte alle Produkte (inklusive Zubehör, das per Konstruktion keinen haben kann) mit nur drei der fünf Hubs. Richtig und nachrechenbar: **13 der 28 Controller**. Dieselbe Prüfung gilt für jede Vorher-Nachher-Zahl: Wer sie nachrechnen will, muss die Menge aus dem Satz kennen.
+
+**Grenze, ausdrücklich:** Die Regel schließt die TAXONOMISCHE Richtung. Die thematische — welcher Blog-Artikel welchen anderen sinnvoll verlinkt — ist redaktionell und nicht ableitbar. Blog-Artikel bleiben mit Median 3 eingehenden Inhaltslinks der schwächste Seitentyp (Reviews: 18), und das sind die Seiten, über die der Traffic kommt.
+**Vorlage:** `scripts/hublinks.py` (Regel) · `scripts/sync_hublinks.py` (Nachzug) · `gen_pages.py` (Generator-Seite) · `scripts/links_batterie.py` (20 Fälle, 13 rot, 7 grün) · Gates in `verify.py` · Gesetze: §A1, §B
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.0 · 2026-10-04*
+*SPC Pattern-Katalog v5.1 · 2026-10-04*
