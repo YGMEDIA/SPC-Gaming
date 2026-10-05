@@ -40,8 +40,13 @@ jobs:
       - name: Python einrichten
         uses: actions/setup-python@v5
         with:
-          # Geprueft: die Skripte nutzen keine Konstrukte oberhalb von 3.9, die
-          # Festlegung dient nur der Reproduzierbarkeit.
+          # Diese Festlegung ist TRAGEND, nicht kosmetisch. Hier stand bis zum 05.10.
+          # "die Skripte nutzen keine Konstrukte oberhalb von 3.9" -- gemessen falsch:
+          # `gen_brand_sections.py:200` enthaelt einen Backslash im Ausdrucksteil eines
+          # f-Strings, und das erlaubt erst PEP 701 ab 3.12. Mit 3.9 bricht die Datei
+          # beim Parsen (nachgemessen mit 3.9.6: 37 der 38 Skripte parsen, dieses nicht), und
+          # verify.py startet sie als Unter-Gate. Wer hier auf 3.11 oder tiefer geht,
+          # macht aus dem Marken-Gate einen Absturz.
           python-version: '3.12'
 
       # Node kam bisher nur aus dem ubuntu-latest-Image: nirgends angefordert, nirgends
@@ -72,6 +77,25 @@ jobs:
 
       - name: sync_product_values.py --audit
         run: python3 scripts/sync_product_values.py --audit
+
+      # Die vier Gates, die bis zum 05.10. NIRGENDS in CI liefen. Von den vierzehn
+      # Gates des Repos fahren drei hier oben, fuenf laufen als Unter-Gate ueber
+      # verify.py mit (gen_brand_sections, gen_preisfrage, gen_bestenliste,
+      # sync_hublinks, sync_guenstiger, sync_zeitversprechen, sync_positionierung) --
+      # diese vier liefen nur auf Yasins Rechner. Ein Push, der eines davon bricht,
+      # deployte gruen.
+      # Zusammen 1,6 Sekunden, gemessen am 05.10.2026: Es war nie die Laufzeit.
+      - name: sync_footer.py --check
+        run: python3 scripts/sync_footer.py --check
+
+      - name: sync_lesezeit.py --check
+        run: python3 scripts/sync_lesezeit.py --check
+
+      - name: sync_kompat.py --check
+        run: python3 scripts/sync_kompat.py --check
+
+      - name: css_kaskade.py
+        run: python3 scripts/css_kaskade.py
 
   deploy:
     needs: verify
