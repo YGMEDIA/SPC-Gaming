@@ -287,8 +287,26 @@
 
 ---
 
+## P-16 · Positionierungs-Pattern [bewiesen 05.10.2026]
+**Wann:** Immer wenn eine Seite sagt, warum es diese Site gibt: Startseite, Über-uns, Redaktions- und Methodenseiten, jede Form von Selbstaussage.
+**Befund, der das Pattern erzwungen hat:** Gemessen über alle 127 Seiten stand „YouTube" auf **0** davon, und „Amazon" auf der Startseite dreimal im Seiteninhalt (ohne Navigation und Footer), jedes Mal als Datenquelle; mit Footer vier, die vierte ist der Provisionshinweis. Positioniert wurde gegen „klassische Affiliate-Seiten" und „Marketing-Blabla". Die Alternative, gegen die wir tatsächlich antreten, war an keiner Stelle benannt (Dunford: Positionierung fängt bei der Frage an, was der Kunde stattdessen täte).
+**Regel:** Die Alternative wird benannt, und jede Eigenschaft, mit der man sich von ihr absetzt, ist eine abgeleitete Zahl aus dem Repo, keine Formulierung.
+
+**Sechs Pflicht-Mechanismen** (1 bis 5 beim Bau, 6 aus dem Prüflauf):
+1. **Die Alternative steht im Text, und das Gate hält sie fest.** Ein Positionierungs-Abschnitt, der sie nicht nennt, positioniert wieder gegen niemanden. Das ist die Maßnahme selbst und gehört deshalb in die Prüfung.
+2. **Die Behauptungen stehen über UNS, nicht über den Wettbewerber.** Was in einer fremden Artikelbeschreibung steht oder fehlt, können wir nicht belegen. Wer seine Positionierung auf eine unbelegbare Aussage über den anderen stützt, gibt das Argument aus der Hand, mit dem er wirbt.
+3. **Jede Zahl abgeleitet, in beide Richtungen geprüft** (P-11): Die gemessene Zahl MUSS im Block stehen, und es darf KEINE ungedeckte Zahl darin stehen. Die Anwesenheitsprüfung allein genügt nicht, sobald eine Zahl mehrfach vorkommt: Wird eine von zwei „42" zu „142", bleibt die Eigenschaft erfüllt.
+4. **Keine All-Aussage über die eigene Arbeit, solange die Messung sie nicht trägt.** „Jeder Controller wird über mehrere Wochen getestet" stand auf zwei Methodenseiten, während 13 von 42 Produktseiten einen eigenen Test tragen. Gegatet wird ein SPRACHMUSTER (All-Quantor plus Test-Aussage, in zwei Satzstellungen, mit Füllwörtern, plus die Form „kein X ohne Test"), ausgenommen Verneinung, Frage und Sätze, die die gemessene Zahl selbst nennen; die Schwelle hängt an der genannten Klasse (Controller gegen Controller, Modell/Produkt/Gerät gegen alle Produkte). **Das ist eine Stichprobe auf die bekannten Formen, kein Beweis.** Die erste Fassung nannte sich im Kommentar „Eigenschaft statt Satz" und fing von zehn echten All-Aussagen eine, während neun wahre Sätze rot wurden, darunter die ehrliche Korrektur „Nicht jeder Controller ist von uns getestet" (die Meldung schnitt das „Nicht" ab). Die zweite Runde fand an derselben Zeile noch 7 von 14 legitimen Sätzen rot (Methoden-Vokabular ohne All-Anspruch) und eine Ausnahme, die jeder nackten Ziffer galt. **Wer so ein Muster baut, schreibt seine Grenzen daneben** — und zwar beide Richtungen, Loch und Fehlalarm, mit dem Satz, der sie auslöst. Sonst ist der Kommentar die nächste unbelegte Behauptung.
+5. **Ein Prozess-Versprechen ohne veröffentlichten Beleg fliegt raus, statt umgeschrieben zu werden.** „Wir messen Input-Latenz" (/redaktion/) und „Wir messen Latenz" (/ueber-uns/) standen da, und **keine einzige der 42 Produktseiten** nennt eine Millisekunden-Zahl. §A5 verbietet erfundene Produktdaten; es gibt keinen Grund, die eigene Arbeit lockerer zu prüfen als die Angaben eines Herstellers.
+6. **Eine Eigenschaftsaussage auf der Startseite braucht ihr eigenes Gate.** „Jede unserer 42 Produktseiten nennt mindestens zwei Schwächen" war wahr und von nichts gedeckt: §A6 steht seit dem ersten Tag in der Verfassung und wurde von keiner Prüfung berührt. Auf den generierten Seiten fing der Zeichenvergleich eine gelöschte Schwäche zufällig mit, auf den 13 handgepflegten Reviews nichts (gemessen: von 4 auf 1 Schwäche gekürzt, Lauf blieb grün). Jetzt zählt ein Parser die Punkte je Seite, das Minimum steht im Satz, und unter zwei wird der Lauf rot.
+
+**Grenze, ausdrücklich:** Das Pattern sichert die PRÜFBAREN Teile einer Positionierung. Ob die gewählte Position die richtige ist, also ob wir gegen Amazon und Video antreten wollen und mit welchem Versprechen, ist eine unternehmerische Entscheidung und kein Gate.
+**Vorlage:** `scripts/positionierung.py` (Regel) · `scripts/sync_positionierung.py` (Nachzug) · §B11 in `verify.py` · Fälle in `scripts/links_batterie.py` · Gesetze: §A1, §A5, §A6
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.2 · 2026-10-05*
+*SPC Pattern-Katalog v5.3 · 2026-10-05*

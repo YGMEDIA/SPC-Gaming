@@ -627,6 +627,222 @@ if _b10_finden is not None:
             err(f"§B10: {_f10} fuehrt einen B10-Hinweis, ist aber keine Produktseite — "
                 f"der Hinweis gehoert auf die Seite des teureren Modells, sonst nirgends")
 
+# B11 (Dunford, Obviously Awesome): Die echte Alternative des Lesers ist Amazon selbst und
+# ein Video, nicht ein anderer Blog. Gemessen am 05.10.2026 ueber alle 127 Seiten: "YouTube"
+# stand auf 0 Seiten, "Amazon" auf der Startseite dreimal im Seiteninhalt und jedes Mal
+# als Datenquelle (mit Footer vier, die vierte ist der Provisionshinweis).
+# Positioniert wurde gegen "klassische Affiliate-Seiten" -- gegen einen Gegner, den der
+# Leser gar nicht erwaegt. Drei Eigenschaften, alle am ausgelieferten Stand:
+if os.path.exists('scripts/sync_positionierung.py'):
+    _rp11 = _gate('sync_positionierung.py', '--check')
+    if _rp11.returncode != 0:
+        _z11 = (_rp11.stdout + _rp11.stderr).strip().splitlines()
+        err(f"§B11: scripts/sync_positionierung.py --check schlaegt fehl. Fix: "
+            f"'python3 scripts/sync_positionierung.py'. {_z11[-1][:160] if _z11 else ''}")
+else:
+    err('scripts/sync_positionierung.py fehlt — die Positionierung ist dann ungegatet')
+
+try:
+    from positionierung import (MARKER as _B11_M, SEITEN as _B11_S, ZAHLWORT as _B11_W,
+                                fakten as _b11_fakten, _spanne as _b11_spanne,
+                                schwaechen as _b11_schwaechen)
+except Exception as _e:                                       # pragma: no cover
+    _B11_M = None
+    err(f'§B11: positionierung.py nicht importierbar ({_e}) — die Positionierung ist '
+        f'ungegatet')
+if _B11_M:
+    _f11 = _b11_fakten(items)
+    _b11_soll = {d for d, _ in _B11_S}
+    # 1 · Die Zahlen im Block muessen die gemessenen sein. Teilstring-Tests waeren hier
+    # besonders wertlos: "42" steckt in "142" und "13" in "130". Darum Ziffergrenzen,
+    # dieselbe Lehre wie bei §B10.
+    _b11_zahlen = {
+        'start': (('Produktseiten mit Kompatibilitaets-Aussage', _f11['kompat']),
+                  ('davon mit Negativzeile', _f11['kompat_nein']),
+                  ('Produkte', _f11['produkte']),
+                  ('Controller', _f11['controller']),
+                  ('Controller unter der Schwelle', _f11['unter_schwelle']),
+                  ('Seiten mit B10-Hinweis', _f11['guenstiger'])),
+        'methode': (('Produkte', _f11['produkte']),
+                    ('eigene Tests', _f11['tests']),
+                    ('Kurzchecks', _f11['kurzchecks'])),
+    }
+    for _d11, _art11 in _B11_S:
+        if not os.path.exists(_d11):
+            err(f"§B11: {_d11} fehlt — die Seite traegt die Positionierung")
+            continue
+        _h11 = open(_d11, encoding='utf-8').read()
+        _a11 = _h11.find(f'<!-- {_B11_M}:START -->')
+        _e11 = _h11.find(f'<!-- {_B11_M}:END -->')
+        if _a11 < 0:
+            err(f"§B11: {_d11} traegt keinen Positionierungs-Block (Fix: "
+                f"'python3 scripts/sync_positionierung.py')")
+            continue
+        if _e11 < _a11:
+            err(f"§B11: {_d11} — der Marker hat keinen Partner (START ohne END oder END "
+                f"vor START). Fix: 'python3 scripts/sync_positionierung.py'")
+            continue
+        # BEIDE Marker zaehlen. Die erste Fassung zaehlte nur START und nahm von END das
+        # erste Vorkommen: Ein verwaistes zweites END blieb damit stumm gruen, obwohl
+        # "Marker gepaart" als gepruefte Eigenschaft ausgewiesen war. Folgenlos fuer den
+        # Leser, aber es verschiebt beim naechsten Umzug die Reichweite von `entferne()`.
+        for _mk11, _nz11 in ((f'<!-- {_B11_M}:START -->', _h11.count(f'<!-- {_B11_M}:START -->')),
+                             (f'<!-- {_B11_M}:END -->', _h11.count(f'<!-- {_B11_M}:END -->'))):
+            if _nz11 != 1:
+                err(f"§B11: {_d11} traegt den Marker {_mk11} {_nz11}x, erwartet genau 1")
+        if (_h11.count(f'<!-- {_B11_M}:START -->') != 1
+                or _h11.count(f'<!-- {_B11_M}:END -->') != 1):
+            continue
+        _t11 = _klartext(_h11[_a11:_e11])
+        for _was11, _wert11 in _b11_zahlen[_art11]:
+            if not re.search(rf'(?<![\d,.]){_wert11}(?!\d)', _t11):
+                err(f"§B11: {_d11} — der Block nennt die gemessene Zahl {_wert11} "
+                    f"({_was11}) nicht (Fix: 'python3 scripts/sync_positionierung.py')")
+        # Und die Gegenrichtung (P-11, Mechanismus 2): KEINE Zahl im Block darf
+        # ungedeckt sein. Die Anwesenheitspruefung allein genuegt nicht, weil "42"
+        # zweimal im Abschnitt steht: Wird eine der beiden zu "142", bleibt die andere
+        # stehen und die Eigenschaft gilt weiter. Gemessen am 05.10.2026 -- diese Form
+        # wurde nur ueber den Zeichenvergleich des Sync-Skripts rot, nicht ueber §B11.
+        _txt11 = _t11
+        for _nm11 in sorted({_pfeld(_p, 'name') for _p in items}, key=len, reverse=True):
+            if _nm11:
+                _txt11 = _txt11.replace(_nm11, ' ')
+        _txt11 = re.sub(r'\b(iPhone|iPad|iOS|Android|Galaxy|Generation|Gen\.?)\s*\d+',
+                        ' ', _txt11)
+        _erl11 = {str(_v) for _v in _f11.values() if _v is not None}
+        _erl11.add(_sterne_text(A6_SCHWELLE))
+        for _z11 in re.findall(r'\d+(?:,\d+)?', _txt11):
+            if _z11 not in _erl11:
+                err(f"§B11: {_d11} — die Zahl {_z11} im Positionierungs-Block ist aus "
+                    f"keiner Regel abgeleitet (gedeckt waeren {sorted(_erl11)}). Fix: "
+                    f"'python3 scripts/sync_positionierung.py'")
+        if _art11 == 'start':
+            # 2 · Die Alternative muss BENANNT sein. Das ist die Massnahme selbst: Ein
+            # Positionierungs-Abschnitt, der Amazon und das Video nicht nennt, positioniert
+            # wieder gegen niemanden.
+            for _alt11 in ('Amazon', 'Video'):
+                if _alt11 not in _t11:
+                    err(f"§B11: {_d11} — der Positionierungs-Abschnitt nennt \"{_alt11}\" "
+                        f"nicht; er soll die echte Alternative benennen")
+            if _b11_spanne(_f11) not in _t11:
+                err(f"§B11: {_d11} — die Lesezeit-Spanne \"{_b11_spanne(_f11)}\" steht "
+                    f"nicht im Block (Fix: 'python3 scripts/sync_positionierung.py')")
+            # Die Zahl der Schwaechen steht als WORT im Satz ("mindestens zwei"), also
+            # faellt sie durch die Ziffernpruefung oben. Geprueft wird deshalb das Wort,
+            # das die Regel fuer den gemessenen Mindestwert rendert.
+            _w11 = str(_B11_W.get(_f11['min_cons'], _f11['min_cons']))
+            if _w11 not in _t11:
+                err(f"§B11: {_d11} — der Block nennt die gemessene Mindestzahl der "
+                    f"Schwaechen (\"{_w11}\") nicht (Fix: "
+                    f"'python3 scripts/sync_positionierung.py')")
+    for _f11n in pages:
+        if (f'<!-- {_B11_M}:START -->' in open(_f11n, encoding='utf-8').read()
+                and _f11n not in _b11_soll):
+            err(f"§B11: {_f11n} fuehrt einen Positionierungs-Block, gehoert aber nicht zu "
+                f"den drei Seiten, die ihn tragen")
+
+
+    # 3 · Solange nicht JEDES Produkt einen eigenen Test hat, soll keine Methodenseite eine
+    # All-Aussage ueber eigene Tests machen. Genau die stand bis zum 05.10. auf beiden:
+    # "Jeder Controller wird ueber mehrere Wochen im echten Gaming-Alltag getestet",
+    # waehrend die Startseite daneben "13 von 42" sagte und 13 Seiten einen Test tragen.
+    #
+    # WAS DIESE PRUEFUNG IST, UND WAS SIE NICHT IST. Sie sucht ein SPRACHMUSTER, kein
+    # Datum. Die erste Fassung hat sich im Kommentar "Eigenschaft statt Satz" genannt und
+    # das nicht eingeloest: Von zehn echten All-Aussagen fing sie eine (Verb zuerst,
+    # Fuellwort zwischen Quantor und Nomen, "Test" als Substantiv, "Geraet" statt
+    # "Modell", "kein X ohne Test" rutschten durch), und neun legitime Saetze wurden rot,
+    # darunter die Korrektur "NICHT jeder Controller ist von uns getestet" -- die Meldung
+    # schnitt das "Nicht" ab und legte der Seite das Gegenteil in den Mund.
+    # Jetzt: zwei Satzstellungen, Fuellwoerter, mehr Nomen und Verben, die Sonderform
+    # "kein X ohne Test", und drei Ausnahmen (Verneinung, Frage, Satz nennt die gemessene
+    # Zahl). Eine Verneinung IN einer Aussage, die daneben einen All-Anspruch erhebt,
+    # findet sie weiterhin nicht, und ein deutscher Satz laesst sich immer so bauen, dass
+    # ein Muster ihn verfehlt. Das ist eine Stichprobe auf die bekannten Formen, kein
+    # Beweis -- so steht es auch in P-16 und im Protokoll.
+    _B11_NOMEN = r'(?:Controller|Modelle?n?|Produkte?n?|Ger(?:ä|ae)te?n?|Gamepads?)'
+    _B11_QUANT = r'(?:jede[rsmn]?|alle[nrs]?|s(?:ä|ae)mtliche[nrs]?)'
+    _B11_TEST = (r'(?:getestet|testen|teste|gepr(?:ü|ue)ft|durchlaufen|'
+                 r'Test\b|Tests\b|Testprozess)')
+    # Die zweite Satzstellung nimmt NUR die Test-Verben. Mit "geprueft" und den
+    # Substantiven darin genuegte irgendein Testwort, gefolgt von irgendeinem Quantor
+    # binnen 120 Zeichen -- und auf einer Methodenseite ist genau dieses Vokabular der
+    # Normalfall: "Im Test zeigte sich, dass alle Controller mit Android laufen" wurde
+    # rot, eine Aussage, die mit eigenen Tests gar nichts zu tun hat. Gemessen fielen so
+    # 7 von 14 legitimen Saetzen; mit dieser Zeile ist es einer, und der steht als
+    # genannte Grenze unten.
+    _B11_TEST2 = r'(?:getestet|testen|teste|durchlaufen)'
+    _B11_ALL = re.compile(
+        rf'{_B11_QUANT}\s+(?:\w+\s+){{0,2}}{_B11_NOMEN}\b[^.!?]{{0,120}}?\b{_B11_TEST}'
+        rf'|\b{_B11_TEST2}\b[^.!?]{{0,120}}?{_B11_QUANT}\s+(?:\w+\s+){{0,2}}{_B11_NOMEN}\b'
+        rf'|\bkein(?:e[nrs]?)?\s+(?:\w+\s+){{0,2}}{_B11_NOMEN}\b[^.!?]{{0,70}}\bohne\b'
+        rf'[^.!?]{{0,50}}\bTest', re.I)
+    _B11_VERNEINT = re.compile(r'\b(nicht|nie|niemals|selten|nur wenige|nein)\b', re.I)
+    # Die Schwelle haengt an der Klasse, die der Satz nennt: "Jeder CONTROLLER wird
+    # getestet" ist wahr, sobald alle 28 Controller einen Test tragen, auch wenn die 14
+    # Zubehoerteile keinen haben. Die erste Fassung verglich immer gegen alle 42 und
+    # haette diesen richtigen Satz blockiert.
+    for _d11, _art11 in _B11_S:
+        if _art11 != 'methode' or not os.path.exists(_d11):
+            continue
+        for _satz in re.split(r'(?<=[.!?])\s+', _klartext(open(_d11, encoding='utf-8').read())):
+            _m11 = _B11_ALL.search(_satz)
+            if not _m11:
+                continue
+            _kein = _m11.group(0).lower().startswith('kein')
+            if (not _kein and _B11_VERNEINT.search(_satz)) or _satz.rstrip().endswith('?'):
+                continue            # Verneinung oder Frage ist keine All-Behauptung
+            _ctrl11 = re.search(r'Controller', _m11.group(0), re.I)
+            _ist, _soll11 = ((_f11['tests_controller'], _f11['controller']) if _ctrl11
+                             else (_f11['tests'], _f11['produkte']))
+            # Die Ausnahme gilt der FORM, nicht jeder Ziffer im Satz: entweder steht die
+            # gemessene Zahl in einer einschraenkenden Wendung ("13 davon", "13 von 42"),
+            # oder Zahl UND Grundgesamtheit stehen beide da ("Von allen 42 Produkten
+            # tragen 13 einen eigenen Test"). Vorher genuegte eine nackte 13 irgendwo, und
+            # "ein 13-Punkte-Test im Alltag" war damit freigestellt.
+            # BEKANNTE GRENZE: "Alle Modelle werden getestet, 13 davon besonders
+            # gruendlich" bleibt gruen. Der Satz nennt die Zahl in der richtigen Form und
+            # erhebt daneben trotzdem einen All-Anspruch; der Unterschied zur wahren
+            # Startseiten-Fassung liegt allein im Verb (gepruefT gegen getesteT). Das
+            # trennt kein Muster, und es wird hier auch nicht behauptet.
+            if (re.search(rf'(?<![\d,.]){_ist}(?!\d)\s*(?:von|der|davon|/)\b', _satz)
+                    or (re.search(rf'(?<![\d,.]){_ist}(?!\d)', _satz)
+                        and re.search(rf'(?<![\d,.]){_soll11}(?!\d)', _satz))):
+                continue            # der Satz nennt die gemessene Zahl in ihrer Rolle
+            if _ist < _soll11:
+                _zit = re.sub(r'[¶\s]+', ' ', _satz).strip()
+                err(f"§B11: {_d11} behauptet im Satz \"{_zit[:140]}\", aber nur "
+                    f"{_ist} von {_soll11} tragen einen eigenen Test — eine All-Aussage "
+                    f"auf der Methodenseite ist genau da falsch, wo der Leser sie prueft")
+
+# ---------- §A6 · mindestens zwei echte Schwaechen je Produktseite ----------
+# Der ungegatete Teil der Verfassung: "Jedes Review nennt mindestens zwei echte
+# Schwaechen." Das stand seit dem ersten Tag als Gesetz da und wurde von NICHTS geprueft,
+# aufgefallen erst, als B11 den Satz auf die Startseite geschrieben hat. Auf den 29
+# generierten Seiten faengt der §A1-Zeichenvergleich eine geloeschte Schwaeche zufaellig
+# mit; die 13 handgepflegten Reviews hatten gar keinen Rueckhalt (gemessen: eine
+# Review-Seite von 4 auf 1 Schwaeche gekuerzt, Lauf blieb gruen).
+# Gemessen am 05.10.2026: 42 Seiten, Minimum 2, Verteilung 16x2 / 16x3 / 9x4 / 1x5.
+# EIGENER try: Ein Verfassungs-Gate darf nicht daran haengen, ob die Positionierung
+# importierbar ist -- sonst schaltet das Entfernen einer Massnahme ein Gesetz mit ab.
+try:
+    from positionierung import schwaechen as _schwaechen
+except Exception as _e:                                       # pragma: no cover
+    _schwaechen = None
+    err(f"§A6: die Schwaechen-Zaehlung ist nicht importierbar ({_e}) — damit ist das "
+        f"Gesetz 'jedes Review nennt mindestens zwei echte Schwaechen' ungegatet")
+if _schwaechen is not None:
+    for _p6 in items:
+        _d6 = (_pfeld(_p6, 'detail') or '').strip('/') + '/index.html'
+        if not _pfeld(_p6, 'detail') or not os.path.exists(_d6):
+            continue
+        _n6 = _schwaechen(open(_d6, encoding='utf-8').read())
+        if _n6 < 2:
+            err(f"§A6: {_d6} nennt {_n6} Schwaeche(n), gefordert sind mindestens zwei. "
+                f"Ein Review ohne echte Schwaechen ist eine Werbeseite, und die "
+                f"Startseite behauptet das Gegenteil fuer alle {len(items)} "
+                f"Produktseiten")
+
 # B9 (Cialdini, Autoritaet am Entscheidungspunkt): Die Beschriftung des Detail-Knopfs
 # sagt, WAS den Leser erwartet -- ein eigener Test oder ein Datenblatt. Gemessen am
 # 05.10.2026 ueber alle 200 Produktkarten der Site, VOR der Massnahme:

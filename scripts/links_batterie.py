@@ -49,10 +49,27 @@ REDAKTION = 'controller/universal/gamesir-x5-lite-review/index.html'
 KISHIPRO = 'controller/universal/razer-kishi-v3-pro-review/index.html'
 WAISE = 'produkte/ipega-pg-9023/index.html'
 BLOGSEITE = 'blog/hall-effect-erklaert/index.html'
+START = 'index.html'
+UEBERUNS = 'ueber-uns/index.html'
+METHODE = 'redaktion/index.html'
+POSBLOCK = ('<!-- POSITION:START -->\n<p>Irgendwas 42 13 29 Amazon Video 1 bis 2 '
+            'Minuten</p>\n<!-- POSITION:END -->\n')
 
 
 def _block_weg(h):
     return re.sub(r'<!-- HUBLINKS:START -->.*?<!-- HUBLINKS:END -->\n?', '', h, flags=re.S)
+
+
+_KRITERIEN = '<h2 style="margin-top:24px">Unsere Bewertungskriterien</h2>'
+
+
+def _satz(h, text):
+    """Setzt einen Satz in den Fliesstext der Methodenseite, vor die Kriterien-Liste.
+
+    Eigene Funktion, weil die All-Aussagen-Faelle sich nur im SATZ unterscheiden duerfen:
+    Wer daneben auch noch die Einfuegestelle variiert, misst zwei Dinge auf einmal.
+    """
+    return h.replace(_KRITERIEN, f'<p>{text}</p>\n{_KRITERIEN}', 1)
 
 
 FAELLE = [
@@ -262,6 +279,99 @@ FAELLE = [
                          '<!-- GUENSTIGER:END -->\n</main>', 1), 'ROT'),
     ('LEGITIM zusaetzlicher Absatz auf einer B10-Seite', KISHIPRO,
      lambda h: h.replace('</main>', '<p>Nachtrag: Preis geprueft.</p></main>', 1), 'GRUEN'),
+
+    # --- B11: die echte Alternative heisst Amazon und Video ----------------------------
+    ('B11-Block auf der Startseite entfernt', START,
+     lambda h: re.sub(r'<!-- POSITION:START -->.*?<!-- POSITION:END -->\n?', '', h,
+                      flags=re.S), 'ROT'),
+    ('B11-Block auf /ueber-uns/ entfernt', UEBERUNS,
+     lambda h: re.sub(r'<!-- POSITION:START -->.*?<!-- POSITION:END -->\n?', '', h,
+                      flags=re.S), 'ROT'),
+    ('abgeleitete Zahl im B11-Block verfaelscht', START,
+     lambda h: h.replace('Auf 33 unserer 42', 'Auf 44 unserer 42', 1), 'ROT'),
+    # Teilstring-Falle mit eigener Pointe: "42" steht zweimal im Abschnitt. Die
+    # Anwesenheitspruefung allein bleibt gruen, weil das zweite stehen bleibt -- erst das
+    # Drift-Gate (keine ungedeckte Zahl) macht die Form rot.
+    ('Zahl im B11-Block um eine Ziffer verlaengert', START,
+     lambda h: h.replace('unserer 42 Produktseiten', 'unserer 142 Produktseiten', 1), 'ROT'),
+    ('Alternative "Amazon" aus dem B11-Block entfernt', START,
+     lambda h: h.replace('Warum nicht einfach bei Amazon schauen?',
+                         'Warum nicht einfach woanders schauen?', 1), 'ROT'),
+    ('Alternative "Video" aus dem B11-Block entfernt', START,
+     lambda h: h.replace('oder sie suchen ein Video dazu', 'oder sie suchen etwas dazu', 1)
+                .replace('Und statt eines Videos:', 'Und ausserdem:', 1), 'ROT'),
+    ('Lesezeit-Spanne im B11-Block verfaelscht', START,
+     lambda h: h.replace('liest du in 1 bis 2 Minuten', 'liest du in 1 bis 5 Minuten', 1),
+     'ROT'),
+    ('B11-END-Marker entfernt', UEBERUNS,
+     lambda h: h.replace('<!-- POSITION:END -->', '', 1), 'ROT'),
+    ('B11-Block zweimal auf derselben Seite', UEBERUNS,
+     lambda h: h.replace('<!-- POSITION:END -->',
+                         '<!-- POSITION:END -->\n<!-- POSITION:START -->\n<p>Doppelt</p>\n'
+                         '<!-- POSITION:END -->', 1), 'ROT'),
+    ('B11-Block auf einer Seite, die keinen traegt', BLOGSEITE,
+     lambda h: h.replace('</main>', POSBLOCK + '</main>', 1), 'ROT'),
+    # Die zwei Formen, die NUR die Eigenschaftspruefung findet: Der Zeichenvergleich sieht
+    # sie nicht, weil der Block selbst unberuehrt bleibt.
+    ('All-Aussage ueber eigene Tests wieder eingesetzt', METHODE,
+     lambda h: h.replace('<h2 style="margin-top:24px">Unser Testprozess</h2>',
+                         '<h2 style="margin-top:24px">Unser Testprozess</h2>\n'
+                         '<p>Jeder Controller wird ueber mindestens 2-3 Wochen im echten '
+                         'Gaming-Alltag getestet.</p>', 1), 'ROT'),
+    ('All-Aussage anders formuliert', UEBERUNS,
+     lambda h: h.replace('<h2 style="margin-top:32px">Wie wir Geld verdienen</h2>',
+                         '<p>Alle Modelle im Sortiment testen wir selbst, bevor wir sie '
+                         'empfehlen, und zwar wochenlang getestet im Alltag.</p>\n'
+                         '    <h2 style="margin-top:32px">Wie wir Geld verdienen</h2>', 1),
+     'ROT'),
+    # Vier Satzstellungen, an denen die erste Fassung des Musters vorbeigelesen hat: Verb
+    # zuerst, Fuellwort zwischen Quantor und Nomen, "Test" als Substantiv statt Verb, und
+    # die Verneinungsform, die trotzdem eine All-Aussage ist.
+    ('All-Aussage mit Verb zuerst', METHODE, lambda h: _satz(
+        h, 'Wir testen jeden Controller ueber mehrere Wochen im Gaming-Alltag.'), 'ROT'),
+    ('All-Aussage mit Fuellwort', METHODE, lambda h: _satz(
+        h, 'Jeder einzelne Controller wird ueber mehrere Wochen getestet.'), 'ROT'),
+    ('All-Aussage mit Test als Substantiv', METHODE, lambda h: _satz(
+        h, 'Jeder Controller geht bei uns durch einen mehrwoechigen Test.'), 'ROT'),
+    ('All-Aussage als "kein X ohne Test"', METHODE, lambda h: _satz(
+        h, 'Kein Controller kommt ohne eigenen Test auf diese Seite.'), 'ROT'),
+    # Und die Gegenrichtung: vier wahre Saetze, die das Muster NICHT faelschlich faengt.
+    # Der erste ist die ehrliche Korrektur der alten Behauptung, der letzte steht in
+    # dieser Form schon auf der Startseite.
+    ('LEGITIM verneinte All-Aussage', METHODE, lambda h: _satz(
+        h, 'Nicht jeder Controller im Sortiment ist von uns getestet.'), 'GRUEN'),
+    ('LEGITIM Verneinung im Nebensatz', METHODE, lambda h: _satz(
+        h, 'Jeder Controller, den wir nicht selbst getestet haben, bekommt einen '
+           'Kurzcheck.'), 'GRUEN'),
+    ('LEGITIM Frage statt Behauptung', METHODE, lambda h: _satz(
+        h, 'Werden alle Controller getestet? Nein, 13 von 42.'), 'GRUEN'),
+    ('LEGITIM All-Satz nennt die gemessene Zahl', METHODE, lambda h: _satz(
+        h, 'Jedes Modell im Sortiment haben wir geprueft, 13 davon ausfuehrlich '
+           'getestet.'), 'GRUEN'),
+    # Methoden-Vokabular ohne All-Anspruch ueber eigene Tests. Die zweite Satzstellung
+    # hat solche Saetze zuerst rot gemacht, und genau dieses Vokabular ist auf einer
+    # Methodenseite der Normalfall.
+    ('LEGITIM Testwort ohne All-Anspruch', METHODE, lambda h: _satz(
+        h, 'Im Test zeigte sich, dass alle Controller mit Android laufen.'), 'GRUEN'),
+    ('LEGITIM geprueft plus Quantor ohne Testbezug', METHODE, lambda h: _satz(
+        h, 'Wir haben die Preise geprueft und alle Produkte neu sortiert.'), 'GRUEN'),
+    ('All-Aussage mit Zahl in falscher Rolle', METHODE, lambda h: _satz(
+        h, 'Jeder Controller bekommt einen 13-Punkte-Test im Alltag.'), 'ROT'),
+    # §A6, der zweite Blocker des Pruefauflaufs: eine handgepflegte Review-Seite verliert
+    # Schwaechen. Vorher blieb das stumm gruen.
+    ('Schwaechen auf einer handgepflegten Review-Seite geloescht', KISHIPRO,
+     lambda h: re.sub(r"(<div class=\"cons-box\"><h3>[^<]*</h3><ul>)(.*?)</ul>",
+                      lambda m: m.group(1) + re.findall(r'<li.*?</li>', m.group(2), re.S)[0]
+                      + '</ul>', h, count=1, flags=re.S), 'ROT'),
+    ('LEGITIM Absatz neben dem B11-Block', START,
+     lambda h: h.replace('<!-- POSITION:START -->',
+                         '<p>Nachtrag: Stand geprueft.</p>\n    <!-- POSITION:START -->', 1),
+     'GRUEN'),
+    ('LEGITIM Testsatz auf der Methodenseite ohne All-Quantor', METHODE,
+     lambda h: h.replace('<h2 style="margin-top:24px">Unsere Bewertungskriterien</h2>',
+                         '<p>Die getesteten Modelle spielen wir ueber mehrere Wochen.</p>\n'
+                         '<h2 style="margin-top:24px">Unsere Bewertungskriterien</h2>', 1),
+     'GRUEN'),
 
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
