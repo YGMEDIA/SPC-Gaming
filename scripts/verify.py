@@ -2644,7 +2644,26 @@ for _flag, _label in [('ios', 'iPhone Controller'), ('android', 'Android Control
 # waehrend products.json, der Hub, sein ItemList-Zaehler, sein hubCount und die
 # Startseiten-Kachel uebereinstimmend 24 sagen. Die Invariante war auf index.html
 # festgenagelt - dieselbe Bindung an eine Datei, die schon zweimal Befunde durchgelassen hat.
-_PLATTFORM_WORT = {'ios': r'(?:iPhone|iOS)', 'android': r'Android', 'universal': r'Universal'}
+# Zahlwoerter fuer die Prosa-Pruefungen darunter. Sie stehen VOR ihrer ersten Nutzung:
+# verify.py ist ein flaches Skript, und eine Definition weiter unten waere ein NameError
+# genau in dem Lauf, der den Fehler melden soll.
+_ZW_S1 = {'ein': 1, 'eine': 1, 'zwei': 2, 'drei': 3, 'vier': 4, 'fünf': 5, 'fuenf': 5,
+          'sechs': 6, 'sieben': 7, 'acht': 8, 'neun': 9, 'zehn': 10, 'elf': 11,
+          'zwölf': 12}
+
+# 'mini' kam am 05.10. dazu (S1-Zitier-Pass Lauf 3): Der Mini-Gamepad-Hub nennt die
+# Zahl jetzt im Einstiegssatz, und sie ist dieselbe Ableitung wie bei den anderen
+# Hubs -- Produkte mit dem Flag in `worksOn`. Das Muster darunter deckt beide
+# Schreibweisen ab ("Mini-Gamepads" und "Controller fuer Mini-Gamepads" waeren
+# zwei Saetze fuer dieselbe Menge, deshalb steht die Wortform in der Tabelle).
+_PLATTFORM_WORT = {'ios': r'(?:iPhone|iOS)', 'android': r'Android',
+                   'universal': r'Universal'}
+# Eigene Form, weil der Satz "Zwei Mini-Gamepads fuehren wir im Sortiment" das Wort
+# Controller gar nicht enthaelt. Zahlwort wie bei der Hall-Pruefung, damit "Zwei"
+# geprueft wird und nicht nur "2".
+_MINI_SOLL = len([p for p in items if 'mini' in _pliste(p, 'worksOn')
+                  and p.get('type') == 'controller'])
+_MINI_RE = re.compile(r'(\d+|[A-Za-zÄÖÜäöü]+)\s+Mini-Gamepads\s+f(?:ü|ue)hren wir')
 for _flag, _wort in _PLATTFORM_WORT.items():
     _soll = len([p for p in items if _flag in _pliste(p, 'worksOn') and p.get('type') == 'controller'])
     for _f in _zu_pruefen:
@@ -2653,6 +2672,16 @@ for _flag, _wort in _PLATTFORM_WORT.items():
             if int(_m.group(1)) != _soll:
                 err(f"§A5: {_f} nennt {_m.group(1)} Controller für {_flag}, "
                     f"worksOn ergibt {_soll}")
+
+for _f in _zu_pruefen:
+    for _m in _MINI_RE.finditer(open(_f, encoding='utf-8').read()):
+        _roh = _m.group(1)
+        _ist = int(_roh) if _roh.isdigit() else _ZW_S1.get(_roh.lower())
+        if _ist is None:
+            err(f'§A5: {_f} nennt "{_m.group(0)}" — die Zahl ist weder Ziffer noch ein '
+                f'Zahlwort, das dieses Gate kennt, und bleibt damit ungeprueft')
+        elif _ist != _MINI_SOLL:
+            err(f'§A5: {_f} sagt "{_roh} Mini-Gamepads", worksOn ergibt {_MINI_SOLL}')
 
 # §A5 · DIE STICK-TECHNIK IN DER PROSA GEGEN DEN DATENKERN (S1-Zitier-Pass, 05.10.2026).
 # blog/hall-effect-erklaert ist mit 28 Impressionen in 28 Tagen unsere staerkste
@@ -2666,8 +2695,6 @@ _HALL_N = len([_p for _p in items if _pfeld(_p, 'type') == 'controller'
 _TMR_LISTE = [_p for _p in items if _pfeld(_p, 'type') == 'controller'
               and 'TMR' in _spec_wie(_p, 'Sticks')]
 _CTRL_N = len([_p for _p in items if _pfeld(_p, 'type') == 'controller'])
-_ZW_S1 = {'ein': 1, 'eine': 1, 'zwei': 2, 'drei': 3, 'vier': 4, 'fünf': 5, 'fuenf': 5,
-          'sechs': 6, 'sieben': 7, 'acht': 8, 'neun': 9, 'zehn': 10, 'elf': 11, 'zwölf': 12}
 _S1_HALL = re.compile(r'(\d+|[A-Za-zÄÖÜäöü]+)\s+der\s+(\d+)\s+Controller'
                       r'[^.!?]{0,90}?Hall-Effect', re.I)
 for _f in _zu_pruefen:

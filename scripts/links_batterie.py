@@ -444,6 +444,16 @@ FAELLE = [
      lambda h: h.replace('Drei davon stehen hier mit Preis und Einordnung.',
                          'Drei davon stehen hier mit Preis und Einordnung. Nachtrag: '
                          'Stand geprueft.', 1), 'GRUEN'),
+    ('Zahl im Mini-Gamepad-Einstieg verfaelscht', 'controller/mini-gamepad/index.html',
+     lambda h: h.replace('Zwei Mini-Gamepads führen wir', 'Drei Mini-Gamepads führen wir',
+                         1), 'ROT'),
+    ('unbekanntes Zahlwort im Mini-Gamepad-Einstieg',
+     'controller/mini-gamepad/index.html',
+     lambda h: h.replace('Zwei Mini-Gamepads führen wir',
+                         'Etliche Mini-Gamepads führen wir', 1), 'ROT'),
+    ('Preis im Mini-Gamepad-Einstieg verfaelscht', 'controller/mini-gamepad/index.html',
+     lambda h: h.replace('Ultimate Mobile für 45 Euro', 'Ultimate Mobile für 48 Euro', 1),
+     'ROT'),
 
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),

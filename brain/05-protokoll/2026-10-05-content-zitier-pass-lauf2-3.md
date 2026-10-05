@@ -1,4 +1,4 @@
-# 2026-10-05 · Content · S1 Zitier-Pass, Lauf 2
+# 2026-10-05 · Content · S1 Zitier-Pass, Läufe 2 und 3
 
 ## Was
 
@@ -75,3 +75,62 @@ Direktantwort, die nur die drei empfohlenen nennt, wäre eine Auswahl, keine Ant
 3. **Vor dem Pass messen, welcher Einstieg ihn braucht.** Fünf von sechs brauchten ihn
    nicht. Dieselbe Lehre wie in Lauf 1, und sie hat wieder gehalten: zwei Seiten der
    Kandidatenliste schieden aus, bevor eine Zeile geschrieben war.
+
+---
+
+# Lauf 3 · controller/mini-gamepad (23 Impr./28T)
+
+## Der Befund
+
+Die stärkste **Query** der Site zeigt hierher: „mini gamepad android" mit 20 von 184
+Impressionen in 28 Tagen. Die Seite ist seit dem Ausbau in gsc-Lauf 6 inhaltlich gut
+(499 Wörter, FAQ mit vier echten Antworten), und drei der vier FAQ-Antworten sind bereits
+eigenständig zitierbar mit Zahlen.
+
+**Der Sektions-Einstieg war es nicht:** „Mini-Gamepads sind die Antwort auf ein
+praktisches Problem: Teleskop-Controller spannen das Handy fest ein und sind unterwegs
+sperrig." Das ist eine Problembeschreibung, keine Antwort. Wer fragt „mini gamepad
+android", bekommt hier zuerst erklärt, was Teleskop-Controller falsch machen.
+
+**Nebenbefund zur Loop-Notiz:** Dort stand „Hubs nur mit gen_hubs-Sync (Generator nicht
+idempotent)". Beides trifft auf diese Seite nicht zu: Der Mini-Gamepad-Hub ist
+handgepflegt (`gen_hubs.py` kennt ihn nicht, nur `sync_product_values` hält seine Karten
+nach), und `gen_hubs.py` ist seit der Idempotenzprobe nachweislich idempotent und
+baumstabil. Die Notiz war vom 20.07. und seitdem überholt.
+
+## Wie
+
+Der Einstieg beantwortet jetzt zuerst die Frage und erzählt danach weiter:
+
+> **Zwei Mini-Gamepads führen wir im Sortiment, beide per Bluetooth und beide an Android
+> wie am iPhone nutzbar:** den 8BitDo Ultimate Mobile für 45 Euro und den abxylute M4
+> Snap-On für 50 Euro. Mini-Gamepads sind die Antwort auf ein praktisches Problem: …
+
+Jede Angabe ist abgeleitet: die Zwei aus `worksOn` (Flag `mini`), „Android wie am iPhone"
+ebenfalls aus `worksOn`, die Preise aus products.json. Was **nicht** dasteht, obwohl es
+naheläge: „auch an Tablet und PC". Das steht als allgemeine Aussage über Bluetooth weiter
+unten im Text, ist aber für diese zwei Modelle in `worksOn` nicht hinterlegt.
+
+## Verify
+
+- **Neue §A5-Invariante:** „N Mini-Gamepads führen wir" wird gegen `worksOn` gerechnet,
+  mit Zahlwort-Auflösung wie bei der Hall-Prüfung; ein unbekanntes Zahlwort ist selbst
+  ein Befund
+- **Fünf Defektformen gemessen, 0 falsch:** Zahl verfälscht · unbekanntes Zahlwort · ein
+  Produkt verliert das `mini`-Flag · Preis im Einstieg verfälscht (fängt `audit_prosa`) ·
+  legitimer Zusatz bleibt grün
+- Vorher geprüft, dass die Prosa-Werte dieser Seite überhaupt gegatet sind: Preis,
+  Sternzahl und Bewertungszahl einzeln verfälscht, alle drei machen `audit_prosa.py` und
+  `verify.py` rot
+- **`scripts/links_batterie.py` von 106 auf 109 Fälle**, 0 falsch
+- **Vierzehn Gates exit 0**, Browser: Einstieg fett, kein Horizontal-Scroll
+
+## Gelernt (Lauf 3)
+
+4. **Eine Loop-Notiz altert wie jede andere Aussage über den Stand.** „Generator nicht
+   idempotent" stimmte am 20.07. und war seit der Idempotenzprobe widerlegt; die Notiz
+   hätte den Lauf fast teurer gemacht, als er war. Vor dem Bauen gilt die Messung, nicht
+   die Notiz.
+5. **Die stärkste Query der Site zeigte auf einen Einstieg, der mit dem Nachteil der
+   Konkurrenzbauform begann.** Inhaltlich richtig, als Antwort unbrauchbar. Die Frage
+   zuerst beantworten, dann einordnen.
