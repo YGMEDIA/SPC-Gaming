@@ -30,15 +30,22 @@ jobs:
   # der Deploy bliebe gruen, waehrend das staerkste §A6-Gate uebersprungen wird.
   # mess_bilder.py --check fehlt bewusst: Es laedt jedes Bild bei Amazon nach und wuerde
   # in CI an deren Bot-Schutz scheitern. Dieses Gate bleibt Handarbeit.
+  # Action-Versionen (05.10.2026): Jede Action steht auf einer Hauptversion, die auf
+  # node24 laeuft. Vorher zielten checkout@v4, setup-node@v4, setup-python@v5,
+  # upload-pages-artifact@v3 und deploy-pages@v4 auf Node.js 20 und wurden vom Runner auf
+  # Node.js 24 gezwungen -- mit einer Deprecation-Warnung in JEDEM Lauf, in beiden Jobs.
+  # Geprueft wurde das nicht am Versionsnamen, sondern an `runs.using` in der jeweiligen
+  # action.yml. Besonderheit: upload-pages-artifact@v4 pinnt INTERN upload-artifact@v4.6.2
+  # und haette die Warnung stehen lassen; erst v5 zieht auf v7.0.0.
   verify:
     name: Gate - verify, prosa, sync
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Python einrichten
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           # Diese Festlegung ist TRAGEND, nicht kosmetisch. Hier stand bis zum 05.10.
           # "die Skripte nutzen keine Konstrukte oberhalb von 3.9" -- gemessen falsch:
@@ -54,7 +61,7 @@ jobs:
       # dabei weg, wird aus dem §A6-Finder-Test stillschweigend eine Warnung bei Exit 0.
       # Deshalb hier angefordert und auf eine Hauptversion festgelegt.
       - name: Node einrichten (fuer den §A6-Finder-Test in verify.py)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22'
 
@@ -105,7 +112,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Build artifact (nur die Site, nichts Internes)
         run: |
@@ -125,10 +132,10 @@ jobs:
             ./ _site/
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
