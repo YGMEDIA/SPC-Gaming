@@ -20,10 +20,14 @@ jobs:
   # wurde, ging ungeprueft live. Als eigener Job statt als Schritt im Deploy, damit die
   # Abhaengigkeit strukturell ist (needs) und nicht von der Reihenfolge der Schritte
   # abhaengt.
-  # Alle drei Gates brauchen nur die Standardbibliothek und enden mit Exit 1, sobald sie
-  # etwas finden; genau das stoppt hier den Deploy. Geprueft wurde das einzeln mit
-  # eingeschleusten Defekten, und zwar ohne Pipe: hinter einer Pipe zeigt $? den Code des
-  # letzten Glieds, nicht den von Python.
+  # Alle drei Gates kommen mit der Python-Standardbibliothek aus und enden mit Exit 1,
+  # sobald sie etwas finden; genau das stoppt hier den Deploy. Geprueft wurde das einzeln
+  # mit eingeschleusten Defekten, und zwar ohne Pipe: hinter einer Pipe zeigt $? den Code
+  # des letzten Glieds, nicht den von Python.
+  # EINE Ausnahme, und sie ist der Grund fuer den node-Schritt unten: verify.py fuehrt
+  # assets/js/finder.js mit `node` aus und prueft damit den §A6-Filter end-to-end. Fehlt
+  # node, meldet verify eine WARNUNG und endet mit Exit 0 (gemessen am 05.10.2026) --
+  # der Deploy bliebe gruen, waehrend das staerkste §A6-Gate uebersprungen wird.
   # mess_bilder.py --check fehlt bewusst: Es laedt jedes Bild bei Amazon nach und wuerde
   # in CI an deren Bot-Schutz scheitern. Dieses Gate bleibt Handarbeit.
   verify:
@@ -40,8 +44,28 @@ jobs:
           # Festlegung dient nur der Reproduzierbarkeit.
           python-version: '3.12'
 
+      # Node kam bisher nur aus dem ubuntu-latest-Image: nirgends angefordert, nirgends
+      # festgelegt. Das Image wechselt ab dem 19.10.2026 auf Ubuntu 26, und faellt node
+      # dabei weg, wird aus dem §A6-Finder-Test stillschweigend eine Warnung bei Exit 0.
+      # Deshalb hier angefordert und auf eine Hauptversion festgelegt.
+      - name: Node einrichten (fuer den §A6-Finder-Test in verify.py)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Der Schritt faellt auch dann, wenn verify.py selbst gruen ist, die Warnung aber
+      # zeigt, dass der Finder-Test uebersprungen wurde. Ohne diese drei Zeilen koennte
+      # ein spaeterer Umbau den node-Schritt entfernen, ohne dass irgendetwas rot wird --
+      # dieselbe Klasse wie ein geloeschtes Gate, das stumm gruen bleibt.
+      # `set -o pipefail`, weil hinter einer Pipe sonst der Exit-Code von `tee` zaehlt.
       - name: verify.py
-        run: python3 scripts/verify.py
+        run: |
+          set -o pipefail
+          python3 scripts/verify.py 2>&1 | tee "$RUNNER_TEMP/verify.log"
+          if grep -q 'node fehlt' "$RUNNER_TEMP/verify.log"; then
+            echo "::error::verify.py lief ohne node — der §A6-Finder-Test wurde uebersprungen, der Lauf beweist §A6 also nicht"
+            exit 1
+          fi
 
       - name: audit_prosa.py
         run: python3 scripts/audit_prosa.py
