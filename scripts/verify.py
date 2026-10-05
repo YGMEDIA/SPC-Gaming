@@ -1814,6 +1814,34 @@ else:
                 f'stimmen nicht mit answers in {FINDER_JS} ({sorted(_keys)}) ueberein')
 
 # ---------------------------------------------------------------------------------------
+# §A1 · EINE BEWERTUNG HINTER EINEM PRODUKTLINK GEHOERT DIESEM PRODUKT.
+# Gefunden beim Nachmessen des X2s-Retro-Winkels (05.10.): Auf marken/gamesir stand
+# "X3 Pro (4,0) und X2s (3,8) liegen unter dem gleich teuren X5 Lite (4,2)" -- der X2s
+# hat 3,9, und mit 53 € ist er auch nicht gleich teuer. Kein Gate hat das gesehen:
+# `audit_prosa.py` prueft die Fliesstext-Werte, die es kennt, und das Drift-Gate der
+# Marken-Sektionen fragt nur, ob eine Zahl irgendwo in den Daten vorkommt -- 3,8 kommt
+# vor, es ist die §A6-Schwelle und die Bewertung des Scuf Nomad. Eine Zahl, die anderswo
+# gedeckt ist, besteht jede Abdeckungspruefung; geprueft werden muss die ROLLE.
+# Gemessen gab es repoweit genau eine Stelle dieser Form, und sie war falsch.
+_A1_LINKBEW = re.compile(r'<a[^>]*href="([^"]+)"[^>]*>([^<]{1,60})</a>\s*\((\d,\d)\)')
+_a1_ziel = {(_pfeld(_p, 'detail') or '').rstrip('/') + '/': _p for _p in items
+            if _pfeld(_p, 'detail')}
+for _f in pages:
+    for _m in _A1_LINKBEW.finditer(open(_f, encoding='utf-8').read()):
+        _z = _m.group(1) if _m.group(1).endswith('/') else _m.group(1) + '/'
+        _p1 = _a1_ziel.get(_z)
+        if _p1 is None:
+            continue
+        _st1 = _bewertung(_p1)[0]
+        if _st1 is None:
+            err(f'§A1: {_f} nennt hinter dem Link auf {_z} eine Bewertung '
+                f'"({_m.group(3)})", das Produkt fuehrt aber keine')
+        elif _sterne_text(_st1) != _m.group(3):
+            err(f'§A1: {_f} schreibt "{_m.group(2)} ({_m.group(3)})", der Link zeigt aber '
+                f'auf {_z} mit {_sterne_text(_st1)} Sternen')
+# ---------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------
 # §A1/B12 · ANWESENHEITSPFLICHT LESEZEIT. Eigener Abschnitt mit Trennmarken, und zwar aus
 # gegebenem Anlass: Dieser Block stand zuerst zwischen dem B12-Kommentar und dem
 # Zeitversprechen-Gate, und beim Ersetzen des Nachbarblocks habe ich ihn mitgeloescht --

@@ -412,6 +412,24 @@ FAELLE = [
     ('LEGITIM Absatz neben der Byline', KISHIPRO,
      lambda h: h.replace('</main>', '<p>Nachtrag.</p></main>', 1), 'GRUEN'),
 
+    # --- §A1: eine Bewertung hinter einem Produktlink gehoert diesem Produkt ----------
+    # Gefunden beim Nachmessen des X2s-Retro-Winkels: "X2s (3,8)" auf marken/gamesir,
+    # waehrend products.json 3,9 fuehrt. Repoweit gab es genau eine Stelle dieser Form,
+    # und sie war falsch.
+    ('Bewertung hinter einem Produktlink verfaelscht', 'marken/gamesir/index.html',
+     lambda h: h.replace('>X2s</a> (3,9)', '>X2s</a> (3,8)', 1), 'ROT'),
+    ('falsche Bewertung hinter einem Produktlink im Fliesstext', KISHIPRO,
+     lambda h: h.replace('</main>', '<p>Der <a href="/controller/universal/'
+                         'gamesir-x5-lite-review/">X5 Lite</a> (4,7) ist die '
+                         'Alternative.</p></main>', 1), 'ROT'),
+    ('LEGITIM richtige Bewertung hinter einem Produktlink', KISHIPRO,
+     lambda h: h.replace('</main>', '<p>Der <a href="/controller/universal/'
+                         'gamesir-x5-lite-review/">X5 Lite</a> (4,2) ist die '
+                         'Alternative.</p></main>', 1), 'GRUEN'),
+    ('LEGITIM Zahl in Klammern ohne Produktlink davor', KISHIPRO,
+     lambda h: h.replace('</main>', '<p>Der Markt liegt im Schnitt bei (4,1).</p></main>',
+                         1), 'GRUEN'),
+
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
     # Die Beschriftung kommt aus der <h1> der Zielseite. Sie steht dort NICHT als
