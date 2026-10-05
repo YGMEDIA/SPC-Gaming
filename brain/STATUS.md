@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-10-04 (B1 · B3 · B4 · B5 deployed; **B6 Bestenlisten**, **B7 interne Verlinkung** und **B8 Bewertungszahl** gebaut. Elf pruefbare Gates, alle exit 0. Pattern P-14 und P-15, Katalog v5.1)
+**Letzte Aktualisierung:** 2026-10-05 (B1 · B3 · B4 · B5 deployed; **B6 Bestenlisten**, **B7 interne Verlinkung**, **B8 Bewertungszahl** und **B9 Autoritaetssignal** gebaut. Elf pruefbare Gates, alle exit 0. Pattern P-14 und P-15, Katalog v5.1)
 
 ---
 
@@ -287,6 +287,16 @@ Jetzt: `scripts/hublinks.py` traegt die Regel *"jede Produktseite verlinkt zurue
 **Gate §B8** prueft am ausgelieferten Stand und ueber ALLE Badges einer Seite: (1) wo ein Badge steht, steht die Anzahl in `.rb-count`, (2) sie ist nicht als Inline-Fussnote gesetzt, (3) die Sterne-Glyphen passen zur genannten Skala. Batterie von 20 auf **35 Faelle** (22 rot, 13 gruen).
 
 **Fuer Yasin:** Der **Redaktions-Score** steht auf 4 der 13 Review-Seiten, auf einer Zehner-Skala, und nirgends ist erklaert, wie er zustande kommt — entweder auf alle Reviews ausweiten und die Methode nennen, oder streichen. Dazu: `Bew.` als Spec-Schluessel wird auf jeder Hub-Karte sichtbar ("Bew. 4,1 (996)"); ausgeschrieben waere es lesbarer, der Schluessel ist aber Datenkern.
+
+**Stand 05.10.: B9 Autoritaetssignal ist gebaut.** Die Aufgabenbeschreibung in LOOP-STATE nannte als Ausgangslage *"bisher nur im Header: 100+ Controller getestet"* — **diese Behauptung existiert nirgends auf der Site**. Die Site sagt "42 Modelle im Sortiment, 13 davon ausfuehrlich getestet", und das stimmt. Eine Massnahme faengt also mit der Messung an, nicht mit ihrer eigenen Beschreibung.
+
+**Gemessen ueber alle 200 Produktkarten:** 66 zeigten auf einen eigenen Test und sagten "Mehr erfahren" (Signal verschenkt), 95 auf ein Datenblatt und sagten dasselbe (nichtssagend), **2 sagten "Zum Test" ueber ein Datenblatt** (falsch). Und **`main.js` benannte jeden Detail-Knopf zur Laufzeit in "Mehr erfahren" um** — die Regel traf `/zum test|details/i` und loeschte 35 der 37 richtigen Beschriftungen; die zwei "Zum Kurzcheck" ueberlebten. Mit JavaScript war die Unterscheidung damit auf **2 von 200** Karten da, ohne JavaScript auf 37. Das Signal war also nicht abwesend, sondern vorhanden und wurde aktiv geloescht.
+
+Jetzt leitet **eine** Regel (`produktdaten.detail_label`) die Beschriftung aus dem Ziel ab: beide Generatoren importieren sie, die drei JS-Renderer fuehren eine gepruefte Zweitfassung (wie bei `A6_SCHWELLE`), `main.js` benennt nicht mehr um, und `sync_product_values` zieht die handgepflegten Seiten nach (vom HEAD-Stand aus: 10 Dateien, 45 Beschriftungen). **101x "Zum Test", 99x "Zum Kurzcheck", 0 Abweichungen** — im Browser mit laufendem JavaScript nachgemessen.
+
+**Vier neue Gates:** Beschriftung gegen Ziel · JS-Fassungen gegen die Python-Regel (Konstanten UND Verwendung im Karten-Markup, nicht nur Erwaehnung) · `main.js` darf nicht ueberschreiben (§A2) · die Prosa-Zahl "13 davon ausfuehrlich getestet" gegen die Zahl der Testseiten (die Stat-Bloecke waren gegatet, die zwei Prosa-Stellen nicht). Batterie von 35 auf **49 Faelle** (31 rot, 18 gruen).
+
+**Pruefrunde 35: zwei Blocker, beide im mitgelieferten Code.** (1) Ich hatte den B9-Block VOR die IIFE der drei JS-Renderer gesetzt — drei globale `const`, und zwei dieser Skripte im selben Scope ergeben "Identifier 'LABEL_TEST' has already been declared", womit das zweite Skript GAR NICHT laeuft. Heute laedt keine Seite zwei davon, aber eine Mine, die es vor B9 nicht gab. (2) Das main.js-Gate suchte woertlich `detailLink.textContent =` — `innerHTML`, `innerText` und ein anderer Variablenname blieben still gruen. Dazu zwei blinde Flecken (404.html fiel aus dem Gate, obwohl sie ausdruecklich in `pages` steht; dasselbe Anker-Muster stand zweimal zeichengleich) und zwei falsche Zahlen in meiner Doku ("die 37, die stimmten" — es waren 35 von 37, zwei "Zum Kurzcheck" ueberlebten; "neun Seiten, 42 Labels" — die Reichweite der Sync-Funktion ist 10 Dateien, 45 Beschriftungen). Alles behoben.
 
 **Claude Code (nächste Session, autonom — Reihenfolge):**
 0. **Erledigt 01.10.:** Die Liste der ungegateten Flächen ist abgearbeitet (robots.txt, Sitemap-Rückrichtung, longtail.json als Struktur, platform/type gegen das JS-Vokabular, verwaiste Seiten über die Verlinkung, video gegen products.json, eigene 404-Seite). Offen bleiben nur noch Kleinigkeiten ohne Befundcharakter: `.nojekyll` und `CNAME` fallen aus der Tag-Dateiliste, `style.css` wird nur gehasht, kein Feed/RSS.

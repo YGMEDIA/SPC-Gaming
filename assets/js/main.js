@@ -227,10 +227,12 @@
         const target = detailLink || amazonLink;
         if (!target) return;
   
-        // Rename the detail button label to "Mehr erfahren" for consistency.
-        if (detailLink && /zum test|details/i.test(detailLink.textContent)) {
-          detailLink.textContent = 'Mehr erfahren';
-        }
+        // B9: Das Umbenennen ist RAUS. Diese drei Zeilen haben jeden Knopf, der
+        // "Zum Test" sagte, zur Laufzeit in "Mehr erfahren" umbenannt -- also genau das
+        // Autoritaetssignal geloescht, das die Karte tragen soll. Gemessen am 05.10.:
+        // 35 richtig beschriftete Karten verloren es dadurch fuer jeden Leser mit
+        // JavaScript. Die Beschriftung kommt aus dem ZIEL (siehe detailLabel), und sie
+        // soll fuer alle Leser dieselbe sein -- das ist auch, was §A2 verlangt.
   
         card.classList.add('pcard-clickable');
         card.addEventListener('click', function (e) {

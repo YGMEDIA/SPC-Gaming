@@ -358,7 +358,7 @@ def baue(lesezeit=4):
     <p class="foot-legal"><a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a> · <a href="/affiliate-hinweis/">Affiliate</a> · <a href="/sitemap.xml">Sitemap</a> · © 2026 YG MEDIA</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=b9adbc20"></script>
+<script src="/assets/js/main.js?v=490abf10"></script>
 </body>
 </html>
 '''

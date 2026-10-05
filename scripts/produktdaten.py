@@ -47,6 +47,47 @@ import re
 A6_SCHWELLE = 3.8
 
 
+# Massnahme B9 (Cialdini, Autoritaet am Entscheidungspunkt): Die Beschriftung des
+# Detail-Knopfs sagt, WAS den Leser erwartet -- ein eigener Test oder ein Datenblatt.
+# Gemessen am 05.10.2026 ueber alle Produktkarten der Site:
+#   66 Karten zeigten auf eine Testseite und sagten "Mehr erfahren" -- Signal verschenkt
+#   95 zeigten auf ein Datenblatt und sagten "Mehr erfahren" -- nichtssagend
+#    2 zeigten auf ein Datenblatt und sagten "Zum Test"       -- schlicht falsch
+#   35 + 2 waren richtig beschriftet
+# Dazu benannte `main.js` jeden Knopf zur Laufzeit in "Mehr erfahren" um und loeschte
+# damit genau die 35, die stimmten. Fuer den Leser mit JavaScript gab es die Unterscheidung
+# also nirgends; ohne JavaScript (und damit fuer KI-Crawler, §A2) auf 37 von 200 Karten.
+#
+# EINE Regel, hier. Die drei JS-Renderer koennen nicht importieren und fuehren eigene
+# Fassungen; verify.py prueft sie GEGEN diese, so wie bei A6_SCHWELLE.
+LABEL_TEST = 'Zum Test'
+LABEL_DATENBLATT = 'Zum Kurzcheck'
+
+
+# Das Anker-Muster fuer Detail-Knoepfe. Es stand in verify.py und sync_product_values.py
+# zeichengleich zweimal -- genau der Anti-Pattern, den sync_product_values.py selbst
+# benennt ("Getrennte Muster sind am 30.09. zweimal auseinandergelaufen").
+BTN_DETAIL = (r'<a[^>]*href="(?P<z1>[^"]*)"[^>]*class="[^"]*btn-detail[^"]*"[^>]*>'
+              r'(?P<t1>[^<]*)</a>'
+              r'|<a[^>]*class="[^"]*btn-detail[^"]*"[^>]*href="(?P<z2>[^"]*)"[^>]*>'
+              r'(?P<t2>[^<]*)</a>')
+# Nur diese Praefixe sind Produktziele; alles andere (Finder, Blog, externe Links) wird
+# von der Regel nicht beansprucht.
+PRODUKT_PRAEFIXE = ('/produkte/', '/controller/')
+
+
+def btn_ziel_text(m):
+    """(Ziel ohne Query/Anker, Linktext) aus einem BTN_DETAIL-Treffer."""
+    ziel = (m.group('z1') or m.group('z2') or '').split('?')[0].split('#')[0]
+    text = m.group('t1') if m.group('t1') is not None else m.group('t2')
+    return ziel, (text or '')
+
+
+def detail_label(detail):
+    """Was den Leser hinter dem Knopf erwartet. Abgeleitet aus dem Ziel, nie getippt."""
+    return LABEL_DATENBLATT if str(detail or '').startswith('/produkte/') else LABEL_TEST
+
+
 def spec_paare(p):
     """Die lesbaren (Schluessel, Wert)-Paare eines Produkts, beide als String.
 

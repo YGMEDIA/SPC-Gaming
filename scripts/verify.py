@@ -532,6 +532,92 @@ for _f in pages:
                     f"{_sl.group(1) if _sl else '?'} verlinkt \"Mehr erfahren\" auf die "
                     f"Seite selbst statt auf die Produktseite")
 
+# B9 (Cialdini, Autoritaet am Entscheidungspunkt): Die Beschriftung des Detail-Knopfs
+# sagt, WAS den Leser erwartet -- ein eigener Test oder ein Datenblatt. Gemessen am
+# 05.10.2026 ueber alle 200 Produktkarten der Site, VOR der Massnahme:
+#   66 zeigten auf einen eigenen Test und sagten "Mehr erfahren"  (Signal verschenkt)
+#   95 zeigten auf ein Datenblatt und sagten dasselbe             (nichtssagend)
+#    2 zeigten auf ein Datenblatt und sagten "Zum Test"           (schlicht falsch)
+# Dazu benannte main.js jeden Knopf um, dessen Text auf /zum test|details/i passte, und
+# loeschte damit 35 der 37 richtigen Beschriftungen. Die zwei "Zum Kurzcheck" ueberlebten
+# die Regel -- auf zwei von 200 Karten war die Unterscheidung also auch mit JavaScript da,
+# auf 198 nicht. Drei Eigenschaften:
+from produktdaten import (detail_label as _b9_label, LABEL_TEST as _B9_T,
+                          LABEL_DATENBLATT as _B9_D, BTN_DETAIL as _B9_MUSTER,
+                          btn_ziel_text as _b9_ziel, PRODUKT_PRAEFIXE as _B9_P)
+
+_B9_A = re.compile(_B9_MUSTER)
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    # Weiterleitungs-Stubs ueberspringen, aber NICHT jede Seite mit `noindex`: 404.html
+    # traegt `noindex, follow` im Head und steht trotzdem ausdruecklich in `pages`
+    # ("sonst waere sie die einzige ausgelieferte HTML-Datei ohne Gate"). Die erste
+    # Fassung sprang ueber sie hinweg und liess damit genau die Datei ungeprueft, die der
+    # Kommentar oben aufnimmt.
+    if 'http-equiv="refresh"' in _h[:_h.find('</head>') + 7]:
+        continue
+    _h2 = re.sub(r'<!--.*?-->', ' ', _h, flags=re.S)
+    for _m in _B9_A.finditer(_h2):
+        _z, _x = _b9_ziel(_m)
+        if not _z.startswith(_B9_P):
+            continue
+        _soll = _b9_label(_z)
+        if _x.strip() != _soll:
+            err(f"§B9: {_f} beschriftet den Knopf zu {_z} mit \"{_x.strip()}\", "
+                f"abgeleitet waere \"{_soll}\" — "
+                f"'python3 scripts/sync_product_values.py' bzw. den Generator laufen lassen")
+
+# Die drei JS-Renderer fuehren die Regel zwangslaeufig ein zweites Mal (der Browser kann
+# kein Python importieren). Sie wird GEGEN die Python-Fassung geprueft, so wie A6_SCHWELLE.
+for _jf in ('assets/js/hub-render.js', 'assets/js/produkte.js', 'assets/js/finder.js'):
+    if not os.path.exists(_jf):
+        continue
+    _js = _ohne_kommentare(open(_jf, encoding='utf-8').read(), True)
+    if 'detailLabel' not in _js:
+        err(f"§B9: {_jf} rendert Produktkarten, kennt aber `detailLabel` nicht — die "
+            f"Beschriftung waere dort wieder fest verdrahtet")
+        continue
+    for _name, _wert in (('LABEL_TEST', _B9_T), ('LABEL_DATENBLATT', _B9_D)):
+        _mm = re.search(rf'{_name}\s*=\s*[\'"]([^\'"]*)[\'"]', _js)
+        if not _mm:
+            err(f"§B9: {_jf} nennt {_name} nicht")
+        elif _mm.group(1) != _wert:
+            err(f"§B9: {_jf} setzt {_name} auf \"{_mm.group(1)}\", produktdaten.py sagt "
+                f"\"{_wert}\" — zwei Fassungen derselben Regel")
+    if "startsWith('/produkte/')" not in _js and 'startsWith("/produkte/")' not in _js:
+        err(f"§B9: {_jf} leitet die Beschriftung nicht aus dem Ziel ab "
+            f"(kein startsWith('/produkte/'))")
+    # Die Funktion zu HABEN genuegt nicht, sie muss im Karten-Markup auch BENUTZT werden.
+    # Die erste Fassung dieses Gates prueft nur die Erwaehnung -- `detailLabel` stehen
+    # lassen und daneben "Mehr erfahren" fest verdrahten blieb still gruen, also genau
+    # der Zustand, den B9 beseitigt hat.
+    for _am in re.finditer(r'<a[^>]*class=\\?"btn-detail\\?"[^>]*>(.{0,80}?)</a>', _js, re.S):
+        if 'detailLabel' not in _am.group(1):
+            err(f"§B9: {_jf} schreibt die Beschriftung des Detail-Knopfs fest "
+                f"(\"{_am.group(1).strip()[:40]}\") statt sie mit detailLabel() aus dem "
+                f"Ziel abzuleiten")
+
+# main.js darf die Beschriftung NICHT zur Laufzeit ueberschreiben. Genau das hat sie
+# geloescht, und §A2 verlangt ohnehin, dass JS identisches Markup hydratisiert.
+if os.path.exists('assets/js/main.js'):
+    _mj9 = _ohne_kommentare(open('assets/js/main.js', encoding='utf-8').read(), True)
+    # Geprueft wird die EIGENSCHAFTS-KLASSE, nicht eine Schreibweise. Die erste Fassung
+    # suchte woertlich `detailLink.textContent =` -- `innerHTML`, `innerText` und ein
+    # anderer Variablenname blieben still gruen, obwohl sie dasselbe tun. Das ist die
+    # Lehre dieses Pakets ("ein Gate, das die Erwaehnung prueft, prueft nicht die
+    # Verwendung") eine Ebene tiefer, und `innerHTML` ist genau die Variante, die jemand
+    # beim naechsten "for consistency" tippt.
+    # Der Variablenname wird aus dem `.btn-detail`-Query ABGELEITET, nicht geraten.
+    _b9_vars = set(re.findall(r'(?:const|let|var)\s+(\w+)\s*=\s*[^;\n]*'
+                              r'querySelector(?:All)?\([^)]*btn-detail', _mj9))
+    _b9_schreib = r'(?:textContent|innerText|innerHTML|outerHTML|replaceChildren|' \
+                  r'insertAdjacentHTML|append|textContent)'
+    for _v in _b9_vars or {'detailLink'}:
+        if re.search(rf'\b{re.escape(_v)}\s*\.\s*{_b9_schreib}\s*(?:=[^=]|\()', _mj9):
+            err(f"§B9/§A2: assets/js/main.js schreibt die Beschriftung des Detail-Knopfs "
+                f"zur Laufzeit um (ueber `{_v}`) — damit sieht der Leser mit JavaScript "
+                f"etwas anderes als der ohne, und das Autoritaetssignal der Karte ist weg")
+
 # B8 (Cialdini): Sternzahl und Bewertungszahl sind ZWEI Signale. "4,8 aus 12 Bewertungen"
 # und "4,4 aus 3.147" sind sehr verschiedene Aussagen, und wer nur den Wert zeigt, zeigt
 # die halbe. Gemessen am 04.10. stand der Wert in 26px/800 und die Anzahl in 11px im
@@ -2039,6 +2125,16 @@ if os.path.exists(FINDER_JS):
 
 # ENDE §A6 IM CONTROLLER-FINDER
 # ---------------------------------------------------------------------------------------
+
+# Die Zahl der eigenen Tests steht auf der Startseite auch in PROSA ("13 davon ausfuehrlich
+# getestet"). Die Stat-Bloecke waren gegatet, die zwei Prosa-Stellen nicht -- dieselbe Zahl,
+# halb geprueft. Das ist die Klasse, die P-13 beschreibt.
+for _f in pages:
+    _kt = _klartext(open(_f, encoding='utf-8').read())
+    for _m in re.finditer(r'(\d+)\s+davon\s+ausf(?:ü|ue)hrlich\s+getestet', _kt):
+        if int(_m.group(1)) != _n_reviews:
+            err(f"§A5: {_f} sagt \"{_m.group(1)} davon ausfuehrlich getestet\", "
+                f"products.json ergibt {_n_reviews} Produkte mit eigener Testseite")
 
 _ZAHL_PAARE = [(str(_n_produkte), 'Modelle im Sortiment'),
                (str(_n_reviews), 'ausführliche Tests'),

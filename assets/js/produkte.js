@@ -1,6 +1,21 @@
+
 /* Alle-Produkte-Seite: lädt products.json, rendert Karten, filtert & sortiert. */
 (function () {
   'use strict';
+  // B9: Dieselbe Regel wie in scripts/produktdaten.py (detail_label). Sie steht hier
+  // zwangslaeufig ein zweites Mal -- der Browser kann kein Python importieren --, und
+  // verify.py prueft diese Fassung GEGEN die Python-Fassung, so wie bei A6_SCHWELLE.
+  //
+  // INNERHALB der IIFE, nicht davor. Die erste Fassung stand im globalen Scope, und drei
+  // lexikalische `const` im globalen Scope machen zwei dieser Renderer gegenseitig
+  // ausschliessend: Das zweite Skript stirbt mit "Identifier 'LABEL_TEST' has already
+  // been declared" -- und zwar ganz, nicht nur die Deklaration. Heute laedt keine Seite
+  // zwei davon, es war also keine Live-Stoerung, aber eine Mine, die es vor B9 nicht gab.
+  const LABEL_TEST = 'Zum Test';
+  const LABEL_DATENBLATT = 'Zum Kurzcheck';
+  function detailLabel(detail) {
+    return String(detail || '').startsWith('/produkte/') ? LABEL_DATENBLATT : LABEL_TEST;
+  }
 
   const TYPE_LABELS = { controller: 'Controller', zubehoer: 'Zubehör' };
   const PLATFORM_LABELS = {
@@ -31,7 +46,7 @@
       `<span class="spec-tag"><span class="k">${esc(s[0])}</span> ${esc(s[1])}</span>`).join('');
     const detail = p.detail || '';
     const detailBtn = detail
-      ? `<a href="${esc(detail)}" class="btn-detail">Mehr erfahren</a>`
+      ? `<a href="${esc(detail)}" class="btn-detail">${esc(detailLabel(detail))}</a>`
       : '';
     const img = p.img ? ` data-img="${esc(p.img)}"` : '';
     const icon = p.type === 'zubehoer'

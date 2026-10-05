@@ -1,6 +1,21 @@
+
 /* Controller-Finder: 3 Fragen → Match-Score gegen products.json → Top-Empfehlungen. */
 (function () {
   'use strict';
+  // B9: Dieselbe Regel wie in scripts/produktdaten.py (detail_label). Sie steht hier
+  // zwangslaeufig ein zweites Mal -- der Browser kann kein Python importieren --, und
+  // verify.py prueft diese Fassung GEGEN die Python-Fassung, so wie bei A6_SCHWELLE.
+  //
+  // INNERHALB der IIFE, nicht davor. Die erste Fassung stand im globalen Scope, und drei
+  // lexikalische `const` im globalen Scope machen zwei dieser Renderer gegenseitig
+  // ausschliessend: Das zweite Skript stirbt mit "Identifier 'LABEL_TEST' has already
+  // been declared" -- und zwar ganz, nicht nur die Deklaration. Heute laedt keine Seite
+  // zwei davon, es war also keine Live-Stoerung, aber eine Mine, die es vor B9 nicht gab.
+  const LABEL_TEST = 'Zum Test';
+  const LABEL_DATENBLATT = 'Zum Kurzcheck';
+  function detailLabel(detail) {
+    return String(detail || '').startsWith('/produkte/') ? LABEL_DATENBLATT : LABEL_TEST;
+  }
 
   const finder = document.getElementById('finder');
   if (!finder) return;
@@ -107,7 +122,7 @@
     grid.innerHTML = ranked.map(({ p }, i) => {
       const specs = (p.specs || []).slice(0, 3).map(x =>
         `<span class="spec-tag"><span class="k">${esc(x[0])}</span> ${esc(x[1])}</span>`).join('');
-      const detail = p.detail ? `<a href="${esc(p.detail)}" class="btn-detail">Mehr erfahren</a>` : '';
+      const detail = p.detail ? `<a href="${esc(p.detail)}" class="btn-detail">${esc(detailLabel(p.detail))}</a>` : '';
       const img = p.img ? ` data-img="${esc(p.img)}"` : '';
       const badge = i === 0 ? '<span class="pcard-badge badge-top">Bester Match</span>' : '';
       return `

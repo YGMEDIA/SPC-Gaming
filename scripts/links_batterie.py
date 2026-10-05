@@ -170,6 +170,58 @@ FAELLE = [
      lambda q: q.replace('{_bew_wort} bei Amazon', '{_bew_wort} auf Amazon.de', 1),
      'GRUEN_NACH_SYNC'),
 
+    # --- B9: Autoritaetssignal am Entscheidungspunkt ------------------------------------
+    ('Label von Hand auf "Mehr erfahren" zurueckgedreht', 'controller/ios/index.html',
+     lambda h: h.replace('>Zum Kurzcheck</a>', '>Mehr erfahren</a>', 1), 'ROT'),
+    ('Datenblatt-Karte behauptet "Zum Test"', 'controller/ios/index.html',
+     lambda h: h.replace('>Zum Kurzcheck</a>', '>Zum Test</a>', 1), 'ROT'),
+    ('JS-Fassung der Regel weicht ab', 'assets/js/finder.js',
+     lambda j: j.replace("const LABEL_TEST = 'Zum Test';",
+                         "const LABEL_TEST = 'Mehr erfahren';", 1), 'ROT_NACH_BUMP'),
+    ('JS verdrahtet die Beschriftung wieder fest', 'assets/js/hub-render.js',
+     lambda j: j.replace('${esc(detailLabel(p.detail))}', 'Mehr erfahren', 1),
+     'ROT_NACH_BUMP'),
+    ('main.js benennt den Knopf wieder um', 'assets/js/main.js',
+     lambda j: j.replace('        card.classList.add',
+                         '        if (detailLink) detailLink.textContent = "Mehr erfahren";'
+                         '\n        card.classList.add', 1), 'ROT_NACH_BUMP'),
+    ('Prosa-Zahl der eigenen Tests gefaelscht', 'index.html',
+     lambda h: h.replace('haben 13 davon ausführlich getestet',
+                         'haben 12 davon ausführlich getestet', 1), 'ROT'),
+    ('LEGITIM btn-detail ausserhalb einer Karte, anderes Ziel', 'index.html',
+     lambda h: h.replace('</main>', '<p><a class="btn-detail" href="/controller-finder/">'
+                         'Zum Finder</a></p></main>', 1), 'GRUEN'),
+    ('LEGITIM btn-detail in einem HTML-Kommentar', 'index.html',
+     lambda h: h.replace('</main>', '<!-- <a class="btn-detail" '
+                         'href="/produkte/gamesir-x2/">Mehr erfahren</a> --></main>', 1),
+     'GRUEN'),
+    ('LEGITIM main.js setzt eine ANDERE textContent', 'assets/js/main.js',
+     lambda j: j.replace('        card.classList.add',
+                         '        if (amazonLink) amazonLink.textContent = "Kaufen";'
+                         '\n        card.classList.add', 1), 'GRUEN_NACH_BUMP'),
+
+    # Aus dem B9-Pruefbericht: zwei Blocker und zwei blinde Flecken.
+    ('main.js benennt per innerHTML um', 'assets/js/main.js',
+     lambda j: j.replace('        card.classList.add',
+                         '        if (detailLink) detailLink.innerHTML = "Mehr erfahren";'
+                         '\n        card.classList.add', 1), 'ROT_NACH_BUMP'),
+    ('main.js benennt ueber einen anderen Variablennamen um', 'assets/js/main.js',
+     lambda j: j.replace('const detailLink = card.querySelector',
+                         'const dl = card.querySelector', 1).replace('detailLink', 'dl')
+     .replace('        card.classList.add',
+              '        if (dl) dl.textContent = "Mehr erfahren";'
+              '\n        card.classList.add', 1), 'ROT_NACH_BUMP'),
+    ('falsches Label auf 404.html', '404.html',
+     lambda h: h.replace('</main>', '<a class="btn-detail" '
+                         'href="/produkte/gamesir-x2/">Zum Test</a></main>', 1), 'ROT'),
+    ('LEGITIM richtiges Label auf 404.html', '404.html',
+     lambda h: h.replace('</main>', '<a class="btn-detail" '
+                         'href="/produkte/gamesir-x2/">Zum Kurzcheck</a></main>', 1),
+     'GRUEN'),
+    ('LEGITIM falsches Label auf einem Redirect-Stub', 'ratgeber/index.html',
+     lambda h: h.replace('</body>', '<a class="btn-detail" '
+                         'href="/produkte/gamesir-x2/">Zum Test</a></body>', 1), 'GRUEN'),
+
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
     # Die Beschriftung kommt aus der <h1> der Zielseite. Sie steht dort NICHT als
@@ -242,6 +294,14 @@ def main():
             open(pfad, 'w', encoding='utf-8').write(nachher)
 
             erwartet = soll
+            if soll in ('ROT_NACH_BUMP', 'GRUEN_NACH_BUMP'):
+                # Eine JS-Aenderung aendert den Inhalts-Hash, und §D verlangt die
+                # nachgezogene Asset-Version. Ohne diesen Schritt entscheidet §D ueber
+                # rot/gruen, und der Fall sagt nichts ueber das gemeinte Gate.
+                subprocess.run([sys.executable, 'scripts/bump_asset_version.py'],
+                               cwd=arbeit, capture_output=True, text=True, timeout=300)
+                erwartet = 'ROT' if soll == 'ROT_NACH_BUMP' else 'GRUEN'
+
             if soll == 'LABEL_GLEICH':
                 for s in ('sync_hublinks.py', 'gen_pages.py', 'bump_asset_version.py'):
                     subprocess.run([sys.executable, 'scripts/' + s]

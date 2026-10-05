@@ -38,6 +38,8 @@ SKIP_DIRS = {'.git', 'brain', 'assets', 'node_modules', 'scripts', '.github'}
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gen_hubs import esc   # gleiche Escaping-Regel wie der Karten-Generator
 from schema_util import typen_von   # eine Definition fuer beide Skripte
+from produktdaten import (detail_label, BTN_DETAIL, btn_ziel_text,
+                          PRODUKT_PRAEFIXE)   # B9, eine Regel und EIN Muster
 
 # Reichweite EINES Spec-Chips, gemeinsam von Schreiber und Audit benutzt. Getrennte
 # Muster sind am 30.09. zweimal auseinandergelaufen (erst beim Escaping, dann bei der
@@ -98,6 +100,37 @@ def karten_bloecke(html):
         if dm:
             out.append((dm.group(1), m.start(), ende))
     return out
+
+def sync_detail_label(html):
+    """B9: Die Beschriftung des Detail-Knopfs gegen sein ZIEL setzen.
+
+    Gemessen am 05.10.2026 ueber alle Produktkarten: 66 Karten zeigten auf einen eigenen
+    Test und sagten "Mehr erfahren" (Signal verschenkt), 95 auf ein Datenblatt und sagten
+    dasselbe (nichtssagend), und 2 sagten "Zum Test" ueber ein Datenblatt (schlicht
+    falsch). Die Regel steht in produktdaten.detail_label(); hier wird sie auf die
+    handgepflegten Seiten gezogen, die kein Generator schreibt. Gemessen vom
+    HEAD-Stand aus, NACH dem Lauf der drei Generatoren: 10 Dateien, 45
+    Beschriftungen. (Hier stand "neun" -- gezaehlt, nachdem gen_hubs schon einen
+    Teil erledigt hatte, also nicht die Reichweite dieser Funktion.)
+
+    Angefasst wird NUR der Linktext, nie das Ziel -- ein Sync, der Links umbiegt, waere
+    etwas ganz anderes als einer, der Beschriftungen nachzieht.
+    """
+    treffer = 0
+
+    def _einen(m):
+        nonlocal treffer
+        ziel, text = btn_ziel_text(m)
+        if not ziel.startswith(PRODUKT_PRAEFIXE):
+            return m.group(0)
+        soll = detail_label(ziel)
+        if text.strip() == soll:
+            return m.group(0)
+        treffer += 1
+        return m.group(0).replace(f'>{text}</a>', f'>{soll}</a>', 1)
+
+    return re.compile(BTN_DETAIL).sub(_einen, html), treffer
+
 
 def sync_cards(html, products):
     """Preis und ALLE Spec-Chips jeder Produktkarte gegen products.json setzen.
@@ -630,6 +663,8 @@ def main():
         with open(path, encoding='utf-8') as f:
             original = f.read()
         html, k = sync_cards(original, products)
+        html, kb = sync_detail_label(html)
+        k += kb
         html, kl = sync_leads(html, products, os.path.relpath(path, ROOT))
         k += kl
         rel_dir = os.path.dirname(os.path.relpath(path, ROOT))

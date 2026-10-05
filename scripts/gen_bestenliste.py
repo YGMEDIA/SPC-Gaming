@@ -87,7 +87,8 @@ sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 os.chdir(ROOT)
 
 from gen_hubs import esc                      # dieselbe Escaping-Regel wie die Hub-Karten
-from produktdaten import (A6_SCHWELLE, bewertung, preis_zahl, spec_paare, spec_wie,
+from produktdaten import (A6_SCHWELLE, bewertung, detail_label, preis_zahl,
+                          spec_paare, spec_wie,
                           sterne_text, anzahl_text, text as pfeld, liste as pliste)
 
 MARKER = 'BESTEN'
@@ -408,22 +409,6 @@ def ehrlichtext(liste_def, menge, erster):
 
 
 # --------------------------------------------------------------------------- Rendern
-def _detail_label(detail):
-    """"Zum Test" nur dort, wo wir wirklich getestet haben.
-
-    Unter /produkte/ liegen generierte Datenblaetter, keine Tests. Genau ein Produkt der
-    23 Positionen faellt darunter (8bitdo-ultimate-mobile), und die Handfassung hatte das
-    richtig: Dort stand "Zum Kurzcheck". Meine erste Generator-Fassung schrieb pauschal
-    "Zum Test" und haette damit auf einer Seite, deren Thema Glaubwuerdigkeit ist, einen
-    Test behauptet, den es nicht gibt.
-
-    Sichtbar ist dieses Etikett nur ohne JavaScript: main.js benennt jeden .btn-detail
-    zur Laufzeit in "Mehr erfahren" um. Fuer §A2 (und damit fuer die KI-Crawler, die kein
-    JS ausfuehren) ist es trotzdem die ausgelieferte Wahrheit.
-    """
-    return 'Zum Kurzcheck' if detail.startswith('/produkte/') else 'Zum Test'
-
-
 def karte(p, nummer, label, badge_klasse, art_klasse, ebene='h3'):
     """Eine Position. Markup wie bisher, Werte aus products.json, plus Faktenzeile.
 
@@ -459,7 +444,7 @@ def karte(p, nummer, label, badge_klasse, art_klasse, ebene='h3'):
       <div class="price-row"><span class="price">{esc(pfeld(p, 'price'))}\
 <span class="price-approx">UVP</span></span><span class="in-stock">Verfügbar</span></div>
       <div class="pcard-actions">
-        <a href="{esc(detail)}" class="btn-detail">{_detail_label(detail)}</a>
+        <a href="{esc(detail)}" class="btn-detail">{detail_label(detail)}</a>
         <a class="btn-amazon" data-asin="{esc(pfeld(p, 'asin'))}" \
 data-product="{esc(pfeld(p, 'slug'))}" href="#" data-img="{esc(img)}">Kaufen →</a>
       </div>

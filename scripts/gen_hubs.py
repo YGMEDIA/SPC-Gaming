@@ -7,6 +7,9 @@
 import json, re, html
 
 import os
+import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from produktdaten import detail_label
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = 'https://smartphone-controller.com'
 items = json.load(open(f'{ROOT}/assets/data/products.json'))
@@ -79,7 +82,10 @@ def card_html(p, featured=False):
     """Identisches Markup wie hub-render.js/produkte.js — JS überschreibt später 1:1."""
     specs = ''.join(f'<span class="spec-tag"><span class="k">{esc(s[0])}</span> {esc(s[1])}</span>'
                     for s in (p.get('specs') or [])[:3])
-    detail = f'<a href="{esc(p["detail"])}" class="btn-detail">Mehr erfahren</a>' if p['detail'] else ''
+    # B9: Die Beschriftung sagt, was den Leser erwartet -- Test oder Datenblatt. Vorher
+    # stand hier pauschal "Mehr erfahren", auf 66 Karten, die auf einen echten Test zeigen.
+    detail = (f'<a href="{esc(p["detail"])}" class="btn-detail">'
+              f'{esc(detail_label(p["detail"]))}</a>') if p['detail'] else ''
     img = f' data-img="{esc(p["img"])}"' if p.get('img') else ''
     icon = ('❄️' if p['platform'] == 'kuehler' else '🧤' if p['platform'] == 'finger-sleeves' else '🎯') \
         if p['type'] == 'zubehoer' else '🎮'
