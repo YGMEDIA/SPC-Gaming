@@ -42,6 +42,12 @@
 **Form:** scripts/verify.py — stdlib-only, Exit 0/1, prüft: JSON-LD-Validität, interne Links, Sitemap (XML + Datei-Abgleich beidseitig), No-JS-Statik (Karten-Mindestzahlen), Invarianten (CNAME, .nojekyll, kein /ratgeber/, keine \x02), products.json-Integrität (Pflichtfelder, Unikate), data-asin-Format.
 **Gesetze:** Teil D.
 
+**Vier Pflicht-Eigenschaften jedes neuen Gates** (alle vier aus Prüfläufen erzwungen, jede schon einmal verletzt):
+1. **Kein Gate darf abbrechen.** `verify.py` ist EIN Prozess mit über 300 Prüfstellen in Reihe. Ein ungefangenes `.index()`, `int()` oder `[0]` auf kaputten Daten nimmt alles mit, was dahinter steht — zuletzt 250 von 301 Prüfstellen, weil ein HTML-Marker seinen Partner verloren hatte. Deshalb: `find()` statt `index()`, Form prüfen und MELDEN statt annehmen. Beweis: Defektform einschmuggeln, Lauf muss ROT werden, nicht ABBRUCH (die Batterien unterscheiden das).
+2. **Ein Teilstring-Test ist keine Wertprüfung.** `wert not in text` lässt „88 €" in „188 €" und „4,4" in „14,4" durch, und ein leerer Erwartungswert macht die Zusicherung wirkungslos (`'' in x` ist immer wahr). Zahlen mit Ziffergrenzen prüfen, Namen in der Rolle, die der Satz behauptet (Linktext auf die genannte Seite), leeren Erwartungswert als Befund melden.
+3. **Eine Schleife über die Datenquelle prüft nicht die Site.** Wer über products.json läuft, sieht nur Produktseiten. Die Hälfte jeder Zusicherung lautet „wo es nicht hingehört, steht es nicht" — und die gilt für alle Seiten. Dafür braucht es einen zweiten Durchgang über `pages`.
+4. **Jede Defektform braucht eine EIGENE Meldung des gemeinten Gates.** Ein Defekt, der nur rot wird, weil der Zeichenvergleich eines Sync-Skripts daneben steht, beweist nichts über das Gate: Fällt der Nachbar weg oder verschiebt sich sein Anker, ist die Zusicherung still weg. Nachmessen heißt: FEHLER-Zeilen nach dem eigenen Paragraphen filtern, nicht nur Exit-Code lesen.
+
 ## P-8 · Screenshot-als-Ground-Truth-Pattern
 **Wann:** Jede externe Datenlage (Amazon, GSC, GA4).
 **Form:** Yasin liefert Screenshot/Export → landet konzeptionell in 03-research/raw/ (Ablage der Kernzahlen als datierte Notiz) → Claude leitet Maßnahmen ab und schreibt die INTERPRETATION getrennt von den Rohzahlen. Rohdaten werden nie überschrieben.
@@ -277,7 +283,7 @@
 7. **Eine Zahl ohne genannte Population ist keine.** "29 von 42 Produktseiten ohne Plattform-Hub-Link" mischte alle Produkte (inklusive Zubehör, das per Konstruktion keinen haben kann) mit nur drei der fünf Hubs. Richtig und nachrechenbar: **13 der 28 Controller**. Dieselbe Prüfung gilt für jede Vorher-Nachher-Zahl: Wer sie nachrechnen will, muss die Menge aus dem Satz kennen.
 
 **Grenze, ausdrücklich:** Die Regel schließt die TAXONOMISCHE Richtung. Die thematische — welcher Blog-Artikel welchen anderen sinnvoll verlinkt — ist redaktionell und nicht ableitbar. Blog-Artikel bleiben mit Median 3 eingehenden Inhaltslinks der schwächste Seitentyp (Reviews: 18), und das sind die Seiten, über die der Traffic kommt.
-**Vorlage:** `scripts/hublinks.py` (Regel) · `scripts/sync_hublinks.py` (Nachzug) · `gen_pages.py` (Generator-Seite) · `scripts/links_batterie.py` (35 Fälle, 22 rot, 13 grün; enthält auch die B8-Fälle) · Gates in `verify.py` · Gesetze: §A1, §B
+**Vorlage:** `scripts/hublinks.py` (Regel) · `scripts/sync_hublinks.py` (Nachzug) · `gen_pages.py` (Generator-Seite) · `scripts/links_batterie.py` (die Fallzahl gibt der Lauf aus, nicht diese Zeile; die Batterie trägt auch die B8-, B9- und B10-Fälle) · Gates in `verify.py` · Gesetze: §A1, §B
 
 ---
 
@@ -285,4 +291,4 @@
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.1 · 2026-10-04*
+*SPC Pattern-Katalog v5.2 · 2026-10-05*

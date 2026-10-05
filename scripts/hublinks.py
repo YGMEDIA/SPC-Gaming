@@ -189,6 +189,15 @@ def hublinks_html(detail, karte, esc):
 
 
 def block(inhalt):
+    """Leerer Inhalt ergibt KEINEN Block.
+
+    Die erste Fassung umhuellte auch den leeren String und schrieb damit auf jede Seite
+    ohne Hinweis ein leeres Markerpaar. Fuer den Leser unsichtbar, fuer das Gate aber ein
+    Hinweis, der da nicht sein soll -- und genau daran ist der erste Lauf des
+    B10-Gates rot geworden, mit 27 Meldungen.
+    """
+    if not inhalt:
+        return ''
     return f'<!-- {MARKER}:START -->\n{inhalt}\n<!-- {MARKER}:END -->'
 
 

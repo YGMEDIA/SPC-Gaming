@@ -181,6 +181,7 @@ from produktdaten import spec as _spec            # eine Leseregel fuer products
 from produktdaten import spec_wie as _spec_wie    # (Docstring dort: warum nicht hier)
 from produktdaten import spec_paare as _spec_paare
 from produktdaten import preis_zahl as _preis_zahl
+from produktdaten import bewertung as _bewertung, sterne_text as _sterne_text
 from produktdaten import formfehler as _formfehler
 # Namen bewusst eindeutig: `_txt`/`_liste` kollidieren mit lokalen Variablen
 # in diesem Lauf (Zeile 344, 471, 1906) und wurden dadurch ueberschrieben --
@@ -531,6 +532,100 @@ for _f in pages:
                 err(f"§B7: {_f} — die Karte fuer "
                     f"{_sl.group(1) if _sl else '?'} verlinkt \"Mehr erfahren\" auf die "
                     f"Seite selbst statt auf die Produktseite")
+
+# B10 (Heath, das Unerwartete): Wo ein guenstigeres Geschwister DERSELBEN MARKE und
+# Kategorie BESSER bewertet ist, steht das auf der Seite des teureren Modells -- an der
+# Stelle, an der die Annahme "teurer ist besser" am staerksten wirkt.
+# Gemessen am 05.10.2026: Sechs Produkte trifft die Regel, und KEINE ihrer Seiten sagte
+# es; vier nannten das guenstigere Modell irgendwo, keine nannte es besser bewertet.
+# Geprueft wird die EIGENSCHAFT am ausgelieferten Stand, nicht der Lauf eines Generators:
+# Den Block setzen zwei Wege (gen_pages.py und sync_guenstiger.py).
+if os.path.exists('scripts/sync_guenstiger.py'):
+    _rg = _gate('sync_guenstiger.py', '--check')
+    if _rg.returncode != 0:
+        _zg = (_rg.stdout + _rg.stderr).strip().splitlines()
+        err(f"§B10: scripts/sync_guenstiger.py --check schlaegt fehl. Fix: "
+            f"'python3 scripts/sync_guenstiger.py'. {_zg[-1][:160] if _zg else ''}")
+else:
+    err('scripts/sync_guenstiger.py fehlt — der B10-Hinweis ist dann ungegatet')
+
+try:
+    from guenstiger import finden as _b10_finden, MARKER as _B10_M
+except Exception as _e:                                       # pragma: no cover
+    _b10_finden = None
+    err(f'§B10: guenstiger.py nicht importierbar ({_e}) — der Hinweis ist ungegatet')
+if _b10_finden is not None:
+    for _p10 in items:
+        _d10 = (_pfeld(_p10, 'detail') or '').strip('/')
+        _f10 = _d10 + '/index.html'
+        if not _d10 or not os.path.exists(_f10):
+            continue
+        _h10 = open(_f10, encoding='utf-8').read()
+        _hat = f'<!-- {_B10_M}:START -->' in _h10
+        _soll = _b10_finden(_p10, items)
+        if _soll is not None and not _hat:
+            err(f"§B10: {_f10} — {_pfeld(_soll, 'name')} ist guenstiger UND besser "
+                f"bewertet, die Seite sagt es aber nicht. Das ist die Zahl, die gegen "
+                f"den eigenen Preis spricht, und sie gehoert auf die Seite")
+        elif _soll is None and _hat:
+            err(f"§B10: {_f10} fuehrt einen B10-Hinweis, obwohl es kein guenstigeres, "
+                f"besser bewertetes Geschwister (mehr) gibt — ein Hinweis auf ein "
+                f"Angebot, das es nicht gibt")
+        elif _soll is not None:
+            # Der genannte Name und beide Zahlen muessen im Block stehen. Drei Loecher,
+            # alle im Pruefbericht zu B10 belegt:
+            # (1) `.index(END)` brach mit ValueError ab, wenn nur der START-Marker stand.
+            #     Ein Gate, das abbricht, prueft nicht nur diesen Fall nicht -- es nimmt
+            #     die 250 err()-Stellen mit, die dahinter liegen. Also `find()` + Meldung.
+            # (2) `wert not in block` ist ein Teilstring-Test: "88 €" steckt in "188 €",
+            #     "4,4" in "14,4". Beide Zahlen werden daher mit Ziffergrenzen geprueft.
+            # (3) Ein leerer Name machte die Zusicherung wirkungslos (`'' in x` ist immer
+            #     wahr) und lieferte den Linktext "Der Razer </a>". Der Name wird deshalb
+            #     im Linktext auf die Zielseite geprueft -- das ist die Aussage, die der
+            #     Satz macht -- und ein leerer Name ist selbst der Befund.
+            _a10 = _h10.index(f'<!-- {_B10_M}:START -->')
+            _e10 = _h10.find(f'<!-- {_B10_M}:END -->')
+            if _e10 < _a10:
+                err(f"§B10: {_f10} — der B10-Marker hat keinen Partner (START ohne END "
+                    f"oder END vor START). Fix: 'python3 scripts/sync_guenstiger.py' "
+                    f"bzw. 'python3 scripts/gen_pages.py --regen'")
+                continue
+            _roh10 = _h10[_a10:_e10]
+            _blk = _klartext(_roh10)
+            # Der Link wird im auskommentar-befreiten Markup gesucht, nicht im rohen: Ein
+            # Block, der komplett in einem HTML-Kommentar steht, traegt sein `<a>` sonst
+            # weiter und die Zusicherung haelt an einem unsichtbaren Satz fest.
+            _sicht10 = re.sub(r'<!--.*?-->', '', _roh10, flags=re.S)
+            _sn, _sc = _bewertung(_soll)
+            _nm10 = _pfeld(_soll, 'name').strip()
+            _zl10 = (_pfeld(_soll, 'detail') or '').rstrip('/') + '/'
+            _lk10 = re.search(rf'<a[^>]*href="{re.escape(_zl10)}"[^>]*>(.*?)</a>',
+                              _sicht10, re.S)
+            if not _nm10:
+                err(f"§B10: {_f10} — das guenstigere Modell traegt in products.json "
+                    f"keinen Namen; der Hinweis kann es nicht benennen")
+            elif not (_lk10 and _nm10 in _klartext(_lk10.group(1))):
+                err(f"§B10: {_f10} — der Hinweis nennt \"{_nm10}\" nicht im Linktext auf "
+                    f"{_zl10} (Fix: 'python3 scripts/sync_guenstiger.py' bzw. "
+                    f"'python3 scripts/gen_pages.py --regen')")
+            for _was, _wert in (('Sterne', _sterne_text(_sn)),
+                                ('Preis', f"{_preis_zahl(_soll)} €")):
+                if not re.search(rf'(?<![\d,.]){re.escape(str(_wert))}(?!\d)', _blk):
+                    err(f"§B10: {_f10} — der Hinweis nennt {_was} \"{_wert}\" nicht "
+                        f"(Fix: 'python3 scripts/sync_guenstiger.py' bzw. "
+                        f"'python3 scripts/gen_pages.py --regen')")
+
+    # Der Gegentest ueber ALLE Seiten. Die Schleife oben laeuft ueber products.json und
+    # sieht deshalb nur Produktseiten: Ein Block auf einer Blog- oder Hub-Seite war fuer
+    # §B10 unsichtbar (gemessen am 05.10.2026, je ein eingeschmuggelter Block auf
+    # blog/hall-effect-erklaert/ und controller/universal/ blieb gruen). "Wo nicht, steht
+    # keiner" gilt fuer die ganze Site, nicht fuer die 42 Seiten der Datei.
+    _b10_ok = {(_pfeld(_p10, 'detail') or '').strip('/') + '/index.html' for _p10 in items}
+    for _f10 in pages:
+        if (f'<!-- {_B10_M}:START -->' in open(_f10, encoding='utf-8').read()
+                and _f10 not in _b10_ok):
+            err(f"§B10: {_f10} fuehrt einen B10-Hinweis, ist aber keine Produktseite — "
+                f"der Hinweis gehoert auf die Seite des teureren Modells, sonst nirgends")
 
 # B9 (Cialdini, Autoritaet am Entscheidungspunkt): Die Beschriftung des Detail-Knopfs
 # sagt, WAS den Leser erwartet -- ein eigener Test oder ein Datenblatt. Gemessen am

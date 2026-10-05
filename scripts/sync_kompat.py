@@ -63,7 +63,15 @@ def main():
         if ANKER not in neu:
             fehlender_anker.append(f)
             continue
-        neu = neu.replace(ANKER, block(inhalt) + ANKER, 1)
+        # Vor die ganze BLOCKKETTE, nicht nur vor die Box. Seit B10 steht zwischen
+        # diesem Block und der Einordnungs-Box ein zweiter (GUENSTIGER). Wer stur vor
+        # `ANKER` einsetzt, landet dahinter -- und dann ergeben die beiden Syncs je nach
+        # Laufreihenfolge eine andere Dokumentreihenfolge. Genau das hat
+        # `sync_kompat.py --check` nach dem B10-Einbau gemeldet: vier Dateien "wuerden
+        # geaendert", obwohl sich an den Daten nichts geaendert hatte.
+        _ziel = min((x for x in (neu.find('<!-- GUENSTIGER:START -->'), neu.find(ANKER))
+                     if x >= 0), default=-1)
+        neu = neu[:_ziel] + block(inhalt) + neu[_ziel:]
         if neu != s:
             geaendert += 1
             if not nur_pruefen:

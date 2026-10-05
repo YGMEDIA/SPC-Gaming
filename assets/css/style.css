@@ -425,6 +425,18 @@ ul, ol { list-style: none; }
   color: var(--ink-soft);
 }
 .hublinks a { color: var(--blue); }
+/* B10: Der Hinweis auf ein guenstigeres, besser bewertetes Geschwister derselben Marke.
+   Blau statt rot: Das Produkt ist nicht schlecht, es gibt nur ein besseres Angebot. */
+.note-info {
+  background: var(--blue-bg);
+  border-left: 4px solid var(--blue);
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  margin: 22px 0;
+  font-size: 14px;
+  line-height: 1.6;
+}
+.note-info a { color: var(--blue); font-weight: 600; }
 .pcard-specs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 11px; }
 .spec-tag {
   font-size: 11px;

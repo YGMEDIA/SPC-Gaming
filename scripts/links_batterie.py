@@ -46,7 +46,9 @@ PRODUKTE = 'produkte/index.html'
 HUBLINKS = 'scripts/hublinks.py'
 TABLETSEITE = 'controller/universal/gamesir-g8-plus-review/index.html'
 REDAKTION = 'controller/universal/gamesir-x5-lite-review/index.html'
+KISHIPRO = 'controller/universal/razer-kishi-v3-pro-review/index.html'
 WAISE = 'produkte/ipega-pg-9023/index.html'
+BLOGSEITE = 'blog/hall-effect-erklaert/index.html'
 
 
 def _block_weg(h):
@@ -222,6 +224,45 @@ FAELLE = [
      lambda h: h.replace('</body>', '<a class="btn-detail" '
                          'href="/produkte/gamesir-x2/">Zum Test</a></body>', 1), 'GRUEN'),
 
+    # --- B10: die Zahl, die gegen den eigenen Preis spricht -----------------------------
+    ('B10-Hinweis von Hand entfernt', KISHIPRO,
+     lambda h: re.sub(r'<!-- GUENSTIGER:START -->.*?<!-- GUENSTIGER:END -->\n?', '', h,
+                      flags=re.S), 'ROT'),
+    ('Preis im B10-Hinweis verfaelscht', KISHIPRO,
+     lambda h: h.replace('kostet 88 € und kommt', 'kostet 99 € und kommt', 1), 'ROT'),
+    ('Sternzahl im B10-Hinweis verfaelscht', KISHIPRO,
+     lambda h: h.replace('auf 4,4 Sterne aus', 'auf 4,9 Sterne aus', 1), 'ROT'),
+    ('genanntes Modell im B10-Hinweis ausgetauscht', KISHIPRO,
+     lambda h: h.replace('>Razer Kishi V3</a>', '>Razer Kishi Ultra</a>', 1), 'ROT'),
+    # Teilstring-Falle: "88 €" steckt in "188 €". Die erste Fassung des Gates testete
+    # `wert not in block` und liess diese Form durch -- rot wurde sie nur, weil der
+    # Zeichenvergleich des Sync-Skripts daneben steht.
+    ('Preis im B10-Hinweis um eine Ziffer verlaengert', KISHIPRO,
+     lambda h: h.replace('kostet 88 € und kommt', 'kostet 188 € und kommt', 1), 'ROT'),
+    # Der Abbruch-Fall: Ein START ohne END liess verify.py mit ValueError sterben, also
+    # exit 1 ohne Urteil -- und nahm die 250 Pruefstellen hinter §B10 mit. Die Batterie
+    # unterscheidet ABBRUCH von ROT, deshalb greift dieser Fall die Klasse wirklich.
+    ('B10-END-Marker entfernt', KISHIPRO,
+     lambda h: h.replace('<!-- GUENSTIGER:END -->', '', 1), 'ROT'),
+    ('B10-Hinweis in einen HTML-Kommentar gehuellt', KISHIPRO,
+     lambda h: h.replace('<!-- GUENSTIGER:START -->', '<!-- GUENSTIGER:START --><!--', 1)
+                .replace('<!-- GUENSTIGER:END -->', '--><!-- GUENSTIGER:END -->', 1),
+     'ROT'),
+    ('B10-Hinweis auf einer Seite, die keinen haben darf', REVIEW,
+     lambda h: h.replace('<div class="verdict-box">',
+                         '<!-- GUENSTIGER:START -->\n<div class="note note-info">'
+                         'Guenstiger: irgendwas 1 € 5,0 Sterne</div>\n'
+                         '<!-- GUENSTIGER:END -->\n<div class="verdict-box">', 1), 'ROT'),
+    # Die Schleife des Gates laeuft ueber products.json und sieht nur Produktseiten. Ein
+    # Block auf einer Blog- oder Hub-Seite blieb damit stumm gruen.
+    ('B10-Hinweis auf einer Blog-Seite', BLOGSEITE,
+     lambda h: h.replace('</main>',
+                         '<!-- GUENSTIGER:START -->\n<div class="note note-info">'
+                         'Guenstiger: irgendwas 1 € 5,0 Sterne</div>\n'
+                         '<!-- GUENSTIGER:END -->\n</main>', 1), 'ROT'),
+    ('LEGITIM zusaetzlicher Absatz auf einer B10-Seite', KISHIPRO,
+     lambda h: h.replace('</main>', '<p>Nachtrag: Preis geprueft.</p></main>', 1), 'GRUEN'),
+
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
     # Die Beschriftung kommt aus der <h1> der Zielseite. Sie steht dort NICHT als
@@ -303,7 +344,7 @@ def main():
                 erwartet = 'ROT' if soll == 'ROT_NACH_BUMP' else 'GRUEN'
 
             if soll == 'LABEL_GLEICH':
-                for s in ('sync_hublinks.py', 'gen_pages.py', 'bump_asset_version.py'):
+                for s in ('sync_hublinks.py', 'sync_guenstiger.py', 'gen_pages.py', 'bump_asset_version.py'):
                     subprocess.run([sys.executable, 'scripts/' + s]
                                    + (['--regen'] if s == 'gen_pages.py' else []),
                                    cwd=arbeit, capture_output=True, text=True, timeout=300)
@@ -342,7 +383,7 @@ def main():
                 for s in ('sync_new_products.py', 'sync_product_values.py', 'gen_hubs.py',
                           'gen_pages.py', 'gen_brand_sections.py', 'gen_bestenliste.py',
                           'gen_preisfrage.py', 'gen_longtail.py', 'sync_kompat.py',
-                          'sync_lesezeit.py', 'sync_hublinks.py', 'bump_asset_version.py'):
+                          'sync_lesezeit.py', 'sync_hublinks.py', 'sync_guenstiger.py', 'bump_asset_version.py'):
                     subprocess.run([sys.executable, 'scripts/' + s]
                                    + (['--regen'] if s == 'gen_pages.py' else []),
                                    cwd=arbeit, capture_output=True, text=True, timeout=300)

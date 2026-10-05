@@ -84,6 +84,13 @@ from kompat import kompat_html   # Massnahme B1, eine Quelle fuer Generator und 
 # Massnahme B7: derselbe Aufbau. Die Zuordnung Produkt -> Uebersicht wird aus dem
 # Linkgraph GELESEN, nicht gepflegt; `taxonomie_karte()` laeuft einmal pro Lauf.
 from hublinks import taxonomie_karte, hublinks_html, block as hub_block
+# Massnahme B10: dieselbe Aufteilung wie bei B1 -- eine Regel, zwei Wege. Der Block steht
+# VOR dem Kurz-Urteil, an derselben Stelle wie der Kompatibilitaets-Block, weil wer erst
+# danach erfaehrt, dass es ein besseres Angebot gibt, die Entscheidung schon getroffen hat.
+# Die erste Fassung setzte ihn hinter Urteil und Absaetze: Auf vier von sechs Seiten stand
+# er damit richtig (die pflegt sync_guenstiger.py), auf zwei falsch -- und die Begruendung
+# stand drei Mal in der Doku, ohne dass sie fuer ein Drittel der Faelle galt.
+from guenstiger import html as guenstiger_html, block as guenstiger_block
 
 
 def a6_warnbox(prod):
@@ -293,7 +300,7 @@ def build(prod, c):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=f7ce8323">
+  <link rel="stylesheet" href="/assets/css/style.css?v=8627c414">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -312,6 +319,8 @@ def build(prod, c):
 .pro-item,.con-item{{font-size:14px;line-height:1.55;padding:4px 0;list-style:none}}
 .pro-item{{color:#1d7a3a}}.con-item{{color:#a04434}}
 .note-warn{{background:var(--red-bg);border-left:4px solid var(--red);padding:16px 18px;border-radius:var(--radius);margin:22px 0;font-size:14px;line-height:1.6}}
+.note-info{{background:var(--blue-bg);border-left:4px solid var(--blue);padding:16px 18px;border-radius:var(--radius);margin:22px 0;font-size:14px;line-height:1.6}}
+.note-info a{{color:var(--blue);font-weight:600}}
 .sticky-cta{{position:sticky;top:184px}}
 .cta-box{{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-md)}}
 .cta-box .cta-name{{font-weight:800;font-size:17px;text-align:center;margin-bottom:4px}}
@@ -385,6 +394,8 @@ def build(prod, c):
         <div class="review-body">
 
           {kompat_html(prod, esc)}
+
+          {guenstiger_block(guenstiger_html(prod, items, esc))}
 
           <h2>Kurz-Einschätzung</h2>
           <div class="verdict-box">
