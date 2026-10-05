@@ -27,6 +27,7 @@ Header und Footer bleiben aussen vor, denn niemand liest die Pflichtangaben mit.
 rechnet; er bleibt, damit alle Seiten dieselbe Skala benutzen.
 """
 import re
+import html as html_mod
 from html.parser import HTMLParser
 
 WPM = 200
@@ -38,12 +39,36 @@ WPM = 200
 # Projekt dreimal zwei Kopien derselben Regel auseinandergelaufen, und die Rechenregel
 # allein zu teilen schuetzt davor nicht.
 # BYLINE: Gruppe 1 = alles bis zur Zahl, 2 = die Minuten, 3 = der Rest.
-BYLINE = re.compile(r'(article-byline"[^>]*>.*?·\s*)(\d+)(\s*Min\. Lesezeit)', re.S)
+BYLINE = re.compile(r'(article-byline"[^>]*>(?:(?!</div>).)*?·\s*)(\d+)'
+                    r'(\s*Min\. Lesezeit)', re.S)
+# `(?:(?!</div>).)*?` statt `.*?`: Die erste Fassung war unbegrenzt, und damit
+# erfuellte eine Lesezeit IRGENDWO spaeter auf der Seite die Byline-Pruefung --
+# gemessen am 05.10., Angabe aus der Byline entfernt und als `article-meta` vor
+# </main> gesetzt: Lauf gruen, Byline leer. REVIEW_BYLINE darunter hatte die
+# Begrenzung von Anfang an; die zwei Muster standen eine Zeile auseinander.
 # KARTE: Gruppe 1 = Ziel-Pfad, 2 = die Minuten, 3 = der Rest.
 KARTE = re.compile(r'<a href="(/blog/[^"]+/)"(?:(?!</a>).)*?'
                    r'article-meta"[^>]*>\s*(\d+)(\s*Min\. Lesezeit)', re.S)
 
-_WEG = re.compile(r'<(script|style|nav)\b[^>]*>.*?</\1>', re.S)
+# B12: Die Byline der 13 handgepflegten Review-Seiten trug bis zum 05.10. KEINE Lesezeit
+# (gemessen: 19 von 127 Seiten nannten ihre eigene, keine davon eine Produktseite). Die
+# Einfuegestelle steht hier und nicht im Sync, weil verify.py dieselbe Stelle kennen muss:
+# Wo der Sync einsetzt, prueft das Gate.
+REVIEW_BYLINE = re.compile(r'(class="article-byline"[^>]*>(?:(?!</div>).)*?·\s*)'
+                           r'(Redaktion smartphone-controller\.com)')
+
+# Die Byline steht im <main>, ist aber kein Artikeltext -- und ihr Inhalt stammt aus
+# DIESER Messung. Die erste B12-Fassung zaehlte sie mit, und bei zwei Seiten
+# (ouligay-sleeves, wllhyf-sleeves) hat sie die Zahl von 1 auf 2 Minuten gekippt:
+# Die Lesezeit hat sich selbst verlaengert. Dieselbe Begruendung wie bei <nav>, nur
+# schaerfer, weil es ein Rueckkopplungskreis ist.
+# Elementunabhaengig wie BYLINE und REVIEW_BYLINE daneben: Die erste Fassung verlangte
+# `<div`, und eine Byline als `<p class="article-byline">` waere wieder mitgezaehlt
+# worden, ohne dass etwas meldet. Drei Muster fuer dasselbe Element, eines davon enger --
+# das ist die Form, an der in diesem Repo schon dreimal zwei Kopien auseinandergelaufen
+# sind. Der Rueckverweis \2 schliesst das Element, das \2 geoeffnet hat.
+_WEG = re.compile(r'<(script|style|nav)\b[^>]*>.*?</\1>|'
+                  r'<(\w+)[^>]*class="article-byline"[^>]*>.*?</\2>', re.S)
 _TAGS = re.compile(r'<[^>]+>')
 
 
@@ -52,7 +77,11 @@ def artikel_text(html):
     m = re.search(r'<main\b.*?</main>', html, re.S)
     if not m:
         return None
-    return _TAGS.sub(' ', _WEG.sub(' ', m.group(0)))
+    # unescape: `&amp;` und `&lt;` zaehlten als Woerter ("amp", "lt"). Gemessen bis zu
+    # 6 Woerter Unterschied je Seite, heute ohne Wirkung auf eine Minutenzahl -- aber
+    # verify._klartext loest Entities ausdruecklich auf, und zwei Textregeln in einem
+    # Repo laufen irgendwann auseinander.
+    return html_mod.unescape(_TAGS.sub(' ', _WEG.sub(' ', m.group(0))))
 
 
 def woerter(html):
@@ -63,8 +92,11 @@ def woerter(html):
 
 def minuten(html):
     """Lesezeit in ganzen Minuten, mindestens 1. None ohne <main>."""
+    # int(x + 0.5) statt round(): `round` rundet bei exakt .5 zur GERADEN Zahl (900
+    # Woerter ergaeben 4 statt 5). Heute trifft das keine der 71 Seiten, aber die Regel
+    # steht ueberall als "ab einer halben Minute aufrunden" -- dann soll der Code das tun.
     w = woerter(html)
-    return None if w is None else max(1, round(w / WPM))
+    return None if w is None else max(1, int(w / WPM + 0.5))
 
 
 class _KartenLeser(HTMLParser):

@@ -9,6 +9,9 @@ Konversionspfad. Idempotent: kompletter Overwrite pro Lauf.
 import json, os, html, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, 'scripts'))
+# B12: dieselbe Lesezeit-Regel wie sync_lesezeit.py und verify.py.
+from lesezeit import minuten as lesezeit_minuten  # noqa: E402
 DOMAIN = 'https://smartphone-controller.com'
 
 longtail = json.load(open(f'{ROOT}/assets/data/longtail.json'))
@@ -25,7 +28,9 @@ def voller_name(p):
 def detail_url(p):
     return p['detail'] if p['detail'] else f"/produkte/{p['slug']}/"
 
-def build(item):
+def build(item, lesezeit):
+    # Kein Default: Ein Aufrufer, der die Lesezeit vergisst, soll einen TypeError
+    # bekommen und keine Seite mit "None Min. Lesezeit" schreiben.
     slug = item['slug']
     url = f"{DOMAIN}/produkte/{slug}/"
     full_name = item['name'] if item['brand'].lower() in item['name'].lower() else f"{item['brand']} {item['name']}"
@@ -108,7 +113,7 @@ def build(item):
   <meta name="twitter:title" content="{esc(full_name)} — Datenblatt & Alternativen">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{og_img}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=8627c414">
+  <link rel="stylesheet" href="/assets/css/style.css?v=edfc9bc1">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -173,6 +178,7 @@ def build(item):
       <span class="eyebrow">📋 Datenblatt · {esc(item['brand'])} · Altmodell</span>
       <h1>{esc(full_name)}</h1>
       <p class="lead">{esc(item['claim'])}</p>
+      <div class="article-byline">Datenblatt ohne eigenen Test · {lesezeit} Min. Lesezeit</div>
     </div>
   </section>
 
@@ -231,6 +237,20 @@ def build(item):
 <script src="/assets/js/main.js?v=490abf10"></script>
 </body></html>'''
 
+def build_fertig(item):
+    """Zweistufig bauen, damit die Lesezeit aus dem fertigen Text kommt (B12).
+
+    Gleiche Loesung wie in gen_pages.py und gen_preisfrage.py. Die Zahl der Woerter
+    aendert sich zwischen den zwei Laeufen nicht (nur die Ziffer), der zweite Lauf kann
+    also kein anderes Ergebnis liefern als der erste gemessen hat.
+    """
+    m = lesezeit_minuten(build(item, lesezeit=1))
+    if m is None:
+        raise SystemExit(f"FEHLER: die gebaute Seite fuer {item.get('slug')} hat kein "
+                         f"<main>-Element, die Lesezeit laesst sich nicht bestimmen")
+    return build(item, lesezeit=m)
+
+
 def generierte_seiten():
     """(slug, pfad, Soll-HTML) fuer jede Longtail-Seite, die dieser Generator besitzt.
 
@@ -238,7 +258,7 @@ def generierte_seiten():
     verify.py auch die zehn Datenblaetter ab, die bisher nur wertweise geprueft wurden.
     """
     for item in longtail:
-        yield item['slug'], f"{ROOT}/produkte/{item['slug']}/index.html", build(item)
+        yield item['slug'], f"{ROOT}/produkte/{item['slug']}/index.html", build_fertig(item)
 
 
 if __name__ == '__main__':
@@ -246,7 +266,7 @@ if __name__ == '__main__':
     for item in longtail:
         d = f"{ROOT}/produkte/{item['slug']}"
         os.makedirs(d, exist_ok=True)
-        page = build(item)
+        page = build_fertig(item)
         open(f'{d}/index.html', 'w', encoding='utf-8').write(page)
         # Gate: Schema-FAQ == sichtbarer Text, >=2 interne Links auf kaufbare Produkte
         import re as _re

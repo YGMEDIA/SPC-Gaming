@@ -21,11 +21,46 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
-from lesezeit import minuten, BYLINE, KARTE  # noqa: E402
+from lesezeit import minuten, BYLINE, KARTE, REVIEW_BYLINE, WPM  # noqa: E402
 
 # Byline- und Karten-Muster kommen aus lesezeit.py, geteilt mit verify.py.
 # Listenseiten, die Lesezeiten fremder Artikel zeigen.
 LISTEN = ['blog/index.html', 'index.html']
+
+
+def reviewseiten():
+    """Die handgepflegten Produktseiten (B12).
+
+    Die 29 generierten Datenblaetter und die 10 Longtail-Seiten tragen ihre Lesezeit vom
+    Generator; hier stehen nur die, die niemand generiert. Dieselbe Aufteilung wie bei
+    B1, B7 und B10 -- eine Regel, zwei Wege.
+    """
+    import json
+    items = json.load(open('assets/data/products.json', encoding='utf-8'))
+    aus = []
+    for p in items:
+        d = str((p or {}).get('detail') or '').strip('/')
+        if not d or d.startswith('produkte/'):
+            continue
+        f = d + '/index.html'
+        if os.path.exists(f):
+            aus.append(f)
+    return aus
+
+
+def setze_review(t, m):
+    """Lesezeit in die Review-Byline schreiben, ob sie schon eine traegt oder nicht.
+
+    Zwei Wege, weil die Byline vor B12 keine hatte: Steht schon eine da, wird die ZAHL
+    gezogen (dann greift dasselbe Muster wie bei den Blog-Artikeln); steht keine da, wird
+    sie vor "Redaktion smartphone-controller.com" eingesetzt. Beide Wege muessen zum
+    selben Ergebnis fuehren, sonst schreiben sich die Laeufe gegenseitig um -- genau das
+    hat die erste Fassung von sync_positionierung.py getan.
+    """
+    if BYLINE.search(t):
+        return BYLINE.sub(lambda x: x.group(1) + str(m) + x.group(3), t, count=1)
+    return REVIEW_BYLINE.sub(lambda x: f'{x.group(1)}{m} Min. Lesezeit · {x.group(2)}',
+                             t, count=1)
 
 
 def artikelseiten():
@@ -92,6 +127,36 @@ def main():
             if not nur_pruefen:
                 open(f, 'w', encoding='utf-8').write(neu)
 
+    # 1b. Dasselbe fuer die handgepflegten Review-Seiten (B12). Sie tragen dieselbe
+    # Byline-Klasse, bis zum 05.10. aber keine Lesezeit: Wer auf einer Produktseite
+    # landet, wusste nicht, worauf er sich einlaesst.
+    for f in reviewseiten():
+        t = open(f, encoding='utf-8').read()
+        m = minuten(t)
+        if m is None:
+            print(f'  FEHLER: {f} hat kein <main>-Element, die Lesezeit laesst sich '
+                  f'nicht bestimmen')
+            ohne_main.append(f)
+            continue
+        # Bis zum Fixpunkt: Die Byline faellt seit B12 aus der Messung heraus, damit ist
+        # `m` stabil -- aber die Schleife kostet nichts und macht den Fix-Hinweis der
+        # Meldung wahr. Vorher brauchte eine Erst-Einsetzung im Grenzfall zwei Laeufe.
+        neu = setze_review(t, m)
+        for _ in range(3):
+            m2 = minuten(neu)
+            if m2 is None or m2 == m:
+                break
+            m = m2
+            neu = setze_review(t, m)
+        if neu == t:
+            continue
+        alt = BYLINE.search(t)
+        abweichungen.append(f'{f}: Byline sagt {alt.group(2) if alt else "nichts"}, '
+                            f'Text ergibt {m}')
+        geaendert += 1
+        if not nur_pruefen:
+            open(f, 'w', encoding='utf-8').write(neu)
+
     # 2. Jede Karte auf die Minuten des Artikels ziehen, auf den sie zeigt.
     for f in LISTEN:
         if not os.path.exists(f):
@@ -121,7 +186,11 @@ def main():
     for f in blind:
         print(f'  FEHLER: {f} nennt eine Lesezeit, die das Byline-Muster nicht findet — '
               f'diese Seite wird NICHT nachgezogen')
-    print(f'{len(soll)} Artikel mit Lesezeit, Regel: 200 Woerter pro Minute')
+    # Die Zahl nennt BEIDE Mengen. Stuende hier weiter nur "19 Artikel", waehrend das
+    # Script 13 Review-Seiten mitzieht, haette es seine eigene Reichweite zu klein
+    # gemeldet -- dieselbe Form, an der `unerfasst()` am 01.10. aufgefallen ist.
+    print(f'{len(soll)} Blog-Artikel und {len(reviewseiten())} Review-Seiten mit '
+          f'Lesezeit, Regel: {WPM} Woerter pro Minute')
     print(f"{geaendert} Datei(en) {'waeren geaendert' if nur_pruefen else 'nachgezogen'}, "
           f'{len(abweichungen)} Abweichung(en), {len(blind)} unerfasst, '
           f'{len(ohne_main)} ohne <main>')

@@ -373,6 +373,45 @@ FAELLE = [
                          '<h2 style="margin-top:24px">Unsere Bewertungskriterien</h2>', 1),
      'GRUEN'),
 
+    # --- B12: das Zeitversprechen, und zwar in beide Richtungen ------------------------
+    ('Finder-Dauer auf der Startseite verfaelscht', START,
+     lambda h: h.replace('in 60 Sekunden die richtige Wahl',
+                         'in 90 Sekunden die richtige Wahl', 1), 'ROT'),
+    ('Finder-Dauer in der Kachel verfaelscht', START,
+     lambda h: h.replace('>60 Sek.<', '>45 Sek.<', 1), 'ROT'),
+    ('Lesezeit auf einer Review-Seite verfaelscht', KISHIPRO,
+     lambda h: re.sub(r'· \d+ Min\. Lesezeit ·', '· 9 Min. Lesezeit ·', h, count=1), 'ROT'),
+    # Die Gegenrichtung, die beim Bauen gefehlt hat: Das Lesezeit-Gate prueft nur Seiten,
+    # die eine NENNEN. Eine Seite, die ihre verliert, blieb stumm gruen.
+    ('Lesezeit auf einer Review-Seite entfernt', KISHIPRO,
+     lambda h: re.sub(r' · \d+ Min\. Lesezeit', '', h, count=1), 'ROT'),
+    ('Lesezeit auf einer generierten Seite entfernt', 'produkte/marsgaming-mgpx/index.html',
+     lambda h: re.sub(r'<div class="article-byline">[^<]*Lesezeit</div>', '', h, count=1),
+     'ROT'),
+    ('LEGITIM Sekundenangabe ohne Finder-Bezug', 'blog/controller-verbindet-nicht/index.html',
+     lambda h: h.replace('etwa 5 Sekunden', 'etwa 7 Sekunden', 1), 'GRUEN'),
+    # Die Formen, an denen die erste Fassung des Gates gescheitert ist: Umformulierung
+    # statt Zahlendreher, und eine ZUSAETZLICHE Zusage neben der gepflegten.
+    ('Finder-Zusage umformuliert statt verfaelscht', START,
+     lambda h: h.replace('in 60 Sekunden die richtige Wahl',
+                         'in zwei Minuten die richtige Wahl', 1), 'ROT'),
+    ('zusaetzliche Finder-Zusage auf der Finder-Seite', 'controller-finder/index.html',
+     lambda h: h.replace('</main>', '<p>Plane dafuer rund 90 Sekunden ein.</p></main>', 1),
+     'ROT'),
+    ('Finder-Dauer in der Meta-Description verfaelscht', 'controller-finder/index.html',
+     lambda h: h.replace('content="Controller finden in 60 Sekunden',
+                         'content="Controller finden in 30 Sekunden', 1), 'ROT'),
+    ('Lesezeit auf einer generierten Seite verfaelscht', 'produkte/marsgaming-mgpx/index.html',
+     lambda h: re.sub(r'· \d+ Min\. Lesezeit', '· 7 Min. Lesezeit', h, count=1), 'ROT'),
+    ('Lesezeit auf einem Blog-Artikel entfernt', 'blog/hall-effect-erklaert/index.html',
+     lambda h: re.sub(r' · \d+ Min\. Lesezeit', '', h, count=1), 'ROT'),
+    # Alterungsprobe (P-13 Mechanismus 3): Text verlaengern, ohne eine Zahl anzufassen.
+    ('Text verlaengert, Lesezeit bleibt stehen', KISHIPRO,
+     lambda h: h.replace('</main>', '<p>' + ('Nachtrag zum Test mit vielen Woertern. ' * 120)
+                         + '</p></main>', 1), 'ROT'),
+    ('LEGITIM Absatz neben der Byline', KISHIPRO,
+     lambda h: h.replace('</main>', '<p>Nachtrag.</p></main>', 1), 'GRUEN'),
+
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
     # Die Beschriftung kommt aus der <h1> der Zielseite. Sie steht dort NICHT als

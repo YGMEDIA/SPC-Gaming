@@ -1660,7 +1660,11 @@ _ZAHLWORT = {'zwei': 2, 'drei': 3, 'vier': 4, 'fünf': 5, 'fuenf': 5, 'sechs': 6
 _FRAGEN_FORMEN = [
     (re.compile(r'in (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen die passenden Modelle'),
      'in N Fragen die passenden Modelle'),
-    (re.compile(r'60 Sekunden: (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen zu Handy'),
+    # `\d+ Sekunden` statt der harten 60: Die Dauer gehoert seit B12 zeitversprechen.py,
+    # und eine zweite Kopie derselben Zahl liess verify auch dann rot bleiben, wenn die
+    # Quelle geaendert UND der Sync gelaufen war -- mit einer Meldung, die auf die falsche
+    # Datei zeigte. Dieses Muster prueft die FRAGENzahl, die Dauer prueft §A5/B12.
+    (re.compile(r'\d+ Sekunden: (\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) Fragen zu Handy'),
      'Meta-Description der Finder-Seite'),
     (re.compile(r'(\d+|[Zz]wei|[Dd]rei|[Vv]ier|[Ff]ünf|[Ss]echs|[Ss]ieben) kurze Fragen zu deinem Handy'),
      'Startseiten-Hero'),
@@ -1808,6 +1812,69 @@ else:
         if _gruppen != _keys:
             err(f'§A5: die Antwortgruppen auf {_FINDER_SEITE} ({sorted(_gruppen)}) '
                 f'stimmen nicht mit answers in {FINDER_JS} ({sorted(_keys)}) ueberein')
+
+# ---------------------------------------------------------------------------------------
+# §A1/B12 · ANWESENHEITSPFLICHT LESEZEIT. Eigener Abschnitt mit Trennmarken, und zwar aus
+# gegebenem Anlass: Dieser Block stand zuerst zwischen dem B12-Kommentar und dem
+# Zeitversprechen-Gate, und beim Ersetzen des Nachbarblocks habe ich ihn mitgeloescht --
+# verify blieb gruen, weil eine geloeschte Pruefung nichts meldet. Dasselbe ist dem
+# Finder-§A6-Gate zwei Abschnitte weiter unten zweimal passiert, und die Lehre dazu stand
+# schon da. Trennmarken sind billiger als die dritte Wiederholung.
+#
+# Das Lesezeit-Gate weiter unten prueft nur Seiten, die eine Lesezeit NENNEN. Eine Seite,
+# die ihre wieder verliert, blieb damit stumm gruen (eigene Probe am 05.10.). Deshalb hier
+# die Pflicht, abgeleitet statt aufgezaehlt: jede Produktseite aus products.json, alles
+# unter /produkte/ (29 Datenblaetter plus 10 Longtail-Seiten) und jeder Blog-Artikel.
+_b12_pflicht = {(_pfeld(_p, 'detail') or '').strip('/') + '/index.html' for _p in items
+                if _pfeld(_p, 'detail')}
+_b12_pflicht |= set(glob.glob('produkte/*/index.html'))
+# glob('blog/*/index.html') trifft die Listenseite blog/index.html nicht, die liegt eine
+# Ebene hoeher. Die erste Fassung filterte sie trotzdem heraus, und der Kommentar daneben
+# erklaerte einen Filter, der nie etwas getan hat.
+_b12_pflicht |= set(glob.glob('blog/*/index.html'))
+for _f12 in sorted(_b12_pflicht):
+    if not os.path.exists(_f12):
+        continue            # fehlende Ziele meldet §A1 an seiner Stelle
+    if not _lz_BYLINE.search(open(_f12, encoding='utf-8').read()):
+        err(f'§A1/B12: {_f12} nennt keine Lesezeit. Jede PRODUKTSEITE und jeder '
+            f'BLOG-ARTIKEL sagt vorher, wie lange er dauert (Fix: "python3 '
+            f'scripts/sync_lesezeit.py" bzw. "gen_pages.py --regen" / "gen_longtail.py"). '
+            f'Die Bestenlisten unter /vergleich/ und die Marken-Hubs tragen bewusst keine: '
+            f'Sie werden ueberflogen, nicht gelesen')
+# ---------------------------------------------------------------------------------------
+
+# B12 (Hormozi, der Nenner der Wert-Gleichung): Das Zeitversprechen zum Finder steht an
+# sieben Stellen und hat seit dem 05.10. EINE Quelle (scripts/zeitversprechen.py). Die
+# erste Fassung suchte es repoweit per Muster und entschied am Umfeld, ob eine Zahl eine
+# Finder-Zusage ist. Der Pruefer hat beide Richtungen zerlegt: fuenf Umformulierungen
+# ("in zwei Minuten", "in 90 s", "in neunzig Sekunden", Zusage entfernt, Kachel ersetzt)
+# blieben gruen, weil die uebrigen Stellen weiter 60 sagten -- und ein Fehlersuche-Artikel
+# wurde faelschlich rot, weil "Wahl" und "Ergebnis" Alltagswoerter sind.
+# Jetzt: zeichengleicher Vergleich gegen die gepflegte Zahl, Anwesenheitspflicht je
+# Stelle, plus ein enger Sweep auf genau den zwei Seiten, auf denen jede Sekundenangabe
+# eine Finder-Zusage ist. Ob 60 Sekunden stimmen, prueft das Gate ausdruecklich nicht.
+if os.path.exists('scripts/sync_zeitversprechen.py'):
+    _rz = _gate('sync_zeitversprechen.py', '--check')
+    if _rz.returncode != 0:
+        _zz = (_rz.stdout + _rz.stderr).strip().splitlines()
+        err(f"§A5/B12: scripts/sync_zeitversprechen.py --check schlaegt fehl. Fix: "
+            f"'python3 scripts/sync_zeitversprechen.py'. {_zz[-1][:160] if _zz else ''}")
+else:
+    err('scripts/sync_zeitversprechen.py fehlt — das Finder-Zeitversprechen ist ungegatet')
+
+try:
+    from zeitversprechen import STELLEN as _B12_STELLEN, pruefe as _b12_pruefe
+except Exception as _e:                                       # pragma: no cover
+    _B12_STELLEN = None
+    err(f'§A5/B12: zeitversprechen.py nicht importierbar ({_e}) — das Zeitversprechen '
+        f'ist ungegatet')
+if _B12_STELLEN:
+    for _dz in sorted({_d for _d, _, _ in _B12_STELLEN}):
+        if not os.path.exists(_dz):
+            err(f'§A5/B12: {_dz} fehlt, traegt aber eine Finder-Zusage')
+            continue
+        for _bz in _b12_pruefe(_dz, open(_dz, encoding='utf-8').read())[0]:
+            err(f'§A5/B12: {_bz}')
 
 # ---------------------------------------------------------------------------------------
 # §A6 IM CONTROLLER-FINDER. Eigener Abschnitt mit Trennmarken, weil dieses Gate schon

@@ -212,7 +212,7 @@
 **Befund, der das Pattern erzwungen hat:** Die Lesezeit stand auf 19 Blog-Seiten getippt, zusätzlich in 19 Karten auf `/blog/` und in 3 Karten auf der Startseite. Nachgerechnet war sie auf **17 von 19 Seiten falsch**, einmal 8 Minuten für einen 5-Minuten-Text; ein Artikel trug drei verschiedene Werte gleichzeitig. Vorher dieselbe Klasse: "In vier Fragen zur Empfehlung" bei einem Finder mit drei Fragen (01.10.), "100+ Controller getestet" bei 13 (22.09.), "28 Controller für iPhone" bei 24 in `llms.txt`.
 **Warum das anders ist als ein Produktwert:** Ein falscher Preis fällt beim Lesen auf, weil er neben dem richtigen steht. Eine seitenbeschreibende Zahl wird falsch, **ohne dass sich an ihr etwas ändert** -- der Text wächst, die Zahl bleibt. Niemand sieht einen Fehler, weil nichts passiert ist.
 **Regel:** Jede Zahl, die den Umfang, die Anzahl oder den Stand einer Seite beschreibt, wird aus der Seite gerechnet, nie getippt.
-**Vierundzwanzig Pflicht-Mechanismen** (1 bis 9 aus den Prüfrunden 1 bis 15 zu B5, danach je einer aus den Runden 16 bis 30, Nummern 10 bis 24 — fünfzehn Runden, fünfzehn Nummern; die Spanne stand bis zum dreißigsten Bericht als "17 bis 29" und war damit arithmetisch unmöglich: die Zahl in dieser Überschrift stand drei Runden lang falsch auf "Drei" — derselbe Fehler, den dieses Pattern beschreibt, in seiner eigenen Überschrift. Sie wird deshalb beim Anfügen eines Mechanismus mitgezählt, nicht geschätzt)**:**
+**Fünfundzwanzig Pflicht-Mechanismen** (1 bis 9 aus den Prüfrunden 1 bis 15 zu B5, danach je einer aus den Runden 16 bis 30, Nummern 10 bis 24 — fünfzehn Runden, fünfzehn Nummern; Nummer 25 kam am 05.10. aus B12; die Spanne stand bis zum dreißigsten Bericht als "17 bis 29" und war damit arithmetisch unmöglich: die Zahl in dieser Überschrift stand drei Runden lang falsch auf "Drei" — derselbe Fehler, den dieses Pattern beschreibt, in seiner eigenen Überschrift. Sie wird deshalb beim Anfügen eines Mechanismus mitgezählt, nicht geschätzt)**:**
 1. **Eine Rechenregel, von allen benutzt.** Die Regel steht in einem Modul (`scripts/lesezeit.py`), und Generator, Sync und Gate importieren sie. Drei eigene Formulierungen derselben Regel sind an diesem Projekt dreimal auseinandergelaufen (Escaping, Reichweite, Vergleichsregel bei den Spec-Chips). Rechnen Generator und Sync verschieden, springt die Datei bei abwechselnden Läufen hin und her.
 2. **Gegen die Sache prüfen, nicht gegen die Kopie.** Byline und Karte sagten auf 12 Seiten einträchtig dasselbe Falsche. Ein Gate, das Kopien vergleicht, findet Drift, aber keinen gemeinsamen Irrtum. Geprüft wird jede Zahl gegen den Text, und erst danach die Karte gegen die Seite, auf die sie zeigt.
 3. **Die Alterungsprobe ist Pflicht.** Eine verfälschte Zahl findet auch ein Mensch. Die eigentliche Probe ist: Text verlängern, ohne eine Zahl anzufassen -- das Gate muss rot werden. Beweis am 01.10.: 600 Wörter eingeschoben, rot an beiden Orten gleichzeitig.
@@ -240,7 +240,9 @@
 
 **Folgeregel für jede Inhaltsänderung:** Wer eine Seite verlängert, erbt alle Zahlen, die über sie etwas behaupten. Nach dem Ausbau also die Frage stellen: Welche Angabe auf oder über dieser Seite beschreibt ihren Umfang, ihre Anzahl, ihren Stand? Am 01.10. hat das Gate genau das an mir selbst bewiesen: Jede der vier Satzkorrekturen aus den Prüfrunden verschob die Wortzahl, zweimal über eine Rundungsgrenze, und das Gate wurde jedes Mal rot, bevor es jemandem auffiel. Endstand 1232 Wörter, 6,16, also 6 Minuten.
 **Der erste Verstoß stand im eigenen Docstring.** `lesezeit.py` nannte in seiner Begründung "15 von 19" statt 17, aus einer früheren Messung nach anderer Regel. Zahlen in Begründungstexten verfallen genauso. Wer eine Messung in Prosa festhält, schreibt dazu, nach welcher Regel gemessen wurde.
-**Vorlage:** `scripts/lesezeit.py` (Regel) · `scripts/sync_lesezeit.py` (Nachzug) · Gates in `verify.py` · Gesetze: §A1, §A2.
+25. **Der Abdeckungs-Anker gilt der MENGE, nicht dem einzelnen Vorkommen.** Mechanismus 4 stand seit Runde 15 da, war aber nur für die Seiten gebaut, die die Zahl schon trugen: Das Gate prüfte jede genannte Lesezeit, und eine Seite, die ihre wieder verlor, blieb stumm grün (gemessen 05.10.: Angabe aus der Byline entfernt, Lauf grün). Seit B12 wird die Menge der Seiten, die eine tragen MÜSSEN, abgeleitet (alle Produktseiten aus products.json, alles unter `/produkte/`, jeder Blog-Artikel außer der Listenseite) und jede einzeln auf Anwesenheit geprüft. Eine Zusage kann damit nicht mehr dadurch verschwinden, dass die Seite sie löscht.
+
+**Vorlage:** `scripts/lesezeit.py` (Regel) · `scripts/sync_lesezeit.py` (Nachzug) · `gen_pages.py` und `gen_longtail.py` (zweistufiger Bau) · Gates in `verify.py` · Gesetze: §A1, §A2.
 
 ---
 
@@ -309,4 +311,4 @@
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.3 · 2026-10-05*
+*SPC Pattern-Katalog v5.4 · 2026-10-05*

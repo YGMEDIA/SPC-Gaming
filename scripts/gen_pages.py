@@ -91,6 +91,10 @@ from hublinks import taxonomie_karte, hublinks_html, block as hub_block
 # er damit richtig (die pflegt sync_guenstiger.py), auf zwei falsch -- und die Begruendung
 # stand drei Mal in der Doku, ohne dass sie fuer ein Drittel der Faelle galt.
 from guenstiger import html as guenstiger_html, block as guenstiger_block
+# Massnahme B12: Die Lesezeit kommt aus derselben Regel, die sync_lesezeit.py
+# nachzieht und verify.py prueft. Zweistufig gebaut (siehe `build_fertig`), weil
+# der Text erst steht, wenn die Seite gebaut ist.
+from lesezeit import minuten as lesezeit_minuten
 
 
 def a6_warnbox(prod):
@@ -153,7 +157,9 @@ def _karte():
     return _TAXONOMIE_KARTE                       # sync_hublinks.py
 
 
-def build(prod, c):
+def build(prod, c, lesezeit):
+    # Kein Default: Ein Aufrufer, der die Lesezeit vergisst, soll einen TypeError
+    # bekommen und keine Seite mit "None Min. Lesezeit" schreiben.
     slug = prod['slug']
     url = f"{DOMAIN}/produkte/{slug}/"
     full_name = prod['name'] if prod['brand'].lower() in prod['name'].lower() else f"{prod['brand']} {prod['name']}"
@@ -300,7 +306,7 @@ def build(prod, c):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=8627c414">
+  <link rel="stylesheet" href="/assets/css/style.css?v=edfc9bc1">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -385,6 +391,7 @@ def build(prod, c):
       <span class="eyebrow">📋 Produkt-Check · {esc(prod['brand'])}</span>
       <h1>{esc(full_name)}</h1>
       <p class="lead">{esc(prod['claim']).replace('&amp;nbsp;', ' ').replace('&amp;amp;', '&amp;')}</p>
+      <div class="article-byline">Kurzcheck ohne eigenen Test · {lesezeit} Min. Lesezeit</div>
     </div>
   </section>
 
@@ -460,6 +467,22 @@ def build(prod, c):
 <script src="/assets/js/main.js?v=490abf10"></script>
 </body></html>'''
 
+def build_fertig(prod, c):
+    """Zweistufig: einmal bauen, um den Text zu zaehlen, dann mit der echten Lesezeit.
+
+    Dieselbe Loesung wie in gen_preisfrage.py und aus demselben Grund: Eine getippte
+    Lesezeit auf einer Seite, die sonst jede Zahl ableitet, waere die erste, die nicht
+    mehr stimmt. Gezaehlt wird mit `lesezeit.minuten`, also mit genau der Regel, die
+    sync_lesezeit.py nachzieht und verify.py prueft -- mit einer eigenen Formulierung
+    wuerden Generator und Sync sich bei jedem Lauf gegenseitig ueberschreiben.
+    """
+    m = lesezeit_minuten(build(prod, c, lesezeit=1))
+    if m is None:
+        raise SystemExit(f"FEHLER: die gebaute Seite fuer {prod.get('slug')} hat kein "
+                         f"<main>-Element, die Lesezeit laesst sich nicht bestimmen")
+    return build(prod, c, lesezeit=m)
+
+
 def generierte_seiten():
     """(slug, pfad, Soll-HTML) für jede Seite, die dieser Generator besitzt.
 
@@ -475,7 +498,7 @@ def generierte_seiten():
         c = CONTENT.get(prod['slug'])
         if not c:
             continue
-        yield prod['slug'], f"{ROOT}/produkte/{prod['slug']}/index.html", build(prod, c)
+        yield prod['slug'], f"{ROOT}/produkte/{prod['slug']}/index.html", build_fertig(prod, c)
 
 
 # ---- Erzeugen ----
@@ -502,7 +525,7 @@ if __name__ == '__main__':
             print('FEHLT IM CONTENT-DICT:', prod['slug']); continue
         d = f"{ROOT}/produkte/{prod['slug']}"
         os.makedirs(d, exist_ok=True)
-        open(f'{d}/index.html', 'w', encoding='utf-8').write(build(prod, c))
+        open(f'{d}/index.html', 'w', encoding='utf-8').write(build_fertig(prod, c))
         prod['detail'] = f"/produkte/{prod['slug']}/"
         created.append(prod['slug'])
 

@@ -1181,7 +1181,11 @@ ul, ol { list-style: none; }
 /* ============================================================
    Blog: Artikel-Layout, FAQ, Related, CTA
    ============================================================ */
-.article-byline { font-size: 13px; color: var(--ink-dim); margin-top: 10px; }
+/* --ink-soft statt --ink-dim: 13px in #8a97aa auf dem Hero-Hintergrund (#f4f6f9) ergibt
+   2,74:1 und liegt damit unter WCAG AA (4,5:1); --ink-soft ergibt 5,79:1, im Browser
+   nachgemessen. Die Klasse stand auf 19 Seiten, seit B12 steht sie auf 71 -- eine
+   Altlast, die durch die Massnahme viermal so breit geworden waere. */
+.article-byline { font-size: 13px; color: var(--ink-soft); margin-top: 10px; }
 /* Artikel-Prosa (max-width Container) */
 .blog-body h2, main .container h2 { margin-top: 32px; margin-bottom: 12px; font-size: 23px; letter-spacing: -.01em; }
 main .container[style*="760px"] h2 { margin-top: 34px; margin-bottom: 12px; }
