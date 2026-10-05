@@ -1,4 +1,8 @@
-# 2026-10-05 · Betrieb · node in CI festgenagelt (Stopp-Punkt, von Yasin freigegeben)
+# 2026-10-05 · Betrieb · Die vier Workflow-Punkte (Stopp-Punkt, von Yasin freigegeben)
+
+> Dieser Eintrag beschreibt Punkt 2 (node). Die drei übrigen kamen am selben Tag dazu und
+> stehen am Ende: vier Gates, die nirgends in CI liefen · fünf Actions auf Node-20-Pfad ·
+> ein falscher Kommentar über die Python-Version.
 
 ## Was
 
@@ -98,3 +102,64 @@ vierter Workflow-Punkt für Yasin.
    01.10. gemessen und begründet in STATUS; die Freigabe kam in einem Satz, und die
    Umsetzung hat zwanzig Minuten gedauert. Was es gebraucht hat, war die Messung, nicht
    die Erlaubnis.
+
+---
+
+# Nachtrag: die drei übrigen Workflow-Punkte (05.10., ebenfalls freigegeben)
+
+## Punkt 1 · Vier Gates liefen nirgends in CI
+
+Von den vierzehn Gates fuhren drei als eigener Schritt und sieben als Unter-Gate über
+`verify.py` mit. **Vier liefen nur auf Yasins Rechner:** `sync_footer.py --check`,
+`sync_lesezeit.py --check`, `sync_kompat.py --check`, `css_kaskade.py`. Ein Push, der
+eines davon bricht, deployte grün — zum Beispiel ein Footer, der auf 16 Seiten
+auseinanderläuft, oder eine Lesezeit, die nach einem Textausbau nicht mehr stimmt.
+
+Gemessen kosten die vier zusammen **1,6 Sekunden** (1,4 davon `sync_footer`). Es war nie
+die Laufzeit, es war schlicht nie eingetragen.
+
+**Beleg aus Lauf 37358684541:** alle vier Schritte im Log, jeder mit seiner eigenen
+Ausgabe (`0 Datei(en) waeren geaendert` · `0 Abweichung(en)` · `0 Datei(en)` ·
+`39 Selektor-Faelle + 42 Kaskaden-Faelle, 0 falsch`).
+
+## Punkt 3 · Fünf Actions auf dem Node-20-Pfad
+
+GitHub warnte in **beiden** Jobs: „Node.js 20 is deprecated … forced to run on Node.js
+24" — im Gate-Job `checkout@v4`, `setup-node@v4`, `setup-python@v5`, im Deploy-Job
+`checkout@v4`, `deploy-pages@v4` und das intern benutzte `upload-artifact@v4`.
+
+Jede Action um **eine** Hauptversion, nicht auf die neueste: checkout v4→v5,
+setup-python v5→v6, setup-node v4→v5, upload-pages-artifact v3→**v5**, deploy-pages
+v4→v5. Das räumt die Warnung weg und hält die Menge der Verhaltensänderungen klein.
+
+**Geprüft am Verhalten, nicht am Namen:** `runs.using` in der jeweiligen `action.yml` am
+gewählten Tag abgefragt. Vier laufen auf `node24`. `upload-pages-artifact` ist ein
+Composite — und dessen **v4 pinnt intern `upload-artifact@v4.6.2`**, hätte die Warnung
+also stehen lassen; erst v5 zieht auf v7.0.0. Ohne diese Abfrage wäre der Punkt mit einer
+Versionsnummer „erledigt" gewesen, die nichts ändert.
+
+**Beleg aus Lauf 37359174321: null Deprecation-Warnungen**, beide Jobs grün, Site live
+(HTTP 200, Stichprobe auf einer Produktseite).
+
+## Punkt 4 · Der Kommentar über die Python-Version war falsch
+
+Er sagte: „Geprueft: die Skripte nutzen keine Konstrukte oberhalb von 3.9, die Festlegung
+dient nur der Reproduzierbarkeit."
+
+Gemessen mit 3.9.6: **37 der 38 Skripte parsen, `gen_brand_sections.py` nicht.** Zeile 200
+hat einen Backslash im Ausdrucksteil eines f-Strings, und das erlaubt erst PEP 701 ab
+3.12. `verify.py` startet diese Datei als Unter-Gate. Die 3.12 ist also **tragend**, nicht
+kosmetisch — der Kommentar sagt das jetzt samt Begründung.
+
+## Gelernt (aus allen vieren)
+
+4. **Eine Versionsnummer ist kein Verhalten.** Der Sprung auf `upload-pages-artifact@v4`
+   hätte den Punkt abgehakt und die Warnung dagelassen, weil die Abhängigkeit eine Ebene
+   tiefer steckt. Gefragt werden muss die `action.yml`, nicht der Tag.
+5. **Vier Gates fehlten nicht aus einem Grund, sondern aus keinem.** Sie sind nach dem
+   CI-Aufbau entstanden und wurden nie nachgetragen. Die Liste der Gates und die Liste
+   der CI-Schritte waren zwei Listen, und zwei Listen laufen auseinander — deshalb nennt
+   der Kommentar im Workflow jetzt die Gesamtzahl und sagt, wo die übrigen laufen.
+6. **Ein falscher Kommentar ist eine Falle mit Verfallsdatum.** „Nutzt nichts oberhalb von
+   3.9" hätte beim nächsten Aufräumen jemanden dazu gebracht, die Version zu senken, und
+   das Marken-Gate wäre mit einem Parse-Fehler gestorben — in CI, nach dem Merge.
