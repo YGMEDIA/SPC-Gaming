@@ -430,6 +430,21 @@ FAELLE = [
      lambda h: h.replace('</main>', '<p>Der Markt liegt im Schnitt bei (4,1).</p></main>',
                          1), 'GRUEN'),
 
+    # --- S1-Zitier-Pass: die Direktantwort auf der staerksten Inhaltsseite -------------
+    ('Hall-Zahl in der Direktantwort verfaelscht', 'blog/hall-effect-erklaert/index.html',
+     lambda h: h.replace('Fünf der 28 Controller', 'Sechs der 28 Controller', 1), 'ROT'),
+    ('Sortimentszahl in der Direktantwort verfaelscht',
+     'blog/hall-effect-erklaert/index.html',
+     lambda h: h.replace('Fünf der 28 Controller', 'Fünf der 30 Controller', 1), 'ROT'),
+    # Ein Zahlwort, das das Gate nicht kennt, waere sonst eine stumme Luecke: Die Pruefung
+    # haengt am Wort, also muss ein unbekanntes Wort selbst der Befund sein.
+    ('unbekanntes Zahlwort in der Direktantwort', 'blog/hall-effect-erklaert/index.html',
+     lambda h: h.replace('Fünf der 28 Controller', 'Etliche der 28 Controller', 1), 'ROT'),
+    ('LEGITIM Satz daneben ergaenzt', 'blog/hall-effect-erklaert/index.html',
+     lambda h: h.replace('Drei davon stehen hier mit Preis und Einordnung.',
+                         'Drei davon stehen hier mit Preis und Einordnung. Nachtrag: '
+                         'Stand geprueft.', 1), 'GRUEN'),
+
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
     # Die Beschriftung kommt aus der <h1> der Zielseite. Sie steht dort NICHT als

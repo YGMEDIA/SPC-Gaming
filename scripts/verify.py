@@ -2654,6 +2654,49 @@ for _flag, _wort in _PLATTFORM_WORT.items():
                 err(f"§A5: {_f} nennt {_m.group(1)} Controller für {_flag}, "
                     f"worksOn ergibt {_soll}")
 
+# §A5 · DIE STICK-TECHNIK IN DER PROSA GEGEN DEN DATENKERN (S1-Zitier-Pass, 05.10.2026).
+# blog/hall-effect-erklaert ist mit 28 Impressionen in 28 Tagen unsere staerkste
+# Inhaltsseite, und die Sektion "Welche Smartphone-Controller haben Hall-Effect-Sticks?"
+# begann ohne einen einzigen Satz: direkt drei Karten. Jetzt steht dort eine
+# Direktantwort mit zwei Zahlen, und Zahlen in handgepflegter Prosa altern -- genau
+# dafuer ist dieses Gate da. Geprueft wird die FORM "N der M Controller ... Hall-Effect"
+# ueberall im Repo, nicht nur auf dieser Seite.
+_HALL_N = len([_p for _p in items if _pfeld(_p, 'type') == 'controller'
+               and 'Hall' in _spec_wie(_p, 'Sticks')])
+_TMR_LISTE = [_p for _p in items if _pfeld(_p, 'type') == 'controller'
+              and 'TMR' in _spec_wie(_p, 'Sticks')]
+_CTRL_N = len([_p for _p in items if _pfeld(_p, 'type') == 'controller'])
+_ZW_S1 = {'ein': 1, 'eine': 1, 'zwei': 2, 'drei': 3, 'vier': 4, 'fünf': 5, 'fuenf': 5,
+          'sechs': 6, 'sieben': 7, 'acht': 8, 'neun': 9, 'zehn': 10, 'elf': 11, 'zwölf': 12}
+_S1_HALL = re.compile(r'(\d+|[A-Za-zÄÖÜäöü]+)\s+der\s+(\d+)\s+Controller'
+                      r'[^.!?]{0,90}?Hall-Effect', re.I)
+for _f in _zu_pruefen:
+    for _m in _S1_HALL.finditer(open(_f, encoding='utf-8').read()):
+        _roh = _m.group(1)
+        _ist = int(_roh) if _roh.isdigit() else _ZW_S1.get(_roh.lower())
+        if _ist is None:
+            err(f'§A5: {_f} nennt "{_m.group(0)[:60]}" — die Zahl ist weder Ziffer noch '
+                f'ein Zahlwort, das dieses Gate kennt, und bleibt damit ungeprueft')
+            continue
+        if _ist != _HALL_N:
+            err(f'§A5: {_f} sagt "{_roh} der {_m.group(2)} Controller" mit '
+                f'Hall-Effect, der Datenkern fuehrt {_HALL_N}')
+        if int(_m.group(2)) != _CTRL_N:
+            err(f'§A5: {_f} nennt {_m.group(2)} Controller im Sortiment, '
+                f'products.json fuehrt {_CTRL_N}')
+# Die TMR-Aussage derselben Sektion: Sie nennt EIN Modell, und das muss das einzige mit
+# TMR sein. Steht TMR morgen bei zweien, ist der Satz still falsch.
+for _f in _zu_pruefen:
+    _h5 = open(_f, encoding='utf-8').read()
+    for _m in re.finditer(r'Der ([A-ZÄÖÜ][\w .-]{2,40}?) nutzt TMR', _h5):
+        _name5 = _m.group(1).strip()
+        _treffer = [_p for _p in _TMR_LISTE if _pfeld(_p, 'name') in _name5
+                    or _name5.endswith(_pfeld(_p, 'name'))]
+        if len(_TMR_LISTE) != 1 or not _treffer:
+            err(f'§A5: {_f} sagt "Der {_name5} nutzt TMR", der Datenkern fuehrt '
+                f'{len(_TMR_LISTE)} Controller mit TMR '
+                f'({", ".join(_pfeld(_p, "slug") for _p in _TMR_LISTE) or "keinen"})')
+
 # Datenstand: EINE Zahl fuer das ganze Repo. Vor dieser Invariante standen fuenf
 # verschiedene Angaben gleichzeitig live (Juni, Juli, August, September, 30.09.), und
 # neunzehn Seiten mit "Stand Juli 2026" trugen Preise, die erst am 30.09. entstanden.
