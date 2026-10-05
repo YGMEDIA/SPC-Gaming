@@ -69,8 +69,21 @@ Genau diese Falle hat mich in dieser Session schon einmal einen Batterie-Lauf mi
 - Workflow-Struktur ausgezählt: 6 Schritte im verify-Job, drei Actions
   (checkout@v4, setup-python@v5, setup-node@v4), keine Tabs, kein CRLF
 - **Vierzehn Gates lokal exit 0** vor dem Push
-- Der eigentliche Beweis ist der CI-Lauf: node-Schritt vorhanden, verify ohne die
-  Warnung, Lauf grün
+- **Der CI-Lauf 37357463288 belegt es:** `actions/setup-node@v4` lief mit
+  `node-version: 22`, node kam aus dem Cache (`/opt/hostedtoolcache/node/22.23.3/x64`),
+  und `verify.py` meldet **„0 Fehler, 0 Warnungen"** — die Warnung „node fehlt" steht
+  also nicht im Lauf, der §A6-Finder-Test ist wirklich gelaufen. Lauf grün.
+- **Nicht bewiesen, und das gehört dazu:** Dass der neue `grep`-Riegel in CI *greift*,
+  ist lokal nachgespielt, aber nicht im echten Lauf ausgelöst worden — dafür müsste man
+  node im Runner entfernen. Die Shell-Logik ist dieselbe, der Beweis ist einer aus zweiter
+  Hand.
+
+**Neuer Befund aus demselben Lauf (gemeldet, nicht geändert):** GitHub warnt am Ende des
+Jobs: *„Node.js 20 is deprecated. The following actions target Node.js 20 but are being
+forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4,
+actions/setup-python@v5."* Das betrifft die Laufzeit der Actions selbst, nicht unser
+node 22. Es läuft heute, aber die drei Actions stehen auf einem Auslaufpfad. Das ist ein
+vierter Workflow-Punkt für Yasin.
 
 ## Gelernt
 
