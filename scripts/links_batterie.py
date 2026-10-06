@@ -455,6 +455,17 @@ FAELLE = [
      lambda h: h.replace('Ultimate Mobile für 45 Euro', 'Ultimate Mobile für 48 Euro', 1),
      'ROT'),
 
+    # --- §A5: der Plattform-Chip einer Karte gegen worksOn ----------------------------
+    # Aus der Aufarbeitung der 14 ungedeckten Spec-Chips: Zwei davon waren wahr, standen
+    # aber in keinem specs-Eintrag und wurden deshalb von nichts geprueft.
+    ('Plattform-Chip laesst eine Plattform aus', 'controller/index.html',
+     lambda h: h.replace('<span class="k">Plattform</span> iOS+Android',
+                         '<span class="k">Plattform</span> nur iOS', 1), 'ROT'),
+    ('LEGITIM Plattform-Chip anders formuliert', 'controller/index.html',
+     lambda h: h.replace('<span class="k">Plattform</span> iOS+Android',
+                         '<span class="k">Plattform</span> iPhone und Android', 1),
+     'GRUEN'),
+
     # ---- Legitim: MUSS gruen bleiben --------------------------------------------------
     ('LEGITIM unveraendert', REVIEW, lambda h: h, 'GRUEN'),
     # Die Beschriftung kommt aus der <h1> der Zielseite. Sie steht dort NICHT als

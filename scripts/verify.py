@@ -1814,6 +1814,39 @@ else:
                 f'stimmen nicht mit answers in {FINDER_JS} ({sorted(_keys)}) ueberein')
 
 # ---------------------------------------------------------------------------------------
+# §A5 · EIN PLATTFORM-CHIP AUF EINER KARTE MUSS ZU worksOn PASSEN.
+# Aus der Aufarbeitung der 14 ungedeckten Spec-Chips (06.10.2026): Zwei davon sind
+# `Plattform: iOS+Android` auf den G8-Galileo-Karten. Sie sind WAHR, stehen aber in
+# keinem `specs`-Eintrag, also hat sie kein Gate geprueft -- und `sync_product_values`
+# vergleicht nur die Schluessel, die es kennt. Geprueft wird deshalb die EIGENSCHAFT
+# gegen worksOn und nicht der Wortlaut: Wer "iPhone" oder "iOS" schreibt, muss 'ios'
+# fuehren, wer "Android" schreibt, 'android' -- und was fehlt, darf auch nicht dastehen.
+_PCHIP = re.compile(r'<span class="spec-tag"><span class="k">(Plat+form)</span>\s*([^<]*)'
+                    r'</span>', re.I)
+for _f in pages:
+    _hp = open(_f, encoding='utf-8').read()
+    for _km in re.finditer(r'<article class="pcard[^"]*".*?</article>', _hp, re.S):
+        _blk = _km.group(0)
+        _sm = re.search(r'data-product="([^"]+)"', _blk)
+        if not _sm:
+            continue
+        _pp = next((p for p in items if _pfeld(p, 'slug') == _sm.group(1)), None)
+        if _pp is None:
+            continue
+        _wo = set(_pliste(_pp, 'worksOn'))
+        for _k, _w in _PCHIP.findall(_blk):
+            _txt = _w.lower()
+            for _flag, _woerter in (('ios', ('ios', 'iphone')), ('android', ('android',))):
+                _genannt = any(_x in _txt for _x in _woerter)
+                if _genannt and _flag not in _wo:
+                    err(f'§A5: {_f} — Karte {_sm.group(1)} nennt im {_k}-Chip "{_w}", '
+                        f'aber worksOn fuehrt {_flag} nicht')
+                if not _genannt and _flag in _wo:
+                    err(f'§A5: {_f} — Karte {_sm.group(1)} nennt im {_k}-Chip "{_w}", '
+                        f'laesst aber {_flag} aus, das in worksOn steht')
+# ---------------------------------------------------------------------------------------
+
+# ---------------------------------------------------------------------------------------
 # §A1 · EINE BEWERTUNG HINTER EINEM PRODUKTLINK GEHOERT DIESEM PRODUKT.
 # Gefunden beim Nachmessen des X2s-Retro-Winkels (05.10.): Auf marken/gamesir stand
 # "X3 Pro (4,0) und X2s (3,8) liegen unter dem gleich teuren X5 Lite (4,2)" -- der X2s
