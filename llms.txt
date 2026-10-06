@@ -1,8 +1,8 @@
 # smartphone-controller.com
 
-> Unabhängiges deutsches Fachportal für Smartphone-Gaming-Controller. Wir testen und vergleichen Handy-Controller (USB-C-Clips, Bluetooth-Gamepads, Teleskop-Controller), Finger Sleeves, Trigger-Aufsätze und Handy-Kühler für iPhone und Android. Betreiber: YG MEDIA (Würzburg, Deutschland). Alle Preise und Amazon-Bewertungen: Stand 30.09.2026. Jedes Review nennt mindestens zwei echte Schwächen.
+> Unabhängiges deutsches Fachportal für Smartphone-Gaming-Controller. Wir testen und vergleichen Handy-Controller (USB-C-Clips, Bluetooth-Gamepads, Teleskop-Controller), Finger Sleeves, Trigger-Aufsätze und Handy-Kühler für iPhone und Android. Betreiber: YG MEDIA (Würzburg, Deutschland). Alle Preise und Amazon-Bewertungen: Stand 06.10.2026. Jedes Review nennt mindestens zwei echte Schwächen.
 
-Testsieger 2026: GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect-Sticks, iPhone 15+ und Android). Preistipp: GameSir X5 Lite (ca. 45 €). Bestes App-Ökosystem: Backbone One 2. Gen (ca. 63 €). Premium: Razer Kishi V3 Pro (ca. 152 €).
+Testsieger 2026: GameSir G8 Galileo (ca. 68 €, USB-C, Hall-Effect-Sticks, iPhone 15+ und Android). Preistipp: GameSir X5 Lite (ca. 36 €). Bestes App-Ökosystem: Backbone One 2. Gen (ca. 63 €). Premium: Razer Kishi V3 Pro (ca. 124 €).
 
 ## Kategorien
 
@@ -19,10 +19,10 @@ Testsieger 2026: GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect-Sticks, iPho
 
 ## Wichtige Reviews
 
-- [GameSir G8 Galileo Test](https://smartphone-controller.com/controller/universal/gamesir-g8-galileo-review/): Testsieger — Hall-Effect, USB-C, 4,2/5 (706 Amazon-Bewertungen)
+- [GameSir G8 Galileo Test](https://smartphone-controller.com/controller/universal/gamesir-g8-galileo-review/): Testsieger — Hall-Effect, USB-C, 4,2/5 (705 Amazon-Bewertungen)
 - [Backbone One 2. Gen Test](https://smartphone-controller.com/controller/ios/backbone-one-2-review/): bester iPhone-Controller mit App-Ökosystem
 - [Razer Kishi V3 Test](https://smartphone-controller.com/controller/universal/razer-kishi-v3-review/): TMR-Sticks, 4,4/5
-- [GameSir X5 Lite Test](https://smartphone-controller.com/controller/universal/gamesir-x5-lite-review/): Preistipp für rund 45 €
+- [GameSir X5 Lite Test](https://smartphone-controller.com/controller/universal/gamesir-x5-lite-review/): Preistipp für rund 36 €
 - [Vergleiche](https://smartphone-controller.com/vergleich/): direkte Duelle (Backbone vs. GameSir, G8 vs. Kishi V3 u. a.)
 
 ## Ratgeber (Blog)
@@ -31,7 +31,7 @@ Testsieger 2026: GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect-Sticks, iPho
 - [Welche Spiele unterstützen Controller?](https://smartphone-controller.com/blog/welche-spiele-controller/)
 - [Cloud Gaming auf dem Smartphone](https://smartphone-controller.com/blog/cloud-gaming-smartphone/): Xbox GamePass, GeForce NOW, PS Remote Play
 - [Controller für Tablet & iPad](https://smartphone-controller.com/blog/controller-fuer-tablet/): die zwei Wege zum Tablet-Gaming
-- [Sind günstige Handy-Controller gut?](https://smartphone-controller.com/blog/guenstige-handy-controller/): ehrliche Budget-Beratung ab 30 €
+- [Sind günstige Handy-Controller gut?](https://smartphone-controller.com/blog/guenstige-handy-controller/): ehrliche Budget-Beratung ab 28 €
 - [Hall-Effect oder TMR?](https://smartphone-controller.com/blog/hall-effect-vs-tmr/): beide Anti-Drift-Techniken im Vergleich
 - [Hall-Effect-Sticks erklärt](https://smartphone-controller.com/blog/hall-effect-erklaert/)
 - [USB-C vs. Bluetooth](https://smartphone-controller.com/blog/usb-c-vs-bluetooth/): Latenz-Vergleich

@@ -46,6 +46,31 @@ def _block(h):
     return h[a:b]
 
 
+def _dk(slug, feld):
+    """Ein Wert dieses Produkts aus products.json, als String wie dort geschrieben.
+
+    Vorgeschichte: Die Faelle unten standen mit getippten Literalen da ("4,2 (706)",
+    "80 €", "aus 706 Bewertungen"). Beim Vollabgleich am 06.10.2026 haben sich sechs
+    davon geaendert, und die Batterie meldete "Mutation hat nicht gegriffen" -- also
+    sechs Faelle, die nichts mehr beweisen, waehrend die Schlusszeile weiter "36 Faelle"
+    sagte. Genau die Klasse, die diese Batterie selbst pruefen soll: eine zweite,
+    handgepflegte Kopie von Werten, die woanders gepflegt werden.
+    """
+    import json
+    for p in json.load(open(os.path.join(ROOT, JSON), encoding='utf-8')):
+        if p.get('slug') != slug:
+            continue
+        if feld == 'price':
+            return p.get('price', '')
+        for k, v in (p.get('specs') or []):
+            if k == 'Bew.':
+                if feld == 'bew':
+                    return v
+                m = re.match(r'([\d,]+)\s*\(([\d.]+)\)', str(v))
+                return (m.group(1) if feld == 'sterne' else m.group(2)) if m else ''
+    raise SystemExit(f'besten_batterie: {slug}/{feld} nicht in products.json')
+
+
 def _erste_karte_preis(h):
     """Der Preis der ersten Karte, so wie er in der price-row steht."""
     m = re.search(r'<span class="price">(\d+) €', _block(h))
@@ -74,10 +99,14 @@ FAELLE = [
      lambda h: h.replace(f'<span class="price">{_erste_karte_preis(h)} €',
                          '<span class="price">99 €', 1), 'ROT'),
     ('Bewertung in der Faktenzeile geaendert', GESAMT,
-     lambda h: h.replace('4,2 Sterne</strong> aus 706', '4,9 Sterne</strong> aus 706', 1),
+     lambda h: h.replace(
+         f"{_dk('gamesir-g8-galileo', 'sterne')} Sterne</strong> aus "
+         f"{_dk('gamesir-g8-galileo', 'anzahl')}",
+         f"4,9 Sterne</strong> aus {_dk('gamesir-g8-galileo', 'anzahl')}", 1),
      'ROT'),
     ('Anzahl in der Faktenzeile geaendert', GESAMT,
-     lambda h: h.replace('aus 706 Bewertungen', 'aus 7.060 Bewertungen', 1), 'ROT'),
+     lambda h: h.replace(f"aus {_dk('gamesir-g8-galileo', 'anzahl')} Bewertungen",
+                         'aus 7.060 Bewertungen', 1), 'ROT'),
     # Die erste Fassung ersetzte nur das OEFFNENDE Tag der zweiten Karte: Danach standen
     # 9 <article>-Oeffner gegen 10 Schliesser, und data-product blieb im Dokument. Der
     # Fall wurde rot, aber nicht an dem, was sein Etikett behauptet. Dieselbe Klasse, die
@@ -184,18 +213,23 @@ FAELLE = [
                          '<p>Sortiert nach Veroeffentlichung findest du unsere Tests und '
                          'Ratgeber im Blog.</p>\n<!-- BESTEN:START -->', 1), 'GRUEN'),
     ('LEGITIM Dreier-Gleichstand, Text zieht mit', JSON,
-     lambda j: j.replace('"4,2 (355)"', '"4,4 (355)"', 1),
+     lambda j: j.replace(f'"{_dk("trust-gxt-rgb", "bew")}"',
+                         f'"4,4 ({_dk("trust-gxt-rgb", "anzahl")})"', 1),
      'GLEICHSTAND_DREI'),
     # ROT_B6 statt ROT: Diese drei Defekte liegen in products.json, und dort wird auch
     # gen_brand_sections rot -- ein Fall, der aus dem FALSCHEN Grund rot wird, beweist
     # ueber das gemeinte Gate nichts. Verlangt wird deshalb, dass gen_bestenliste --check
     # den Befund SELBST nennt.
     ('Position ohne lesbare Bewertung', JSON,
-     lambda j: j.replace('"4,2 (706)"', '"keine Angabe"', 1), 'ROT_B6'),
+     lambda j: j.replace(f'"{_dk("gamesir-g8-galileo", "bew")}"', '"keine Angabe"', 1),
+     'ROT_B6'),
     ('Preis unlesbar', JSON,
-     lambda j: j.replace('"price": "80 €"', '"price": "auf Anfrage"', 1), 'ROT_B6'),
+     lambda j: j.replace(f'"price": "{_dk("gamesir-g8-galileo", "price")}"',
+                         '"price": "auf Anfrage"', 1), 'ROT_B6'),
     ('Bew. mit Punkt statt Komma bei Platz 1', JSON,
-     lambda j: j.replace('"4,2 (706)"', '"4.2 (706)"', 1), 'ROT_B6'),
+     lambda j: j.replace(f'"{_dk("gamesir-g8-galileo", "bew")}"',
+                         f'"{_dk("gamesir-g8-galileo", "bew").replace(",", ".", 1)}"', 1),
+     'ROT_B6'),
     # ROT_NACH_GENERATOR: erst regenerieren, DANN muss verify rot sein. Sonst beweist der
     # Fall nur, dass die Datei vom Generator abweicht -- nicht, dass der Sprung auffaellt.
     ('Kartenebene auf h3, neu generiert (Ueberschriften-Sprung)', GEN,

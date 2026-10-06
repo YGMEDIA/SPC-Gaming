@@ -12,6 +12,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, 'scripts'))
 # B12: dieselbe Lesezeit-Regel wie sync_lesezeit.py und verify.py.
 from lesezeit import minuten as lesezeit_minuten  # noqa: E402
+from datenstand import MONAT as DATENSTAND_MONAT   # §A5, eine Quelle fuers ganze Repo
 DOMAIN = 'https://smartphone-controller.com'
 
 longtail = json.load(open(f'{ROOT}/assets/data/longtail.json'))
@@ -113,7 +114,7 @@ def build(item, lesezeit):
   <meta name="twitter:title" content="{esc(full_name)} — Datenblatt & Alternativen">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{og_img}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=edfc9bc1">
+  <link rel="stylesheet" href="/assets/css/style.css?v=43e618fc">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -153,7 +154,7 @@ def build(item, lesezeit):
 <div class="trust-strip"><div class="container">
 <span class="ts">Unabhängig &amp; herstellerneutral</span>
 <span class="ts">42 Modelle im Sortiment</span>
-<span class="ts">Datenstand September 2026</span>
+<span class="ts">Datenstand Oktober 2026</span>
 </div></div>
 <div class="header-main">
 <a href="/" class="logo" aria-label="smartphone-controller.com – Startseite"><span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span></a>
@@ -234,7 +235,7 @@ def build(item, lesezeit):
     <p class="foot-legal"><a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a> · <a href="/affiliate-hinweis/">Affiliate</a> · <a href="/sitemap.xml">Sitemap</a> · © 2026 YG MEDIA</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=490abf10"></script>
+<script src="/assets/js/main.js?v=74cdf24b"></script>
 </body></html>'''
 
 def build_fertig(item):

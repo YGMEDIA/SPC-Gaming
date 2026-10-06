@@ -38,8 +38,18 @@ import sys
 import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-FELDER = ['slug', 'asin', 'name', 'brand', 'type', 'platform', 'platformLabel', 'price',
-          'detail', 'claim', 'img', 'worksOn', 'specs', 'gallery', 'video']
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from produktdaten import (TEXTFELDER, LISTENFELDER,   # noqa: E402
+                          OBJEKTFELDER)
+
+# Die Feldliste wird GELESEN, nicht gepflegt. Sie stand hier als eigene Kopie mit 15
+# Namen, und am 06.10.2026 kam `stock` in den Datenkern -- die Probe hat es nicht
+# geprueft und trotzdem "117 Defektformen, keine bricht ab" gemeldet. Das ist genau die
+# Klasse, die `produktdaten.py` fuer den Datenkern selbst schliesst ("ein Feld, das in
+# keiner Liste steht, ist selbst ein Befund"): eine zweite, handgepflegte Liste derselben
+# Sache. Ein neues Feld erweitert die Probe jetzt von allein, und die Zahl der
+# Defektformen wird vom Lauf ausgegeben statt getippt.
+FELDER = list(TEXTFELDER) + list(LISTENFELDER) + list(OBJEKTFELDER)
 WERTE = [('Zahl', 7), ('Liste', ['a', 'b']), ('None', None), ('Objekt', {'x': 1}),
          ('leer', ''), ('bool', True), ('float', 1.5)]
 SONDERFORMEN = [

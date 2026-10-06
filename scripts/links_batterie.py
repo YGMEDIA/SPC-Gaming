@@ -52,12 +52,50 @@ BLOGSEITE = 'blog/hall-effect-erklaert/index.html'
 START = 'index.html'
 UEBERUNS = 'ueber-uns/index.html'
 METHODE = 'redaktion/index.html'
+# §A5-Verfuegbarkeit (06.10.2026) und die Black-Friday-Schwellen-Matrix.
+BF = 'black-friday/index.html'
+HUBRENDER = 'assets/js/hub-render.js'
+PRODUKTJSON = 'assets/data/products.json'
+# Ein Produkt, dessen Verfuegbarkeit NICHT 'ja' ist -- die Karte muss das sagen.
+GEN_KARTE = 'produkte/index.html'
 POSBLOCK = ('<!-- POSITION:START -->\n<p>Irgendwas 42 13 29 Amazon Video 1 bis 2 '
             'Minuten</p>\n<!-- POSITION:END -->\n')
 
 
 def _block_weg(h):
     return re.sub(r'<!-- HUBLINKS:START -->.*?<!-- HUBLINKS:END -->\n?', '', h, flags=re.S)
+
+
+def _hall_satz(h):
+    """Der Satz "<Zahlwort> der <N> Controller" aus der Hall-Direktantwort.
+
+    Stand dreimal als Literal "Fünf der 28 Controller" hier. Nachdem am 06.10.2026 sechs
+    weitere Hall-Specs belegt wurden, waren es elf, die Mutationen griffen nicht mehr,
+    und die Batterie meldete "Mutation hat nicht gegriffen" -- drei Faelle ohne
+    Beweiswert bei unveraenderter Schlusszeile. Vierter Fall derselben Klasse an einem
+    Tag.
+    """
+    m = re.search(r'([A-ZÄÖÜ][a-zäöüß]+) der (\d+) Controller', h)
+    if not m:
+        raise SystemExit('links_batterie: Hall-Direktantwort nicht gefunden -- der Satz '
+                         'hat seine Form geaendert')
+    return m.group(0), m.group(1), m.group(2)
+
+
+def _b10_preis(h):
+    """Der Preis, den der §B10-Hinweis auf dieser Seite nennt.
+
+    Vorgeschichte: Zwei Faelle standen mit dem Literal "kostet 88 € und kommt" da.
+    Beim Vollabgleich am 06.10.2026 fiel der Kishi V3 auf 78 €, die Mutation griff nicht
+    mehr, und die Batterie meldete "Mutation hat nicht gegriffen" -- zwei Faelle ohne
+    Beweiswert, waehrend die Schlusszeile weiter "111 Faelle" sagte. Ein Wert, der
+    woanders gepflegt wird, gehoert nicht als Literal in eine Probe.
+    """
+    m = re.search(r'kostet (\d+) € und kommt', h)
+    if not m:
+        raise SystemExit('links_batterie: §B10-Hinweis auf der KISHIPRO-Seite nicht '
+                         'gefunden -- der Satz hat seine Form geaendert')
+    return m.group(1)
 
 
 _KRITERIEN = '<h2 style="margin-top:24px">Unsere Bewertungskriterien</h2>'
@@ -246,7 +284,8 @@ FAELLE = [
      lambda h: re.sub(r'<!-- GUENSTIGER:START -->.*?<!-- GUENSTIGER:END -->\n?', '', h,
                       flags=re.S), 'ROT'),
     ('Preis im B10-Hinweis verfaelscht', KISHIPRO,
-     lambda h: h.replace('kostet 88 € und kommt', 'kostet 99 € und kommt', 1), 'ROT'),
+     lambda h: h.replace(f'kostet {_b10_preis(h)} € und kommt', 'kostet 99 € und kommt', 1),
+     'ROT'),
     ('Sternzahl im B10-Hinweis verfaelscht', KISHIPRO,
      lambda h: h.replace('auf 4,4 Sterne aus', 'auf 4,9 Sterne aus', 1), 'ROT'),
     ('genanntes Modell im B10-Hinweis ausgetauscht', KISHIPRO,
@@ -255,7 +294,8 @@ FAELLE = [
     # `wert not in block` und liess diese Form durch -- rot wurde sie nur, weil der
     # Zeichenvergleich des Sync-Skripts daneben steht.
     ('Preis im B10-Hinweis um eine Ziffer verlaengert', KISHIPRO,
-     lambda h: h.replace('kostet 88 € und kommt', 'kostet 188 € und kommt', 1), 'ROT'),
+     lambda h: h.replace(f'kostet {_b10_preis(h)} € und kommt',
+                         f'kostet 1{_b10_preis(h)} € und kommt', 1), 'ROT'),
     # Der Abbruch-Fall: Ein START ohne END liess verify.py mit ValueError sterben, also
     # exit 1 ohne Urteil -- und nahm die 250 Pruefstellen hinter §B10 mit. Die Batterie
     # unterscheidet ABBRUCH von ROT, deshalb greift dieser Fall die Klasse wirklich.
@@ -432,14 +472,17 @@ FAELLE = [
 
     # --- S1-Zitier-Pass: die Direktantwort auf der staerksten Inhaltsseite -------------
     ('Hall-Zahl in der Direktantwort verfaelscht', 'blog/hall-effect-erklaert/index.html',
-     lambda h: h.replace('Fünf der 28 Controller', 'Sechs der 28 Controller', 1), 'ROT'),
+     lambda h: h.replace(_hall_satz(h)[0],
+                         f'Sechs der {_hall_satz(h)[2]} Controller', 1), 'ROT'),
     ('Sortimentszahl in der Direktantwort verfaelscht',
      'blog/hall-effect-erklaert/index.html',
-     lambda h: h.replace('Fünf der 28 Controller', 'Fünf der 30 Controller', 1), 'ROT'),
+     lambda h: h.replace(_hall_satz(h)[0],
+                         f'{_hall_satz(h)[1]} der 30 Controller', 1), 'ROT'),
     # Ein Zahlwort, das das Gate nicht kennt, waere sonst eine stumme Luecke: Die Pruefung
     # haengt am Wort, also muss ein unbekanntes Wort selbst der Befund sein.
     ('unbekanntes Zahlwort in der Direktantwort', 'blog/hall-effect-erklaert/index.html',
-     lambda h: h.replace('Fünf der 28 Controller', 'Etliche der 28 Controller', 1), 'ROT'),
+     lambda h: h.replace(_hall_satz(h)[0],
+                         f'Etliche der {_hall_satz(h)[2]} Controller', 1), 'ROT'),
     ('LEGITIM Satz daneben ergaenzt', 'blog/hall-effect-erklaert/index.html',
      lambda h: h.replace('Drei davon stehen hier mit Preis und Einordnung.',
                          'Drei davon stehen hier mit Preis und Einordnung. Nachtrag: '
@@ -487,6 +530,79 @@ FAELLE = [
                          '<p>Mehr dazu im <a href="/blog/hall-effect-erklaert/">'
                          'Hall-Effect-Erklaerer</a>.</p>\n<!-- HUBLINKS:START -->', 1),
      'GRUEN'),
+    # ---- §A5 Verfuegbarkeit (06.10.2026) ---------------------------------------------
+    # "Verfügbar" stand 197 Mal als Literal im Markup und kam aus nichts; beim
+    # Vollabgleich war es fuer 6 von 42 Produkten falsch. Diese Faelle halten das Gate
+    # in BEIDE Richtungen fest: der Defekt muss rot werden, und das Nachziehen aus dem
+    # Datenkern muss gruen bleiben.
+    ('Badge-Text eines nicht kaufbaren Produkts auf "Verfügbar"', GEN_KARTE,
+     lambda h: h.replace('<span class="out-stock">Nicht verfügbar</span>',
+                         '<span class="out-stock">Verfügbar</span>', 1), 'ROT'),
+    ('Badge-Klasse gruen an "Nicht verfügbar"', GEN_KARTE,
+     lambda h: h.replace('<span class="out-stock">Nicht verfügbar</span>',
+                         '<span class="in-stock">Nicht verfügbar</span>', 1), 'ROT'),
+    ('Verfuegbarkeitstext ohne Badge-Klasse', GEN_KARTE,
+     lambda h: h.replace('<span class="out-stock">Nicht verfügbar</span>',
+                         '<em>Nicht verfügbar</em>', 1), 'ROT'),
+    ('Schema-availability auf InStock bei stock=nein',
+     'produkte/hellcool-controller/index.html',
+     lambda h: h.replace('"availability": "https://schema.org/OutOfStock"',
+                         '"availability": "https://schema.org/InStock"'), 'ROT'),
+    ('JS-Label weicht von produktdaten.py ab', HUBRENDER,
+     lambda j: j.replace("nein: 'Nicht verfügbar'", "nein: 'Nicht lieferbar'"),
+     'ROT_NACH_BUMP'),
+    ('JS-Klasse weicht von produktdaten.py ab', HUBRENDER,
+     lambda j: j.replace("nein: 'out-stock'", "nein: 'in-stock'"), 'ROT_NACH_BUMP'),
+    ('JS-Renderer fuehrt die Verfuegbarkeits-Tabelle gar nicht', HUBRENDER,
+     lambda j: '\n'.join(z for z in j.split('\n')
+                         if 'STOCK_LABEL' not in z and 'STOCK_KLASSE' not in z)
+               .replace('${stockHTML(p)}', '<span class="in-stock">Verfügbar</span>'),
+     'ROT_NACH_BUMP'),
+    # Die Einrueckung ist die von json.dump(indent=2) in einer Liste von Objekten:
+    # vier Leerzeichen. Mit zwei griff die Mutation nicht, und der Fall haette
+    # "Mutation hat nichts geaendert" gemeldet statt etwas zu beweisen.
+    ('stock-Feld bei einem Produkt entfernt', PRODUKTJSON,
+     lambda j: j.replace('    "price": "190 €",\n    "stock": "nein",',
+                         '    "price": "190 €",', 1), 'ROT'),
+    ('stock-Wert ausserhalb der vier erlaubten', PRODUKTJSON,
+     lambda j: j.replace('"stock": "nein"', '"stock": "vielleicht"', 1), 'ROT'),
+
+    # ---- §A5 Black-Friday-Schwellen-Matrix (06.10.2026) ------------------------------
+    # Die Seite nennt ihre eigene Rechenregel ("rund 20 Prozent unter dem Regulaerpreis")
+    # und hat sie um das Fuenffache verfehlt, weil Spalte 2 vom Preis-Sync nachgezogen
+    # wurde und die daraus berechnete Spalte 3 nicht.
+    ('BF-Schwelle 2 € neben der Regel', BF,
+     lambda h: h.replace('<strong>unter 54 €</strong>', '<strong>unter 56 €</strong>'),
+     'ROT'),
+    ('BF-Schwelle auf den alten Wert zurueck (4 statt 20 Prozent)', BF,
+     lambda h: h.replace('<strong>unter 54 €</strong>', '<strong>unter 65 €</strong>'),
+     'ROT'),
+    ('BF-Regulaerpreis vom Datenkern geloest', BF,
+     lambda h: h.replace('<td>68 €</td><td><strong>unter 54 €',
+                         '<td>80 €</td><td><strong>unter 54 €'), 'ROT'),
+    ('BF-Deal-Regel aus dem Text entfernt', BF,
+     lambda h: h.replace('rund 20 Prozent unter dem Regulärpreis',
+                         'deutlich unter dem Regulärpreis'), 'ROT'),
+    ('BF-Regel auf 25 Prozent, Schwellen bleiben', BF,
+     lambda h: h.replace('rund 20 Prozent unter dem Regulärpreis',
+                         'rund 25 Prozent unter dem Regulärpreis'), 'ROT'),
+    ('EINE BF-Zeile unlesbar gemacht (Teil-Ausfall)', BF,
+     lambda h: h.replace('<strong>unter 62 €</strong>', 'unter 62 EUR'), 'ROT'),
+    ('BF-Tabelle ganz entfernt', BF,
+     lambda h: re.sub(r'<table[^>]*class="bf-table".*?</table>', '', h, flags=re.S),
+     'ROT'),
+    ('LEGITIM BF-Schwelle 1 € gerundet', BF,
+     lambda h: h.replace('<strong>unter 54 €</strong>', '<strong>unter 55 €</strong>'),
+     'GRUEN'),
+    ('LEGITIM eine BF-Zeile ganz geloescht', BF,
+     lambda h: re.sub(r'<tr><td><a href="/controller/universal/razer-kishi-v3-review/".*?</tr>\n',
+                      '', h, flags=re.S), 'GRUEN'),
+    # Die QUELLE aendern, nicht die generierte Seite: Ein Edit am Output wird vom
+    # Zeichenvergleich (verify 6c) rot, und der Fall haette das Generator-Gate bewiesen
+    # statt die Verneinungs-Ausnahme. Genau so war meine erste Fassung falsch.
+    ('LEGITIM Verneinung im Hall-Satz, Quelle geaendert (kein Fehlalarm)',
+     'scripts/gen_content.py',
+     lambda h: h.replace('(kein Hall-Effect)', '(ohne Hall-Effect)'), 'GRUEN_NACH_SYNC'),
     ('LEGITIM Redirect-Stub verlinkt zusaetzlich auf eine Seite', 'ratgeber/index.html',
      lambda h: h.replace('</body>',
                          '<p><a href="/produkte/mocute-050/">Mocute 050</a></p></body>', 1),

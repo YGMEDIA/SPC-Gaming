@@ -187,6 +187,10 @@ from produktdaten import formfehler as _formfehler
 # in diesem Lauf (Zeile 344, 471, 1906) und wurden dadurch ueberschrieben --
 # derselbe Fehler, den `_klartext` eine Runde vorher gemacht hat.
 from produktdaten import text as _pfeld, liste as _pliste
+from produktdaten import (stock as _stock, STOCK_LABEL as _STOCK_LABEL,
+                          STOCK_KLASSE as _STOCK_KLASSE,
+                          STOCK_SCHEMA as _STOCK_SCHEMA,
+                          STOCK_CTA as _STOCK_CTA)
 from css_kaskade import wert as _css_wert, sichtbar as _css_sichtbar
 
 def _gate(_skript, *_args, _grenze=180):
@@ -1254,6 +1258,16 @@ if os.path.exists('scripts/audit_prosa.py'):
             'als Suchname an jeder Position trifft')
         _pr = None
     if _pr is not None and _pr.returncode != 0:
+        # Ein Traceback in audit_prosa.py landet auf STDERR, und stdout ist dann LEER.
+        # Die alte Fassung iterierte nur ueber stdout: Das Fliesstext-Audit fiel damit
+        # lautlos aus, waehrend verify 20 andere Fehler meldete und kein Wort darueber
+        # verlor, dass die groesste Einzelpruefung in diesem Lauf nicht stattgefunden hat.
+        # Gemessen am 06.10.2026 mit einem Nicht-String-Slug (Pruefbericht Runde 2, B8).
+        if not _pr.stdout.strip():
+            err(f"§A1-Fließtext: scripts/audit_prosa.py ist mit Exit {_pr.returncode} "
+                f"abgebrochen und hat NICHTS ausgegeben — das Fliesstext-Audit ist in "
+                f"diesem Lauf nicht gelaufen. Letzte Zeile auf stderr: "
+                f"{(_pr.stderr.strip().splitlines() or ['(leer)'])[-1][:120]}")
         for _z in _pr.stdout.strip().splitlines():
             if _z.strip() and 'Abweichung(en)' not in _z:
                 err(f"§A1-Fließtext: {_z.strip()}")
@@ -2768,9 +2782,12 @@ for _f in _zu_pruefen:
 # Datenstand: EINE Zahl fuer das ganze Repo. Vor dieser Invariante standen fuenf
 # verschiedene Angaben gleichzeitig live (Juni, Juli, August, September, 30.09.), und
 # neunzehn Seiten mit "Stand Juli 2026" trugen Preise, die erst am 30.09. entstanden.
-# Bei jedem Preis-Sync wird hier EINE Zeile geaendert, das Gate haelt den Rest nach.
-DATENSTAND_MONAT = 'September 2026'
-DATENSTAND_TAG = '30.09.2026'
+# Bei jedem Preis-Sync wird EINE Zeile geaendert -- in scripts/datenstand.py --, das Gate
+# haelt den Rest nach. Dass die Konstante dort steht und nicht hier, hat der Vollabgleich
+# am 06.10.2026 erzwungen: Sie stand in fuenf Zeilen in vier Dateien, und nach dem
+# Umstellen HIER haben drei Generatoren den alten Monat in 35 Seiten zurueckgeschrieben.
+from datenstand import (MONAT as DATENSTAND_MONAT, TAG as DATENSTAND_TAG,
+                        ISO as _DS_ISO)
 for _f in _zu_pruefen:
     _h = open(_f, encoding='utf-8').read()
     for _dm in re.finditer(r'(?:Stand|Datenstand|Aktuell)[:\s]*'
@@ -2780,11 +2797,48 @@ for _f in _zu_pruefen:
             err(f"§A5: {_f} nennt den Datenstand \"{_dm.group(1)}\", aktuell ist "
                 f"{DATENSTAND_MONAT} ({DATENSTAND_TAG})")
 
+# Dieselbe Pruefung ueber ALLE scripts/*.py, nicht nur ueber `gen_*.py`. Beim
+# Vollabgleich am 06.10.2026 hat `md_to_pdf.py` weiter "Stand 30.09.2026" auf
+# Oktober-PDFs gestempelt: Es stand in keinem der beiden globs von `_zu_pruefen`, wird
+# von keinem Gate aufgerufen (es braucht reportlab) und ist deshalb ein toter Winkel,
+# in dem ein Literal beliebig lange altern kann.
+# KOMMENTARE sind ausgenommen, und zwar ueber `tokenize`, nicht per Heuristik: Fuenf der
+# sechs Fundstellen sind Vorgeschichte ("Hier stand er bis zum 06.10. als zweites
+# Literal"), und ein Gate, das wahre historische Saetze rot macht, wird umgangen.
+# Docstrings bleiben DRIN -- in `gen_content.py` steht die Produktprosa in
+# String-Literalen, sie auszunehmen wuerde das eigentliche Ziel blind machen.
+try:
+    sys.path.insert(0, 'scripts')
+    from audit_prosa import maskiere_kommentare as _ohne_komm, NichtLesbar as _NichtLesbar
+except Exception as _e:
+    _ohne_komm = None
+    err(f"§A5: Kommentar-Maskierung nicht ladbar ({type(_e).__name__}: {_e}) — die "
+        f"Datenstand-Pruefung ueber scripts/*.py faellt in diesem Lauf aus")
+if _ohne_komm:
+    for _f in sorted(glob.glob('scripts/*.py') + glob.glob('scripts/*.js')):
+        try:
+            _code = _ohne_komm(open(_f, encoding='utf-8').read(), _f)
+        except _NichtLesbar as _e:
+            err(f"§A5: {_e}")
+            continue
+        # (?i) und der ausgeschriebene Tag: "Preisstand" mit kleinem s und
+        # "Stand 30. September 2026" liefen vorbei (Pruefbericht Runde 2, Befund e);
+        # die Kleinschreib-Form stand bereits in gen_brand_sections.py.
+        for _dm in re.finditer(r'(?:[Ss]tand|Datenstand|Aktuell)[:\s]*'
+                               r'(?:\d{1,2}\.\s*)?'
+                               r'((?:Januar|Februar|März|April|Mai|Juni|Juli|August'
+                               r'|September|Oktober|November|Dezember)\s*\d{4}'
+                               r'|\d{2}\.\d{2}\.\d{4})', _code):
+            if _dm.group(1) not in (DATENSTAND_MONAT, DATENSTAND_TAG):
+                err(f"§A5: {_f}:{_code[:_dm.start()].count(chr(10)) + 1} fuehrt den "
+                    f"Datenstand \"{_dm.group(1)}\" ausserhalb eines Kommentars, aktuell "
+                    f"ist {DATENSTAND_MONAT} ({DATENSTAND_TAG}) — die EINE Quelle ist "
+                    f"scripts/datenstand.py")
+
 # Die MASCHINENLESBARE Fassung des Datums muss zur sichtbaren passen. Eine Seite, die
 # "Stand September 2026" zeigt und im Schema dateModified 2026-07-18 fuehrt, sagt
 # Menschen und Google Verschiedenes - und Google liest das Schema. Geprueft wird nur,
 # dass dateModified nicht AELTER ist als der ausgewiesene Datenstand.
-_DS_ISO = '-'.join(reversed(DATENSTAND_TAG.split('.')))
 for _f in pages:
     _h = open(_f, encoding='utf-8').read()
     if not re.search(r'(?:Stand|Datenstand|Aktuell)[:\s]*' + re.escape(DATENSTAND_MONAT), _h):
@@ -4663,13 +4717,400 @@ if _hall:
                          r'|\b(?:ab|für|schon für|bereits ab)\s*(?:etwa |rund |ca\. )?('
                          + '|'.join(_falsch) + r')(?:,-)?\s*[ -]?(?:€|Euro|EUR)(?!\s*(?:mehr|weniger|Aufpreis|Aufschlag))'
                          r'[^.!?]{0,90}?(?:' + _HALLWORT + r')', re.I)
+    # VERNEINTE Erwaehnungen sind kein Versprechen. Beim Vollabgleich am 06.10.2026 hat
+    # dieses Gate den Satz "Potentiometer-Sticks (kein Hall-Effect) und eine Haptik, die
+    # man fuer 23 € erwarten darf" als „verspricht Hall-Effect ab 23 EUR" gemeldet --
+    # der Satz sagt das Gegenteil. Ausgeloest hat es eine Preisaenderung (34 -> 23 €),
+    # die den Abstand zur Schwelle umgedreht hat; der Fehlalarm lag aber schon vorher im
+    # Muster. Ein Gate, das wahre Saetze rot macht, wird abgeschaltet oder umgangen.
+    _NEIN = re.compile(r'\b(?:kein|keine[mnrs]?|ohne|statt|nicht|verzichtet auf|'
+                       r'fehlen|fehlt|mangelt)\s*$', re.I)
+    _HALL_RE = re.compile(_HALLWORT, re.I)
+
+    def _verneint(_text, _von, _bis):
+        """True, wenn JEDE Hall-Erwaehnung in diesem Fenster verneint ist.
+
+        Reicht eine unverneinte, ist die Aussage ein Versprechen und wird gemeldet.
+        Geprueft werden die 40 Zeichen vor dem Begriff -- weiter zurueck wuerde ein
+        "kein" aus dem Vorsatz die echte Zusage im Folgesatz decken.
+        """
+        _fenster = _text[max(0, _von - 40):_bis]
+        _versatz = _von - max(0, _von - 40)
+        _treffer = list(_HALL_RE.finditer(_fenster))
+        if not _treffer:
+            return False
+        return all(_NEIN.search(_fenster[max(0, _h.start() - 24):_h.start()])
+                   for _h in _treffer if _h.end() > _versatz or _h.start() >= _versatz)
+
     # Eingerueckt: Die Schleife stand ausserhalb ihres Guards und lief in einen
     # NameError, sobald kein Hall-Produkt gefunden wurde - alles danach lief nie.
     for _f in _zu_pruefen:
-        for _mm in _muster.finditer(open(_f, encoding='utf-8').read()):
+        _htxt = open(_f, encoding='utf-8').read()
+        for _mm in _muster.finditer(_htxt):
+            if _verneint(_htxt, _mm.start(), _mm.end()):
+                continue
             err(f"SUPERLATIV gekippt (§A6): {_f} verspricht Hall-Effect ab "
                 f"{_mm.group(1) or _mm.group(2)} EUR, guenstigster Hall-Controller ist "
                 f"{_guenstigster['slug']} mit {_preis_hall} EUR")
+
+# ---------- §A5 · Verfuegbarkeit gegen den Datenkern ----------
+# "Verfügbar" stand bis zum 06.10.2026 197 Mal als Literal im Markup und kam aus NICHTS:
+# products.json hatte kein solches Feld, fuenf Renderer behaupteten es unabhaengig
+# voneinander, und beim Vollabgleich war die Aussage fuer 6 von 42 Produkten nachweislich
+# falsch -- darunter der Backbone Pro, der mit "190 € · Verfügbar" bewarb, waehrend Amazon
+# "Derzeit nicht verfügbar" sagte UND die ASIN auf eine andere umleitete.
+#
+# Jetzt kommt sie aus `stock`. Dieses Gate haelt die drei Ausspielungen zusammen:
+#   1 das Badge auf jeder Karte (ueber data-product im <article> aufgeloest)
+#   2 `offers.availability` im Product-Schema -- Google liest das Schema, nicht den Absatz
+#   3 die drei JS-Renderer, die kein Python importieren koennen (wie bei A6_SCHWELLE)
+# Was es NICHT prueft: ob `stock` selbst stimmt. Das ist eine Amazon-Lesung (§A5) und
+# steht im Beleg unter 03-research/raw/amazon/.
+_BADGE = re.compile(r'<span class="(in-stock|out-stock|used-stock)">([^<]*)</span>')
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    for _am in re.finditer(r'<article class="pcard[^"]*"', _h):
+        _ende = _h.find('</article>', _am.end())
+        if _ende < 0:
+            continue
+        _blk = _h[_am.start():_ende]
+        _dm = re.search(r'data-product="([^"]+)"', _blk)
+        if not _dm:
+            continue
+        _p = next((x for x in items if x.get('slug') == _dm.group(1)), None)
+        if not _p:
+            continue
+        _bm = _BADGE.search(_blk)
+        if not _bm:
+            # Kein Badge ist kein Fehler (Bestenlisten-Karten tragen eins, andere
+            # Darstellungen nicht), aber ein VERFUEGBARKEITSTEXT ohne Badge-Klasse waere
+            # die alte Luecke: hartkodiert und ungeprueft.
+            if re.search(r'>\s*(?:Verf(?:ü|ue)gbar|Nicht verf(?:ü|ue)gbar|Nur gebraucht'
+                         r'|Nur Drittanbieter)\s*<', _blk):
+                err(f"§A5: {_f} Karte {_p['slug']} nennt eine Verfuegbarkeit ausserhalb "
+                    f"der Badge-Klassen (in-stock/out-stock/used-stock) — dort prueft sie "
+                    f"niemand gegen products.json")
+            continue
+        if _bm.group(2) != _STOCK_LABEL.get(_stock(_p), ''):
+            err(f"§A5: {_f} Karte {_p['slug']} zeigt \"{_bm.group(2)}\", products.json "
+                f"fuehrt stock={_pfeld(_p, 'stock')!r} "
+                f"(= \"{_STOCK_LABEL.get(_stock(_p), '')}\")")
+        elif _bm.group(1) != _STOCK_KLASSE.get(_stock(_p)):
+            err(f"§A5: {_f} Karte {_p['slug']} traegt die Klasse \"{_bm.group(1)}\", zu "
+                f"stock={_pfeld(_p, 'stock')!r} gehoert \"{_STOCK_KLASSE.get(_stock(_p))}\" "
+                f"— die Farbe sagt dann etwas anderes als der Text")
+
+# PREISBAENDER als Ueberschrift ("Unter 20 Euro", "50 bis 100 Euro", "Ab 100 Euro"):
+# Jede Produktkarte unter so einer Ueberschrift muss ins Band passen. Der Preis-Sync
+# zieht die Karte nach, die Ueberschrift nicht -- auf /geschenke/ stand der Kishi Ultra
+# mit 63 € unter "Ab 100 Euro: Premium" (gefunden vom Pruefer am 06.10.2026, aelter als
+# der Vollabgleich). Das Fliesstext-Audit kann es nicht sehen: Eine Bandgrenze ist eine
+# Schwelle und gehoert zu keinem Produkt, sie wird dort ausdruecklich ausgenommen.
+_BAND = re.compile(r'<h[23][^>]*>\s*(Unter|Ab|ab)?\s*(\d+)(?:\s*bis\s*(\d+))?'
+                   r'\s*(?:Euro|€)[^<]{0,60}</h[23]>')
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _marken = [(_m.start(), _m) for _m in _BAND.finditer(_h)]
+    for _i, (_pos, _m) in enumerate(_marken):
+        _ende = _marken[_i + 1][0] if _i + 1 < len(_marken) else len(_h)
+        _wort = (_m.group(1) or '').lower()
+        _a, _b = int(_m.group(2)), (int(_m.group(3)) if _m.group(3) else None)
+        # Karten UND Prosa-Links: Auf `blog/geschenke-fuer-mobile-gamer/` sind die
+        # Baender aus verlinkten Produktnamen gebaut, nicht aus Karten -- die erste
+        # Fassung prueft dort nichts (Pruefbericht Runde 2, Befund f). Beide Wege
+        # ueber dieselbe Regel, Reihenfolge egal.
+        _ziele = list(re.findall(r'data-product="([^"]+)"', _h[_pos:_ende]))
+        _nach_detail = {(x.get('detail') or '').strip(): x.get('slug') for x in items
+                        if (x.get('detail') or '').strip()}
+        _ziele += [_nach_detail[_z] for _z in re.findall(r'href="(/[^"]+/)"',
+                                                         _h[_pos:_ende])
+                   if _z in _nach_detail]
+        for _slug in dict.fromkeys(_ziele):
+            _q = next((x for x in items if x.get('slug') == _slug), None)
+            _pz = _preis_zahl(_q) if _q else None
+            if _pz is None:
+                continue
+            if _wort == 'unter':
+                _ok = _pz < _a
+            elif _wort == 'ab':
+                _ok = _pz >= _a
+            elif _b is not None:
+                _ok = _a <= _pz <= _b
+            else:
+                continue          # "100 Euro" ohne Wort und ohne Spanne: keine Bandgrenze
+            if not _ok:
+                err(f"§A1: {_f} fuehrt {_slug} ({_q['price']}) unter der Ueberschrift "
+                    f"\"{re.sub(chr(60) + '[^' + chr(62) + ']*' + chr(62), '', _m.group(0))}\" "
+                    f"— die Karte passt nicht ins Preisband")
+
+# WAS DIESE GATE-FAMILIE NICHT KANN, ausdruecklich (Pruefbericht Runde 2, Befund g):
+# Eine Verfuegbarkeitsaussage im FLIESSTEXT ("Der Backbone Pro ist sofort lieferbar")
+# wird nicht geprueft. Ein Muster dafuer waere ein Fehlalarm-Generator: Dieselben Woerter
+# stehen harmlos in "PS Remote Play ist nur auf iOS verfuegbar" und "pruefe, ob ein
+# System-Update verfuegbar ist", und ein Gate, das wahre Saetze rot macht, wird umgangen
+# (siehe die Verneinungs-Ausnahme im Hall-Gate). Gemessen wurde stattdessen der Bestand:
+# ueber alle 127 Seiten gibt es heute **0** positive Verfuegbarkeitsaussagen ueber eines
+# der 6 nicht kaufbaren Produkte. Geprueft sind Badge, Kaufleiste und Schema; der
+# Fliesstext bleibt Handarbeit, und das steht hier, damit niemand ihn fuer gedeckt haelt.
+
+# TITEL-QUELLEN einer Seite muessen dieselben Euro-Betraege nennen. <title>, og:title,
+# twitter:title, die <h1> und die Article-`headline` sind Fassungen DESSELBEN Satzes;
+# wenn sie verschiedene Preise nennen, ist eine davon beim letzten Nachzug liegen
+# geblieben. Genau das stand am 06.10.2026 auf `blog/guenstige-handy-controller/`: Title,
+# og und twitter sagten "ab 30 €", H1, headline und Breadcrumb "ab 28 €" (Pruefbericht
+# Runde 2, B5). Kein Preisgate erreicht es, weil "ab N €" ueberall als SCHWELLE gilt und
+# Schwellen zu keinem Produkt gehoeren -- aber ein Widerspruch zwischen zwei Fassungen
+# desselben Titels braucht gar kein Produktwissen.
+def _euros(_s):
+    return sorted(set(re.findall(r'(?<![\d,.])(\d{1,4})\s*(?:€|Euro\b)', _s or '')))
+
+
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _t = re.search(r'<title>([^<]*)</title>', _h)
+    _h1 = re.search(r'<h1[^>]*>(.*?)</h1>', _h, re.S)
+    _q = {
+        '<title>': _euros(_t.group(1) if _t else ''),
+        '<h1>': _euros(re.sub(r'<[^>]*>', '', _h1.group(1)) if _h1 else ''),
+        'headline': _euros(' '.join(re.findall(r'"headline"\s*:\s*"([^"]*)"', _h))),
+        'og:title': _euros(' '.join(re.findall(
+            r'property="og:title"\s+content="([^"]*)"', _h))),
+        'twitter:title': _euros(' '.join(re.findall(
+            r'name="twitter:title"\s+content="([^"]*)"', _h))),
+    }
+    _nicht_leer = {_k: _v for _k, _v in _q.items() if _v}
+    if len({tuple(_v) for _v in _nicht_leer.values()}) > 1:
+        err(f"§A1: {_f} nennt in den Fassungen desselben Titels verschiedene "
+            f"Euro-Betraege: "
+            + ' · '.join(f'{_k} {_v}' for _k, _v in _nicht_leer.items())
+            + " — eine davon ist beim letzten Preis-Nachzug liegen geblieben")
+
+# Ein Verfuegbarkeits-Badge DARF NUR an einer Karte stehen, die products.json kennt.
+# Gemessen am 06.10.2026: 200 von 201 Badges lagen im Gate-Umfang, eines nicht -- die
+# ROG-Phone-Karte auf /gaming-phones/ behauptete "Verfügbar" fuer ein Geraet, zu dem wir
+# keinerlei Datenquelle fuehren. Ohne diese Regel ist jedes neue Badge ausserhalb einer
+# Produktkarte wieder eine Behauptung ohne Beleg, genau wie die 197 vorher.
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    for _bm in re.finditer(r'<span class="(?:in-stock|out-stock|used-stock)">[^<]*</span>',
+                           _h):
+        _am = None
+        for _a in re.finditer(r'<article[^>]*class="[^"]*pcard[^"]*"[^>]*>', _h):
+            _e = _h.find('</article>', _a.end())
+            if _a.start() < _bm.start() < (_e if _e > 0 else len(_h)):
+                _am = _h[_a.start():_e]
+                break
+        if _am is None or not re.search(r'data-product="([^"]+)"', _am):
+            err(f"§A5: {_f} fuehrt ein Verfuegbarkeits-Badge ausserhalb einer "
+                f"Produktkarte mit data-product — dort prueft es niemand gegen "
+                f"products.json")
+            continue
+        _slug = re.search(r'data-product="([^"]+)"', _am).group(1)
+        if not any(x.get('slug') == _slug for x in items):
+            err(f"§A5: {_f} fuehrt ein Verfuegbarkeits-Badge fuer \"{_slug}\", das "
+                f"products.json nicht kennt")
+
+# Die Verfuegbarkeits-Zeile der KAUFLEISTE. Sie stand bis zum 06.10.2026 als Literal
+# ("✓ Auf Amazon verfügbar") auf 33 Produktseiten und war die 33-fache Ausnahme von der
+# Regel, die das Karten-Badge an diesem Tag bekommen hat: Auf drei Seiten behauptete sie
+# Verfuegbarkeit, waehrend das Schema derselben Seite OutOfStock fuehrte, und auf drei
+# weiteren fehlte sie ganz -- ausgerechnet bei drei der sechs nicht kaufbaren Produkte.
+# Das erste §A5-Gate hat das NICHT gefunden, weil es nur Karten las; gefunden hat es der
+# Pruefer. Deshalb prueft dieses Gate drei Dinge: Text, Klasse und ANWESENHEIT.
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _rel_dir = os.path.dirname(_f.replace(os.sep, '/'))
+    _tr = [x for x in items if (x.get('detail') or '').strip('/') == _rel_dir]
+    if len(_tr) != 1:
+        continue
+    _p = _tr[0]
+    if 'class="cta-box"' not in _h:
+        continue
+    _cms = list(re.finditer(r'<div class="cta-available([^"]*)">([^<]*)</div>', _h))
+    if len(_cms) > 1:
+        err(f"§A5: {_f} fuehrt {len(_cms)} Verfuegbarkeits-Zeilen in der Kaufleiste — "
+            f"eine Seite sagt ihre Lage einmal, und ein Gate, das nur die erste liest, "
+            f"deckt die zweite")
+    _cm = _cms[0] if _cms else None
+    if not _cm:
+        err(f"§A5: {_f} hat eine Kaufleiste ohne Verfuegbarkeits-Zeile — Preis und "
+            f"Kauf-Knopf stehen da, die Lage nicht ("
+            f"'python3 scripts/sync_product_values.py')")
+        continue
+    if _cm.group(2) != _STOCK_CTA.get(_stock(_p), ''):
+        err(f"§A5: {_f} Kaufleiste zeigt \"{_cm.group(2)}\", zu "
+            f"stock={_pfeld(_p, 'stock')!r} gehoert "
+            f"\"{_STOCK_CTA.get(_stock(_p), '')}\"")
+    elif _cm.group(1).strip() != (_stock(_p) or 'nein'):
+        err(f"§A5: {_f} Kaufleiste traegt die Klasse \"{_cm.group(1).strip()}\", zu "
+            f"stock={_pfeld(_p, 'stock')!r} gehoert \"{_stock(_p)}\" — die Farbe sagt "
+            f"dann etwas anderes als der Text")
+
+# Preise in ATTRIBUTWERTEN (meta description, og/twitter, title, alt). Das Fliesstext-
+# Audit laesst dort jede Summe und jede Differenz der Seitenprodukte zu -- eine Regel,
+# die im Fliesstext noetig ist ("52 € Preisunterschied"), in einer Meta-Description aber
+# zu weit: Auf der Kishi-V3-Seite blieb "für 88 €" dreimal stehen, weil 124 − 36 = 88 in
+# der erlaubten Menge lag. In einer Description steht ein Produktpreis, keine Rechnung.
+# Gemessen ueber alle 42 Detailseiten: genau diese eine Stelle, 0 Fehlalarme.
+try:
+    from audit_prosa import (attribut_text as _attr, produkte_im_kontext as _kontext,
+                             preis as _ap_preis, kein_produktpreis as _keinpreis)
+except Exception as _e:
+    _attr = None
+    err(f"§A1: Attributpreis-Pruefung nicht ladbar ({type(_e).__name__}: {_e})")
+if _attr:
+  try:
+    # ALLE Seiten, nicht nur Produktdetailseiten. Die enge Fassung hat genau den Fall
+    # nicht gesehen, fuer den sie gebaut war: Auf `blog/guenstige-handy-controller/`
+    # standen Title, og:title und twitter:title auf "ab 30 €", waehrend H1, headline und
+    # Breadcrumb derselben Seite "ab 28 €" sagten (Pruefbericht Runde 2, B5/Befund d).
+    # Gemessen ueber alle 127 Seiten: genau ein Treffer, 0 Fehlalarme.
+    for _f in pages:
+          _h = open(_f, encoding='utf-8').read()
+          _ps = _kontext(_f, _h)
+          if not _ps:
+              continue
+          _erlaubt = {_ap_preis(x) for x in _ps}
+          _at = _attr(_h)
+          for _m in re.finditer(r'(?<![\d,.])(\d{1,4})\s*(?:€|Euro\b)', _at):
+              if _keinpreis(_at, _m.start(), _m.end()):
+                  continue
+              # Eine STATISTIK ist kein Produktpreis. Die Preisfrage-Seite nennt in ihrer
+              # Description den Median des Sortiments ("typisch 48 €"); er gehoert
+              # absichtlich zu keinem Produkt und wird vom Generator gerechnet. Ohne
+              # diese Ausnahme meldet das Gate die einzige Seite rot, deren Aufgabe
+              # genau solche Zahlen sind.
+              if re.search(r'(?:typisch|Median|im Mittel|im Schnitt|durchschnittlich|'
+                           r'Durchschnitt)\w*\s*$',
+                           _at[max(0, _m.start() - 30):_m.start()], re.I):
+                  continue
+              if int(_m.group(1)) in _erlaubt:
+                  continue
+              err(f"§A1: {_f} nennt in einem Attributwert (Description/Title/alt) "
+                  f"{_m.group(1)} €, das zu keinem Produkt dieser Seite gehoert — "
+                  f"Summen und Differenzen zaehlen hier NICHT, eine Description nennt "
+                  f"einen Preis, keine Rechnung")
+  except Exception as _e:
+    err(f"§A1: Attributpreis-Pruefung abgebrochen ({type(_e).__name__}: {_e}) — die "
+        f"Preise in Descriptions und Titles sind in diesem Lauf NICHT geprueft")
+
+# `offers.availability` gegen den Datenkern. Fehlt das Feld, ist das KEIN Fehler: Sechs
+# aeltere Review-Schemas fuehren gar kein `offers` (eigener Merkposten in STATUS). Eine
+# FALSCHE Angabe ist einer -- und genau die waere vor dem 06.10. entstanden, weil alle
+# 36 Vorkommen "InStock" als Literal trugen.
+for _f in pages:
+    _h = open(_f, encoding='utf-8').read()
+    _rel_dir = os.path.dirname(_f.replace(os.sep, '/'))
+    _treffer = [x for x in items if (x.get('detail') or '').strip('/') == _rel_dir]
+    if len(_treffer) != 1:
+        continue
+    _p = _treffer[0]
+    for _av in re.finditer(r'"availability"\s*:\s*"([^"]+)"', _h):
+        if _av.group(1) != _STOCK_SCHEMA.get(_stock(_p)):
+            err(f"§A5/§A4: {_f} fuehrt im Schema availability \"{_av.group(1)}\", zu "
+                f"stock={_pfeld(_p, 'stock')!r} gehoert "
+                f"\"{_STOCK_SCHEMA.get(_stock(_p))}\" — Google liest das Schema")
+
+# Die drei JS-Renderer fuehren die Tabelle zwangslaeufig ein zweites Mal (der Browser kann
+# kein Python importieren). Geprueft wird sie gegen die Python-Fassung, genau wie
+# A6_SCHWELLE und LABEL_TEST. Ohne diese Pruefung koennte die hydratisierte Karte etwas
+# anderes sagen als die statische -- derselbe Widerspruch, den §A2 fuer Produktnamen
+# schon einmal hatte.
+for _jf in sorted(glob.glob('assets/js/*.js')):
+    _js = open(_jf, encoding='utf-8').read()
+    if 'STOCK_LABEL' not in _js:
+        continue
+    for _schluessel, _label in _STOCK_LABEL.items():
+        if not re.search(re.escape(_schluessel) + r':\s*[\'"]' + re.escape(_label)
+                         + r'[\'"]', _js):
+            err(f"§A5: {_jf} fuehrt STOCK_LABEL ohne den Eintrag "
+                f"{_schluessel}: \"{_label}\" aus scripts/produktdaten.py — die "
+                f"hydratisierte Karte sagt dann etwas anderes als die statische")
+    for _schluessel, _klasse in _STOCK_KLASSE.items():
+        if not re.search(re.escape(_schluessel) + r':\s*[\'"]' + re.escape(_klasse)
+                         + r'[\'"]', _js):
+            err(f"§A5: {_jf} fuehrt STOCK_KLASSE ohne den Eintrag "
+                f"{_schluessel}: \"{_klasse}\" aus scripts/produktdaten.py")
+# Und umgekehrt: ein Renderer, der die Tabelle GAR NICHT fuehrt, behauptet wieder
+# hartkodiert. Die drei Kartenrenderer sind namentlich benannt, damit ein vierter nicht
+# stillschweigend durchlaeuft.
+for _jf in ('assets/js/finder.js', 'assets/js/hub-render.js', 'assets/js/produkte.js'):
+    if os.path.exists(_jf) and 'STOCK_LABEL' not in open(_jf, encoding='utf-8').read():
+        err(f"§A5: {_jf} rendert Produktkarten, fuehrt aber kein STOCK_LABEL — die "
+            f"Verfuegbarkeit darin ist wieder eine Behauptung ohne Datenkern")
+
+# Die Schwellen-Matrix auf /black-friday/ ist eine RECHNUNG, nicht ein Text: Die Seite
+# nennt ihre Regel selbst ("stark, wenn er rund 20 Prozent unter dem Regulärpreis liegt")
+# und leitet daraus pro Produkt eine Deal-Schwelle ab. Beim Vollabgleich am 06.10.2026
+# waren sechs der sieben Schwellen gekippt, und zwar stumm: Der Regulärpreis in Spalte 2
+# wurde vom Preis-Sync nachgezogen, die daraus berechnete Spalte 3 nicht. Beim G8 Galileo
+# stand "68 € regulär, starker Deal unter 65 €" -- das sind 4 Prozent, nicht 20. Eine
+# Kaufempfehlung, die den eigenen Maßstab um das Fuenffache verfehlt.
+# Das Fliesstext-Audit kann das nicht finden: Schwellenwerte gehoeren zu keinem Produkt
+# und werden dort bewusst nur als Hinweis gefuehrt (sie standen als 6 von 54 darin).
+_BF = 'black-friday/index.html'
+if os.path.exists(_BF):
+    _bf = open(_BF, encoding='utf-8').read()
+    # Die Regel aus der Seite lesen, nicht hier zweitfuehren: Steht dort eines Tages 25
+    # Prozent, prueft dieses Gate ab dann 25 Prozent.
+    _rm = re.search(r'rund (\d+) Prozent unter dem Regul(?:ä|ae)rpreis', _bf)
+    if not _rm:
+        err(f"§A5: {_BF} nennt seine Deal-Regel nicht mehr in Prozent — die "
+            f"Schwellen-Matrix ist damit aus keiner Regel mehr nachrechenbar")
+    else:
+        _rabatt = int(_rm.group(1)) / 100
+        # ALLE Tabellen mit dieser Klasse, nicht nur die erste. `re.search` hat genau
+        # eine genommen; eine zweite, widersprechende Matrix daneben blieb ungeprueft
+        # (vom Pruefer am 06.10.2026 gemessen und bestaetigt).
+        # class="bf-table deal" ist dieselbe Tabelle. Das exakte Muster hat eine
+        # zweite, widersprechende Matrix mit Zusatzklasse uebersehen (Pruefbericht
+        # Runde 2, Befund c) -- und die Zeilen-Gegenzaehlung merkt es nicht, weil sie
+        # nur ueber die GEFUNDENEN Tabellen laeuft.
+        _tabs = re.findall(r'<table[^>]*class="[^"]*\bbf-table\b[^"]*".*?</table>',
+                           _bf, re.S)
+        _zeilen = [z for _t in _tabs
+                   for z in re.findall(r'<tr><td><a href="([^"]+)"[^>]*>([^<]+)</a></td>'
+                                       r'<td>(\d+)\s*€</td><td><strong>unter (\d+)\s*€',
+                                       _t)]
+        # ANZAHL gegen die Tabelle halten, nicht nur "mindestens eine gefunden". Die erste
+        # Fassung las 6 von 7 Zeilen und schwieg: Eine Zeile, deren Schwelle nicht in
+        # <strong>…€</strong> endet, fiel aus dem Muster und damit aus der Pruefung. Die
+        # Rot/Gruen-Probe hat genau das gezeigt -- bei zerstoertem Markup blieb EINE
+        # lesbare Zeile uebrig, die stimmte, und das Gate meldete nichts. Das ist die
+        # Klasse "Deckung statt Rolle": zaehlen, was man findet, und das fuer vollstaendig
+        # erklaeren.
+        if not _tabs:
+            err(f"§A5: {_BF} hat keine table.bf-table mehr — die Schwellen-Matrix ist "
+                f"damit aus keiner Struktur mehr nachrechenbar")
+        else:
+            _soll_n = sum(len(re.findall(r'<tr\b', _t)) - 1 for _t in _tabs)
+            if len(_zeilen) != _soll_n:
+                err(f"§A5: {_BF} hat {_soll_n} Schwellen-Zeile(n), lesbar sind "
+                    f"{len(_zeilen)} — die uebrigen laufen ungeprueft durch "
+                    f"(Muster: Link, Regulaerpreis in €, <strong>unter N €</strong>)")
+        for _ziel, _label, _regulaer, _schwelle in _zeilen:
+            # Regulaerpreis gegen den Datenkern, ueber das Linkziel aufgeloest.
+            _p = next((x for x in items
+                       if (x.get('detail') or '').strip('/') == _ziel.strip('/')), None)
+            if _p is None:
+                err(f"§A5: {_BF} fuehrt \"{_label}\" mit Ziel {_ziel}, das zu keinem "
+                    f"Produkt in products.json gehoert")
+                continue
+            _soll_r = _preis_zahl(_p)
+            if _soll_r is not None and int(_regulaer) != _soll_r:
+                err(f"§A5: {_BF} nennt fuer {_p['slug']} den Regulaerpreis "
+                    f"{_regulaer} €, products.json sagt {_p['price']}")
+                continue
+            # Die Schwelle darf runden, aber nicht die Regel verfehlen. Erlaubt ist ein
+            # Euro Spiel nach oben und unten um den gerechneten Wert -- die Seite schreibt
+            # bewusst lesbare Zahlen ("unter 54 €" statt "unter 54,40 €").
+            _soll_s = int(_regulaer) * (1 - _rabatt)
+            if abs(int(_schwelle) - _soll_s) > 1:
+                err(f"§A5: {_BF} nennt fuer {_p['slug']} die Deal-Schwelle "
+                    f"\"unter {_schwelle} €\"; {_rm.group(1)} Prozent unter "
+                    f"{_regulaer} € sind {_soll_s:.0f} € — das sind "
+                    f"{(1 - int(_schwelle) / int(_regulaer)) * 100:.0f} Prozent "
+                    f"statt {_rm.group(1)}")
 
 # marken/razer nennt den Preisabstand V3 -> V3 Pro als Prozentzahl. Prozentaussagen
 # entgehen jeder Wertpruefung, weil die Zahl in keinem Produkt steht: Sie ist erst aus

@@ -95,6 +95,8 @@ from guenstiger import html as guenstiger_html, block as guenstiger_block
 # nachzieht und verify.py prueft. Zweistufig gebaut (siehe `build_fertig`), weil
 # der Text erst steht, wenn die Seite gebaut ist.
 from lesezeit import minuten as lesezeit_minuten
+from produktdaten import STOCK_SCHEMA, STOCK_CTA, stock   # §A5, eine Quelle fuer Karte, Schema und Kaufleiste
+from datenstand import MONAT as DATENSTAND_MONAT   # §A5, eine Quelle fuers ganze Repo
 
 
 def a6_warnbox(prod):
@@ -195,7 +197,7 @@ def build(prod, c, lesezeit):
     }
     if p_num:
         schema_prod["offers"] = {"@type": "Offer", "price": p_num, "priceCurrency": "EUR",
-                                 "availability": "https://schema.org/InStock",
+                                 "availability": STOCK_SCHEMA[stock(prod)],
                                  "url": f"https://www.amazon.de/dp/{prod['asin']}?tag=ygmedia-21"}
     if rating_val and rating_cnt and int(rating_cnt) > 1:
         schema_prod["aggregateRating"] = {"@type": "AggregateRating", "ratingValue": rating_val,
@@ -306,7 +308,7 @@ def build(prod, c, lesezeit):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=edfc9bc1">
+  <link rel="stylesheet" href="/assets/css/style.css?v=43e618fc">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -333,6 +335,7 @@ def build(prod, c, lesezeit):
 .cta-box .cta-brand{{text-align:center;font-size:12px;color:var(--ink-dim);margin-bottom:14px}}
 .cta-box .cta-price{{font-size:26px;font-weight:800;text-align:center;color:var(--ink);margin-bottom:4px}}
 .cta-box .cta-available{{text-align:center;font-size:12px;color:#1d7a3a;font-weight:600;margin-bottom:14px}}
+.cta-box .cta-available.nein,.cta-box .cta-available.gebraucht,.cta-box .cta-available.drittanbieter{{color:var(--ink-dim)}}
 .cta-box .btn{{width:100%;justify-content:center;margin-bottom:10px}}
 .cta-box .cta-note{{font-size:11px;color:var(--ink-dim);text-align:center;line-height:1.5}}
 .cta-photo{{display:block;width:100%;max-height:260px;object-fit:contain;border-radius:var(--radius);margin-bottom:14px;background:#fff}}
@@ -366,7 +369,7 @@ def build(prod, c, lesezeit):
 <div class="trust-strip"><div class="container">
 <span class="ts">Unabhängig &amp; herstellerneutral</span>
 <span class="ts">42 Modelle im Sortiment</span>
-<span class="ts">Datenstand September 2026</span>
+<span class="ts">Datenstand Oktober 2026</span>
 </div></div>
 <div class="header-main">
 <a href="/" class="logo" aria-label="smartphone-controller.com – Startseite"><span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span></a>
@@ -446,7 +449,7 @@ def build(prod, c, lesezeit):
             <div class="cta-name">{esc(full_name)}</div>
             <div class="cta-brand">{esc(prod['brand'])}</div>
             <div class="cta-price">{esc(prod['price'] or 'Preis auf Amazon')}</div>
-            <div class="cta-available">✓ Auf Amazon verfügbar</div>
+            <div class="cta-available {stock(prod) or 'nein'}">{STOCK_CTA[stock(prod)]}</div>
             <a class="btn btn-primary" data-asin="{esc(prod['asin'])}" data-product="{esc(slug)}" href="#">Kaufen →</a>
             {cta_extra}
             <a class="btn btn-secondary" href="/produkte/">← Alle Produkte</a>
@@ -464,7 +467,7 @@ def build(prod, c, lesezeit):
     <p class="foot-legal"><a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a> · <a href="/affiliate-hinweis/">Affiliate</a> · <a href="/sitemap.xml">Sitemap</a> · © 2026 YG MEDIA</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=490abf10"></script>
+<script src="/assets/js/main.js?v=74cdf24b"></script>
 </body></html>'''
 
 def build_fertig(prod, c):

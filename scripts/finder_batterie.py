@@ -57,6 +57,21 @@ def _rotiere(h, a, b):
 
 
 # (Name, Datei, Mutation, Erwartung)
+def _preisspanne(h):
+    """Die Controller-Preisspanne, wie die Preisfrage-Seite sie schreibt ("23 und 190").
+
+    Stand als Literal "30 und 190" hier, mit dem guenstigsten Controller von damals.
+    Beim Vollabgleich am 06.10.2026 fiel der MGPX auf ca. 23 €, die Mutation griff nicht
+    mehr, und die Batterie meldete "Mutation hat nichts geaendert" -- ein Fall ohne
+    Beweiswert bei unveraenderter Schlusszeile.
+    """
+    m = re.search(r'zwischen (\d+) und (\d+) €', h)
+    if not m:
+        raise SystemExit('finder_batterie: Preisspanne auf der Preisfrage-Seite nicht '
+                         'gefunden -- der Satz hat seine Form geaendert')
+    return f'{m.group(1)} und {m.group(2)}'
+
+
 FAELLE = [
     ('R18 Script-Tag entfernt', SEITE, lambda h: h.replace(_script_tag(h), ''), 'ROT'),
     ('R18 id=finder umbenannt', SEITE, lambda h: h.replace('id="finder"', 'id="ft"', 1), 'ROT'),
@@ -240,7 +255,8 @@ FAELLE = [
     ('R27 zwei Deklarationen, none zuletzt', CSS,
      lambda c: c + '\n.finder-step.is-active{display:block;display:none}\n', 'ROT'),
     ('R27 Preisfrage-Zahl von Hand geaendert', 'blog/was-kostet-ein-handy-controller/index.html',
-     lambda h: h.replace('30 und 190', '30 und 240'), 'ROT'),
+     lambda h: h.replace(_preisspanne(h),
+                         _preisspanne(h).split(' und ')[0] + ' und 240'), 'ROT'),
     ('R28 :has() am aktiven Schritt', CSS,
      lambda c: c + '\n.finder-step.is-active:has(.x){display:none}\n', 'ROT'),
     ('R28 :has() am Container', CSS,

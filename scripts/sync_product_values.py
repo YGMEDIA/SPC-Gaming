@@ -39,7 +39,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gen_hubs import esc   # gleiche Escaping-Regel wie der Karten-Generator
 from schema_util import typen_von   # eine Definition fuer beide Skripte
 from produktdaten import (detail_label, BTN_DETAIL, btn_ziel_text,
-                          PRODUKT_PRAEFIXE)   # B9, eine Regel und EIN Muster
+                          PRODUKT_PRAEFIXE,   # B9, eine Regel und EIN Muster
+                          STOCK_SCHEMA, STOCK_CTA, stock,   # §A5, dieselbe Tabelle wie die Karte
+                          stock_klasse, stock_label,
+                          preis_zahl as _preis_roh)
 
 # Reichweite EINES Spec-Chips, gemeinsam von Schreiber und Audit benutzt. Getrennte
 # Muster sind am 30.09. zweimal auseinandergelaufen (erst beim Escaping, dann bei der
@@ -149,6 +152,16 @@ def sync_cards(html, products):
             # Preis in der price-row
             neu = re.sub(r'(<span class="price">)[^<]*',
                          lambda mm: mm.group(1) + p['price'], neu)
+            # Verfuegbarkeits-Badge (§A5, 06.10.2026). Es stand als Literal "Verfügbar"
+            # in der Karte, und auf fuenf handgepflegten Seiten blieb es nach dem
+            # Vollabgleich fuer drei nicht kaufbare Produkte stehen (Backbone Pro,
+            # X3 Pro, Toaluea). Die Generatoren lesen `stock` seitdem; die handgepflegten
+            # Karten brauchen diesen Schreiber, sonst ist das Gate daneben Handarbeit.
+            # Geschrieben wird Klasse UND Text zusammen: Eine gruene Klasse an
+            # "Nicht verfügbar" sagt mit der Farbe das Gegenteil des Textes.
+            neu = re.sub(r'<span class="(?:in-stock|out-stock|used-stock)">[^<]*</span>',
+                         f'<span class="{stock_klasse(p)}">{esc(stock_label(p))}</span>',
+                         neu)
             # Claim (B2, 30.09.): Die Karten-Beschreibung folgt products.json. Sieben
             # Produkte hatten gar keinen Claim, ihre Karten zeigten keine Beschreibung.
             if p.get('claim'):
@@ -427,9 +440,11 @@ def audit(products, mit_text=True):
     fehler = []
     hinweise = []
 
+    # Preis-Regel aus produktdaten.py, nicht hier zweitgefuehrt: Die lokale Fassung
+    # kannte die Tausenderpunkt-Regel nicht ("1.299 €" waere 1 gewesen). Audit und
+    # Schreiber sync_schemas() haetten sich damit im Kreis korrigiert.
     def preis_zahl(s):
-        m = re.search(r'(\d+)', s or '')
-        return m.group(1) if m else None
+        return _preis_str({'price': s})
 
     for path in pages():
         rel = os.path.relpath(path, ROOT)
@@ -622,6 +637,122 @@ def audit(products, mit_text=True):
     return fehler, hinweise
 
 
+def _preis_str(p):
+    """Der Preis als Ziffernfolge fuer Schema und Vergleich, oder None."""
+    z = _preis_roh(p)
+    return None if z is None else str(z)
+
+
+def produkt_der_seite(rel, html, products):
+    """Das eine Produkt, zu dem diese Seite gehoert, oder None.
+
+    Dieselbe Aufloesung, die das Schema-Audit oben benutzt: erst das `detail`-Feld aus
+    products.json, dann die data-asin der Seite. Sie steht hier als Funktion, damit
+    Audit und Schreiber nicht mit zwei Fassungen arbeiten -- genau der Fehler, den der
+    Kopf dieser Datei fuer CHIP_REST beschreibt.
+    """
+    rel_dir = os.path.dirname(rel.replace(os.sep, '/'))
+    treffer = [x for x in products
+               if (x.get('detail') or '').strip('/')
+               and (x['detail']).strip('/') == rel_dir]
+    if len(treffer) != 1:
+        asins = set(re.findall(r'data-asin="([^"]+)"', html))
+        treffer = [x for x in products if x['asin'] in asins and x['name'] in html]
+    return treffer[0] if len(treffer) == 1 else None
+
+
+def sync_schemas(rel, html, products):
+    """Preis, Bewertung und Verfuegbarkeit im Product-Schema auf products.json setzen.
+
+    Vorgeschichte: Das Audit oben MELDET diese vier Werte seit dem 30.09.2026, aber
+    niemand hat sie geschrieben. Beim Vollabgleich am 06.10. standen dadurch auf 13
+    handgepflegten Review-Seiten 15 veraltete Schema-Werte -- Preis "45", waehrend die
+    Seite sichtbar 36 € zeigte. Google liest das Schema, nicht den Absatz (§A4).
+
+    Geschrieben wird TEXTUELL, nicht ueber json.dumps: Die Bloecke sind von Hand
+    formatiert, und ein Neuserialisieren wuerde jede Seite unnoetig umschreiben und den
+    Zeichenvergleich der Generator-Gates zerstoeren. Die Schluessel kommen in jedem
+    Block genau einmal vor (gemessen ueber alle 126 Seiten); wo das nicht gilt, wird
+    nichts geschrieben.
+    """
+    p = produkt_der_seite(rel, html, products)
+    if not p:
+        return html, 0
+    soll = {'price': _preis_str(p), 'availability': STOCK_SCHEMA.get(stock(p))}
+    bew = spec(p, 'Bew')
+    mm = re.match(r'([\d,]+)\s*\(([\d.]+)\)', bew) if bew else None
+    if mm:
+        soll['ratingValue'] = mm.group(1).replace(',', '.')
+        soll['reviewCount'] = mm.group(2).replace('.', '')
+    n = 0
+    for schluessel, wert in soll.items():
+        if not wert:
+            continue
+        muster = re.compile(r'("' + schluessel + r'"\s*:\s*")([^"]*)(")')
+        if len(muster.findall(html)) != 1:
+            continue          # mehrfach oder gar nicht: nicht raten
+        def _setz(m, _w=wert):
+            return m.group(1) + _w + m.group(3) if m.group(2) != _w else m.group(0)
+        neu, treffer = muster.subn(_setz, html)
+        if neu != html:
+            n += 1
+            html = neu
+    return html, n
+
+
+def sync_maschinenwerte(html, products):
+    """`data-price` auf den Datenkern setzen.
+
+    Das Attribut steuert die Sortierung "Preis aufsteigend" auf dem Controller-Hub.
+    verify.py prueft es seit dem 30.09.2026 ("Vier der acht Werte waren nach dem
+    Amazon-Abgleich veraltet") -- geschrieben hat es nie jemand. Beim Vollabgleich am
+    06.10. waren 6 von 8 Werten falsch, waehrend die sichtbaren Preise daneben stimmten:
+    ein Sortierfehler, den kein Leser sieht und keine Textpruefung findet.
+
+    Dieselbe Aufloesung wie das Gate: `data-product` im selben Tag.
+    """
+    bySlug = {p['slug']: p for p in products}
+    n = 0
+
+    def _setz(m):
+        nonlocal n
+        dm = re.search(r'data-product="([^"]+)"', m.group(0))
+        p = bySlug.get(dm.group(1)) if dm else None
+        soll = _preis_str(p) if p else None
+        if not soll or soll == m.group(2):
+            return m.group(0)
+        n += 1
+        return m.group(1) + soll + m.group(3)
+
+    html = re.sub(r'(<[^>]*data-price=")(\d+)("[^>]*>)', _setz, html)
+    return html, n
+
+
+def sync_cta_verfuegbar(rel, html, products):
+    """Die Verfuegbarkeits-Zeile der Kaufleiste gegen den Datenkern setzen.
+
+    `gen_pages.py` rendert sie seit dem 06.10.2026 aus `stock`; die 13 handgepflegten
+    Review-Seiten tragen sie als Literal. Ohne diesen Schreiber waere das Gate daneben
+    Handarbeit -- genau der Fehler, den `sync_schemas()` eine Etage tiefer behebt.
+    """
+    p = produkt_der_seite(rel, html, products)
+    if not p:
+        return html, 0
+    soll_k = stock(p) or 'nein'
+    soll_t = STOCK_CTA.get(stock(p), STOCK_CTA['nein'])
+    zeile = f'<div class="cta-available {soll_k}">{esc(soll_t)}</div>'
+    if 'cta-available' in html:
+        neu_html = re.sub(r'<div class="cta-available[^"]*">[^<]*</div>', zeile, html)
+    else:
+        # Drei handgepflegte Review-Seiten haben eine Kaufleiste OHNE diese Zeile
+        # (backbone-pro, gamesir-x3-pro, turtle-beach-atom) -- und das sind ausgerechnet
+        # drei der sechs nicht kaufbaren Produkte. "Sagt nichts" ist hier schlechter als
+        # "sagt die Wahrheit": Die Leiste nennt Preis und Kauf-Knopf, nur die Lage nicht.
+        neu_html = re.sub(r'(<div class="cta-price">[^<]*</div>\n(\s*))',
+                          lambda m: m.group(1) + zeile + '\n' + m.group(2), html, count=1)
+    return (neu_html, 1) if neu_html != html else (html, 0)
+
+
 def sync_ratings(html, mapping):
     """Bekannte alte Bewertungs-Strings global ersetzen (auch in Schemas und Prosa)."""
     hits = 0
@@ -658,7 +789,7 @@ def main():
         for feld, (alt, neu) in felder.items():
             (rating_map if feld == 'rating' else text_map)[alt] = neu
 
-    gesamt = {'karten': 0, 'ratings': 0, 'texte': 0, 'dateien': 0}
+    gesamt = {'karten': 0, 'ratings': 0, 'texte': 0, 'schemas': 0, 'dateien': 0}
     for path in pages():
         with open(path, encoding='utf-8') as f:
             original = f.read()
@@ -680,20 +811,27 @@ def main():
             k += kv
         html, r = sync_ratings(html, rating_map)
         html, t = sync_ratings(html, text_map)
+        html, s = sync_schemas(os.path.relpath(path, ROOT), html, products)
+        html, mw = sync_maschinenwerte(html, products)
+        html, cv = sync_cta_verfuegbar(os.path.relpath(path, ROOT), html, products)
+        s += mw + cv
         if html != original:
             gesamt['karten'] += k
             gesamt['ratings'] += r
             gesamt['texte'] += t
+            gesamt['schemas'] += s
             gesamt['dateien'] += 1
             rel = os.path.relpath(path, ROOT)
-            print(f'  {rel:<52} Karten {k:>2} · Bewertungen {r:>2} · Texte {t:>2}')
+            print(f'  {rel:<52} Karten {k:>2} · Bewertungen {r:>2} · Texte {t:>2} '
+                  f'· Schema {s:>2}')
             if not CHECK:
                 with open(path, 'w', encoding='utf-8') as f:
                     f.write(html)
 
     verb = 'wären geändert' if CHECK else 'geändert'
     print(f"\n{gesamt['dateien']} Datei(en) {verb}: "
-          f"{gesamt['karten']} Karten, {gesamt['ratings']} Bewertungen, {gesamt['texte']} Textstellen")
+          f"{gesamt['karten']} Karten, {gesamt['ratings']} Bewertungen, "
+          f"{gesamt['texte']} Textstellen, {gesamt['schemas']} Schema-Werte")
     return 0
 
 

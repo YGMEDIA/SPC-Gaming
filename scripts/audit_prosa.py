@@ -25,11 +25,17 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(ROOT)
 
 items = json.load(open('assets/data/products.json', encoding='utf-8'))
-bySlug = {p['slug']: p for p in items}
+# str(): Seit verify.py dieses Modul IMPORTIERT statt es als Unterprozess zu starten,
+# ist jeder Abbruch hier ein Abbruch von verify -- und damit faellt alles dahinter aus.
+# Als Unterprozess war ein Traceback nur ein gemeldeter Fehler. Die Robustheitsprobe
+# hat am 06.10.2026 zehn solche Abbrueche gezeigt (slug und price mit falschem Typ).
+bySlug = {str(p.get('slug')): p for p in items if isinstance(p, dict)}
 
 
 def preis(p):
-    m = re.search(r'(\d+)', (p.get('price') or '').replace('.', ''))
+    # str(): `price` als Zahl, Liste oder Objekt liess `.replace` mit AttributeError
+    # abbrechen -- fuenf der zehn Abbrueche vom 06.10.2026.
+    m = re.search(r'(\d+)', str((p or {}).get('price') or '').replace('.', ''))
     return int(m.group(1)) if m else None
 
 
@@ -79,7 +85,7 @@ for p in items:
     # Das ist eine Stufe schlimmer als ein Abbruch: kein Exit-Code, kein Befund, nichts.
     for _n in (str(p.get('name') or ''), f"{p.get('brand') or ''} {p.get('name') or ''}"):
         if len(_n.strip()) > 2:
-            ALIAS.setdefault(_n.strip(), p['slug'])
+            ALIAS.setdefault(_n.strip(), str(p.get('slug')))
 # "Backbone One" ist mehrdeutig (2. Gen und PlayStation Edition) und bleibt deshalb draußen:
 # beide Varianten tragen unterschiedliche Preise, eine Zuordnung über den Kurznamen wäre geraten.
 for mehrdeutig in ('Backbone One', 'Bluetooth Controller (weiß)'):
@@ -240,12 +246,81 @@ def maskiere_urls(text):
     return re.sub(r'https?://[^\s)"\'<>]+', '_', text)
 
 
+class NichtLesbar(Exception):
+    """Eine Quelle, die der Pruefer nicht lesen kann. Wird gemeldet, nie verschluckt."""
+
+
+def maskiere_kommentare(text, datei):
+    """Python-Kommentare laengentreu ausblenden.
+
+    Ein Kommentar beschreibt VERGANGENHEIT, keinen Datenstand. Beim ersten Lauf am
+    06.10.2026 hat dieses Skript zwei historische Kommentare zerstoert:
+
+      gen_brand_sections.py: „Er war als G8 Plus (76 €) verdrahtet, teuerster ist der
+        G8 Galileo (80 €)" wurde zu „(72 €) … (68 €)" -- und damit sinnlos, weil der
+        G8 Plus mit 72 € heute der teuerste ist. Der Satz behauptete danach das
+        Gegenteil seiner eigenen Aussage.
+      gen_bestenliste.py: ein ZITAT einer alten Fehlermeldung („459 statt 153
+        Bewertungen") wurde auf 157 gezogen. Ein korrigiertes Zitat ist kein Zitat.
+
+    Die Prosa in `gen_content.py` steht in String-Literalen und MUSS nachgezogen werden
+    -- maskiert wird deshalb nur der Kommentar, nicht der String. Erkannt wird er mit
+    `tokenize`, nicht per Regex: Ein `#` in einem String ist kein Kommentar, und eine
+    URL in einem Docstring enthaelt reichlich davon.
+
+    Die Regel steht HIER und nicht im Schreiber, weil dieses Audit sie erzwungen hat:
+    Es meldete die historischen Kommentare als veraltete Werte, und genau deshalb hat
+    `preiswelle.py` sie ueberschrieben. Pruefer und Schreiber brauchen dieselbe
+    Maskierung, sonst korrigiert der eine, was der andere verlangt -- derselbe Riss, den
+    `sync_product_values.py` im Kopf fuer CHIP_REST beschreibt.
+
+    **AUF DEM ROHTEXT AUFRUFEN, VOR maskiere_tags().** Die erste Fassung lief danach, und
+    `maskiere_tags()` zerstoert Python-String-Literale (es ersetzt alles zwischen `<` und
+    `>` durch Leerzeichen, und in einem Generator steht reichlich HTML in Strings).
+    `tokenize` scheitert dann mit TokenError, der Except-Zweig hat die GANZE Datei
+    geblankt, und **vier Generatoren fielen lautlos aus dem Pruefumfang** (gen_pages,
+    gen_hubs, gen_bestenliste, gen_brand_sections -- zusammen 124 kB). Der Pruefer hat es
+    mit einem eingeschleusten Preis in gen_hubs.py bewiesen: HEAD meldete ihn, die neue
+    Fassung sagte "0 Abweichungen". Ein Blindfleck, der beim Schliessen eines anderen
+    entstanden ist, und schlimmer als der, den er schliessen sollte.
+
+    Nicht parsebares Python wird deshalb nicht mehr still geblankt, sondern als
+    `NichtLesbar` gemeldet. Ein Pruefer, der eine Datei nicht lesen kann, muss das sagen.
+    """
+    if not datei.endswith('.py'):
+        return text
+    import io
+    import tokenize
+    zeichen = list(text)
+    zeilen_start = [0]
+    for z in text.split('\n')[:-1]:
+        zeilen_start.append(zeilen_start[-1] + len(z) + 1)
+    try:
+        for tok in tokenize.generate_tokens(io.StringIO(text).readline):
+            if tok.type != tokenize.COMMENT:
+                continue
+            von = zeilen_start[tok.start[0] - 1] + tok.start[1]
+            bis = zeilen_start[tok.end[0] - 1] + tok.end[1]
+            for i in range(von, min(bis, len(zeichen))):
+                if zeichen[i] != '\n':
+                    zeichen[i] = ' '
+    except (tokenize.TokenError, IndentationError, SyntaxError) as e:
+        raise NichtLesbar(f'{datei}: Python nicht parsebar ({type(e).__name__}: {e}) — '
+                          f'die Werte darin sind in diesem Lauf NICHT geprueft') from e
+    return ''.join(zeichen)
+
+
 def pruefe():
     befunde = []
     for f in seiten():
         _roh = open(f, encoding='utf-8').read()
         # Attributwerte hinten anhaengen, damit Metas und alt-Texte mitgeprueft werden.
-        _rumpf = maskiere_tags(maskiere_urls(_roh))
+        try:
+            _ohne_kommentar = maskiere_kommentare(_roh, f)
+        except NichtLesbar as _e:
+            befunde.append((f, 1, 'Quelle', str(_e), ''))
+            continue
+        _rumpf = maskiere_tags(maskiere_urls(_ohne_kommentar))
         _grenze = len(_rumpf) + 1
         h = _rumpf + '\n' + maskiere_urls(attribut_text(_roh))
         belegt = []
@@ -294,14 +369,17 @@ def produkte_im_kontext(f, h):
     for p in items:
         d = (p.get('detail') or '').strip()
         if d and (f'href="{d}"' in h or f.startswith(d.lstrip('/'))):
-            slugs.add(p['slug'])
+            slugs.add(str(p.get('slug')))
     for n in NAMEN:
         if n and n in h:
             slugs.add(ALIAS[n])
-    return [bySlug[s] for s in slugs]
+    # Ein Slug, den bySlug nicht kennt, liess hier einen KeyError fliegen (die ALIAS-
+    # Tabelle wird aus Namen gebaut, bySlug aus den rohen slug-Werten). Fuenf weitere
+    # Abbrueche derselben Messung.
+    return [bySlug[s] for s in slugs if s in bySlug]
 
 
-MARKEN = {p['brand'] for p in items}
+MARKEN = {str(p.get('brand')) for p in items if isinstance(p, dict) and p.get('brand')}
 
 # Marken-Summen und gewichtete Marken-Schnitte gehoeren zu keinem einzelnen Produkt,
 # stehen aber voellig zu Recht im Text ("GameSir kommt auf 3.625 Bewertungen"). Sie
@@ -618,7 +696,7 @@ def pruefe_vergleiche():
         for p in items:
             d = (p.get('detail') or '').strip()
             if d and f'href="{d}"' in h:
-                slugs.add(p['slug'])
+                slugs.add(str(p.get('slug')))
         kopf = re.search(r'<tr>\s*<t[hd][^>]*>Merkmal</t[hd]>(.*?)</tr>', h, re.S)
         if kopf:
             for zelle in re.findall(r'<t[hd][^>]*>(.*?)</t[hd]>', kopf.group(1), re.S):

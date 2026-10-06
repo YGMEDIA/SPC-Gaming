@@ -13,8 +13,11 @@ Braucht reportlab. Das System-Python ist per PEP 668 gesperrt, deshalb ein venv:
 Unterstuetzt: H2/H3, Absaetze, Listen, Tabellen, Trennlinien, **fett**, *kursiv*, `code`.
 """
 
+import os
 import re
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
@@ -27,6 +30,21 @@ NAVY = colors.HexColor('#12233f')
 BLUE = colors.HexColor('#1f6feb')
 SOFT = colors.HexColor('#44546a')
 LINE = colors.HexColor('#d6dbe3')
+
+
+# Der Datenstand ist EINE Zahl fuer das ganze Repo (§A5). Hier stand er bis zum
+# 06.10.2026 als zweites Literal und blieb beim Vollabgleich stehen: Das PDF stempelte
+# "Stand 30.09.2026" auf Seiten, die Oktober-Preise trugen.
+#
+# Die erste Korrektur hat den Wert per Regex aus dem QUELLTEXT von verify.py gelesen,
+# mit der Begruendung "verify.py ist ein flaches Skript und wuerde beim Import alle Gates
+# ausfuehren". Das stimmte, war aber schon beim Schreiben falsch: Im selben Schritt ist
+# `scripts/datenstand.py` entstanden, ein Modul OHNE Nebenwirkungen, und verify.py fuehrt
+# den Namen seitdem nur noch als Import. Die Regex hatte danach keinen Treffer mehr, und
+# md_to_pdf.py waere beim naechsten Aufruf mit SystemExit gestorben -- gefunden hat das
+# der Pruefer, nicht ich. Lehre: Wer eine Quelle schafft, liest aus ihr, nicht aus ihrem
+# ersten Benutzer.
+from datenstand import TAG as DATENSTAND_TAG   # noqa: E402
 
 ss = getSampleStyleSheet()
 S = {
@@ -127,7 +145,7 @@ def build(md_path, pdf_path, titel, untertitel):
         canvas.setFillColor(SOFT)
         canvas.setFont('Helvetica', 7.5)
         canvas.drawString(20 * mm, 12 * mm,
-                          'smartphone-controller.com · YG MEDIA · Stand 30.09.2026')
+                          f'smartphone-controller.com · YG MEDIA · Stand {DATENSTAND_TAG}')
         canvas.drawRightString(A4[0] - 20 * mm, 12 * mm, f'Seite {doc.page}')
         canvas.setStrokeColor(LINE)
         canvas.setLineWidth(0.4)

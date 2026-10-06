@@ -5,6 +5,7 @@
     "name": "Bluetooth Controller (weiß)",
     "claim": "Verstellbare Joystick-Höhe, was in dieser Preisklasse selten ist. Für Android und iPhone.",
     "price": "ca. 40 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/51d7ihu9z1L._AC_SL1001_.jpg",
     "detail": "/produkte/shanwan-bt-white/",
     "slug": "shanwan-bt-white",
@@ -18,7 +19,7 @@
       ],
       [
         "Bew.",
-        "4,1 (996)"
+        "4,1 (998)"
       ]
     ],
     "worksOn": [
@@ -42,7 +43,8 @@
     "brand": "Trust",
     "name": "GXT 735G Mylox (Teleskop)",
     "claim": "Hält bis zu 12 Stunden durch und dient nebenbei als Gamepad fürs PS5- und Xbox-Remote-Play.",
-    "price": "40 €",
+    "price": "37 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71Pmo0-ByyL._AC_SL1500_.jpg",
     "detail": "/produkte/trust-gxt-rgb/",
     "slug": "trust-gxt-rgb",
@@ -64,7 +66,7 @@
       ],
       [
         "Bew.",
-        "4,2 (355)"
+        "4,2 (361)"
       ]
     ],
     "worksOn": [
@@ -89,6 +91,7 @@
     "name": "Handy Controller (schwarz)",
     "claim": "Günstiger Einstieg ins Teleskop-Format, mit höhenverstellbarem Joystick und linearem Auslöser.",
     "price": "ca. 40 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/51RjZhyb4OL._SL1001_.jpg",
     "detail": "/produkte/shanwan-teleskop-black/",
     "slug": "shanwan-teleskop-black",
@@ -102,7 +105,7 @@
       ],
       [
         "Bew.",
-        "4,2 (826)"
+        "4,2 (830)"
       ]
     ],
     "worksOn": [
@@ -121,7 +124,8 @@
     "brand": "EasySMX",
     "name": "M15 Controller (Mecha)",
     "claim": "Mechanische Tasten geben spürbares Klicken zurück, die Hall-Sticks driften nicht. Gebaut für Shooter.",
-    "price": "ca. 50 €",
+    "price": "ca. 42 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71lMl0hSizL._SL1500_.jpg",
     "detail": "/produkte/easysmx-m15/",
     "slug": "easysmx-m15",
@@ -134,8 +138,12 @@
         "BT/USB-C"
       ],
       [
+        "Sticks",
+        "Hall-Effect"
+      ],
+      [
         "Bew.",
-        "4,1 (767)"
+        "4,1 (772)"
       ]
     ],
     "worksOn": [
@@ -159,6 +167,7 @@
     "name": "S8 Bluetooth Controller",
     "claim": "Läuft an iPhone, iPad, Android und Switch, wiegt dabei 256 Gramm. Die Hall-Sticks driften nicht.",
     "price": "46 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71yA+vwPpaL._SL1500_.jpg",
     "detail": "/produkte/abxylute-s8/",
     "slug": "abxylute-s8",
@@ -169,6 +178,10 @@
       [
         "Verb.",
         "Bluetooth"
+      ],
+      [
+        "Sticks",
+        "Hall-Effect"
       ],
       [
         "Bew.",
@@ -196,7 +209,8 @@
     "brand": "8BitDo",
     "name": "Ultimate 2C Wired",
     "claim": "Driftfreie Hall-Sticks zum Einstiegspreis. Kabelgebunden, also ohne Funkverzögerung, für Android und Windows.",
-    "price": "30 €",
+    "price": "28 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61lvnaOk4kL._SL1500_.jpg",
     "detail": "/controller/universal/8bitdo-ultimate-2c-review/",
     "slug": "8bitdo-ultimate-2c",
@@ -218,7 +232,7 @@
       ],
       [
         "Bew.",
-        "4,6 (2.188)"
+        "4,6 (2.205)"
       ]
     ],
     "worksOn": [
@@ -236,7 +250,8 @@
     "brand": "GameSir",
     "name": "X5 Lite",
     "claim": "Driftfreie Hall-Sticks im Teleskop-Format, leicht und ohne Kopplung einsatzbereit.",
-    "price": "45 €",
+    "price": "36 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71oJVM3GuOL._SL1500_.jpg",
     "detail": "/controller/universal/gamesir-x5-lite-review/",
     "slug": "gamesir-x5-lite",
@@ -258,7 +273,7 @@
       ],
       [
         "Bew.",
-        "4,2 (1.953)"
+        "4,2 (1.977)"
       ]
     ],
     "worksOn": [
@@ -278,6 +293,7 @@
     "name": "Backbone One (2. Gen)",
     "claim": "Wiegt 138 Gramm und trägt kaum auf. Gebaut fürs Cloud-Gaming unterwegs.",
     "price": "63 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61gf0Hn9VJL._SL1500_.jpg",
     "detail": "/controller/ios/backbone-one-2-review/",
     "slug": "backbone-one-2",
@@ -299,7 +315,7 @@
       ],
       [
         "Bew.",
-        "4,3 (57)"
+        "4,3 (58)"
       ]
     ],
     "worksOn": [
@@ -313,7 +329,8 @@
     "brand": "GameSir",
     "name": "G8 Galileo",
     "claim": "Unser Testsieger: driftfreie Hall-Sticks, Laden während des Spielens und eine Klinkenbuchse fürs Headset.",
-    "price": "80 €",
+    "price": "68 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61FUXjnhfXL._SL1500_.jpg",
     "detail": "/controller/universal/gamesir-g8-galileo-review/",
     "slug": "gamesir-g8-galileo",
@@ -335,7 +352,7 @@
       ],
       [
         "Bew.",
-        "4,2 (706)"
+        "4,2 (705)"
       ]
     ],
     "worksOn": [
@@ -358,8 +375,9 @@
     "asin": "B0F2JFWSJ5",
     "brand": "Razer",
     "name": "Kishi V3",
-    "claim": "Vier Rücktasten und eine App ohne Abo. Der bestbewertete Razer in unserem Sortiment.",
-    "price": "88 €",
+    "claim": "Vier frei belegbare Zusatztasten und eine App ohne Abo. Der bestbewertete Razer in unserem Sortiment.",
+    "price": "78 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/618HoYQQUrL._AC_SL1500_.jpg",
     "detail": "/controller/universal/razer-kishi-v3-review/",
     "slug": "razer-kishi-v3",
@@ -381,7 +399,7 @@
       ],
       [
         "Bew.",
-        "4,4 (153)"
+        "4,4 (157)"
       ]
     ],
     "worksOn": [
@@ -406,6 +424,7 @@
     "name": "M4 Snap-On",
     "claim": "Faltbar, 56 Gramm, hält per Magnet am iPhone. Für Retro-Emulatoren unterwegs gebaut.",
     "price": "50 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71COJG6hnVL._SL1500_.jpg",
     "detail": "/produkte/abxylute-m4-snapon/",
     "slug": "abxylute-m4-snapon",
@@ -419,7 +438,7 @@
       ],
       [
         "Bew.",
-        "4,3 (417)"
+        "4,3 (427)"
       ]
     ],
     "worksOn": [
@@ -440,6 +459,7 @@
     "name": "Ultimate Mobile",
     "claim": "Driftfreie Hall-Sticks und Makro-Tasten per Bluetooth. Auf Android ausgerichtet.",
     "price": "45 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61apnh41faL._SL1500_.jpg",
     "detail": "/produkte/8bitdo-ultimate-mobile/",
     "slug": "8bitdo-ultimate-mobile",
@@ -452,8 +472,12 @@
         "Bluetooth"
       ],
       [
+        "Sticks",
+        "Hall-Effect"
+      ],
+      [
         "Bew.",
-        "4,3 (566)"
+        "4,3 (571)"
       ]
     ],
     "worksOn": [
@@ -473,7 +497,8 @@
     "brand": "GameSir",
     "name": "G8 Plus",
     "claim": "Der einzige GameSir, der kabelgebunden und kabellos kann, und der einzige der Marke mit Switch-Betrieb.",
-    "price": "76 €",
+    "price": "72 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61WGrvXwEWL._SL1500_.jpg",
     "detail": "/controller/universal/gamesir-g8-plus-review/",
     "slug": "gamesir-g8-plus",
@@ -491,7 +516,7 @@
       ],
       [
         "Bew.",
-        "4,1 (557)"
+        "4,1 (564)"
       ]
     ],
     "worksOn": [
@@ -512,6 +537,7 @@
     "name": "Ultimate Mobile (USB-C, VITURE Ed.)",
     "claim": "Für Android und XR-Brillen gebaut, lädt beim Spielen weiter. Kein iOS, kein Bluetooth.",
     "price": "64 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61h4aDqnURL._AC_SL1500_.jpg",
     "detail": "/produkte/viture-8bitdo/",
     "slug": "viture-8bitdo",
@@ -525,7 +551,7 @@
       ],
       [
         "Bew.",
-        "3,9 (254)"
+        "3,9 (253)"
       ]
     ],
     "worksOn": [
@@ -549,6 +575,7 @@
     "name": "ROG Tessen",
     "claim": "Sehr schnelle, taktile Buttons in einem für Shooter optimierten Layout. Ohne Hall-Sticks.",
     "price": "83 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71Pdt30bo3L._AC_SL1500_.jpg",
     "detail": "/controller/android/asus-rog-tessen-review/",
     "slug": "asus-rog-tessen",
@@ -562,7 +589,7 @@
       ],
       [
         "Bew.",
-        "3,9 (135)"
+        "3,9 (134)"
       ]
     ],
     "worksOn": [
@@ -581,7 +608,8 @@
     "brand": "Backbone",
     "name": "Backbone One – PlayStation Edition",
     "claim": "PlayStation-Layout mit Kreis und Dreieck, gebaut fürs PS5-Remote-Play. Passt nur an iPhones bis Generation 14.",
-    "price": "76 €",
+    "price": "75 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71j7Tl+PYhL._SL1500_.jpg",
     "detail": "/controller/ios/backbone-one-ps-review/",
     "slug": "backbone-one-ps",
@@ -613,6 +641,7 @@
     "name": "Backbone Pro",
     "claim": "Lässt sich auch kabellos koppeln und hält 40 Stunden durch. Die vollen App-Funktionen kosten Abo.",
     "price": "190 €",
+    "stock": "nein",
     "img": "https://m.media-amazon.com/images/I/71JsC-tarML._SL1500_.jpg",
     "detail": "/controller/ios/backbone-pro-review/",
     "slug": "backbone-pro",
@@ -646,6 +675,7 @@
     "name": "Controller (metallisch-braun)",
     "claim": "Teleskop-Controller im Metallic-Finish. Per Key-Mapping lassen sich auch Spiele ohne Controller-Support belegen.",
     "price": "ca. 45 €",
+    "stock": "drittanbieter",
     "img": "https://m.media-amazon.com/images/I/51VzphsdqGL._SL1001_.jpg",
     "detail": "/produkte/shanwan-metallic/",
     "slug": "shanwan-metallic",
@@ -659,7 +689,7 @@
       ],
       [
         "Bew.",
-        "4,2 (826)"
+        "4,2 (830)"
       ]
     ],
     "worksOn": [
@@ -684,6 +714,7 @@
     "name": "X2s Bluetooth",
     "claim": "Driftfreie Hall-Sticks per Bluetooth, also auch an älteren iPhones. Der Griff fällt kleiner aus als beim G8.",
     "price": "53 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/51iuRzRtbBL._SL1000_.jpg",
     "detail": "/controller/universal/gamesir-x2s-review/",
     "slug": "gamesir-x2s",
@@ -694,6 +725,10 @@
       [
         "Verb.",
         "Bluetooth"
+      ],
+      [
+        "Sticks",
+        "Hall-Effect"
       ],
       [
         "Bew.",
@@ -717,6 +752,7 @@
     "name": "X3 Pro",
     "claim": "Der einzige Controller bei uns mit eingebauter Peltier-Kühlung: hält das Handy bei langen Sessions kühl. Nur Android.",
     "price": "45 €",
+    "stock": "nein",
     "img": "https://m.media-amazon.com/images/I/71LVpM24TaL._SL1500_.jpg",
     "detail": "/controller/android/gamesir-x3-pro-review/",
     "slug": "gamesir-x3-pro",
@@ -730,7 +766,7 @@
       ],
       [
         "Bew.",
-        "4,0 (306)"
+        "4,0 (308)"
       ]
     ],
     "worksOn": [
@@ -749,6 +785,7 @@
     "name": "Handheld Controller",
     "claim": "Teleskop-Controller mit driftfreien Hall-Sticks und rund sechs Stunden Akku, für Cloud-Gaming-Dienste.",
     "price": "ab 50 €",
+    "stock": "nein",
     "img": "https://m.media-amazon.com/images/I/81Mly0rGFmL._AC_SL1500_.jpg",
     "detail": "/produkte/hellcool-controller/",
     "slug": "hellcool-controller",
@@ -759,6 +796,10 @@
       [
         "Verb.",
         "Bluetooth"
+      ],
+      [
+        "Sticks",
+        "Hall-Effect"
       ],
       [
         "Bew.",
@@ -782,6 +823,7 @@
     "name": "MGP-BT2",
     "claim": "Ein Gamepad für PC, Switch, Handy und PlayStation, mit Halterung bis 7 Zoll.",
     "price": "ca. 30 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71K1ylJgzpL._SL1500_.jpg",
     "detail": "/produkte/marsgaming-mgp-bt2/",
     "slug": "marsgaming-mgp-bt2",
@@ -795,7 +837,7 @@
       ],
       [
         "Bew.",
-        "4,2 (40)"
+        "4,2 (41)"
       ]
     ],
     "worksOn": [
@@ -819,7 +861,8 @@
     "brand": "Mars Gaming",
     "name": "MGPX (Turbo)",
     "claim": "Multiplattform-Gamepad mit Turbo-Funktion und Halterung bis 6,8 Zoll.",
-    "price": "ca. 34 €",
+    "price": "ca. 23 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61YY8sb3-DL._SL1500_.jpg",
     "detail": "/produkte/marsgaming-mgpx/",
     "slug": "marsgaming-mgpx",
@@ -833,7 +876,7 @@
       ],
       [
         "Bew.",
-        "4,1 (430)"
+        "4,1 (433)"
       ]
     ],
     "worksOn": [
@@ -858,6 +901,7 @@
     "name": "MGPXPRO",
     "claim": "Driftfreie Hall-Sticks und Hall-Trigger in einem Multiplattform-Gamepad. Noch auf wenigen Bewertungen.",
     "price": "ca. 36 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71Kzf8sbyEL._SL1500_.jpg",
     "detail": "/produkte/marsgaming-mgpxpro/",
     "slug": "marsgaming-mgpxpro",
@@ -868,6 +912,10 @@
       [
         "Verb.",
         "BT 5.0 / USB-C"
+      ],
+      [
+        "Sticks",
+        "Hall-Effect"
       ],
       [
         "Bew.",
@@ -894,8 +942,9 @@
     "asin": "B0F2JGV9NK",
     "brand": "Razer",
     "name": "Kishi V3 Pro",
-    "claim": "Haptisches Feedback wie bei Konsolen-Controllern, dazu vier programmierbare Rücktasten. Lädt beim Spielen nicht.",
-    "price": "152 €",
+    "claim": "Haptisches Feedback wie bei Konsolen-Controllern, dazu vier frei belegbare Zusatztasten. Lädt beim Spielen nicht.",
+    "price": "124 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71+GwlwjuOL._AC_SL1500_.jpg",
     "detail": "/controller/universal/razer-kishi-v3-pro-review/",
     "slug": "razer-kishi-v3-pro",
@@ -917,7 +966,7 @@
       ],
       [
         "Bew.",
-        "4,2 (151)"
+        "4,2 (152)"
       ]
     ],
     "worksOn": [
@@ -943,6 +992,7 @@
     "name": "Atom",
     "claim": "Teilbar in zwei Hälften, die einzeln in die Tasche passen. Von allen Controllern bei uns am schwächsten bewertet.",
     "price": "45 €",
+    "stock": "gebraucht",
     "img": "https://m.media-amazon.com/images/I/71DDV8CRz3L._SL1500_.jpg",
     "detail": "/controller/android/turtle-beach-atom-review/",
     "slug": "turtle-beach-atom",
@@ -956,7 +1006,7 @@
       ],
       [
         "Bew.",
-        "3,5 (649)"
+        "3,5 (653)"
       ]
     ],
     "worksOn": [
@@ -975,6 +1025,7 @@
     "name": "Kishi Ultra",
     "claim": "Passt auch an ein iPad mini bis 8 Zoll, mit Klinkenbuchse fürs Headset und Laden beim Spielen.",
     "price": "63 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71vamojjeKL._AC_SL1500_.jpg",
     "detail": "/produkte/razer-kishi-ultra/",
     "slug": "razer-kishi-ultra",
@@ -1017,7 +1068,8 @@
     "brand": "Scuf",
     "name": "Nomad",
     "claim": "Wechselbare Stickkappen, zwei Rücktasten und ein eigener Akku. Fürs iPhone gebaut.",
-    "price": "40 €",
+    "price": "75 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61jeqWowRFL._SL1500_.jpg",
     "detail": "/produkte/scuf-nomad/",
     "slug": "scuf-nomad",
@@ -1035,7 +1087,7 @@
       ],
       [
         "Bew.",
-        "3,8 (156)"
+        "3,9 (157)"
       ]
     ],
     "worksOn": [
@@ -1058,6 +1110,7 @@
     "name": "Anti-Schweiß Finger Sleeves",
     "claim": "Silberfaser-Hülsen gegen schwitzige Finger, touchscreen-tauglich. Zehn Stück in fünf Farben.",
     "price": "7 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/81YVt1kmfXL._AC_SL1500_.jpg",
     "detail": "/produkte/wllhyf-sleeves/",
     "slug": "wllhyf-sleeves",
@@ -1075,7 +1128,7 @@
       ],
       [
         "Bew.",
-        "4,2 (86)"
+        "4,2 (89)"
       ]
     ],
     "worksOn": [
@@ -1093,6 +1146,7 @@
     "name": "Fingerschutz Daumenhülsen",
     "claim": "Carbonfaser-Hülsen im 30er-Pack, verstellbar für jede Fingergröße.",
     "price": "7 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/81F1ufTJi3L._AC_SL1500_.jpg",
     "detail": "/produkte/ouligay-sleeves/",
     "slug": "ouligay-sleeves",
@@ -1128,6 +1182,7 @@
     "name": "Gaming Finger Sleeves (10er-Set)",
     "claim": "Unser meistbewertetes Zubehör: atmungsaktive Silberfaser-Hülsen, touchscreen-tauglich.",
     "price": "14 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/91D6F+hPFvL._AC_SL1500_.jpg",
     "detail": "/produkte/risoka-finger-sleeves/",
     "slug": "risoka-finger-sleeves",
@@ -1145,7 +1200,7 @@
       ],
       [
         "Bew.",
-        "4,4 (3.147)"
+        "4,4 (3.167)"
       ]
     ],
     "worksOn": [
@@ -1168,6 +1223,7 @@
     "name": "Gaming Fingerhüllen (40er-Pack)",
     "claim": "40er-Massenpack aus Polyesterfaser. Die Bewertungen fallen durchwachsen aus, eher für Gelegenheitsspieler.",
     "price": "7 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71ED-8DQMML._AC_SL1500_.jpg",
     "detail": "/produkte/rxkfigx-sleeves/",
     "slug": "rxkfigx-sleeves",
@@ -1203,6 +1259,7 @@
     "name": "2-in-1 Handy-Kühler (Peltier)",
     "claim": "Peltier-Kühler wahlweise per Clip oder Magnet. Die Kühlleistung wird gemischt bewertet.",
     "price": "16 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71QdT4dUIjL._AC_SL1500_.jpg",
     "detail": "/produkte/magnet-peltier-cooler/",
     "slug": "magnet-peltier-cooler",
@@ -1224,7 +1281,7 @@
       ],
       [
         "Bew.",
-        "3,6 (165)"
+        "3,6 (166)"
       ]
     ],
     "worksOn": [
@@ -1241,7 +1298,8 @@
     "brand": "Black Shark",
     "name": "FunCooler 6",
     "claim": "Kühlt per Peltier-Element mit 20 Watt, hält magnetisch am Handy. Braucht ein Netzteil, hat keinen Akku.",
-    "price": "32 €",
+    "price": "30 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/71qZ04OnZ-L._AC_SL1500_.jpg",
     "detail": "/produkte/black-shark-funcooler/",
     "slug": "black-shark-funcooler",
@@ -1263,7 +1321,7 @@
       ],
       [
         "Bew.",
-        "4,1 (185)"
+        "4,2 (195)"
       ]
     ],
     "worksOn": [
@@ -1281,6 +1339,7 @@
     "name": "Phone Cooler Chroma",
     "claim": "Kühlt kräftig, ist dabei aber hörbar laut. Die schwächste Bewertung im Kühler-Segment unseres Sortiments.",
     "price": "70 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/718z-leXZdL._AC_SL1500_.jpg",
     "detail": "/produkte/razer-phone-cooler/",
     "slug": "razer-phone-cooler",
@@ -1320,6 +1379,7 @@
     "name": "2x Mobile Gaming Trigger (4 Buttons)",
     "claim": "Zwei Auslöser mit je zwei belegbaren Tasten, mechanisch spürbar. Für PUBG und CoD Mobile.",
     "price": "20 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61vgsEZOweL._AC_SL1500_.jpg",
     "detail": "/produkte/risoka-trigger/",
     "slug": "risoka-trigger",
@@ -1341,7 +1401,7 @@
       ],
       [
         "Bew.",
-        "4,0 (87)"
+        "4,0 (88)"
       ]
     ],
     "worksOn": [
@@ -1364,6 +1424,7 @@
     "name": "4-Auslöser Grip L1R1 L2R2 (grün)",
     "claim": "Vier Auslöser für 6-Finger-Steuerung, die Gummipuffer schonen das Display. Ohne Bluetooth.",
     "price": "17 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61XjzG2nwrL._AC_SL1001_.jpg",
     "detail": "/produkte/ozkak-6finger/",
     "slug": "ozkak-6finger",
@@ -1385,7 +1446,7 @@
       ],
       [
         "Bew.",
-        "3,7 (110)"
+        "3,8 (112)"
       ]
     ],
     "worksOn": [
@@ -1408,6 +1469,7 @@
     "name": "AK77 Controller-Grip (Lüfter + 4 Trigger)",
     "claim": "Vier Trigger, ein Lüfter gegen Überhitzung und eine 4000-mAh-Powerbank in einem Griff.",
     "price": "27 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61LY-tkSPWL._AC_SL1001_.jpg",
     "detail": "/produkte/ozkak-trigger-set/",
     "slug": "ozkak-trigger-set",
@@ -1448,6 +1510,7 @@
     "name": "L1R1 Trigger-Aufsatz",
     "claim": "Zwei Auslöser zum Aufstecken, ohne Kopplung und ohne Akku. Für Handys von 5 bis 9 Millimeter Dicke.",
     "price": "10 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/610UceC+wkL._AC_SL1001_.jpg",
     "detail": "/produkte/ozkak-mini-portable/",
     "slug": "ozkak-mini-portable",
@@ -1469,7 +1532,7 @@
       ],
       [
         "Bew.",
-        "3,8 (328)"
+        "3,9 (330)"
       ]
     ],
     "worksOn": [
@@ -1487,6 +1550,7 @@
     "name": "Mobile Controller 4-Trigger (vergoldete Kontakte)",
     "claim": "Vier Auslöser für 6-Finger-Steuerung mit vergoldeten Kontakten. Ohne Bluetooth, sofort einsatzbereit.",
     "price": "18 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/619xiKhExWL._AC_SL1001_.jpg",
     "detail": "/produkte/ozkak-trigger-l1r1/",
     "slug": "ozkak-trigger-l1r1",
@@ -1527,6 +1591,7 @@
     "name": "Mobile Controller 4-Trigger (Clip mit Polster)",
     "claim": "Vier Auslöser mit vergoldeten Kontakten, gepolstertes Clip-System. Ohne Kopplung nutzbar.",
     "price": "9 €",
+    "stock": "nein",
     "img": "https://m.media-amazon.com/images/I/61hIpRuk+7L._SL1500_.jpg",
     "detail": "/produkte/toaluea-trigger-joystick/",
     "slug": "toaluea-trigger-joystick",
@@ -1566,6 +1631,7 @@
     "name": "Tablet Game Controller Schnellfeuer",
     "claim": "Der einzige Trigger-Grip bei uns für Tablets bis 13 Zoll, mit elektronischem Schnellfeuer.",
     "price": "33 €",
+    "stock": "ja",
     "img": "https://m.media-amazon.com/images/I/61McniyZUhL._SL1001_.jpg",
     "detail": "/produkte/ozkak-trigger-gamepad/",
     "slug": "ozkak-trigger-gamepad",
@@ -1587,7 +1653,7 @@
       ],
       [
         "Bew.",
-        "3,6 (279)"
+        "3,7 (280)"
       ]
     ],
     "worksOn": [

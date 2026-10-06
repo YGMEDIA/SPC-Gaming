@@ -48,6 +48,15 @@
 3. **Eine Schleife über die Datenquelle prüft nicht die Site.** Wer über products.json läuft, sieht nur Produktseiten. Die Hälfte jeder Zusicherung lautet „wo es nicht hingehört, steht es nicht" — und die gilt für alle Seiten. Dafür braucht es einen zweiten Durchgang über `pages`.
 4. **Jede Defektform braucht eine EIGENE Meldung des gemeinten Gates.** Ein Defekt, der nur rot wird, weil der Zeichenvergleich eines Sync-Skripts daneben steht, beweist nichts über das Gate: Fällt der Nachbar weg oder verschiebt sich sein Anker, ist die Zusicherung still weg. Nachmessen heißt: FEHLER-Zeilen nach dem eigenen Paragraphen filtern, nicht nur Exit-Code lesen.
 
+**Ein Gate muss seinen eigenen Ausfall auf dem Kanal melden, den der Aufrufer liest
+[06.10.2026].** verify ruft `audit_prosa.py` als Unterprozess und iterierte nur ueber
+`stdout`. Ein Traceback landet auf `stderr`, stdout bleibt LEER, und die Schleife lief
+null Mal: Das groesste Einzelgate fiel aus, waehrend der Lauf 20 andere Fehler meldete
+und kein Wort darueber verlor. Regel: Bei `returncode != 0` UND leerem stdout ist der
+Ausfall selbst ein Fehler, mit der letzten stderr-Zeile in der Meldung.
+
+**Ein Import in verify.py erbt die Zerbrechlichkeit des Importierten [06.10.2026].** `audit_prosa.py` lief als Unterprozess; ein Traceback darin war ein GEMELDETER Fehler. Sobald verify.py es importiert, wird derselbe Traceback zum Abbruch des ganzen Laufs, und alles dahinter ist ungeprueft. Gemessen: 10 Abbrueche in der Robustheitsprobe, alle aus Lesestellen, die seit Monaten so dastanden. Regel: Jede neue In-Prozess-Abhaengigkeit wird (a) an ihren Lesestellen gehaertet und (b) im aufrufenden Gate-Block in ein try/except gefasst, das den Ausfall MELDET. Und danach laeuft die Robustheitsprobe, nicht nur verify.
+
 ## P-8 · Screenshot-als-Ground-Truth-Pattern
 **Wann:** Jede externe Datenlage (Amazon, GSC, GA4).
 **Form:** Yasin liefert Screenshot/Export → landet konzeptionell in 03-research/raw/ (Ablage der Kernzahlen als datierte Notiz) → Claude leitet Maßnahmen ab und schreibt die INTERPRETATION getrennt von den Rohzahlen. Rohdaten werden nie überschrieben.
@@ -307,8 +316,77 @@
 
 ---
 
+## P-17 · Preiswellen-Pattern [bewiesen 06.10.2026]
+**Wann:** Immer wenn Preise oder Bewertungen in `products.json` geändert werden. Eine Preiswelle ist nicht eine Datenänderung, sondern **sechs** gleichzeitige: Datenkern, Generatoren, Schemas, Maschinenwerte, redaktionelle Prosa und abgeleitete Zahlen. Beim Vollabgleich am 06.10.2026 lagen nach dem Schreiben des Datenkerns noch **1.248 Befunde** an, obwohl der Kern korrekt war.
+
+**Regel: Eine Welle hat sechs Ebenen, und sie werden in dieser Reihenfolge abgearbeitet.** Wer eine überspringt, hinterlässt eine Seite, die sich selbst widerspricht.
+
+1. **Datenkern.** `price`, `Bew.`-Spec, `stock`. Preise auf ganze Euro, vorhandener Präfix (`ca.`/`ab`) bleibt.
+2. **Datenstand.** EINE Zeile in `scripts/datenstand.py`. Alles andere importiert; `assets/js/main.js` trägt den Trust-Strip und wird vom Gate mitgelesen.
+3. **Generatoren.** `gen_pages --regen`, `gen_longtail`, `gen_hubs`, `gen_bestenliste`, `gen_brand_sections`, `gen_preisfrage`. Danach `sync_header`, `sync_footer`, `sync_new_products`.
+4. **Schemas und Maschinenwerte.** `sync_product_values.py` schreibt `offers.price`, `availability`, `ratingValue`, `reviewCount` und `data-price`. Diese Ebene hat am 06.10. **21 falsche Werte** getragen, von denen keiner sichtbar war.
+5. **Prosa.** `scripts/preiswelle.py`. Danach die Generatoren **noch einmal**, weil `gen_content.py` zur Prosa gehört und die /produkte/-Seiten daraus gebaut werden.
+6. **Abgeleitete Zahlen von Hand.** Differenzen, Prozente, Spannen, Schwellen. Siehe unten.
+
+**Pflicht-Mechanismus 1 · Prosa wird zugeordnet, nicht ersetzt.** Ein globales Suchen-und-Ersetzen auf einem Preis ist verboten. Gemessen am 06.10.: **10 der 30 geänderten Werte waren gleichzeitig der AKTUELLE Wert eines anderen Produkts** (der alte Preis des Ultimate 2C ist heute der des MGP-BT2), und `preiswelle.py` hat **159 Fundstellen korrekt abgelehnt**, die ein Replace zerstört hätte. Zugeordnet wird mit drei Regeln, in dieser Reihenfolge:
+- der nächste Produktname **davor** (bis 140 Zeichen) — `audit_prosa.naechstes_produkt()`
+- der nächste Produktname **dahinter** (bis 70 Zeichen) — für „ab 45 € (GameSir X5 Lite)"
+- der **Ort**, wenn in der Nähe gar kein Name steht: die eigene Produktseite, oder in `gen_content.py` der zuletzt geöffnete Slug-Block
+
+Ohne Zuordnung wird **berichtet, nicht geschrieben**. Die Regeln werden aus `audit_prosa.py` IMPORTIERT, nicht nachgebaut — getrennte Muster für Prüfer und Schreiber sind in diesem Repo dreimal auseinandergelaufen.
+
+**Pflicht-Mechanismus 2 · Die Tabelle wird abgeleitet, nicht gepflegt.** `preiswelle.py` liest `git show HEAD:assets/data/products.json` gegen den Arbeitsbaum. Nach dem Commit ist die Tabelle leer und das Werkzeug ein No-Op; es kann nicht gegen eine veraltete Eingabe laufen.
+
+**Pflicht-Mechanismus 3 · Abgeleitete Zahlen nachrechnen.** Differenzen, Prozente, Spannen und Schwellen stehen in KEINEM Produkt und werden daher von keiner Wertprüfung erfasst. Am 06.10. waren es 22 Differenzsätze und eine siebenzeilige Deal-Matrix. Drei Formen, drei Fallen:
+- **Differenz:** „8 € günstiger" bei 10 € Differenz. Repoweit greppen: `\d+ *(€|Euro|Prozent) *(mehr|weniger|günstiger|teurer|billiger|Aufpreis|Ersparnis|Unterschied)`.
+- **Spanne:** „von 45 € (X5 Lite) über 76 € (G8 Plus) bis 80 € (G8 Galileo)" — nach der Welle war der mittlere Wert der höchste, die **Reihenfolge** war gekippt, nicht nur die Zahl. Eine Spanne muss nach jeder Welle neu sortiert werden.
+- **Schwelle:** Die Black-Friday-Matrix nannte ihre Regel selbst („rund 20 Prozent unter dem Regulärpreis") und verfehlte sie um das Fünffache. Wo eine Seite ihre eigene Rechenregel nennt, gehört sie gegatet: die Regel aus der Seite lesen, nicht im Gate zweitführen.
+
+**Pflicht-Mechanismus 4 · Ein steigender Preis kippt Aussagen, nicht nur Zahlen.** Beim Scuf Nomad (40 → 75 €) waren drei Sätze betroffen, die bei 40 € stimmten, darunter ein PRO-Punkt, der nach der Welle das Gegenteil der Wahrheit war („günstiger als die meisten iPhone-Controller" — tatsächlich sind 18 von 23 anderen günstiger). **Für jeden gestiegenen Preis die gesamte Produktseite lesen, nicht nur die Zahlen.** Bei fallenden Preisen ist eine veraltete Zahl peinlich; bei steigenden ist sie eine falsche Kaufempfehlung.
+
+**Verfügbarkeit gehört in den Datenkern, und zwar grob.** `stock` hat vier Werte (`ja` · `nein` · `gebraucht` · `drittanbieter`), nicht Amazons Text. „Nur noch 2 auf Lager" ist morgen falsch; eine Zahl, die täglich verfällt, gehört nicht in einen Datenkern mit Monats-Datenstand. `ja` heißt „neu kaufbar, Knappheitshinweis eingeschlossen". Ein **fehlendes** `stock` ergibt kein „Verfügbar", sondern einen Befund — vorher stand die Aussage 197 Mal als Literal im Markup und war für 6 von 42 Produkten falsch.
+
+**Ein Nachzug erreicht die Prosa, nicht die ATTRIBUTE.** `maskiere_tags()` blankt
+`content="…"`, und der Schreiber hängt den Attributtext nicht an. Meta-Description,
+og:description, twitter:description und `title` bleiben deshalb stehen -- auf der
+Kishi-V3-Seite dreimal „für 88 €", vier Wochen nachdem der Preis 78 € war. Das
+Fliesstext-Audit sieht sie zwar, laesst dort aber jede Summe und Differenz der
+Seitenprodukte zu (124 − 36 = 88). **Nach jeder Welle gehoeren die Attributwerte der
+geaenderten Produkte einzeln gelesen**, und das eigene Gate dafuer verlangt in einem
+Attributwert einen PRODUKTPREIS, keine Rechnung.
+
+**Ein Gate fuer eine Aussage muss ALLE Stellen kennen, die sie treffen.** Das
+Verfuegbarkeits-Gate las Produktkarten und uebersah die Kaufleiste: 33 Seiten, drei davon
+falsch, direkt neben einem Schema, das `OutOfStock` sagte. Beim Bauen zaehlt nicht „faengt
+es den Fall, den ich gerade behebe", sondern „wie viele Stellen behaupten dasselbe".
+Praktisch: Vor dem Gate einmal repoweit nach dem SATZ greppen, nicht nach der Klasse.
+
+**Wer ein Audit baut, baut den Schreiber mit.** Drei Wertklassen wurden am 30.09. gegatet und nie geschrieben (Schema-Preis, Schema-Bewertung, `data-price`); eine Woche später waren 21 Werte falsch. Ein Audit ohne Schreiber verlagert die Arbeit nur, und bei dreistelligen Stückzahlen bleibt sie liegen — **genau das hat den preis-loop zweieinhalb Monate angehalten.**
+
+**Die Korrektur ist der zweite Bau, nicht das Aufräumen [06.10.2026, teuer gelernt].**
+Nach dem ersten Prüflauf waren fünf der acht Blocker der zweiten Runde ERST DURCH die
+Korrekturen entstanden. Die fünf Formen, jede einmal passiert:
+1. **Ersetzung verloren**: Ein Skript mit mehreren Ersetzungen und `assert` dazwischen
+   brach ab, nachdem es die erste im Speicher angewandt hatte, und schrieb die Datei nie.
+   → Jede Ersetzung einzeln schreiben, Treffer zählen, 0 melden statt abzubrechen.
+2. **Am Output statt an der Quelle korrigiert**: Der Satz kam aus einem Generator, mein
+   Edit am HTML war beim nächsten Lauf weg. → Vor jedem Edit fragen, ob die Seite
+   generiert ist.
+3. **Geltungsbereich gestrichen**: Aus „schwächster Wert unter den iPhone-Controllern"
+   wurde beim Umformulieren „schwächster Wert im Sortiment" — und damit falsch. → Beim
+   Umschreiben eines Superlativs seinen Bezugsrahmen MITNEHMEN (§A6-Superlativ-Regel).
+4. **Markup beim Verschieben zerstört**: Eine Karte landete zwischen `</section>` und
+   der nächsten Überschrift, 984 px breit statt 316. → Nach jedem Struktur-Edit im
+   Browser nachsehen, nicht nur verify.
+5. **Sammelkorrektur mit Lücke**: „80 → 68" an vier Stellen, die fünfte übersehen.
+   → Nach der Korrektur denselben grep noch einmal, nicht den nächsten.
+
+**Vorlage:** `scripts/preiswelle.py` (Prosa-Nachzug) · `scripts/datenstand.py` (eine Zeile) · `sync_schemas()` + `sync_maschinenwerte()` in `scripts/sync_product_values.py` · `STOCK_LABEL`/`STOCK_KLASSE`/`STOCK_SCHEMA` in `scripts/produktdaten.py` · BF-Schwellen-Gate in `verify.py` · Beleg: `03-research/raw/amazon/2026-10-06-vollabgleich-42.md` · Gesetze: §A1, §A4, §A5, §A6
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.4 · 2026-10-05*
+*SPC Pattern-Katalog v5.5 · 2026-10-06*

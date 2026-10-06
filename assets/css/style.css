@@ -452,8 +452,23 @@ ul, ol { list-style: none; }
 .price-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
 .price { font-size: 20px; font-weight: 800; color: var(--ink); }
 .price-approx { font-size: 11px; color: var(--ink-dim); }
-.in-stock { font-size: 11.5px; color: var(--good); font-weight: 700; display: inline-flex; align-items: center; gap: 5px; margin-left: auto; }
-.in-stock::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); display: block; }
+.in-stock, .out-stock, .used-stock { font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; margin-left: auto; }
+.in-stock, .out-stock, .used-stock { color: var(--good); }
+.in-stock::before, .out-stock::before, .used-stock::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--good); display: block; }
+/* §A5: Die Verfuegbarkeits-Zeile der Kaufleiste, GLOBAL. Der Kommentar hier behauptete
+   zuerst, die Grundregel stehe in den Seiten-<style>-Bloecken der Review-Seiten -- das
+   galt fuer 4 von 13. Die neun uebrigen haben die Zeile am 06.10.2026 vom Sync bekommen
+   und standen ohne jede Regel da: 16px statt 12px, Gewicht 400 statt 600, linksbuendig
+   und in Textfarbe statt Gruen. Gemessen im Browser, gefunden vom Pruefer. Die Basis
+   steht deshalb hier; die Seiten-Bloecke und der Generator duerfen sie ueberschreiben,
+   tun es aber mit denselben Werten. */
+.cta-available { text-align: center; font-size: 12px; color: var(--good); font-weight: 700; margin-bottom: 14px; }
+.cta-available.nein, .cta-available.gebraucht, .cta-available.drittanbieter { color: var(--ink-dim); }
+/* §A5: Die Farbe sagt dasselbe wie der Text. Ein grauer Punkt an "Nicht verfügbar" waere
+   leiser als die Aussage. Grau statt rot, weil es keine Warnung ist, sondern eine
+   Sortimentslage: Das Produkt ist gut, nur gerade nicht zu haben. */
+.out-stock, .used-stock { color: var(--ink-dim); }
+.out-stock::before, .used-stock::before { background: var(--ink-dim); }
 .pcard-actions { display: flex; gap: 8px; }
 .btn-detail {
   flex: 1;

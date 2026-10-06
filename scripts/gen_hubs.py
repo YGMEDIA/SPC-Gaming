@@ -9,7 +9,7 @@ import json, re, html
 import os
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from produktdaten import detail_label
+from produktdaten import detail_label, stock_klasse, stock_label
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOMAIN = 'https://smartphone-controller.com'
 items = json.load(open(f'{ROOT}/assets/data/products.json'))
@@ -98,7 +98,7 @@ def card_html(p, featured=False):
           {f'<p class="pcard-claim">{esc(p["claim"])}</p>' if p.get('claim') else ''}
           <div class="pcard-specs">{specs}</div>
           <div class="pcard-foot">
-            <div class="price-row"><span class="price">{esc(p.get('price') or '—')}</span><span class="in-stock">Verfügbar</span></div>
+            <div class="price-row"><span class="price">{esc(p.get('price') or '—')}</span><span class="{stock_klasse(p)}">{stock_label(p)}</span></div>
             <div class="pcard-actions">{detail}<a class="btn-amazon" data-asin="{esc(p['asin'])}" data-product="{esc(p['slug'])}" href="#"{img}>Kaufen →</a></div>
           </div>
         </div>
@@ -154,7 +154,7 @@ HUBS = {
    seo_h2='iPhone-Controller kaufen: Darauf kommt es an',
    seo=[ 'Seit dem iPhone 15 setzt Apple auf USB-C — und das hat den Controller-Markt verändert: Clip-Controller wie der <a href="/controller/universal/gamesir-g8-galileo-review/">GameSir G8 Galileo</a> oder der <a href="/controller/ios/backbone-one-2-review/">Backbone One (2. Gen)</a> stecken direkt am Port und spielen praktisch ohne Input-Lag. Für ältere iPhones mit Lightning-Anschluss ist die Auswahl stark eingeschränkt — dort führt der Weg fast nur über Bluetooth-Gamepads oder die Lightning-Version des Backbone One.',
         'Grundsätzlich hast du am iPhone zwei Wege: <strong>USB-C-Clip-Controller</strong> (Handy wird eingespannt, minimale Latenz, ideal für Shooter und kompetitives Spielen) oder <strong>Bluetooth-Gamepads</strong> (flexibler, funktionieren auch am iPad und Apple TV, aber mit spürbar mehr Latenz). Für Apple Arcade, Cloud Gaming über Xbox GamePass oder GeForce NOW und native Titel wie Genshin Impact sind beide Wege gut — für PUBG Mobile und CoD Mobile gelten Sonderregeln, die wir in den FAQ erklären.',
-        'Unsere Testsieger fürs iPhone: Der <a href="/controller/universal/gamesir-g8-galileo-review/">GameSir G8 Galileo</a> (ca. 80 €) mit Hall-Effect-Sticks als Gesamtsieger, der <a href="/controller/ios/backbone-one-2-review/">Backbone One</a> (ca. 63 €) für das beste App-Ökosystem und der <a href="/controller/universal/gamesir-x5-lite-review/">GameSir X5 Lite</a> (ca. 45 €) als Preistipp.'],
+        'Unsere Testsieger fürs iPhone: Der <a href="/controller/universal/gamesir-g8-galileo-review/">GameSir G8 Galileo</a> (ca. 68 €) mit Hall-Effect-Sticks als Gesamtsieger, der <a href="/controller/ios/backbone-one-2-review/">Backbone One</a> (ca. 63 €) für das beste App-Ökosystem und der <a href="/controller/universal/gamesir-x5-lite-review/">GameSir X5 Lite</a> (ca. 36 €) als Preistipp.'],
    faqs=[('Welcher Controller passt zum iPhone 15, 16 und 17?','Alle USB-C-Clip-Controller — z. B. GameSir G8 Galileo, Backbone One (2. Gen) oder Razer Kishi V3 — passen an iPhone 15 und neuer. Dazu funktionieren alle Bluetooth-Controller mit MFi- oder iOS-Unterstützung.'),
          ('Funktionieren Controller mit älteren iPhones (Lightning)?','Nur eingeschränkt: USB-C-Clips passen nicht. Für iPhone 14 und älter brauchst du entweder die Lightning-Version des Backbone One oder ein Bluetooth-Gamepad wie den abxylute S8.'),
          ('Kann ich mit Controller PUBG Mobile oder CoD Mobile auf dem iPhone spielen?','CoD Mobile ja: Controller werden offiziell unterstützt, Controller-Spieler bekommen eigenes Matchmaking. PUBG Mobile nein: Im normalen Matchmaking sind Controller nicht erlaubt. Die legale Alternative dort sind Trigger-Aufsätze, die physisch aufs Display drücken.'),
@@ -168,7 +168,7 @@ HUBS = {
    seo=[ 'Android ist die offenste Plattform fürs Controller-Gaming: Praktisch jedes Bluetooth-Gamepad koppelt sich ohne Umwege, USB-C-Clip-Controller wie der <a href="/controller/universal/gamesir-g8-galileo-review/">GameSir G8 Galileo</a> laufen per Plug-and-Play, und mit Apps wie Mantis lassen sich sogar Spiele ohne native Controller-Unterstützung per Key-Mapping steuern — eine Freiheit, die es auf dem iPhone so nicht gibt.',
         'Die Wahl hängt von deinem Spielstil ab: <strong>USB-C-Clips</strong> (GameSir, Razer Kishi) für minimale Latenz und kompetitives Spielen, <strong>Teleskop-Bluetooth-Controller</strong> (ShanWan, Trust) als günstiger Einstieg ab 30 €, oder <strong>klassische Gamepads</strong> (8BitDo, Mars Gaming) mit Handy-Halterung, wenn du denselben Controller auch am PC oder an der Switch nutzen willst.',
         'Wichtig für Samsung-Nutzer: In Kombination mit Samsung DeX oder dem integrierten Game Booster laufen Controller besonders rund. Und wer Wert auf Langlebigkeit legt, achtet auf Hall-Effect-Sticks (GameSir G8, EasySMX M15, 8BitDo Ultimate Mobile) — sie verhindern den gefürchteten Stick-Drift dauerhaft.'],
-   faqs=[('Welcher Controller ist der beste für Android?','Unser Gesamtsieger ist der GameSir G8 Galileo (ca. 80 €, USB-C, Hall-Effect). Preistipp unter den Clip-Controllern ist der GameSir X5 Lite (ca. 45 €). Wer ein klassisches Gamepad will, greift zum 8BitDo Ultimate Mobile (ca. 45 €).'),
+   faqs=[('Welcher Controller ist der beste für Android?','Unser Gesamtsieger ist der GameSir G8 Galileo (ca. 68 €, USB-C, Hall-Effect). Preistipp unter den Clip-Controllern ist der GameSir X5 Lite (ca. 36 €). Wer ein klassisches Gamepad will, greift zum 8BitDo Ultimate Mobile (ca. 45 €).'),
          ('USB-C oder Bluetooth — was ist besser am Android-Handy?','USB-C hat praktisch keinen Input-Lag und lädt teilweise das Handy durch (Pass-Through). Bluetooth ist flexibler und funktioniert auch am Tablet oder TV — hat aber je nach Modell 20–60 ms mehr Latenz.'),
          ('Warum wird mein Bluetooth-Controller in PUBG Mobile gesperrt?','PUBG Mobile blockiert Controller im normalen Matchmaking aktiv, um Fairness zu wahren — erlaubt sind Trigger-Aufsätze, die physisch aufs Display drücken (siehe unsere Trigger-Kategorie). Anders CoD Mobile: Dort ist der Controller-Support offiziell, mit eigenem Controller-Matchmaking.'),
          ('Funktionieren Android-Controller auch am Smart-TV?','Die meisten Bluetooth-Modelle ja — praktisch für Cloud Gaming am Fernseher über GeForce NOW oder Xbox GamePass. USB-C-Clip-Controller sind dagegen fest ans Handy gebunden.')]),
@@ -183,7 +183,7 @@ HUBS = {
         'Achte beim Kauf auf zwei Dinge: Hall-Effect-Sticks für Langlebigkeit (GameSir G8, Kishi V3 Pro, EasySMX M15) und die Verbindungsart — USB-C-Modelle wie der <a href="/produkte/viture-8bitdo/">VITURE × 8BitDo</a> haben keinen Input-Lag, Bluetooth-Modelle sind flexibler einsetzbar.'],
    faqs=[('Was ist ein Universal-Controller?','Ein Controller, der mehrere Plattformen unterstützt — typischerweise iOS, Android, PC und oft Nintendo Switch. Der Plattform-Modus wird meist per Tastenkombination beim Einschalten gewählt.'),
          ('Funktioniert ein Controller wirklich an iPhone UND Android?','Ja — alle Bluetooth-Controller in dieser Kategorie koppeln sich mit beiden Systemen. Bei USB-C-Clips gilt: iPhone ab Modell 15 (USB-C-Port), Android sowieso.'),
-         ('Welcher Universal-Controller ist der beste?','Als Clip-Controller: der GameSir G8 Galileo (Testsieger, ca. 80 €). Als klassisches Multi-Plattform-Gamepad: der abxylute S8 (ca. 46 €, inkl. Switch-2-Support, 4,3 Sterne).')]),
+         ('Welcher Universal-Controller ist der beste?','Als Clip-Controller: der GameSir G8 Galileo (Testsieger, ca. 68 €). Als klassisches Multi-Plattform-Gamepad: der abxylute S8 (ca. 46 €, inkl. Switch-2-Support, 4,3 Sterne).')]),
 }
 
 # ============================================================

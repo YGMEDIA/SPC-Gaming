@@ -33,6 +33,27 @@
     return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
   }
 
+  // §A5-Verfuegbarkeit. Dieselbe Tabelle wie STOCK_LABEL/STOCK_KLASSE in
+  // scripts/produktdaten.py; der Browser kann kein Python importieren, und verify.py
+  // prueft diese Fassung GEGEN die Python-Fassung, so wie bei LABEL_TEST.
+  // Ein fehlender oder unbekannter Wert ergibt KEIN "Verfügbar" -- genau diese
+  // Behauptung ohne Beleg stand hier bis zum 06.10.2026 fest im Markup.
+  //
+  // INNERHALB der IIFE, aus demselben Grund wie LABEL_TEST: zwei dieser Renderer auf
+  // einer Seite wuerden sich im globalen Scope gegenseitig abschalten.
+  const STOCK_LABEL = {
+    ja: 'Verfügbar', nein: 'Nicht verfügbar',
+    gebraucht: 'Nur gebraucht', drittanbieter: 'Nur Drittanbieter'
+  };
+  const STOCK_KLASSE = {
+    ja: 'in-stock', nein: 'out-stock',
+    gebraucht: 'used-stock', drittanbieter: 'used-stock'
+  };
+  function stockHTML(p) {
+    const k = STOCK_LABEL[p.stock] ? p.stock : '';
+    return `<span class="${STOCK_KLASSE[k] || 'out-stock'}">${esc(STOCK_LABEL[k] || '')}</span>`;
+  }
+
   function cardHTML(p, featured) {
     const specs = (p.specs || []).slice(0, 3).map(s =>
       `<span class="spec-tag"><span class="k">${esc(s[0])}</span> ${esc(s[1])}</span>`).join('');
@@ -51,7 +72,7 @@
           ${p.claim ? `<p class="pcard-claim">${esc(p.claim)}</p>` : ''}
           <div class="pcard-specs">${specs}</div>
           <div class="pcard-foot">
-            <div class="price-row"><span class="price">${esc(p.price || '—')}</span><span class="in-stock">Verfügbar</span></div>
+            <div class="price-row"><span class="price">${esc(p.price || '—')}</span>${stockHTML(p)}</div>
             <div class="pcard-actions">${detail}<a class="btn-amazon" data-asin="${esc(p.asin)}" data-product="${esc(p.slug)}" href="#"${img}>Kaufen →</a></div>
           </div>
         </div>

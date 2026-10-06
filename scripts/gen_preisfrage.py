@@ -34,7 +34,7 @@ from lesezeit import minuten as lesezeit_minuten  # noqa: E402
 
 ZIEL = 'blog/was-kostet-ein-handy-controller/index.html'
 URL = 'https://smartphone-controller.com/blog/was-kostet-ein-handy-controller/'
-DATENSTAND = 'September 2026'
+from datenstand import MONAT as DATENSTAND, ISO as DATENSTAND_ISO   # §A5, nicht hier zweitfuehren
 
 
 def esc(s):
@@ -210,7 +210,7 @@ def baue(lesezeit=4):
     # die Zahl gebaut, gezaehlt und dann mit ihr ausgegeben.
     beschreibung = (
         f'Handy-Controller kosten bei uns {preis(billigster)} bis {preis(teuerster)} €, '
-        f'im Mittel {median} €. Was du in welcher Preisklasse bekommst und wo mehr Geld '
+        f'typisch {median} €. Was du in welcher Preisklasse bekommst und wo mehr Geld '
         f'nichts bringt.')
     voll_titel = f'{titel} | smartphone-controller.com'
 
@@ -222,7 +222,10 @@ def baue(lesezeit=4):
         'publisher': {'@type': 'Organization', 'name': 'smartphone-controller.com',
                       'logo': {'@type': 'ImageObject',
                                'url': 'https://smartphone-controller.com/assets/img/og-default.jpg'}},
-        'datePublished': '2026-10-01', 'dateModified': '2026-10-01',
+        # dateModified folgt dem Datenstand: Diese Seite rechnet ihre Zahlen bei
+        # jedem Preisabgleich neu, also aendert sie sich mit ihm. Als Literal hat sie
+        # am 06.10.2026 "Oktober 2026" gezeigt und dateModified 2026-10-01 gefuehrt.
+        'datePublished': '2026-10-01', 'dateModified': DATENSTAND_ISO,
         'mainEntityOfPage': URL}, ensure_ascii=False)
     bc_schema = json.dumps({
         '@context': 'https://schema.org', '@type': 'BreadcrumbList', 'itemListElement': [
@@ -252,7 +255,7 @@ def baue(lesezeit=4):
   <meta name="twitter:title" content="{esc(voll_titel)}">
   <meta name="twitter:description" content="{esc(beschreibung)}">
   <meta name="twitter:image" content="https://smartphone-controller.com/assets/img/og-default.jpg">
-  <link rel="stylesheet" href="/assets/css/style.css?v=edfc9bc1">
+  <link rel="stylesheet" href="/assets/css/style.css?v=43e618fc">
   <style>
 .pr-tabelle{{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}}
 .pr-tabelle th,.pr-tabelle td{{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}}
@@ -276,7 +279,7 @@ def baue(lesezeit=4):
 <div class="trust-strip"><div class="container">
 <span class="ts">Unabhängig &amp; herstellerneutral</span>
 <span class="ts">42 Modelle im Sortiment</span>
-<span class="ts">Datenstand September 2026</span>
+<span class="ts">Datenstand Oktober 2026</span>
 </div></div>
 <div class="header-main">
 <a href="/" class="logo" aria-label="smartphone-controller.com – Startseite"><span class="logo-text">smartphone-controller<span class="logo-tld">.com</span></span></a>
@@ -358,7 +361,7 @@ def baue(lesezeit=4):
     <p class="foot-legal"><a href="/impressum/">Impressum</a> · <a href="/datenschutz/">Datenschutz</a> · <a href="/affiliate-hinweis/">Affiliate</a> · <a href="/sitemap.xml">Sitemap</a> · © 2026 YG MEDIA</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=490abf10"></script>
+<script src="/assets/js/main.js?v=74cdf24b"></script>
 </body>
 </html>
 '''

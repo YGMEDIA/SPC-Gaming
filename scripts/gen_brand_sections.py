@@ -182,6 +182,22 @@ class Lookup:
         p = self(slug)
         return f'<a href="{p["detail"]}">{p["name"]}</a>'
 
+    def abstand(self, a, b):
+        """Der Preisabstand zweier Produkte als Satzteil, aus products.json gerechnet.
+
+        "kostet inzwischen dasselbe wie der X5 Lite" stand hier als festes Wort und war
+        wahr, solange beide 45 € kosteten. Nach dem Vollabgleich am 06.10.2026 (X3 Pro 45,
+        X5 Lite 36) war es falsch, und zwar in einem Generator, der beide Preise kennt.
+        Eine BEZIEHUNG zwischen zwei Werten gehoert gerechnet, nicht getippt.
+        """
+        pa, pb = self.price(a), self.price(b)
+        if pa is None or pb is None:
+            return f'einen anderen Preis als der {self(b)["name"]}'
+        d = int(pa) - int(pb)
+        if d == 0:
+            return f'dasselbe wie der {self(b)["name"]}'
+        return f'{abs(d)} Euro {"mehr" if d > 0 else "weniger"} als der {self(b)["name"]}'
+
 
 # ---------------------------------------------------------------- Textschicht
 
@@ -214,7 +230,8 @@ def comparison_table(stats_all, current):
 
 def erfahrung_text(s, allst, L):
     # Den teuersten GameSir rechnen statt ihn zu benennen: Er war als G8 Plus (76 €)
-    # verdrahtet, teuerster ist der G8 Galileo (80 €). Und "halb so teure" stand als
+    # verdrahtet, teuerster ist der G8 Galileo (80 €) -- Preisstand 05.10.2026, den
+    # dieser Kommentar als Vorgeschichte festhaelt. Und "halb so teure" stand als
     # festes Wort gegen dynamische Preise - bei 45 zu 76 Euro sind es 59 Prozent.
     _gs = [p for p in L._by_slug.values()
            if p.get('brand') == 'GameSir' and p.get('type') == 'controller']
@@ -265,7 +282,8 @@ def erfahrung_text(s, allst, L):
             f'bei uns und steht bei {L.rating(_gs_teuerster)} Sternen, der '
             f'{L.link("gamesir-x5-lite")} liegt bei {L.rating("gamesir-x5-lite")} und kostet '
             f'{L.price("gamesir-x5-lite")} Euro. Und der '
-            f'{L.link("gamesir-x3-pro")} kostet inzwischen dasselbe wie der X5 Lite, steht aber '
+            f'{L.link("gamesir-x3-pro")} kostet '
+            f'{L.abstand("gamesir-x3-pro", "gamesir-x5-lite")}, steht aber '
             f'nur bei {L.rating("gamesir-x3-pro")}.</p>\n'
             f'<p><strong>Woran es bei den schwächeren Modellen liegt:</strong> Beim '
             f'{L.link("gamesir-x2s")} nennen wir in unserem Test die Verarbeitung als Schwachpunkt, '

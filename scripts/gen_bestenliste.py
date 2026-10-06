@@ -88,7 +88,8 @@ os.chdir(ROOT)
 
 from gen_hubs import esc                      # dieselbe Escaping-Regel wie die Hub-Karten
 from produktdaten import (A6_SCHWELLE, bewertung, detail_label, preis_zahl,
-                          spec_paare, spec_wie,
+                          spec_paare, spec_wie, stock, stock_klasse, stock_label,
+                          STOCK_LABEL,
                           sterne_text, anzahl_text, text as pfeld, liste as pliste)
 
 MARKER = 'BESTEN'
@@ -318,7 +319,8 @@ def ehrlichtext(liste_def, menge, erster):
         # Jede Zahl steht BEI ihrem Produkt. Die erste Fassung sammelte die Namen vorn
         # und die Bewertungszahlen hinten ("A und B kommen beide auf 4,4 (459, 153)") --
         # nicht zuordenbar, und der §A1-Fliesstext-Gate hat es sofort als "Razer Kishi V3:
-        # 459 statt 153 Bewertungen" gemeldet. Die Meldung war richtig.
+        # 459 statt 153 Bewertungen" gemeldet. Die Meldung war richtig. (Zitat vom
+        # 04.10.2026; die 153 sind der damalige Wert, nicht der heutige.)
         #
         # Und: Die Zahlwoerter werden GERECHNET. Die zweite Fassung verzweigte auf
         # `len(spitze) > 1`, formulierte aber fuer genau zwei ("teilen sich zwei",
@@ -337,8 +339,13 @@ def ehrlichtext(liste_def, menge, erster):
         for q in sorted(spitze, key=_platz):
             pl = _platz(q)
             wo = f'Platz {pl}' if pl < 10 ** 6 else 'nicht auf dieser Liste'
+            # Verfuegbarkeit MIT nennen (§A6, 06.10.2026). Der Satz haelt ein Produkt als
+            # bestbewertet hoch; ist es nicht kaufbar, gehoert das in denselben Satz und
+            # nicht nur in die Preiszeile daneben. Auf der iPhone-Liste betraf das den
+            # Backbone Pro, der seit dem Vollabgleich nicht lieferbar ist.
+            lage = '' if stock(q) == 'ja' else f', {STOCK_LABEL.get(stock(q), "").lower()}'
             teile.append(f'{esc(vollname(q))} ({wo}, '
-                         f'{anzahl_text(bewertung(q)[1])} Bewertungen)')
+                         f'{anzahl_text(bewertung(q)[1])} Bewertungen{lage})')
         aufzaehlung = (' und '.join(teile) if n == 2
                        else ', '.join(teile[:-1]) + ' und ' + teile[-1])
         return (f'<p><strong>Die beste Bewertung teilen sich {wort}:</strong> '
@@ -442,7 +449,7 @@ def karte(p, nummer, label, badge_klasse, art_klasse, ebene='h3'):
     <div class="pcard-specs">{chips}</div>
     <div class="pcard-foot">
       <div class="price-row"><span class="price">{esc(pfeld(p, 'price'))}\
-<span class="price-approx">UVP</span></span><span class="in-stock">Verfügbar</span></div>
+<span class="price-approx">UVP</span></span><span class="{stock_klasse(p)}">{stock_label(p)}</span></div>
       <div class="pcard-actions">
         <a href="{esc(detail)}" class="btn-detail">{detail_label(detail)}</a>
         <a class="btn-amazon" data-asin="{esc(pfeld(p, 'asin'))}" \

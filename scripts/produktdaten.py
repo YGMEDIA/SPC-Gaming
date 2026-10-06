@@ -64,6 +64,66 @@ LABEL_TEST = 'Zum Test'
 LABEL_DATENBLATT = 'Zum Kurzcheck'
 
 
+# Verfuegbarkeit. Bis zum 06.10.2026 stand "Verfügbar" 197 Mal als Literal im Markup und
+# kam aus NICHTS: products.json hatte kein solches Feld, kein Gate hat die Aussage
+# geprueft, und fuenf Renderer haben sie unabhaengig voneinander behauptet. Beim
+# Vollabgleich am 06.10. war sie fuer 6 von 42 Produkten nachweislich falsch -- darunter
+# der Backbone Pro, der mit "190 € · Verfügbar" bewarb, waehrend Amazon
+# "Derzeit nicht verfügbar" sagte und die ASIN auf eine andere umleitete.
+#
+# Die vier Werte sind absichtlich grob. Amazons "Nur noch 2 auf Lager" ist morgen falsch;
+# eine Zahl, die taeglich verfaellt, gehoert nicht in einen Datenkern mit Monats-
+# Datenstand. "ja" heisst deshalb: neu bei Amazon kaufbar, Knappheitshinweis eingeschlossen.
+STOCK_LABEL = {
+    'ja': 'Verfügbar',
+    'nein': 'Nicht verfügbar',
+    'gebraucht': 'Nur gebraucht',
+    'drittanbieter': 'Nur Drittanbieter',
+}
+# Die CSS-Klasse traegt die Farbe: gruen nur, wenn es wirklich gruen ist.
+STOCK_KLASSE = {'ja': 'in-stock', 'nein': 'out-stock',
+                'gebraucht': 'used-stock', 'drittanbieter': 'used-stock'}
+# Die Kaufleiste auf jeder Produktseite ("✓ Auf Amazon verfügbar"). Sie stand als
+# Literal im Generator und war damit die 33-fache Ausnahme von der Regel, die das
+# Karten-Badge gerade bekommen hat: Auf drei Seiten behauptete sie Verfuegbarkeit,
+# waehrend das Schema derselben Seite OutOfStock fuehrte. Gefunden hat das der Pruefer,
+# nicht das neue Gate -- weil das Gate nur Karten las.
+STOCK_CTA = {
+    'ja': '✓ Auf Amazon verfügbar',
+    'nein': '✗ Derzeit nicht verfügbar',
+    'gebraucht': '✗ Nur noch gebraucht erhältlich',
+    'drittanbieter': '✗ Nur über Drittanbieter',
+}
+# schema.org/ItemAvailability. "InStock" fuer ein nicht kaufbares Produkt ist nicht nur
+# unwahr, es ist ein Rich-Results-Risiko (§A4): Google liest das Schema.
+STOCK_SCHEMA = {
+    'ja': 'https://schema.org/InStock',
+    'nein': 'https://schema.org/OutOfStock',
+    'gebraucht': 'https://schema.org/OutOfStock',
+    'drittanbieter': 'https://schema.org/LimitedAvailability',
+}
+
+
+def stock(p):
+    """Der Verfuegbarkeits-Schluessel eines Produkts. Fehlt er, ist das KEIN "ja".
+
+    Ein fehlendes Feld auf "verfuegbar" abzubilden waere genau der Fehler, der
+    197 Mal im Markup stand: eine Behauptung ohne Beleg. `formfehler()` meldet jedes
+    Produkt ohne gueltigen Wert, und verify.py ruft das auf.
+    """
+    w = text(p, 'stock').strip()
+    return w if w in STOCK_LABEL else ''
+
+
+def stock_label(p):
+    """Was auf der Karte steht. Leer, wenn der Datenkern nichts belegt."""
+    return STOCK_LABEL.get(stock(p), '')
+
+
+def stock_klasse(p):
+    return STOCK_KLASSE.get(stock(p), 'out-stock')
+
+
 # Das Anker-Muster fuer Detail-Knoepfe. Es stand in verify.py und sync_product_values.py
 # zeichengleich zweimal -- genau der Anti-Pattern, den sync_product_values.py selbst
 # benennt ("Getrennte Muster sind am 30.09. zweimal auseinandergelaufen").
@@ -173,7 +233,7 @@ def anzahl_text(wert):
 # gibt keinen Grund, warum die naechste Lesestelle es besser machen sollte. Deshalb wird
 # die FORM hier zentral gemeldet, und die Lesestellen nehmen str().
 TEXTFELDER = ('slug', 'asin', 'name', 'brand', 'type', 'platform', 'platformLabel',
-              'price', 'detail', 'claim', 'img')
+              'price', 'stock', 'detail', 'claim', 'img')
 LISTENFELDER = ('worksOn', 'specs', 'gallery')
 OBJEKTFELDER = ('video',)
 # Jedes Feld in products.json MUSS in einer der drei Listen stehen. Ohne diese Regel ist
@@ -252,4 +312,15 @@ def formfehler(items):
                 aus.append(f"§A1: {p.get('slug')} hat den Spec-Eintrag {e!r}, der kein "
                            f"Paar aus Schluessel und Wert ist — er wird von allen "
                            f"Spec-Gates uebersprungen")
+        # Verfuegbarkeit ist Pflicht, nicht optional. Ohne diese Zeile faellt ein Produkt
+        # ohne `stock` auf das leere Label zurueck, die Karte zeigt gar keinen Hinweis,
+        # und das bleibt unbemerkt -- derselbe stille Ausfall, den `spec_paare()` oben
+        # beschreibt. Ein fehlender Beleg muss laut werden, nicht leer.
+        if 'stock' not in p:
+            aus.append(f"§A5: {p.get('slug')} hat kein Feld \"stock\" — die "
+                       f"Verfuegbarkeit auf der Karte waere dann wieder eine Behauptung "
+                       f"ohne Beleg. Erlaubt: {', '.join(sorted(STOCK_LABEL))}")
+        elif not stock(p):
+            aus.append(f"§A5: {p.get('slug')} fuehrt stock={p.get('stock')!r}, erlaubt "
+                       f"sind nur {', '.join(sorted(STOCK_LABEL))}")
     return aus

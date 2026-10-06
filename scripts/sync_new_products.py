@@ -4,7 +4,7 @@
 Warum ein eigenes Script: Es fasst ausschließlich Karten, Zähler und ItemList-Schemas
 an und überspringt Produkte, deren Karte schon im HTML steht.
 
-Stand 01.10.2026: Die frühere Begründung, gen_hubs.py sei nicht idempotent, stimmt
+Nachtrag 01.10.2026: Die frühere Begründung, gen_hubs.py sei nicht idempotent, stimmt
 nicht mehr. Sie war bis zum 30.09. richtig (SEO-Text und alle drei Schemas wurden bei
 jedem Lauf erneut eingefügt), ist seit der Marker-Idempotenz aber überholt — zwei
 Läufe liefern denselben Hash. Ein Kommentar, der eine behobene Schwäche weiter
