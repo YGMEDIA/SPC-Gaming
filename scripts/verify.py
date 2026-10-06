@@ -2746,16 +2746,24 @@ for _f in _zu_pruefen:
                 f'products.json fuehrt {_CTRL_N}')
 # Die TMR-Aussage derselben Sektion: Sie nennt EIN Modell, und das muss das einzige mit
 # TMR sein. Steht TMR morgen bei zweien, ist der Satz still falsch.
+# Die Aufzaehlung muss VOLLSTAENDIG sein und die Verbform zur Anzahl passen. Die erste
+# Fassung verlangte genau einen TMR-Controller und haette beim zweiten nur gemeldet,
+# dass es zwei gibt -- richtig, aber danach waere der korrigierte Satz ("X und Y nutzen
+# TMR") durch das Muster gefallen und ungeprueft gewesen. Gemessen am 06.10., als der
+# Kishi V3 Pro seinen belegten TMR-Spec bekam.
 for _f in _zu_pruefen:
     _h5 = open(_f, encoding='utf-8').read()
-    for _m in re.finditer(r'Der ([A-ZÄÖÜ][\w .-]{2,40}?) nutzt TMR', _h5):
-        _name5 = _m.group(1).strip()
-        _treffer = [_p for _p in _TMR_LISTE if _pfeld(_p, 'name') in _name5
-                    or _name5.endswith(_pfeld(_p, 'name'))]
-        if len(_TMR_LISTE) != 1 or not _treffer:
-            err(f'§A5: {_f} sagt "Der {_name5} nutzt TMR", der Datenkern fuehrt '
-                f'{len(_TMR_LISTE)} Controller mit TMR '
-                f'({", ".join(_pfeld(_p, "slug") for _p in _TMR_LISTE) or "keinen"})')
+    for _m in re.finditer(r'(?:Der|Die)\s+(.{2,70}?)\s+(nutzt|nutzen)\s+TMR', _h5):
+        _satz5, _verb5 = _m.group(1), _m.group(2)
+        _fehlt = [_pfeld(_p, 'name') for _p in _TMR_LISTE
+                  if _pfeld(_p, 'name') not in _satz5]
+        if _fehlt:
+            err(f'§A5: {_f} sagt "{_m.group(0)[:70]}", nennt aber nicht alle Controller '
+                f'mit TMR im Datenkern — es fehlen: {", ".join(_fehlt)}')
+        _soll_verb = 'nutzt' if len(_TMR_LISTE) == 1 else 'nutzen'
+        if _verb5 != _soll_verb:
+            err(f'§A5: {_f} schreibt "{_verb5} TMR", der Datenkern fuehrt '
+                f'{len(_TMR_LISTE)} Controller mit TMR — richtig waere "{_soll_verb}"')
 
 # Datenstand: EINE Zahl fuer das ganze Repo. Vor dieser Invariante standen fuenf
 # verschiedene Angaben gleichzeitig live (Juni, Juli, August, September, 30.09.), und
