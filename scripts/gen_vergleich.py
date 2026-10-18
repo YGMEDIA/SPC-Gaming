@@ -972,6 +972,24 @@ def main():
                                f"{' oder '.join(eigner)} gehört — keines der beiden "
                                f"Produkte dieses Duells")
 
+        # Exklusivaussagen brauchen ihren Geltungsbereich IM SATZ. Dieser Fehlertyp
+        # ist in diesem Paket dreimal aufgetreten: "der einzige Controller, der sich
+        # kabellos koppeln laesst" (17 von 42 koennen es), "der einzige der Marke mit
+        # Switch-Betrieb" (am Listing nicht auffindbar) und "der einzige GameSir, der
+        # kabelgebunden und kabellos kann" ohne "im Sortiment" -- widerlegt vom eigenen
+        # T4 Pro, der laut seiner Produktseite beides kann. §A6 verlangt den Bereich im
+        # Satz; die Invariante in verify.py kann eine unqualifizierte Form nicht sehen,
+        # weil sie nur gegen products.json rechnet.
+        for m in re.finditer(r'(?:der|die|das) einzige[rs]?\s+(\w[\w-]*)', h):
+            satz = h[m.start():m.start() + 170]
+            # Zulaessige Bereiche: das Sortiment, eine Zahl, oder "der beiden" --
+            # ein Duell hat genau zwei Teilnehmer, das ist eine Grenze.
+            if not re.search(r'(?:in unserem |im )Sortiment|von \d+|unter den|der beiden|von beiden|dieser beiden', satz):
+                befunde.append(f"{v['datei']}: „{m.group(0)}“ nennt keinen "
+                               f"Geltungsbereich — eine Exklusivaussage braucht „im "
+                               f"Sortiment“, eine Zahl oder eine andere Grenze im Satz "
+                               f"(§A6-Superlativ-Regel)")
+
         for feld in ('lead', 'kurzurteil'):
             if feld in v and v[feld] not in h:
                 befunde.append(f"{v['datei']}: das Feld {feld} der Definition steht so "
