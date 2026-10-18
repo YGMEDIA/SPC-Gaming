@@ -509,6 +509,24 @@ if os.path.exists('scripts/gen_bestenliste.py'):
 else:
     err('scripts/gen_bestenliste.py fehlt — die vier Bestenlisten sind dann ungegatet')
 
+# Massnahme 9: Die fuenf Direktvergleiche waren die ACHTE Renderstelle fuer Produktdaten
+# ohne Generator. Gemessen am 06.10.2026: 103 bis 428 Woerter (drei davon Thin Pages nach
+# demselben Massstab, den B6 an die Bestenlisten angelegt hat), die Zeilen-Labels liefen
+# auseinander, und **die Amazon-Bewertung stand auf zwei von fuenf Seiten** -- auf einer
+# Vergleichsseite fehlte also das Signal, nach dem jemand entscheidet. Verfuegbarkeit
+# stand auf keiner, obwohl der Backbone Pro in einem der Duelle steht und nicht kaufbar
+# ist. Jetzt kommen Tabelle, Siegerbox und Gegenrede aus products.json; redaktionell
+# bleiben Paarung, Sieger und Urteil.
+if os.path.exists('scripts/gen_vergleich.py'):
+    _rv = _gate('gen_vergleich.py', '--check')
+    if _rv.returncode != 0:
+        _zv = (_rv.stdout + _rv.stderr).strip().splitlines()
+        err(f"§A1: scripts/gen_vergleich.py --check schlaegt fehl — ein Direktvergleich "
+            f"weicht von dem ab, was aus products.json folgt. Fix: "
+            f"'python3 scripts/gen_vergleich.py'. {_zv[-1][:160] if _zv else ''}")
+else:
+    err('scripts/gen_vergleich.py fehlt — die sieben Direktvergleiche sind dann ungegatet')
+
 # Ein "Mehr erfahren" einer Produktkarte darf nicht auf die eigene Seite zeigen. Gefunden
 # beim Umbau auf die Karten-Regel: Auf /zubehoer/handy-kuehler/ zeigten ZWEI von drei
 # Karten dorthin statt auf die Produktseite. Die beiden Kuehler hingen damit an keinem

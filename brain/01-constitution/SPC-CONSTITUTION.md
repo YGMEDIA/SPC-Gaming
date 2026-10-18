@@ -25,6 +25,41 @@ aggregateRating immer `bestRating: "5"`, `reviewCount` > 1, jeder Schema-Wert (P
 Amazon blockt jeden programmatischen Zugriff (web_fetch 403, CDN-curl 403). Quelle für Preise/Ratings/Verfügbarkeit sind ausschließlich Yasins Screenshots; Bild-URLs kommen per Rechtsklick → Grafikadresse. Jede Datenänderung trägt ihr Screenshot-Datum in STATUS. Nie verfügbare Produkte werden entfernt, nicht schöngeredet (Historie: iPega, Mocute, RedMagic).
 **Zweite zulässige Quelle [Yasins Anweisung 30.09. und 06.10.2026]:** Claude liest die Produktseiten selbst im Browser („geh selber mit chrome auf amazon und mach alles selber"). Es gilt derselbe Maßstab wie für Screenshots: jede Angabe als wörtliches Zitat mit ASIN in einer dateierten Beleg-Datei unter `03-research/raw/amazon/`, und bei Widersprüchen entscheiden TITEL und FEATURE-BULLETS, nicht Fremdempfehlungen im selben DOM. Zusätzlich gelesen werden `#ASIN` und `canonical` — so ist am 06.10. aufgefallen, dass unser Backbone-Pro-Link auf eine andere ASIN umleitet.
 **Verfügbarkeit ist ein Datenfeld, keine Formulierung [bewiesen 06.10.2026]:** Sie steht als `stock` in products.json mit genau vier Werten (`ja` · `nein` · `gebraucht` · `drittanbieter`) und wird von dort in Karte, CSS-Klasse und `offers.availability` gerendert. Ein fehlendes oder unbekanntes `stock` ergibt KEIN „Verfügbar", sondern einen Fehler. Vorher stand die Aussage 197 Mal als Literal im Markup und war für 6 von 42 Produkten nachweislich falsch, darunter das teuerste Gerät. Absichtlich grob: Amazons „Nur noch 2 auf Lager" verfällt täglich und gehört nicht in einen Datenkern mit Monats-Datenstand. **Dass ein nicht verfügbares Produkt im Sortiment bleibt, ist eine Entscheidung Yasins** — die Seite muss nur die Wahrheit sagen.
+**Ein Beleg beweist Anwesenheit eines Textes, nicht Zustimmung [bewiesen 06.10.2026].**
+Wer eine Produktaussage maschinell belegt, prüft vier Dinge, nicht eines: (1) die Quelle
+gehört dem Produkt, über das die Aussage geht, nicht einem Nachbarprodukt auf derselben
+Seite; (2) der Belegtext trägt die **Zahl**, die die Aussage nennt, nicht nur den Feldnamen
+(`"Gew."` hielt auch bei einem falschen Gewicht); (3) die **Umgebung** des Treffers stimmt
+mit der Richtung der Aussage überein — ein Häkchen, belegt mit einer Zeile aus einem
+Schwächen-Block, belegt das Gegenteil; (4) eine Lücke im Datenkern ist **kein** Beleg für
+Abwesenheit, sie heißt „keine Angabe". Belegt durch sieben Fälle an einem Tag, darunter
+„RGB ✓ Chroma", belegt mit „✗ Chroma-RGB ist Geschmackssache und für das Spielgefühl ohne
+Nutzen" von der eigenen Produktseite. **Und die Gegenrichtung zählt mit:** Eine belegte
+Zahl zu streichen, weil man ihren Beleg nicht gefunden hat, ist derselbe Fehler wie eine zu
+erfinden — „2 Rücktasten + 2 Bumper" auf „2 Rücktasten" verkürzt, während 14 Seiten und
+zwei FAQ-Stellen der betreffenden Testseite von vier sprachen.
+**Eine Gegenprobe, die nicht ihre eigene Trefferquote misst, ist keine [bewiesen 06.10.2026].**
+Ein Gate, das eine Zahl gegen „irgendwo im Repo gedeckt" prüft, muss ausweisen, **wie groß
+der Deckungsraum ist**. Beispiel aus diesem Tag: Eine Messwert-Prüfung erlaubte alle
+Differenzen und Prozentverhältnisse aller Zahlen aus Tabelle und JSON-Dump beider Produkte
+(inklusive ASINs und Bild-URLs) und deckte damit **96 bis 100 Prozent aller Zahlen von 1 bis
+2000** ab. „9000 mAh", „999 Euro", „230 g" und „40 Stunden" liefen durch. Die Regel sah
+streng aus und war ein Freibrief.
+
+Daraus drei Vorschriften:
+1. **Den Deckungsraum zählen, nicht schätzen.** Wer eine Ableitung erlaubt, misst, welcher
+   Anteil eines plausiblen Wertebereichs dadurch zulässig wird. 0,5 Prozent ist eine
+   Prüfung, 96 Prozent ist keine.
+2. **Die Rot-Probe zählt Befunde, nicht Exitcodes.** In `--check` ist der Exitcode schon 1,
+   wenn sich der generierte Block ändert. Wer ihn als Rot-Signal liest, bestätigt jede
+   Prüfung, auch eine abgeschaltete — und genau das ist passiert, zweimal im selben Paket.
+3. **Teilstring ist nie Deckung.** `zahl in text` galt „40" durch `a40cb261` und „1" durch
+   `eu-west-1-prod` als gedeckt; `\b` allein reicht nicht, weil „1" in „4,1" eine Wortgrenze
+   hat. Gebraucht wird ein eigenständiges Token: weder Wortzeichen noch Dezimalnachbarn.
+   Derselbe Präfix-Fehler ist an einem Tag in vier verschiedenen Prüfungen aufgetreten
+   (`'razer-kishi-v3' in 'razer-kishi-v3-pro-review'`, `'38' in '138 g'`, `'Preis' in
+   'Preis-Leistung'`, `'40' in 'a40cb261'`). **Wo eine Identität gemeint ist, gehört ein
+   Gleichheitszeichen hin.**
 
 ### §A6 · Ehrlichkeit ist der Burggraben [bewiesen]
 Jedes Review ≥2 echte Cons. Produkte unter ~3,8 Sternen bekommen explizite Warnung oder "keine Kaufempfehlung" (Stand 06.10.2026, nachgerechnet nach dem Vollabgleich: **5 Produkte liegen darunter** — turtle-beach-atom 3,5 als einziger Controller, dazu razer-phone-cooler 3,3, rxkfigx-sleeves 3,6, magnet-peltier-cooler 3,6, ozkak-trigger-gamepad 3,7. **Genau AUF der Schwelle liegt ozkak-6finger mit 3,8** und ist damit nicht mehr darunter: Seine Bewertung ist von 3,7 gestiegen, und der Text, der von ihm abriet, musste nachgezogen werden — das Gate hat es gemeldet. Diese Aufzählung ist beim zweiten Mal in Folge veraltet gewesen (02.10. nannte 6 Produkte und den MGPXPRO mit 3,3, der bei 4,3 liegt). Wer sie liest, prueft sie gegen products.json; maßgeblich ist `A6_SCHWELLE` in `scripts/produktdaten.py`, nicht diese Liste). Wir listen sie transparent und empfehlen die Alternative — das ist Positionierung, kein Bug.
@@ -100,6 +135,8 @@ Impressum/Datenschutz sind fachlich solide aufgebaut, die juristische Prüfung s
 ## Änderungslog
 | Datum | Änderung |
 |---|---|
+| 2026-10-06 | v1.6 — §A5 um **drei Vorschriften für Gegenproben** ergänzt (Deckungsraum zählen statt schätzen · Rot-Proben zählen Befunde, nicht Exitcodes · Teilstring ist nie Deckung). Anlass: eine Messwert-Prüfung, die 96 bis 100 Prozent aller Zahlen von 1 bis 2000 erlaubte und deren eigene Rot/Grün-Probe sie trotzdem als wirksam auswies, weil sie den Exitcode las. |
+| 2026-10-06 | v1.5 — §A5 um die **vier Prüfungen an einem Beleg** ergänzt (Produktzugehörigkeit, Zahl statt Feldname, Umgebung des Treffers, Lücke ≠ Abwesenheit) plus die Gegenrichtung (eine belegte Zahl zu streichen ist derselbe Fehler wie eine zu erfinden). Anlass: sieben Fälle an einem Tag beim Bau der Vergleichsseiten, darunter ein Häkchen, das mit einer Zeile aus dem Schwächen-Block derselben Produktseite belegt war. |
 | 2026-10-06 | v1.4 — §A5 um die **Hall-Effect-Belege** ergänzt: sechs Controller tragen den Spec jetzt mit Zitat vom Listing (8BitDo Ultimate Mobile, abxylute S8, EasySMX M15, GameSir X2s, HELLCOOL, Mars Gaming MGPXPRO); der ASUS ROG Tessen bleibt ohne, sein Claim sagt selbst „Ohne Hall-Sticks". Damit sind es **elf von 28** Controllern, vorher behaupteten zehn Claims Hall bei fünf Specs. |
 | 2026-10-06 | v1.3 — §A6-Schwellenliste nachgezogen (5 statt 6 Produkte unter 3,8; ozkak-6finger liegt jetzt genau auf der Schwelle). §A5 um zwei Punkte ergänzt (Vollabgleich 06.10.): **eigene Browser-Lesung als zweite zulässige Quelle** (Yasins Anweisung, mit Beleg-Pflicht wie bei Screenshots, plus `#ASIN`/`canonical` gegen ASIN-Wechsel) und **Verfügbarkeit als Datenfeld `stock`** statt als Formulierung (vier Werte, von Karte, CSS-Klasse und `offers.availability` gelesen; fehlender Wert = Fehler, nicht „Verfügbar"). |
 | 2026-07-18 | v1.0 — Constitution aus Projekthistorie extrahiert; alle A/B/C-Gesetze durch Sessions bewiesen oder als Befund markiert. |

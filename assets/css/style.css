@@ -1317,3 +1317,8 @@ main .container[style*="760px"] a.btn, main .container[style*="760px"] a.btn-pri
 .kompat-werte{font-size:15px;font-weight:700;color:var(--ink);line-height:1.5}
 .kompat-hinweis{font-size:13px;color:var(--ink-soft);line-height:1.6;margin:8px 0 0}
 @media(max-width:520px){.kompat-label{min-width:100%}}
+
+/* Kauf-Knopf-Paar in der winner-box der Vergleichsseiten */
+.cta-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+/* Zweite Knopfreihe der Vergleichsseiten (Test-Links) */
+.cta-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}

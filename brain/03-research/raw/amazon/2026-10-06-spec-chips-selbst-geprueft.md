@@ -56,3 +56,23 @@ die Spec-Chips, nur 234-fach.
 (`DATENSTAND_MONAT` in verify.py, heute „September 2026"). Würde ich sieben Preise auf
 Oktober ziehen, wären die anderen 35 falsch ausgewiesen. Entweder Vollabgleich über alle
 42 Produkte oder keiner — das ist der preis-loop, nicht dieser Pass.
+
+---
+
+## Nachtrag 06.10.2026: zwei Lesungen aus dem Vergleichsseiten-Paket
+
+Diese zwei Angaben habe ich im selben Browser-Durchgang gelesen; sie standen bisher nur als
+Prosa in STATUS und Protokoll und nicht hier. §A5 verlangt den Beleg an dieser Stelle, und
+auf beiden ruhen Aussagen, die live sind.
+
+| ASIN | Produkt | gelesen | woraus folgt |
+|---|---|---|---|
+| `B0FYQ1SHHS` | GameSir G8 Plus | Die Produktseite sagt, das Gerät **„unterstützt das Durchladen"**. | Pass-Through ist für den G8 Plus **belegt**. Die Tabellenzeile auf `vergleich/g8-galileo-vs-g8-plus/` steht deshalb auf „✓ Ja" für beide G8, und die eigene Testseite hatte recht. Vorher stand dort „✗ Nein" — der erste Blocker des Pakets. |
+| `B0FYQ1SHHS` | GameSir G8 Plus | Volltextsuche nach „3,5", „Klinke", „Kopfhörer" und „Audio": **kein Treffer**. | Zur Klinkenbuchse sagt die Produktseite **nichts**. Deshalb steht in der Tabelle „keine Angabe" und auf `vergleich/g8-galileo-vs-g8-plus/` der Satz „Ob er eine Klinkenbuchse hat, gibt GameSir auf der Produktseite nicht an". Die Testseite behauptete vorher gleichzeitig „3,5-mm-Audio" (Urteilskasten) und „Kein 3,5-mm-Anschluss" (Nachteile); **beides** ist entfernt, weil keines belegt ist. |
+
+**Warum das hier steht und nicht nur im Protokoll:** Ein Prüflauf hat angemerkt, dass genau
+diese zwei Sätze Hersteller-Schweigen behaupten und die Spur dafür fehlte. Eine Aussage über
+das, was ein Hersteller **nicht** sagt, ist genauso belegpflichtig wie eine über das, was er
+sagt — nur ist sie schwerer zu belegen, weil ein Negativbefund kein Zitat hat. Was ihn
+belegt, ist die protokollierte Suche: welche Begriffe, auf welcher ASIN, mit welchem
+Ergebnis.

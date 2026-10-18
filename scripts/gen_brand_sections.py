@@ -375,7 +375,7 @@ def plattform_text(s, L):
             'braucht es dafür ein iPhone 15 oder neuer.</li>\n'
             '  <li><strong>USB-C und Bluetooth:</strong> der '
             '<a href="/controller/universal/gamesir-g8-plus-review/">G8 Plus</a> ist das einzige Modell, '
-            'das beides beherrscht, und das einzige mit Switch-Betrieb. Die Bluetooth-Verbindung '
+            'das beides beherrscht. Die Bluetooth-Verbindung '
             'kostet messbar Latenz, am Handy steckst du ihn besser an.</li>\n'
             '  <li><strong>Nur Bluetooth:</strong> der '
             '<a href="/controller/universal/gamesir-x2s-review/">X2s</a>. Funktioniert unabhängig '

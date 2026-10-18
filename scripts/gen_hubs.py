@@ -237,6 +237,17 @@ def _longtail_block(s):
 
 
 if __name__ == '__main__':
+    # `--check` gibt es hier NICHT, und schweigend zu schreiben waere die
+    # schlechteste Antwort darauf: Ein Pruefer, der das Flag fuer lesend haelt,
+    # veraendert damit den Arbeitsbaum, den er gerade prueft (am 06.10.2026 genau so
+    # passiert). Also ablehnen. Die Wache steht INNERHALB von __main__, denn beim
+    # Import aus einem Skript, das selbst mit --check laeuft, traegt sys.argv das
+    # Flag ebenfalls -- die erste Fassung hat damit drei echte Gates abgeschossen.
+    if '--check' in sys.argv:
+        print(f"{os.path.basename(__file__)} kennt kein --check und wuerde "
+              f"SCHREIBEN. Abgebrochen. Fuer einen lesenden Abgleich nimm "
+              f"scripts/idempotenzprobe.py.", file=sys.stderr)
+        sys.exit(2)
     for path, cfg in HUBS.items():
         f = f'{ROOT}/{path}'
         s = open(f, encoding='utf-8').read()

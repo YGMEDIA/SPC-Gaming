@@ -114,7 +114,7 @@ def build(item, lesezeit):
   <meta name="twitter:title" content="{esc(full_name)} — Datenblatt & Alternativen">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{og_img}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=43e618fc">
+  <link rel="stylesheet" href="/assets/css/style.css?v=feb620c6">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}
@@ -263,6 +263,17 @@ def generierte_seiten():
 
 
 if __name__ == '__main__':
+    # `--check` gibt es hier NICHT, und schweigend zu schreiben waere die
+    # schlechteste Antwort darauf: Ein Pruefer, der das Flag fuer lesend haelt,
+    # veraendert damit den Arbeitsbaum, den er gerade prueft (am 06.10.2026 genau so
+    # passiert). Also ablehnen. Die Wache steht INNERHALB von __main__, denn beim
+    # Import aus einem Skript, das selbst mit --check laeuft, traegt sys.argv das
+    # Flag ebenfalls -- die erste Fassung hat damit drei echte Gates abgeschossen.
+    if '--check' in sys.argv:
+        print(f"{os.path.basename(__file__)} kennt kein --check und wuerde "
+              f"SCHREIBEN. Abgebrochen. Fuer einen lesenden Abgleich nimm "
+              f"scripts/idempotenzprobe.py.", file=sys.stderr)
+        sys.exit(2)
     created = []
     for item in longtail:
         d = f"{ROOT}/produkte/{item['slug']}"

@@ -255,7 +255,7 @@ def baue(lesezeit=4):
   <meta name="twitter:title" content="{esc(voll_titel)}">
   <meta name="twitter:description" content="{esc(beschreibung)}">
   <meta name="twitter:image" content="https://smartphone-controller.com/assets/img/og-default.jpg">
-  <link rel="stylesheet" href="/assets/css/style.css?v=43e618fc">
+  <link rel="stylesheet" href="/assets/css/style.css?v=feb620c6">
   <style>
 .pr-tabelle{{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px}}
 .pr-tabelle th,.pr-tabelle td{{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}}

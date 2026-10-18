@@ -308,7 +308,7 @@ def build(prod, c, lesezeit):
   <meta name="twitter:title" content="{esc(full_name)} — Kurzcheck & Preis">
   <meta name="twitter:description" content="{esc(desc)}">
   <meta name="twitter:image" content="{esc(img)}">
-  <link rel="stylesheet" href="/assets/css/style.css?v=43e618fc">
+  <link rel="stylesheet" href="/assets/css/style.css?v=feb620c6">
   <style>
 .review-grid{{display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start}}
 .specs-table{{width:100%;border-collapse:collapse;margin:16px 0}}

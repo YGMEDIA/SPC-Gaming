@@ -385,8 +385,191 @@ Korrekturen entstanden. Die fünf Formen, jede einmal passiert:
 
 ---
 
+## P-18 · Direktvergleich-Pattern [bewiesen 06.10.2026]
+**Wann:** Jede Seite, die genau zwei Produkte gegeneinanderstellt (`/vergleich/<a>-vs-<b>/`).
+**Regel:** Redaktionell sind **Paarung, Sieger und Urteil**. Alles andere kommt aus
+products.json und wird bei jedem Lauf neu gerechnet.
+
+**Was abgeleitet wird:** Preis mit Abstand in Euro · Amazon-Bewertung mit Anzahl ·
+Verfügbarkeit · Sticks · Verbindung · Plattformen · die Häkchen · die Kauf-Knöpfe mit
+Preis und ASIN. Redaktionelle Zeilen (Design, Abo-Modell, Bauform) stehen in der
+Definition und tragen ihre Häkchen im Text, weil ein „Premium-Look" keine Messung ist.
+
+**Pflicht-Mechanismus 1 · Die Gegenrede.** Was in den DATEN gegen den gewählten Sieger
+spricht, steht auf der Seite: höherer Preis, schwächere Bewertung, dünnere Datenbasis,
+fehlende Plattform, keine driftfreien Sticks, nicht kaufbar. Spricht nichts dagegen,
+steht das ausdrücklich da. Beleg für den Wert: In **vier von sieben** Duellen ist der
+gewählte Sieger der schwächer bewertete — das stand vorher auf keiner dieser Seiten.
+
+**Pflicht-Mechanismus 2 · Verfügbarkeit nur, wenn sie etwas sagt.** Zwei kaufbare Geräte
+brauchen keine Zeile „Verfügbar / Verfügbar". Sobald eines nicht kaufbar ist, ist es die
+wichtigste Zeile der Tabelle.
+
+**Pflicht-Mechanismus 3 · Jede Zahl steht hinter IHREM Produktnamen.** Die erste Fassung
+der Gegenrede schrieb „schwächer bewertet als der Backbone Pro mit 4,4 und seine
+Bewertung ruht auf 152 Stimmen" — das Fließtext-Audit hat die 152 dem Backbone Pro
+zugeordnet und den Satz zu Recht rot gemacht. Ein Vergleichssatz braucht beide Namen,
+nicht ein Pronomen und einen Namen.
+
+**Ein neues Duell ist eine DEFINITION, keine kopierte Datei.** Der Generator legt die
+ganze Seite an und holt Header und Footer aus `sync_header`/`sync_footer`. Die fünf
+ersten Duelle sind durch Kopieren entstanden; Ergebnis waren **18 verschiedene
+Zeilen-Labels** über fünf Tabellen und **auf drei von fünf Seiten keine Bewertung**.
+Ein neuer Seitentyp gehört beim ERSTEN Exemplar generiert, nicht beim fünften.
+
+**Die Paarung ist nicht ableitbar, und das gehört gesagt.** 145 Paare erfüllen die
+Datenkriterien (Plattform-Überschneidung, unter 40 % Preisabstand, beide kaufbar). Welche
+davon eine Seite verdient, ist eine redaktionelle Entscheidung. Was die Daten liefern,
+ist die Begründung: Die beiden am 06.10. gebauten Duelle sind markenintern und tragen
+beide eine Bewertungs-Umkehr.
+
+**Nach dem Anlegen prüft verify, was man vergisst.** Die zwei neuen Seiten waren beim
+ersten Lauf vierfach rot: Sitemap-Eintrag, eingehender interner Link, zwei
+Asset-Versionen. Dieselben Punkte wie bei B4. Dazu die fünfte Stelle, die kein Gate
+kannte: **Ein neues Duell muss von den Testseiten der beiden Produkte aus erreichbar
+sein.** Die zwei neuen waren von den Marken-Hubs und /vergleich/ verlinkt, aber nicht
+von den vier Seiten, auf denen der Leser steht, wenn die Frage aufkommt.
+
+**Pflicht-Mechanismus 4 · JEDE redaktionelle Zeile braucht einen Beleg, und zwar
+maschinell.** Die `merkmale`-Zeilen waren von der Prüfung ausgenommen, begründet mit „ein
+Premium-Look ist keine Messung". Das trifft auf „Premium-Look" zu und auf „✗ Nein"
+nicht: Das behauptet, ein Gerät könne etwas nicht. **Von 17 solchen Zellen hielten sieben
+der Prüfung stand.** Nur war die erste Fassung der Regel die halbe: Beleg-Pflicht ab „✗".
+Der nächste Prüflauf fand sofort zwei falsche **positive** Behauptungen, die ungehindert
+durchliefen („Chroma-RGB ✓ Ja" für den Kishi V3 Pro, obwohl Chroma im Repo nur für den
+Kishi **Ultra** belegt ist; „App: GameSir Nexus" mit genau einem Treffer im Repo, nämlich
+dieser Zelle). Regel seit dem 06.10., für JEDE `merkmale`-Zeile:
+
+```python
+'belege': {
+    # Seitengebunden: 'a' und 'b' tragen je ihren eigenen Beleg, weil jede
+    # Seite der Zeile etwas anderes behauptet.
+    'Pass-Through': {'a': ('controller/ios/backbone-one-2-review/index.html',
+                           'Kein Pass-Through-Charging'),
+                     'b': ('assets/data/products.json',
+                           'Laden während des Spielens')},
+    'Design': 'EINSCHAETZUNG',   # kein ✓, kein ✗, keine Zahl, kein Ja/Nein/Kein
+}
+```
+
+Das Gate liest jede genannte Datei und verlangt den Suchtext darin; fehlt der Eintrag,
+fehlt die Datei oder hat sich die Quelle geändert, wird es rot. Ohne Beleg heißt die
+Zelle **„keine Angabe"**. **Ein Haken ist genauso eine Tatsachenaussage wie ein Kreuz** —
+deshalb ist „Design: ✓ Premium-Look" zu „Design: Premium-Look" geworden: Eine
+Einschätzung darf kein Häkchen tragen, weil ein Haken einen gemessenen Vorteil behauptet.
+
+Zeilen, die sich ableiten lassen, gehören gar nicht in `merkmale`: Vier
+„Kabellos"-Zeilen sind entfallen, weil die abgeleitete Zeile „Verbindung" dasselbe aus
+products.json sagt, ohne eine Abwesenheit von Hand zu behaupten. Umgekehrt gilt: Wenn die
+abgeleitete Zeile **weniger** weiß als die Site („Sticks: keine Angabe" für den Backbone
+Pro, dessen Testseite „✗ Keine Hall-Effect-Sticks" sagt), gehört eine belegte Zeile dazu.
+
+**Ein Beleg beweist Anwesenheit eines Textes, nicht Zustimmung.** Die erste Fassung war
+eine reine Teilstring-Prüfung, und damit ist mir der schlimmste Fall des Pakets
+durchgegangen: `RGB: ✓ Chroma` belegt mit `'Chroma-RGB'` — eine Zeichenfolge, die auf der
+Produktseite **genau einmal** vorkommt, nämlich unter `<h3>Schwächen</h3>` („✗ Chroma-RGB
+ist Geschmackssache und für das Spielgefühl ohne Nutzen"). Also prüft das Gate zusätzlich die **Umgebung** des Treffers auf `✗`, `con-item` und `<h3>Schwächen`, und zwar **in beide Richtungen und pro Zelle**: Ein Häkchen darf keine Nachteils-Umgebung haben, ein Kreuz braucht eine — oder eine Einschränkung im Belegtext selbst („Nur die Trigger arbeiten mit Hall" steht in einem Prosa-Absatz, nicht in einer Nachteilsliste). Die erste Fassung prüfte nur das Häkchen; damit ließ sich ein `✗` mit einer Zeile aus der **Vorteile**-Liste belegen. Weitere Umgehungen, alle einzeln rot bewiesen: leere Beleg-Liste, leerer
+Suchtext (`'' in text` ist immer wahr), verwaister Beleg ohne Zeile, falscher Typ. Und ein
+**Feldname** ist kein Beleg: `"Gew."` hielt auch bei „999 g", die Zahl muss im Suchtext
+stehen.
+
+**Pflicht-Mechanismus 5 · Der Seitenrahmen gehört ebenfalls geprüft.** `titel`, `lead`,
+`kurzurteil` und die Abschnitte schreibt der Generator **einmal beim Anlegen** und fasst
+sie danach nie wieder an; bei bestehenden Dateien pflegt er nur den Markerblock. Als der
+Em-Dash im generierten Titel im Code behoben war, stand er weiter in sechs Meta-Tags der
+zwei neuen Seiten, und `verify.py`, `gen_vergleich.py --check` und `idempotenzprobe.py`
+waren gleichzeitig grün. **„baumstabil=True" beweist, dass der Markerblock passt, nicht
+dass die Seite zur Definition passt.** Das Gate vergleicht jetzt `<title>`, `og:title` und
+`twitter:title` gegen `titel` und die Felder `lead`/`kurzurteil`/`abschnitte` gegen die
+Seite.
+
+**Was auch Mechanismus 4 und 5 NICHT abdecken, und das gehört gesagt:** Die Urteilsfelder
+haben eine Drift-Prüfung gegen die Definition, aber **keine Sachprüfung gegen die
+Tabelle**. Drei Urteile haben deshalb der eigenen Seite widersprochen („Klinke … überlegene
+Wahl" neben einer Tabelle, die „keine Angabe" sagt; „vier Euro weniger … entscheiden"
+neben einem Lead, der sagt „Die Entscheidung fällt woanders"; „deckt mehr Einsatzfälle ab"
+neben einer identischen Plattformen-Zeile). **Wer eine Prämisse kippt, muss jedes Urteil
+nachziehen, das darauf stand**, und beim Umschreiben eines Urteils Lead, Tabelle und
+Absätze danebenlegen — sonst behebt man einen Widerspruch und erzeugt den nächsten. Genau
+das ist zwischen zwei Prüfrunden passiert. Dafür gibt es keine Maschine, nur die Regel.
+
+**Wo eine Identität gemeint ist, gehört ein Gleichheitszeichen hin, kein `in`.** Drei Prüfungen dieses Pakets arbeiteten auf Teilstrings und waren genau in dem Fall blind, den sie fangen sollten: `'razer-kishi-v3' in 'razer-kishi-v3-pro-review'` (die Seite des Pro durfte eine Aussage über den V3 belegen), `'38' in '138 g'` (eine halbierte Zahl hielt) und `'Preis' in 'Preis-Leistung'` (ein redaktionelles Label hätte die gerechnete Preiszeile still gelöscht). Jetzt: Ordnernamen exakt (`<slug>` oder `<slug>-review`), Zahlen als eigenständige Tokens (`(?<![\\w,.-])…(?![\\w,.-])`, **nicht** `\\b` — das hat „1" in „4,1" und „3,5" in „3,5-mm" gedeckt), und die Ersetzung einer abgeleiteten Zeile wird in der Definition **deklariert** (`'ersetzt': {'Hall bei den Sticks': ['Sticks']}`), nicht erraten. Die Umstellung auf die Deklaration hat sofort eine Dopplung freigelegt, die die Heuristik zufällig verdeckt hatte: **Eine Heuristik, die das Richtige tut, ohne dass man weiß warum, verbirgt so viel wie sie löst.**
+
+**Und `'EINSCHAETZUNG'` darf kein Freifahrtschein sein.** Der Zweig sprang vor der Zahlenprüfung ab, womit ein Wort in `belege` jede Zahl der Zeile von der Belegpflicht befreite. Eine Einschätzung trägt jetzt weder Häkchen noch Kreuz noch Zahl.
+
+**Ein Beleg beweist einen Text, keinen Bezug — deshalb ist er seitengebunden.** Die Regel prüfte zuerst, aus welcher **Datei** ein Beleg kommt, nie über **welches Produkt darin** er etwas sagt. Mit `products.json` als unbedingt freigegebener Datei war damit jede Zeichenfolge aus 42 Produkten als Beleg zulässig: „Chroma 12 LEDs" (Phone Cooler) belegte ein Merkmal des Kishi V3 Pro, „138 g" (Backbone One) eine Gewichtsangabe desselben Geräts. Genau dort sind die beiden Namensfehler dieses Pakets entstanden. Form seit dem 06.10.:
+
+```python
+'belege': {
+    'Pass-Through': {'a': ('controller/ios/backbone-one-2-review/index.html',
+                           'Kein Pass-Through-Charging'),
+                     'b': ('assets/data/products.json',
+                           'Laden während des Spielens')},
+}
+```
+
+Jede Seite, die etwas behauptet, braucht ihren **eigenen** Beleg. Der Ordnername der Quelle muss `<slug>` oder `<slug>-review` **ihres** Produkts sein; in products.json wird nur das Objekt dieses Produkts durchsucht. Eine Seite, die „keine Angabe" sagt, darf keinen Beleg tragen (überflüssiger Beleg = Befund). Dazu zwei Prüfungen, die die wiederkehrenden Fehler direkt adressieren: **jeder Messwert** (Zahl plus Einheit) in `lead`, `kurzurteil` und `urteil` muss in der Tabelle oder im Datenkern der beiden Produkte stehen, und **Markennamen gehören ihrem Gerät** (`Sensa` → V3 Pro, `Chroma` → Kishi Ultra und Phone Cooler, `TPSiV` → Kishi Ultra, `Backbone+` → die zwei Backbones); steht einer auf einem Duell ohne sein Gerät, wird es rot. Zwei weitere Löcher, beide
+nachgemessen rot: Ein Beleg durfte von einem **fremden** Produkt kommen (die Seite des
+Kishi Ultra belegte ein Merkmal des Kishi V3 Pro), und die **Zahl in der Zelle** hing an
+nichts (Zelle „999 g", Beleg weiter „138 g", exit 0). Jetzt muss die Beleg-Datei zu `a`
+oder `b` des Duells gehören oder products.json sein, und jede Zahl aus der Zelle in
+mindestens einem Belegtext derselben Zeile vorkommen. Die erste Regel fand beim Einbau
+sofort zwei echte Fälle.
+
+**Während ein Prüfer liest, wird nicht geschrieben.** Zweimal in diesem Paket habe ich im
+Arbeitsbaum editiert, während ein Prüflauf darin gelesen hat. Einmal waren zwei Befunde
+beim Nachmessen schon weg, einmal entstand ein Bericht gegen einen Stand, der fünf Minuten
+später nicht mehr existierte — inklusive eines sekundenlang roten `verify.py` und vier
+falsch-roter Batteriefälle. Macher ≠ Prüfer ist nicht nur eine Aussage über den Kontext,
+sondern auch über die Zeit. Besonders gefährlich bei den Batterien, die Dateien mutieren
+und zurückstellen: Sie können einen parallelen Edit überschreiben.
+
+**Und die Gegenrichtung ist genauso ein Fehler:** Eine belegte Zahl zu streichen, weil man
+ihren Beleg nicht gefunden hat, ist so falsch wie eine zu erfinden — „✓ 2 Rücktasten +
+2 Bumper" auf „2 Rücktasten" verkürzt, während 14 Seiten im Repo und zwei FAQ-Stellen der
+betreffenden Testseite von vier sprachen. Vorsicht fühlt sich beim Machen wie Sorgfalt an
+und ist es nicht, wenn sie ungemessen bleibt.
+
+**Pflicht-Mechanismus 6 · Ein Duell deckt Widersprüche auf, also prüft man sie zu Ende.**
+Solange zwei Produkte auf getrennten Seiten stehen, kann die eine ein Merkmal behaupten
+und die andere schweigen, ohne dass es auffällt. In einer Tabelle muss man sich
+entscheiden. Beim ersten Bau führte das zu drei Falschaussagen (Pass-Through beim G8
+Plus auf „✗ Nein", obwohl das Listing „unterstützt das Durchladen" sagt; eine Testseite,
+die „3,5-mm-Audio" und „Kein 3,5-mm-Anschluss" gleichzeitig behauptete; 230 g für ein
+Gerät ohne Gewichtsangabe). Daher gilt für jede Tabellenzeile:
+1. **Beide Seiten gegen den Datenkern.** Ein `✗ Nein` behauptet Abwesenheit und braucht
+   dafür einen Beleg. Eine Lücke im Datenkern ist keiner: Aus „kein Extra-Feld" wurde
+   „Zusatztasten: 0" und damit eine Behauptung aus einem Loch. Richtig ist `keine Angabe`.
+2. **Ist nichts belegt, fällt die Aussage in BEIDE Richtungen weg.** Nicht die Mehrheit
+   der eigenen Seiten entscheidet. „Keine Angabe" ist eine zulässige Antwort auf einer
+   Kaufseite, ein geratenes Häkchen nicht.
+3. **Widerspruch heißt Repo-weite Gegenprobe, nicht Zeilenfix.** Die 230 g standen nach
+   dem Fix der Testseite weiter zweimal im Blog. Wer nur die Stelle korrigiert, die der
+   Prüfer genannt hat, hat den Prüfer bedient und nicht den Fehler.
+4. **Exklusivaussagen werden gezählt.** „der einzige Controller im Sortiment, der …"
+   gegen products.json nachrechnen; bei Bluetooth waren es 17 von 42, und die erste Messung ergab 11, weil sie nach `BT` suchte und `Bluetooth` übersah. Zählbare Aussagen
+   ohne Zählung sind der Normalfall des Irrtums.
+
+**Was der Generator selbst falsch machen kann (alles am 06.10. real passiert).** Fünf
+Fehler, bei denen jedes Gate grün blieb: Kopfzeile als `<td>` statt `<th scope="col">`
+(drei Seiten verloren ihre Header-Zellen, die Regel `.vs-table th` lief ins Leere, für
+Screenreader keine Tabelle mehr) · `h.find(START)` sieht nur das erste Markerpaar, ein
+zweiter Block zeigte dauerhaft alte Preise · `if befunde:` gegen die globale Befundliste
+übersprang nach dem ersten Fund alle weiteren Duelle · `len(la) > len(lb)` verglich
+Zeichen statt Plattformen, womit „keine Angabe" (12) gegen „Android" (7) gewann · und
+die redaktionelle Prosa stand außerhalb des Markerblocks, konnte also von der Definition
+abdriften (beim Korrigieren einer falschen Passage genau so eingetreten). **Drei dieser fünf Stellen haben einen Befund im Gate** (zweites Markerpaar, Prosa-Drift, fehlende Header-Zellen); die beiden anderen sind **Logikkorrekturen ohne eigenen Befund** (`len()` auf Plattformzahl statt Zeichenlänge, Befundprüfung duellweise statt global) und werden nur als Blockdrift rot. Die erste Fassung dieses Absatzes behauptete Gate-Schutz für alle fünf — eine Dokumentation, die mehr verspricht als die Maschine hält, ist schlimmer als keine. Dazu: Eine CSS-Klasse, die im Markup
+aller Seiten steht, gehört in `style.css`, nicht in das `<style>` von zweien —
+`.cta-pair` fehlte auf fünf von sieben Seiten, direkt am Kauf-Knopf.
+
+**Vorlage:** `scripts/gen_vergleich.py` · Gate 15 (`--check`) in `verify.py` ·
+Protokoll: `05-protokoll/2026-10-06-content-m9-vergleichsseiten.md` ·
+Gesetze: §A1, §A4, §A5, §A6
+
+---
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.5 · 2026-10-06*
+*SPC Pattern-Katalog v5.7 · 2026-10-06*
