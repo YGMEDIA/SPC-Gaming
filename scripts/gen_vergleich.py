@@ -52,6 +52,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from seitenbau import beleg_umgebung  # noqa: E402
 
 from gen_hubs import esc                      # dieselbe Escaping-Regel wie die Karten
 from produktdaten import (bewertung, preis_zahl, spec_wie, sterne_text, anzahl_text,
@@ -817,15 +818,9 @@ def main():
                                        re.I)
                 if not quelle.endswith('products.json') and (wert[:1] in '✓✗'
                                                              or negativwort):
-                    negativ = None
-                    for m in re.finditer(re.escape(suchtext), raum):
-                        davor = raum[max(0, m.start() - 160):m.start()]
-                        n = (('✗' in davor and '✓' not in davor.rsplit('✗', 1)[1])
-                             or 'con-item' in davor[-90:]
-                             or bool(re.search(r'<h3>\s*Schwächen', davor)))
-                        negativ = n if negativ is None else (negativ or n)
-                        if n:
-                            break
+                    # Der Kernel steht seit 01.11. in seitenbau.py, damit ihn der
+                    # Tablet-Generator importieren kann statt ihn nachzubauen.
+                    negativ = beleg_umgebung(raum, suchtext)
                     if wert.startswith('✓') and negativ:
                         befunde.append(
                             f"{v['datei']}: Zeile „{lab}“/{seite} setzt ein Häkchen, "

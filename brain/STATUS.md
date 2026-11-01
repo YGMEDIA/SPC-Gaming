@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-11-01 (**Zubehör-Ast ausgebaut** — die Maßnahme aus GSC-Lauf 8. Vier Thin Pages auf Standard, neuer Generator mit sechs bewiesenen Mechanismen, Pattern P-19. Sieben Prüfrunden, 15 Blocker, alle berechtigt, keiner live. Davor am selben Tag: **GSC-Lauf 8 ausgewertet**: erster Klick seit Anfang August, Impressionen minus 55 % — fast vollständig die Startseite —, und zum dritten Mal in Folge liegt die stärkste Nachfrage auf der dünnsten Seite. Maßnahme 5 geparkt, Zubehör-Ast als nächster Bauschritt. Davor 2026-10-18: Vergleichsseiten. Davor 2026-10-06: **Vollabgleich über alle 42 Produkte**, selbst bei Amazon gelesen: 12 Preise · 29 Bewertungen · 6 Produkte nicht neu kaufbar · Datenstand auf Oktober 2026. Verfügbarkeit kommt jetzt aus dem Datenkern (`stock`), `scripts/preiswelle.py` zieht den Fließtext nach, `scripts/datenstand.py` hält den Datenstand an EINER Stelle. Vierzehn prüfbare Gates plus das neue Black-Friday-Schwellen-Gate, alle exit 0)
+**Letzte Aktualisierung:** 2026-11-01 (**Tablet-Hub ausgebaut**, zweiter dünner Fund aus derselben Messung: 131 → 650 Wörter, fünf Prüfrunden, dabei drei live falsche Aussagen im Nachbarartikel gefunden. Davor am selben Tag: **Zubehör-Ast ausgebaut** — die Maßnahme aus GSC-Lauf 8. Vier Thin Pages auf Standard, neuer Generator mit sechs bewiesenen Mechanismen, Pattern P-19. Sieben Prüfrunden, 15 Blocker, alle berechtigt, keiner live. Davor am selben Tag: **GSC-Lauf 8 ausgewertet**: erster Klick seit Anfang August, Impressionen minus 55 % — fast vollständig die Startseite —, und zum dritten Mal in Folge liegt die stärkste Nachfrage auf der dünnsten Seite. Maßnahme 5 geparkt, Zubehör-Ast als nächster Bauschritt. Davor 2026-10-18: Vergleichsseiten. Davor 2026-10-06: **Vollabgleich über alle 42 Produkte**, selbst bei Amazon gelesen: 12 Preise · 29 Bewertungen · 6 Produkte nicht neu kaufbar · Datenstand auf Oktober 2026. Verfügbarkeit kommt jetzt aus dem Datenkern (`stock`), `scripts/preiswelle.py` zieht den Fließtext nach, `scripts/datenstand.py` hält den Datenstand an EINER Stelle. Vierzehn prüfbare Gates plus das neue Black-Friday-Schwellen-Gate, alle exit 0)
 
 ---
 
@@ -267,6 +267,18 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 ---
 
 ## Nächster geplanter Schritt
+
+**Stand 01.11. (drittes Paket): `/controller/tablet/` ist gebaut, 131 → 650 Wörter.** Neu `scripts/gen_tablet_hub.py` und `scripts/seitenbau.py` als geteiltes Modul (Grammatik aus P-19, Schema-Renderer, Mass-Gate, Beleg-Umgebungsprüfung). Die Extraktion ist AST-geprüft verhaltensneutral, `gen_vergleich.py` und `gen_zubehoer_sections.py` erzeugen unverändert dieselben Dateien.
+
+**Zwei Bestandsfehler waren wichtiger als die Wortzahl.** Der Hinweiskasten der Seite empfahl für Tablets ein Modell, das zugleich ihre erste Karte ist, als Alternative zu Clip-Controllern. Und `blog/controller-fuer-tablet/` behauptete an vier Stellen, zwei davon im FAQPage-Schema, es gebe unterhalb des G8 Plus keine Tablet-Angabe (der Kishi Ultra kostet 63 €) und driftfreie Sticks plus Tablet-Freigabe verbinde „genau ein Modell" (der V3 Pro hat TMR). Vier Stellen korrigiert, vier VERBOTEN-Einträge dagegen.
+
+**Fünf Prüfrunden, 11 Blocker, alle berechtigt.** Zwei Lehren wiegen schwer: Ich habe in Runde 2 den gemeldeten Absatz repariert und den strukturgleichen danebenstehen lassen (dieselbe Lehre wie beim Zubehör-Ast, am selben Tag). Und ich habe „18 Gates exit 0" gemeldet, während die Idempotenzprobe von 0 auf 1 Befund gestiegen war, weil ein Beleg auf eine Datei unter `brain/` zeigte. Rückfluss: **P-19 Mechanismen 6 bis 8**, Katalog v5.9.
+
+**Deployed** und live geprüft, siehe unten.
+
+**Nächster Schritt:** GSC-Lauf 9 abwarten (Checkliste in `04-loops/gsc-loop.md`, Punkt 1 ist die Positions-Spalte). **Braucht Yasin:** die abxylute-S8-Frage (Datenkern widerspricht sich selbst, Details in LOOP-STATE) und die vier unbelegten Gewichtsangaben.
+
+---
 
 **Stand 01.11. (zweites Paket des Tages): Der Zubehör-Ast ist gebaut.** `/zubehoer/handy-kuehler/` 163 → 986 Wörter, `/zubehoer/finger-sleeves/` 168 → 881, `/zubehoer/trigger/` 294 → 1327, der Hub 41 → 484. Alles aus `scripts/gen_zubehoer_sections.py`, redaktionell bleibt nur die Textführung.
 

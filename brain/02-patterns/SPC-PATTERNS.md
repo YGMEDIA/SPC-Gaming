@@ -609,6 +609,29 @@ Antwort darauf ist kein Singular-Zweig an sieben Stellen: Mit einem Produkt ist
 auf einer vergleichenden Seite kein Satz mehr wahr. `rows_of()` bricht unter zwei
 Produkten ab und nennt den Grund.
 
+**Pflicht-Mechanismus 6 · Eine Ellipse ist auch eine Beugung von Hand.**
+Gelernt am Tablet-Hub (01.11.): Ein Erklärsatz wurde aus einer Tabelle
+zusammengesetzt, deren zweiter Eintrag sein Verb einsparte („Millimeter die
+Gerätebreite") — die Ellipse trug nur, solange der erste Eintrag zuerst stand.
+Die Reihenfolge kam aber aus der Preissortierung. Ein Preisdreher hätte
+„Millimeter die Gerätebreite, Zoll misst die Bildschirmdiagonale" ergeben, eine
+einzelne Gruppe ein verbloses Fragment. **Jeder Baustein, der einzeln stehen
+kann, muss einzeln stehen können.**
+
+**Pflicht-Mechanismus 7 · Ein Generator hängt zur Laufzeit nicht am Vault.**
+Ein Beleg des Tablet-Hubs zeigte auf eine Datei unter `brain/`. Die
+Idempotenzprobe arbeitet in einer Kopie OHNE `brain/`, der Generator brach dort
+ab, und die Batterie ging von 0 auf 1 Befund. `brain/` ist lebendes Gedächtnis,
+kein Deploy-Artefakt: Dateien werden konsolidiert und umbenannt. Belege zeigen
+in den ausgelieferten Baum, die Forschungsdatei steht als Quelle im Kommentar.
+
+**Pflicht-Mechanismus 8 · Geteilte Prüfungen werden importiert, nicht nachgebaut.**
+Das Beleg-Gate des Tablet-Hubs prüfte zuerst nur, ob der Suchtext in der Datei
+vorkommt — und `"Pass-Through-Charging"` steckt in `"Kein Pass-Through-Charging"`.
+Die Richtungsprüfung existierte seit dem 06.10. in `gen_vergleich.py`. Sie steht
+jetzt als `beleg_umgebung()` in `seitenbau.py`, und beide Generatoren rufen sie.
+Wer eine vorhandene Prüfung nachbaut, baut sie schwächer.
+
 **GRENZE, gemessen und benannt.** Drift- und Mass-Gate prüfen Zahlen,
 `check_claims` prüft Verhältnisse zwischen Produkten im Datenkern. **Ein Satz ohne
 Zahl und ohne Produktverhältnis passiert beides ungeprüft.** Belegt: „Der Razer
@@ -624,4 +647,4 @@ gefunden, nicht durch eine Maschine.
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.8 · 2026-11-01*
+*SPC Pattern-Katalog v5.9 · 2026-11-01*

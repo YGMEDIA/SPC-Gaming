@@ -4616,6 +4616,21 @@ VERBOTEN = [
      "dieselbe widerlegte Aussage im Kurz-Urteil"),
     ("den direkten Duell", "vergleich/backbone-one-vs-gamesir-g8",
      "Duell ist saechlich: 'das direkte Duell'"),
+    ("Tablet-Angabe gibt es in unserem Sortiment nicht", "blog/controller-fuer-tablet",
+     "widerlegt am 01.11.: der Razer Kishi Ultra ist mit 63 Euro guenstiger als der "
+     "G8 Plus (72 Euro) und fuehrt 'tablet' in worksOn samt 8-Zoll-Angabe im claim"),
+    ("Tablet-Angabe führen wir nicht", "blog/controller-fuer-tablet",
+     "dieselbe widerlegte Aussage, zweite Schreibweise im Fliesstext"),
+    ("Tablet-Freigabe verbindet bei uns genau ein Modell", "blog/controller-fuer-tablet",
+     "widerlegt am 01.11.: der Kishi V3 Pro hat TMR-Sticks ('TMR heisst dauerhaft "
+     "driftfrei', eigener Blog-Artikel) UND tablet in worksOn, es sind also zwei"),
+    ("Bluetooth-Standalone-Controller wie der abxylute S8", "controller/tablet",
+     "der Satz bot zwei Modelle als Alternative zu Clip-Controllern an, davon ist "
+     "der G8 Plus selbst ein Teleskop-Clip UND die erste Karte derselben Seite -- "
+     "die Seite widersprach sich also. Beim abxylute S8 widerspricht sich der "
+     "Datenkern (claim nennt iPad, worksOn fuehrt kein 'tablet'); solange das offen "
+     "ist, wird er hier nicht als Tablet-Empfehlung genannt. Hinweis: Das fehlende "
+     "worksOn-Tag allein waere KEIN Beleg fuer Untauglichkeit (§A5 (4))"),
 ]
 # REPOWEIT statt pro Datei. Die Bindung an EINE Datei hat am 30.09. vier Befunde
 # überleben lassen: Dieselbe widerlegte Aussage über den Ultimate 2C stand unverändert
