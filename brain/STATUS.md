@@ -274,7 +274,7 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 **Fünf Prüfrunden, 11 Blocker, alle berechtigt.** Zwei Lehren wiegen schwer: Ich habe in Runde 2 den gemeldeten Absatz repariert und den strukturgleichen danebenstehen lassen (dieselbe Lehre wie beim Zubehör-Ast, am selben Tag). Und ich habe „18 Gates exit 0" gemeldet, während die Idempotenzprobe von 0 auf 1 Befund gestiegen war, weil ein Beleg auf eine Datei unter `brain/` zeigte. Rückfluss: **P-19 Mechanismen 6 bis 8**, Katalog v5.9.
 
-**Deployed** und live geprüft, siehe unten.
+**Deployed** als `579d56e`, CI grün, beide Seiten HTTP 200, über beide 0 Treffer für die vier widerlegten Sätze, IndexNow 111 URLs HTTP 200.
 
 **Nächster Schritt:** GSC-Lauf 9 abwarten (Checkliste in `04-loops/gsc-loop.md`, Punkt 1 ist die Positions-Spalte). **Braucht Yasin:** die abxylute-S8-Frage (Datenkern widerspricht sich selbst, Details in LOOP-STATE) und die vier unbelegten Gewichtsangaben.
 

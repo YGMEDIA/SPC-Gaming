@@ -47,6 +47,12 @@ Dazu `scripts/seitenbau.py` als geteiltes Modul: die Grammatik-Helfer aus P-19, 
 
 **6. Dreimal habe ich ein Wort zurückgenommen, statt einen Beleg zu behaupten:** „nennt der Hersteller" → „nennt unser Test" · „ist belegt" → „die Angaben stammen aus" · „in jedem Fall die falsche Bauform" → „je größer das Tablet, desto eher". Das ist die Bewegung, die §A5 verlangt, und sie kostet nichts.
 
+## Deploy
+
+Commit `579d56e`, CI grün. Live geprüft: `/controller/tablet/` HTTP 200 mit 535 Wörtern
+im ausgelieferten Marker-Block, `/blog/controller-fuer-tablet/` HTTP 200. Über beide
+Seiten **0 Treffer** für die vier widerlegten Sätze. IndexNow: 111 URLs, HTTP 200.
+
 ## Offen
 
 - **BRAUCHT YASIN: Der Datenkern widerspricht sich beim abxylute S8.** `claim` nennt iPad, `worksOn` führt kein `tablet`, die Produktseite nennt iPad dreimal inklusive Schema. Entweder Tag nachtragen (dann vier Modelle auf dieser Seite, und der Monotonie-Befund kippt) oder die iPad-Aussagen zurücknehmen. Steht in LOOP-STATE. **Das fehlende Tag allein ist kein Beleg für Untauglichkeit (§A5 (4)).**
