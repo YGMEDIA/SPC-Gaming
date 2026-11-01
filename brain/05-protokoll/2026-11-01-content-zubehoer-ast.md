@@ -65,6 +65,12 @@ Dazu neu in diesem Paket: **P-19, zahlgebundene Prosa.** Zahlwort, Substantiv, A
 
 **10. Das Muster hält: In jeder Runde ein neuer Fehler beim Beheben des vorigen.** Acht in sieben Runden, darunter zweimal ein Syntaxfehler durch ein fehlendes `+`, einmal „ein das Set" durch ein Substantiv mit Artikel an `mz()`, einmal Großschreibung mitten im Satz durch ein `capitalize()` im falschen Helfer. Die letzten vier habe ich selbst gefunden, bevor der Prüfer dran war. **Was sich geändert hat: Diesmal ging keiner davon live.**
 
+## Deploy
+
+Commit `48cce16`, CI grün. Live geprüft: alle vier Seiten HTTP 200, der Marker-Block steht
+ausgeliefert (Hub 311 · handy-kuehler 514 · finger-sleeves 482 · trigger 658 Wörter im Block,
+3/5/4/5 FAQs). IndexNow: 111 URLs gemeldet, HTTP 200.
+
 ## Offen
 
 - **Die Klasse, die kein Gate prüft** (vom Prüfer benannt, als GRENZE in P-19 dokumentiert): Sätze ohne Zahl und ohne Produktverhältnis passieren alle drei Gates. Rund ein Dutzend stehen im Text, überwiegend Regeln fremder Spiele und Technik-Allgemeinplätze. Sie wurden durch Lesen geprüft, zweimal gegen die eigenen Blog-Artikel gekreuzt, und driften unbemerkt, falls sich die Spielregeln ändern.

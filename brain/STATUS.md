@@ -276,6 +276,8 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 **Die benannte Grenze:** Drift- und Mass-Gate prüfen Zahlen, das Aussagen-Gate prüft Verhältnisse im Datenkern. Ein Satz ohne Zahl und ohne Produktverhältnis passiert alle drei. Rund ein Dutzend stehen im Text (Regeln fremder Spiele, Technik-Allgemeinplätze), zweimal gegen die eigenen Blog-Artikel gekreuzt und heute widerspruchsfrei. Sie driften unbemerkt, falls sich die Spielregeln ändern.
 
+**Deployed** als `48cce16`, CI grün, alle vier Seiten live mit HTTP 200 geprüft, IndexNow 111 URLs HTTP 200.
+
 **Nächster Schritt:** GSC-Lauf 9 abwarten (Checkliste in `04-loops/gsc-loop.md`, Punkt 1 ist die Positions-Spalte). Erfolgskontrolle für dieses Paket: Wächst `/zubehoer/handy-kuehler/` über seine 18 Impr./28T? In der Warteschlange stehen zwei Folgefunde aus derselben Messung: die 6-Finger-Beschreibung auf `produkte/ozkak-6finger/` und `/controller/tablet/` mit 131 Wörtern.
 
 ---
