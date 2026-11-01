@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-10-06 (**Vollabgleich über alle 42 Produkte**, selbst bei Amazon gelesen: 12 Preise · 29 Bewertungen · 6 Produkte nicht neu kaufbar · Datenstand auf Oktober 2026. Verfügbarkeit kommt jetzt aus dem Datenkern (`stock`), `scripts/preiswelle.py` zieht den Fließtext nach, `scripts/datenstand.py` hält den Datenstand an EINER Stelle. Vierzehn prüfbare Gates plus das neue Black-Friday-Schwellen-Gate, alle exit 0)
+**Letzte Aktualisierung:** 2026-11-01 (**GSC-Lauf 8 ausgewertet**: erster Klick seit Anfang August, Impressionen minus 55 % — fast vollständig die Startseite —, und zum dritten Mal in Folge liegt die stärkste Nachfrage auf der dünnsten Seite. Maßnahme 5 geparkt, Zubehör-Ast als nächster Bauschritt. Davor 2026-10-18: Vergleichsseiten. Davor 2026-10-06: **Vollabgleich über alle 42 Produkte**, selbst bei Amazon gelesen: 12 Preise · 29 Bewertungen · 6 Produkte nicht neu kaufbar · Datenstand auf Oktober 2026. Verfügbarkeit kommt jetzt aus dem Datenkern (`stock`), `scripts/preiswelle.py` zieht den Fließtext nach, `scripts/datenstand.py` hält den Datenstand an EINER Stelle. Vierzehn prüfbare Gates plus das neue Black-Friday-Schwellen-Gate, alle exit 0)
 
 ---
 
@@ -13,9 +13,11 @@
 
 **Site:** LIVE, 127 Seiten (inkl. 16 Redirect-Stubs), Sitemap 109 URLs, 42 Produkte, 8 Vergleichsseiten, Q4-Seiten seit 07.08., GTM/GA4 end-to-end verifiziert (19.07.), Search Console aktiv (Sitemap non-www eingereicht), Bing + IndexNow aktiv, Zusatz-Domains .de/.info/.store leiten auf die .com.
 
-**Marktdaten (GSC-Lauf 7, Paket 29.09., 7T 21.-27.09. + 28T + Gründe-Tabelle — Details raw/gsc/2026-09-29.md):**
-7 Tage: 0 Klicks · **31 Impressionen (von 19, +63 %)** · **Ø Position 41,8**. 28 Tage: 184 Impressionen, Position 49,2.
-**Kern-Erkenntnisse Lauf 7:** (1) **Trendwende bestätigt:** Position über drei Läufe 55,9 → 43,5 → 41,8, Impressionen erstmals seit dem Einbruch wieder steigend. (2) **Indexierungs-Frage abschließend geklärt** (Gründe-Tabelle endlich da): Der Rückgang auf 66 ist vollständig strukturell, 72 der 129 nicht indexierten Seiten sind unsere eigenen absichtlichen Ausschlüsse (Stubs, www-Duplikate, robots); der echte Engpass liegt stabil bei 35 (Lauf 3: 47). Kein Handlungsbedarf. (3) **Das Thin-Page-Muster aus Lauf 6 galt für alle vier Marken-Seiten** (59-138 Wörter), obwohl marken/razer mit 11 Impr./28T die viertstärkste Seite ist → alle vier auf 331-470 Wörter ausgebaut, mit FAQs, Schemas und erstmals vollständigem Produktbestand (vorher nur 9 von 14 Produkten gelistet). (4) §A6: Razer Phone Cooler (3,2) jetzt mit expliziter Warnung gelistet statt verschwiegen. (5) "mini gamepad android" wächst weiter (15 → 20 Impr./28T), der am 22.09. ausgebaute Hub liegt bei 23 Impr./28T. (6) Q4-Seiten weiter ohne Impressionen, Saison läuft ab Oktober an.
+**Marktdaten (GSC-Lauf 8, Paket 01.11., 28T 03.10.-30.10. — Details raw/gsc/2026-11-01.md):**
+28 Tage: **1 Klick** (erster seit Anfang August) · **82 Impressionen (von 184, minus 55 %)** · **Ø Position 52,3** · CTR 1,2 %.
+**Kern-Erkenntnisse Lauf 8:** (1) **Der Verlust ist fast vollständig die Startseite:** 93 → 13 Impressionen, das sind 80 der 102 verlorenen. Gleichzeitig steigen die Unterseiten mit Kaufabsicht (handy-kuehler +17, controller/android +9, produkte +10, zwei Vergleichsseiten und der Controller-Finder neu). Keine Kollaps-Kurve, eine Umverteilung. Mitgedacht und nicht wegdiskutiert: Zwischen den Läufen liegen 20+ Commits, die fast jede Seite angefasst haben; ob die Umverteilung von uns oder von Google kommt, entscheiden diese Daten nicht. (2) **Der einzige Klick ging auf eine Vergleichsseite** (`g8-galileo-vs-kishi-v3`, 1 Impression, 1 Klick); die Query ist von Google anonymisiert. (3) **Thin-Page-Muster zum dritten Mal in Folge:** Die stärkste Seite des Fensters, `/zubehoer/handy-kuehler/` mit 18 Impr., hat **163 Wörter**. Geschwister sofort mitgemessen (Lektion Lauf 7): Der ganze Zubehör-Ast ist dünn (Hub **41 W**, finger-sleeves 168, trigger 294), dazu `/controller/tablet/` mit 131 W neben Geschwistern von 482 bis 1138. (4) **Kühler ist das stärkste Query-Cluster** (14 von 82 Impr. = 17 %) und damit erstmals Zubehör statt Controller. (5) 83 % der Impressionen aus Deutschland (Lauf 7: 73 %), der Streuverlust nach BR/RU/ID ist weg.
+**Historie:** Lauf 6 (28T): 197 Impr., Pos. 52,1 · Lauf 7 (28T): 184 Impr., Pos. 49,2 · 7-Tage-Positionen Lauf 4-7: 56,4 → 55,9 → 43,5 → 41,8.
+**Kern-Erkenntnisse Lauf 7 (vorheriger Lauf, 29.09. — Punkt 1 ist durch Lauf 8 überholt):** (1) **Trendwende bestätigt:** Position über drei Läufe 55,9 → 43,5 → 41,8, Impressionen erstmals seit dem Einbruch wieder steigend. (2) **Indexierungs-Frage abschließend geklärt** (Gründe-Tabelle endlich da): Der Rückgang auf 66 ist vollständig strukturell, 72 der 129 nicht indexierten Seiten sind unsere eigenen absichtlichen Ausschlüsse (Stubs, www-Duplikate, robots); der echte Engpass liegt stabil bei 35 (Lauf 3: 47). Kein Handlungsbedarf. (3) **Das Thin-Page-Muster aus Lauf 6 galt für alle vier Marken-Seiten** (59-138 Wörter), obwohl marken/razer mit 11 Impr./28T die viertstärkste Seite ist → alle vier auf 331-470 Wörter ausgebaut, mit FAQs, Schemas und erstmals vollständigem Produktbestand (vorher nur 9 von 14 Produkten gelistet). (4) §A6: Razer Phone Cooler (3,2) jetzt mit expliziter Warnung gelistet statt verschwiegen. (5) "mini gamepad android" wächst weiter (15 → 20 Impr./28T), der am 22.09. ausgebaute Hub liegt bei 23 Impr./28T. (6) Q4-Seiten weiter ohne Impressionen, Saison läuft ab Oktober an.
 
 **Strategie:** Sichtbarkeits-Plan mit Blöcken A–H steht (Framework Teil VI). Block E (Reddit/Gutefrage) von Yasin freigegeben und bei ihm in Arbeit. Spec A+B am 18.07. freigegeben; **Block A und Block B umgesetzt + deployed (18.07.)** — Spec #1 damit komplett abgearbeitet (`06-specs/SPEC-sichtbarkeit-blockA-B.md`).
 
@@ -265,6 +267,18 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 ---
 
 ## Nächster geplanter Schritt
+
+**Stand 01.11.: GSC-Lauf 8 ausgewertet. Der nächste Bauschritt heißt Zubehör-Ast, nicht Titles.**
+
+Die Daten haben die Reihenfolge umgeworfen. Geplant war Maßnahme 5 der Bücher-Synthese (Titles auf Klickrate). **Die ist mit Ø Position 52,3 und 82 Impressionen in 28 Tagen nicht machbar** und bleibt geparkt, bis eine Seite in den Positionen 5-20 steht: Position 52 ist Ergebnisseite 5 bis 6, eine Title-Änderung dort erzeugt über Monate kein vom Rauschen unterscheidbares Signal.
+
+**Korrektur eines eigenen Fehlers (18.10.):** Ich hatte geschrieben, Maßnahme 5 ziele auf „Positionen um 18". Diese Zahl stammt aus der CLAUDE.md-Kurzfassung vom 18.07., also aus der New-Site-Boost-Phase vor dem Einbruch am 25.07. Seit Lauf 4 liegen die Positionen zwischen 41,8 und 56,4. Der Unterschied entscheidet über den nächsten Hebel: Bei 18 wäre #5 richtig gewesen, bei 52 ist sie Arbeit ohne Messpunkt.
+
+**Stattdessen gebaut wird der Zubehör-Ast** (Begründung und Messung in `raw/gsc/2026-11-01.md`): `/zubehoer/handy-kuehler/` ist mit 18 Impr./28T die stärkste Seite der Site und hat 163 Wörter, der Hub darüber 41. Dasselbe Muster wie Lauf 6 (mini-gamepad, 118 W) und Lauf 7 (vier Marken-Seiten, 59-138 W), beide Male hat der Ausbau die Nachfrage gehalten. Reihenfolge: handy-kuehler zuerst (trägt die Nachfrage), dann finger-sleeves und der Hub, dann `/controller/tablet/` (131 W). Meta-Freeze beachten: handy-kuehler ist jetzt Impressions-Träger, also Body ausbauen, Title/Description nicht anfassen.
+
+**Offen bei Yasin, blockiert nichts:** (a) die vier unbelegten Gewichtsangaben inkl. des Selbstwiderspruchs auf der Turtle-Beach-Atom-Seite (181 g in der Spec-Tabelle gegen 140 g in der Pro-Liste), (b) für Lauf 9 die Positions-Spalte pro Query — sie allein entscheidet, ob Maßnahme 5 wiederbelebt wird.
+
+---
 
 **Stand 06.10. (zweites Paket des Tages): Maßnahme 9 der Bücher-Synthese ist gebaut — die Vergleichsseiten.** Damit sind **13 von 15** Maßnahmen erledigt; offen bleiben nur noch #5 (Titles auf Klickrate, braucht GSC-Daten und das Ende des Meta-Freeze) und #6 (die „After"-Phase, als einzige mit Aufwand „hoch" eingestuft).
 
