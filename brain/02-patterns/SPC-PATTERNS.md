@@ -568,8 +568,60 @@ Gesetze: §A1, §A4, §A5, §A6
 
 ---
 
+## P-19 · Zahlgebundene Prosa [bewiesen 01.11.2026]
+**Wann:** Jeder Generator, dessen Fließtext eine Menge aus den Daten nennt
+(„vier der sieben Sets", „zwei der drei Geräte liegen unter 3,8 Sternen").
+**Regel:** Zahlwort, Substantiv, Artikel und Verb kommen aus derselben Zahl.
+Von Hand gebeugt wird nichts.
+
+**Der Befund, der das Pattern erzwungen hat.** `gen_zubehoer_sections.py` schrieb
+„Ein der sieben Sets liegt unter 3,8 Sternen" und „bei ein Sets steht keine
+Maßangabe": Die Zahl kam aus products.json, Substantiv und Verb standen fest im
+Text. Beide Sätze waren am Tag des Baus richtig und beim nächsten Preisabgleich
+falsch. In sieben Prüfrunden war das die häufigste Einzelklasse.
+
+**Pflicht-Mechanismus 1 · Helfer statt Gedächtnis.** `mz(n, sg, pl)` ·
+`mz_dativ` · `die_mz` (mit Artikel) · `anteil(k, n, pl)` („vier der sieben Sets",
+bei Vollständigkeit „alle sieben Sets") · `vb(n, sg, pl)`. Messbar: Wie viele
+Zeilen schicken ihre Zahl durch einen Helfer, wie viele beugen von Hand? Im
+Zielzustand sind die handgebeugten Stellen unerreichbar oder begründet.
+
+**Pflicht-Mechanismus 2 · Kein Gate auf die Mengenstärke.** Ein Gate, das
+`len(schwache) != 1` festnagelt, schützt die Grammatik und blockiert dabei die
+nächste korrekte Datenpflege — also genau den Vorgang, den §A5 verlangt. Die
+Grammatik gehört an die Zahl, nicht in ein Gate (P-13 Mechanismus 6). Im
+Zubehör-Paket sind vier solche Gates wieder entfernt worden, nachdem die Helfer
+standen.
+
+**Pflicht-Mechanismus 3 · Die Null ist kein Zahlwort.** Alle Helfer brechen bei
+0 ab. Ein Satz über eine leere Menge gehört weggelassen, nicht mit „null"
+formuliert: „0 der drei Geräte liegen unter 3,8 Sternen" wäre nicht nur falsch
+geschrieben, sondern inhaltlich leer — nichts ist dann „unbequem", und die
+Fußnote verwiese auf eine graue Markierung, die es nicht gibt.
+
+**Pflicht-Mechanismus 4 · Der Rahmen entfällt mit dem Inhalt.** Steht ein
+Mengen-Satz unter Bedingung, gehört das `<p>` in dieselbe Bedingung. Sonst bleibt
+ein `<p></p>` stehen, und die Seiten-CSS macht daraus eine sichtbare Lücke.
+
+**Pflicht-Mechanismus 5 · Die Untergrenze ist eine Entscheidung, keine Beugung.**
+Sieben Stellen hätten bei einer Einproduktkategorie „ein Sets" geschrieben. Die
+Antwort darauf ist kein Singular-Zweig an sieben Stellen: Mit einem Produkt ist
+auf einer vergleichenden Seite kein Satz mehr wahr. `rows_of()` bricht unter zwei
+Produkten ab und nennt den Grund.
+
+**GRENZE, gemessen und benannt.** Drift- und Mass-Gate prüfen Zahlen,
+`check_claims` prüft Verhältnisse zwischen Produkten im Datenkern. **Ein Satz ohne
+Zahl und ohne Produktverhältnis passiert beides ungeprüft.** Belegt: „Der Razer
+Phone Cooler ist spritzwassergeschützt" und „der leiseste Kühler am Markt" liefen
+im Prüflauf unberührt durch. Solche Sätze sind wenige, sie stehen als Literale im
+Generator, und sie gehören beim Bau aufgelistet, damit ein Prüfer sie wiederfindet.
+Im Zubehör-Paket sind es rund ein Dutzend, überwiegend Regeln fremder Spiele
+(PUBG-Controller-Sperre) und Technik-Allgemeinplätze (Peltier braucht Strom). Vier
+der sieben Blocker aus Prüfrunde 1 lagen in dieser Klasse und wurden durch Lesen
+gefunden, nicht durch eine Maschine.
+
 ## Offen / noch zu definieren
 - Outreach-Vorlagen-Pattern (Block F — Blogger-Anschreiben)
 - Scheduled-Loop-Pattern (Automatisierung via Claude-Desktop-Schedule — erst nach 2–3 manuellen Läufen je Loop)
 
-*SPC Pattern-Katalog v5.7 · 2026-10-06*
+*SPC Pattern-Katalog v5.8 · 2026-11-01*

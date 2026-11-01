@@ -5,7 +5,7 @@
 > Lesereihenfolge für neue Sessions: INDEX.md → diese Datei → gezielt weiter.
 > Historie vor dem Brain (Juni bis 11.07.2026) ist unten als Kompakt-Archiv erhalten; Details liegen in den Chat-Verläufen.
 
-**Letzte Aktualisierung:** 2026-11-01 (**GSC-Lauf 8 ausgewertet**: erster Klick seit Anfang August, Impressionen minus 55 % — fast vollständig die Startseite —, und zum dritten Mal in Folge liegt die stärkste Nachfrage auf der dünnsten Seite. Maßnahme 5 geparkt, Zubehör-Ast als nächster Bauschritt. Davor 2026-10-18: Vergleichsseiten. Davor 2026-10-06: **Vollabgleich über alle 42 Produkte**, selbst bei Amazon gelesen: 12 Preise · 29 Bewertungen · 6 Produkte nicht neu kaufbar · Datenstand auf Oktober 2026. Verfügbarkeit kommt jetzt aus dem Datenkern (`stock`), `scripts/preiswelle.py` zieht den Fließtext nach, `scripts/datenstand.py` hält den Datenstand an EINER Stelle. Vierzehn prüfbare Gates plus das neue Black-Friday-Schwellen-Gate, alle exit 0)
+**Letzte Aktualisierung:** 2026-11-01 (**Zubehör-Ast ausgebaut** — die Maßnahme aus GSC-Lauf 8. Vier Thin Pages auf Standard, neuer Generator mit sechs bewiesenen Mechanismen, Pattern P-19. Sieben Prüfrunden, 15 Blocker, alle berechtigt, keiner live. Davor am selben Tag: **GSC-Lauf 8 ausgewertet**: erster Klick seit Anfang August, Impressionen minus 55 % — fast vollständig die Startseite —, und zum dritten Mal in Folge liegt die stärkste Nachfrage auf der dünnsten Seite. Maßnahme 5 geparkt, Zubehör-Ast als nächster Bauschritt. Davor 2026-10-18: Vergleichsseiten. Davor 2026-10-06: **Vollabgleich über alle 42 Produkte**, selbst bei Amazon gelesen: 12 Preise · 29 Bewertungen · 6 Produkte nicht neu kaufbar · Datenstand auf Oktober 2026. Verfügbarkeit kommt jetzt aus dem Datenkern (`stock`), `scripts/preiswelle.py` zieht den Fließtext nach, `scripts/datenstand.py` hält den Datenstand an EINER Stelle. Vierzehn prüfbare Gates plus das neue Black-Friday-Schwellen-Gate, alle exit 0)
 
 ---
 
@@ -268,7 +268,19 @@ Regel: Ein Todo steht an genau EINEM Ort; diese Tabelle verlinkt nur. Neue Todos
 
 ## Nächster geplanter Schritt
 
-**Stand 01.11.: GSC-Lauf 8 ausgewertet. Der nächste Bauschritt heißt Zubehör-Ast, nicht Titles.**
+**Stand 01.11. (zweites Paket des Tages): Der Zubehör-Ast ist gebaut.** `/zubehoer/handy-kuehler/` 163 → 986 Wörter, `/zubehoer/finger-sleeves/` 168 → 881, `/zubehoer/trigger/` 294 → 1327, der Hub 41 → 484. Alles aus `scripts/gen_zubehoer_sections.py`, redaktionell bleibt nur die Textführung.
+
+**Der Inhalt ist ein Befund, kein Fülltext:** Zubehör ist der am schwächsten bewertete Teil des Sortiments (vier der 14 Artikel unter 3,8 Sternen, in der Tabelle grau), in zwei der drei Kategorien ist das teuerste Produkt das am schlechtesten bewertete, und das meistbewertete Produkt der ganzen Site ist ein 14-Euro-Set Finger Sleeves mit 3.167 Bewertungen.
+
+**Sieben Prüfrunden, 15 Blocker, alle berechtigt.** Vier davon waren Aussagen, die stärker waren als die Daten (eine behauptete Akku-Abwesenheit, „die einzige erlaubte Hardware-Hilfe", eine Dickenangabe für sieben Sets, von denen nur vier eine nennen, ein Superlativ mit zu weitem Geltungsbereich). Acht waren Fehler, die ich beim Beheben des vorigen eingebaut habe. Keiner ging live. Rückfluss: **Pattern P-19, zahlgebundene Prosa**, Katalog v5.8.
+
+**Die benannte Grenze:** Drift- und Mass-Gate prüfen Zahlen, das Aussagen-Gate prüft Verhältnisse im Datenkern. Ein Satz ohne Zahl und ohne Produktverhältnis passiert alle drei. Rund ein Dutzend stehen im Text (Regeln fremder Spiele, Technik-Allgemeinplätze), zweimal gegen die eigenen Blog-Artikel gekreuzt und heute widerspruchsfrei. Sie driften unbemerkt, falls sich die Spielregeln ändern.
+
+**Nächster Schritt:** GSC-Lauf 9 abwarten (Checkliste in `04-loops/gsc-loop.md`, Punkt 1 ist die Positions-Spalte). Erfolgskontrolle für dieses Paket: Wächst `/zubehoer/handy-kuehler/` über seine 18 Impr./28T? In der Warteschlange stehen zwei Folgefunde aus derselben Messung: die 6-Finger-Beschreibung auf `produkte/ozkak-6finger/` und `/controller/tablet/` mit 131 Wörtern.
+
+---
+
+**Stand 01.11. (erstes Paket): GSC-Lauf 8 ausgewertet. Der nächste Bauschritt heißt Zubehör-Ast, nicht Titles.**
 
 Die Daten haben die Reihenfolge umgeworfen. Geplant war Maßnahme 5 der Bücher-Synthese (Titles auf Klickrate). **Die ist mit Ø Position 52,3 und 82 Impressionen in 28 Tagen nicht machbar** und bleibt geparkt, bis eine Seite in den Positionen 5-20 steht: Position 52 ist Ergebnisseite 5 bis 6, eine Title-Änderung dort erzeugt über Monate kein vom Rauschen unterscheidbares Signal.
 
